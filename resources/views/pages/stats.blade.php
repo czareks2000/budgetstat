@@ -66,6 +66,18 @@
             </section>
         </div>
     </div>
+    <div class="row">
+        <div class="col-xl-6">
+            <section id="chart1">
+                <canvas id="avgExpensesChart" width="10" height="5"></canvas>
+            </section>
+        </div>
+        <div class="col-xl-6">
+            <section id="chart2">
+                <canvas id="avgIncomesChart" width="10" height="5"></canvas>
+            </section>
+        </div>
+    </div>
     @else
     <div class="alert alert-warning mt-5" role="alert">
         There are no statistics to show yet.
@@ -77,6 +89,8 @@
 <script>
     $(document).ready(function(){
 
+        const dateObj = new Date()
+        const monthName = dateObj.toLocaleString("default", { month: "long" })
         var sign = "{{Auth::user()->total_expense()['sign']}}";
         var difference = parseFloat("{{Auth::user()->total_income()['sum']}}".replace(' ', ''));
         difference -= parseFloat("{{Auth::user()->total_expense()['sum']}}".replace(' ', ''));
@@ -248,7 +262,7 @@
                         title:{
                             display: true,
                             fontSize: 18,
-                            text: "Expenses By Categories"
+                            text: "Expenses in " + monthName
                         },
                         legend: {
                             display: false
@@ -303,7 +317,117 @@
                         title:{
                             display: true,
                             fontSize: 18,
-                            text: "Incomes By Categories"
+                            text: "Incomes in " + monthName
+                        },
+                        legend: {
+                            display: false
+                        },
+                        tooltips: {
+                            callbacks: {
+                                label: (item) => `${item.yLabel} `+sign
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
+        var Avg_Categories_ex = new Array();;
+        var Avg_Data_ex = new Array();;
+        $.ajax({
+            url: 'avg_expensesByCategories',
+            type: 'GET',
+            dataType: 'json',
+            success: function(response){
+                
+                for (const [key, value] of Object.entries(response['avg_expensesByCategories'])) {
+                    Avg_Categories_ex.push(key);
+                    Avg_Data_ex.push(Math.round(value * 100) / 100);
+                }
+                
+                var ctx = $('#avgExpensesChart');
+                var myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: Avg_Categories_ex,
+                        datasets: [{
+                            label: 'Expenses',
+                            data: Avg_Data_ex,
+                            backgroundColor: 'rgba(0, 153, 255, 0.2)',
+                            borderColor: 'rgba(0, 153, 255, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true,
+                                    callback: function(value, index, values) {
+                                        return value + " " +sign;
+                                    }
+                                }
+                            }]
+                        },
+                        title:{
+                            display: true,
+                            fontSize: 18,
+                            text: "Avg Monthly Expenses"
+                        },
+                        legend: {
+                            display: false
+                        },
+                        tooltips: {
+                            callbacks: {
+                                label: (item) => `${item.yLabel} `+sign
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
+        var Avg_Categories_in = new Array();;
+        var Avg_Data_in = new Array();;
+        $.ajax({
+            url: 'avg_incomesByCategories',
+            type: 'GET',
+            dataType: 'json',
+            success: function(response){
+                
+                for (const [key, value] of Object.entries(response['avg_incomesByCategories'])) {
+                    Avg_Categories_in.push(key);
+                    Avg_Data_in.push(Math.round(value * 100) / 100);
+                }
+                
+                var ctx = $('#avgIncomesChart');
+                var myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: Avg_Categories_in,
+                        datasets: [{
+                            label: 'Incomes',
+                            data: Avg_Data_in,
+                            backgroundColor: 'rgba(0, 153, 255, 0.2)',
+                            borderColor: 'rgba(0, 153, 255, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true,
+                                    callback: function(value, index, values) {
+                                        return value + " " +sign;
+                                    }
+                                }
+                            }]
+                        },
+                        title:{
+                            display: true,
+                            fontSize: 18,
+                            text: "Avg Monthly Incomes"
                         },
                         legend: {
                             display: false

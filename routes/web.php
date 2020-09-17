@@ -38,6 +38,10 @@ Route::get('/expensesByCategories', 'UserController@expensesByCategories')->midd
 Route::get('/incomesByCategories', 'UserController@incomesByCategories')->middleware('auth');
 Route::get('/expensesByMonths', 'UserController@expensesByMonths')->middleware('auth');
 Route::get('/incomesByMonths', 'UserController@incomesByMonths')->middleware('auth');
+Route::get('/avg_expensesByCategories', 'UserController@avg_expensesByCategories')->middleware('auth');
+Route::get('/avg_incomesByCategories', 'UserController@avg_incomesByCategories')->middleware('auth');
+
+
 
 
 Route::post('payoff','LoanController@payoff');

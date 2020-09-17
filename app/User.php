@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Account;
+use App\Category;
 use App\Currency;
 use App\Income;
 use App\Expense;
@@ -225,7 +226,10 @@ class User extends Authenticatable
         //expenses grouped by categories and sumed to one currency
         $user_id = auth()->user()->id;
         
-        $results = DB::select(DB::raw("SELECT categories.name as category, amount, currencies.name from (SELECT * FROM `expenses` WHERE user_id = $user_id) as expenses INNER JOIN accounts ON expenses.account_id = accounts.id inner JOIN categories on expenses.category_id = categories.id INNER join currencies on accounts.currency_id = currencies.id"));
+        $year = date('Y');
+        $month = date('m');
+
+        $results = DB::select(DB::raw("SELECT categories.name as category, amount, currencies.name from (SELECT * FROM `expenses` WHERE user_id = $user_id and MONTH(date) = $month AND YEAR(date) = $year) as expenses INNER JOIN accounts ON expenses.account_id = accounts.id inner JOIN categories on expenses.category_id = categories.id INNER join currencies on accounts.currency_id = currencies.id"));
 
         if($currency_id === null)
         {
@@ -275,10 +279,13 @@ class User extends Authenticatable
 
     public function incomesByCategories($currency_id = null)
     {
-        //incomes grouped by categories and sumed to one currency
+        //incomes in current month grouped by categories and sumed to one currency
         $user_id = auth()->user()->id;
         
-        $results = DB::select(DB::raw("SELECT categories.name as category, amount, currencies.name from (SELECT * FROM `incomes` WHERE user_id = $user_id) as incomes INNER JOIN accounts ON incomes.account_id = accounts.id inner JOIN categories on incomes.category_id = categories.id INNER join currencies on accounts.currency_id = currencies.id"));
+        $year = date('Y');
+        $month = date('m');
+
+        $results = DB::select(DB::raw("SELECT categories.name as category, amount, currencies.name from (SELECT * FROM `incomes` WHERE user_id = $user_id and MONTH(date) = $month AND YEAR(date) = $year) as incomes INNER JOIN accounts ON incomes.account_id = accounts.id inner JOIN categories on incomes.category_id = categories.id INNER join currencies on accounts.currency_id = currencies.id"));
 
         if($currency_id === null)
         {
@@ -346,10 +353,8 @@ class User extends Authenticatable
         //Get total number of months
         $oldest_income = Income::where('user_id', $user_id)->oldest('date')->first();
 
-
         $date = strtotime($oldest_income->date);
-
-
+        
         $year1 = date('Y', $date);
         $year2 = date('Y');
 
@@ -529,6 +534,159 @@ class User extends Authenticatable
         return $incomes;
     
     }
+
+    public function avg_expensesByCategories($currency_id = null)
+    {
+
+        $user_id = auth()->user()->id;
+        
+        $results = DB::select(DB::raw("SELECT categories.name as category, amount, currencies.name from (SELECT * FROM `expenses` WHERE user_id = $user_id) as expenses INNER JOIN accounts ON expenses.account_id = accounts.id inner JOIN categories on expenses.category_id = categories.id INNER join currencies on accounts.currency_id = currencies.id"));
+
+        if($currency_id === null)
+        {
+            $currency = Currency::find(auth()->user()->currency_id);
+        }
+        else
+        {
+            $currency = Currency::find($currency_id);
+        }
+
+        $total = array();
+
+        $get_data = Helper::callAPI('GET', 'https://api.ratesapi.io/api/latest?base='.$currency->name, false);
+        $response = json_decode($get_data, true);
+        
+        foreach ($results as $result)
+        {
+            if($currency->name === "EUR" && $result->name === "EUR")
+            {   
+                if(array_key_exists($result->category,$total))
+                {
+                    $total[$result->category] += $result->amount;
+                }
+                else
+                {
+                    $total[$result->category] = $result->amount;
+                }
+                
+            }
+            else
+            {   
+                if(array_key_exists($result->category,$total))
+                {
+                    $total[$result->category] +=  $result->amount / $response['rates'][$result->name];
+                }
+                else
+                {
+                    $total[$result->category] = $result->amount / $response['rates'][$result->name];
+                }
+                
+            }
+        }
+
+        
+
+        foreach($total as $key => $value)
+        {   
+
+            //$category = Category::where('name','=', $key)->first();
+            $category = Category::where('name','=', $key)->where('type','=','expense')->first();
+
+            //Get total number of months
+            $oldest_expense = Expense::where('user_id', $user_id)->where('category_id', $category->id)->oldest('date')->first();
+
+            $date = strtotime($oldest_expense->date);
+
+            $year1 = date('Y', $date);
+            $year2 = date('Y');
+
+            $month1 = date('m', $date);
+            $month2 = date('m');
+
+            $number_months = (($year2 - $year1) * 12) + ($month2 - $month1) + 1;
+
+            $total[$key] /= $number_months;
+        }
+
+        
+        return $total;
+    }
+    public function avg_incomesByCategories($currency_id = null)
+    {
+
+        $user_id = auth()->user()->id;
+        
+        $results = DB::select(DB::raw("SELECT categories.name as category, amount, currencies.name from (SELECT * FROM `incomes` WHERE user_id = $user_id) as incomes INNER JOIN accounts ON incomes.account_id = accounts.id inner JOIN categories on incomes.category_id = categories.id INNER join currencies on accounts.currency_id = currencies.id"));
+
+        if($currency_id === null)
+        {
+            $currency = Currency::find(auth()->user()->currency_id);
+        }
+        else
+        {
+            $currency = Currency::find($currency_id);
+        }
+
+        $total = array();
+
+        $get_data = Helper::callAPI('GET', 'https://api.ratesapi.io/api/latest?base='.$currency->name, false);
+        $response = json_decode($get_data, true);
+        
+        foreach ($results as $result)
+        {
+            if($currency->name === "EUR" && $result->name === "EUR")
+            {   
+                if(array_key_exists($result->category,$total))
+                {
+                    $total[$result->category] += $result->amount;
+                }
+                else
+                {
+                    $total[$result->category] = $result->amount;
+                }
+                
+            }
+            else
+            {   
+                if(array_key_exists($result->category,$total))
+                {
+                    $total[$result->category] +=  $result->amount / $response['rates'][$result->name];
+                }
+                else
+                {
+                    $total[$result->category] = $result->amount / $response['rates'][$result->name];
+                }
+                
+            }
+        }
+
+        
+
+        foreach($total as $key => $value)
+        {   
+            
+            $category = Category::where('name','=', $key)->where('type','=','income')->first();
+
+            //Get total number of months
+            $oldest_income = Income::where('user_id', $user_id)->where('category_id', $category->id)->oldest('date')->first();
+
+            $date = strtotime($oldest_income->date);
+
+            $year1 = date('Y', $date);
+            $year2 = date('Y');
+
+            $month1 = date('m', $date);
+            $month2 = date('m');
+
+            $number_months = (($year2 - $year1) * 12) + ($month2 - $month1) + 1;
+
+            $total[$key] /= $number_months;
+        }
+
+        
+        return $total;
+    }
+
 
     public $timestamps = false;
 }

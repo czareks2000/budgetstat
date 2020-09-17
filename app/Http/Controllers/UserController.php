@@ -171,4 +171,14 @@ class UserController extends Controller
         return response()->json(array('success' => true, 'incomesByMonths' => Auth::user()->incomesByMonths(null)));
     }
 
+    public function avg_expensesByCategories()
+    {
+        return response()->json(array('success' => true, 'avg_expensesByCategories' => Auth::user()->avg_expensesByCategories(null)));
+    }
+
+    public function avg_incomesByCategories()
+    {
+        return response()->json(array('success' => true, 'avg_incomesByCategories' => Auth::user()->avg_incomesByCategories(null)));
+    }
+
 }
