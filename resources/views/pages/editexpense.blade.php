@@ -3,7 +3,7 @@
 @section('content')
 <div class="container-fluid">
     <div class="col-xl-6 offset-xl-3 pt-5">
-        @include('inc\messeges')
+        @include('inc.messeges')
         <section>
             <h3>Edit Expense</h3>
             <form action="/expenses/{{$expense->id}}" method="POST" autocomplete="off">
