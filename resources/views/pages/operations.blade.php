@@ -107,7 +107,7 @@
     <style>
 
     </style>
-    @include('inc\messeges')
+    
     <div class="row">
       <div class="col-xl-4">
         <section>
