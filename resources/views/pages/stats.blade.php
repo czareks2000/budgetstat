@@ -7,6 +7,7 @@
             <section class="px-4 py-5 text-center">
                 <h2>Your Balance:</h2>
                 <p class="display-4"><b>{{Auth::user()->balance()['sum']}}</b><span style="color: #0099FF"> {{Auth::user()->balance()['sign']}}</span></p>
+                <h5 class="difference"></h5>
             </section>
         </div>
         <div class="col-xl-4">
@@ -21,7 +22,7 @@
             <section class="px-4 pt-5 pb-4 text-center">
                 <h2>Your Balance:</h2>
                 <p class="display-4"><b>{{Auth::user()->balance()['sum']}}</b><span style="color: #0099FF"> {{Auth::user()->balance()['sign']}}</span></p>
-                <h5 id="difference"></h5>
+                <h5 class="difference"></h5>
             </section>
         </div>
         <div class="col-xl-4">
@@ -97,11 +98,11 @@
 
         if(difference >= 0)
         {
-            $('#difference').html('<span style="color: #0a9c00;">+'+difference.toFixed(2)+'</span> '+sign);
+            $('.difference').html('<span style="color: #0a9c00;">+'+difference.toFixed(2)+'</span> '+sign);
         }
         else
         {
-            $('#difference').html('<span style="color: #ed0000;">'+difference.toFixed(2)+'</span> '+sign);
+            $('.difference').html('<span style="color: #ed0000;">'+difference.toFixed(2)+'</span> '+sign);
         }
         
         Chart.defaults.global.defaultFontColor = "#000";
