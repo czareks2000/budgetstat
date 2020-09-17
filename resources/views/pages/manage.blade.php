@@ -15,7 +15,7 @@
   </div>
   <div class="row">
     <div class="col-xl-6">
-      @include('inc\messeges')
+      @include('inc.messeges')
       <section>
         <h3>NEW ACCOUNT</h3> 
         <form action="accounts" method="POST" autocomplete="off">
