@@ -51,7 +51,7 @@
     </div>
     <div class="row">
       <div class="col-xl-6">
-        @include('inc\messeges')
+        @include('inc.messeges')
         @if(count($contractors) > 0)
         <section>
           <h3>GIVE MONEY</h3>
