@@ -3,7 +3,7 @@
 @section('content')
 <div class="container-fluid">
     <div class="col-xl-6 offset-xl-3 pt-5">
-        @include('inc\messeges')
+        @include('inc.messeges')
         <section>
             <h3>Profile</h3>
             <form class="text-left" action="/user/{{Auth::user()->id}}" method="POST" autocomplete="off">
