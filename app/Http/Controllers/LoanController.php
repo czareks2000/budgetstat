@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\loan;
+use App\Loan;
 use App\Contractor;
 use App\Currency;
 use App\Account;
