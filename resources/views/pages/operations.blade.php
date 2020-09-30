@@ -272,16 +272,6 @@
     </div>
     <div class="row">
       <div class="col-xl-6">
-        <div class="zoom pb-3 d-none d-sm-flex">
-          
-          <select id="expense_currency" class="btn-primary p-2 rounded-right" style="height: 52px;">
-            @if (count($currencies) > 0)
-                @foreach ($currencies as $currency)
-                <option value="{{$currency->id}}" @if(auth()->user()->currency_id == $currency->id) selected @endif>{{$currency->name}}</option>
-                @endforeach
-            @endif
-          </select>
-        </div>
         <section>
           <h3>EXPENCES</h3>
           <div class="table-responsive">
@@ -333,16 +323,6 @@
          </section>
       </div>
       <div class="col-xl-6">
-        <div class="zoom pb-3 d-none d-sm-flex">
-          
-          <select id="income_currency" class="btn-primary p-2 rounded-right" style="height: 52px;">
-            @if (count($currencies) > 0)
-                @foreach ($currencies as $currency)
-                <option value="{{$currency->id}}" @if(auth()->user()->currency_id == $currency->id) selected @endif>{{$currency->name}}</option>
-                @endforeach
-            @endif
-          </select>
-        </div>
         <section>
           <h3>INCOMES</h3>
           <div class="table-responsive">
