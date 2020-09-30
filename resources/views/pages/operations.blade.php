@@ -273,7 +273,7 @@
     <div class="row">
       <div class="col-xl-6">
         <div class="zoom pb-3 d-none d-sm-flex">
-          <h2 id="total_expense" class="p-2 border bg-white rounded-left">Expense this month: <b>{{Auth::user()->total_expense()['sum']}}</b><span style="color: #0099FF">{{Auth::user()->total_expense()['sign']}}</span></h2>
+          
           <select id="expense_currency" class="btn-primary p-2 rounded-right" style="height: 52px;">
             @if (count($currencies) > 0)
                 @foreach ($currencies as $currency)
@@ -334,7 +334,7 @@
       </div>
       <div class="col-xl-6">
         <div class="zoom pb-3 d-none d-sm-flex">
-          <h2 id="total_income" class="p-2 border bg-white rounded-left">Income this month: <b>{{Auth::user()->total_income()['sum']}}</b><span style="color: #0099FF">{{Auth::user()->total_income()['sign']}}</span></h2>
+          
           <select id="income_currency" class="btn-primary p-2 rounded-right" style="height: 52px;">
             @if (count($currencies) > 0)
                 @foreach ($currencies as $currency)
