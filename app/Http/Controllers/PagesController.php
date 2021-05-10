@@ -34,8 +34,8 @@ class PagesController extends Controller
         $categories_in = Category::where('type','income')->where(function ($query) { $query->where('user_id', auth()->user()->id)->orWhere('user_id', NULL);})->get();
         $categories_ex = Category::where('type','expense')->where(function ($query) { $query->where('user_id', auth()->user()->id)->orWhere('user_id', NULL);})->get();
         $categories = Category::where('user_id', auth()->user()->id)->get();
-        $incomes = Income::where('user_id', $user_id)->orderBy('date','desc')->get()->limit(50);
-        $expenses = Expense::where('user_id', $user_id)->orderBy('date','desc')->get()->limit(50);
+        $incomes = Income::where('user_id', $user_id)->orderBy('date','desc')->limit(50)->get();
+        $expenses = Expense::where('user_id', $user_id)->orderBy('date','desc')->limit(50)->get();
         $currencies = Currency::all();
 
         return view('pages.operations')->with('title', $title)
