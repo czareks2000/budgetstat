@@ -5,7 +5,8 @@
     @if (count($accounts) > 0)
     <script>
       $(document).ready(function(){
-
+    
+        /*
         $('#income_currency').change(function(e){
           e.preventDefault();
 
@@ -47,6 +48,7 @@
 
             $('#expense_currency').blur();
         });
+        */
 
         $('#ex_amount').blur(function(){
           $('#ex_amount').val($('#ex_amount').val().replace(",", "."));
