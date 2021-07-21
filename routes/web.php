@@ -41,9 +41,6 @@ Route::get('/incomesByMonths', 'UserController@incomesByMonths')->middleware('au
 Route::get('/avg_expensesByCategories', 'UserController@avg_expensesByCategories')->middleware('auth');
 Route::get('/avg_incomesByCategories', 'UserController@avg_incomesByCategories')->middleware('auth');
 
-
-
-
 Route::post('payoff','LoanController@payoff');
 
 Auth::routes();

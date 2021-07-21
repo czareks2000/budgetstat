@@ -9,27 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ExpenseController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
+{    
     /**
      * Store a newly created resource in storage.
      *
@@ -73,17 +53,6 @@ class ExpenseController extends Controller
             return redirect('/operations')->with('error','You don’t have enough funds in this account. <strong>'.$account->name.'</strong> balance is: <strong>'.$account->balance.' '.$account->currency()->first()->sign.'</strong>')->withInput();
         }
         
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Expense  $expense
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Expense $expense)
-    {
-        //
     }
 
     /**

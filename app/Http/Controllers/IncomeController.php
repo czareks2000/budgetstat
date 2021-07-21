@@ -10,26 +10,7 @@ use Illuminate\Http\Request;
 
 class IncomeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
+   
     /**
      * Store a newly created resource in storage.
      *
@@ -66,18 +47,7 @@ class IncomeController extends Controller
 
         return redirect('/operations')->with('success','<strong>'.$account->name.'</strong> balance is now: <strong>'.$account->balance.$account->currency()->first()->sign.'</strong>');
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Income  $income
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Income $income)
-    {
-        //
-    }
-
+    
     /**
      * Show the form for editing the specified resource.
      *
