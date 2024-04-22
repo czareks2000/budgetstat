@@ -11,6 +11,6 @@ namespace Domain
         public string UserId { get; set; }
 
         public virtual User User { get; set; }
-        public virtual ICollection<BudgetCategory> BudgetCategories { get; set; }
+        public virtual ICollection<BudgetCategory> Categories { get; set; }
     }
 }

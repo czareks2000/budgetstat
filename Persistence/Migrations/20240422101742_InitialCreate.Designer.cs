@@ -12,7 +12,7 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240419152923_InitialCreate")]
+    [Migration("20240422101742_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -36,6 +36,9 @@ namespace Persistence.Migrations
                     b.Property<decimal>("Balance")
                         .HasColumnType("numeric");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<int>("CurrencyId")
                         .HasColumnType("integer");
 
@@ -46,9 +49,7 @@ namespace Persistence.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("Status")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(1);
+                        .HasColumnType("integer");
 
                     b.Property<string>("UserId")
                         .HasColumnType("text");
@@ -70,9 +71,6 @@ namespace Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("numeric");
-
                     b.Property<int>("AssetCategoryId")
                         .HasColumnType("integer");
 
@@ -87,6 +85,9 @@ namespace Persistence.Migrations
 
                     b.Property<string>("UserId")
                         .HasColumnType("text");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("numeric");
 
                     b.HasKey("Id");
 
@@ -105,13 +106,15 @@ namespace Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Icon")
-                        .HasColumnType("text");
+                    b.Property<int>("IconId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("IconId");
 
                     b.ToTable("AssetCategories");
                 });
@@ -131,9 +134,7 @@ namespace Persistence.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("Period")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(1);
+                        .HasColumnType("integer");
 
                     b.Property<string>("UserId")
                         .HasColumnType("text");
@@ -155,6 +156,8 @@ namespace Persistence.Migrations
 
                     b.HasKey("BudgetId", "CategoryId");
 
+                    b.HasIndex("CategoryId");
+
                     b.ToTable("BudgetCategories");
                 });
 
@@ -166,8 +169,8 @@ namespace Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Icon")
-                        .HasColumnType("text");
+                    b.Property<int>("IconId")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsMain")
                         .HasColumnType("boolean");
@@ -185,6 +188,8 @@ namespace Persistence.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("IconId");
 
                     b.HasIndex("MainCategoryId");
 
@@ -236,6 +241,22 @@ namespace Persistence.Migrations
                     b.ToTable("Currencies");
                 });
 
+            modelBuilder.Entity("Domain.Icon", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Icons");
+                });
+
             modelBuilder.Entity("Domain.Loan", b =>
                 {
                     b.Property<int>("Id")
@@ -265,9 +286,7 @@ namespace Persistence.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("LoanStatus")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0);
+                        .HasColumnType("integer");
 
                     b.Property<int>("LoanType")
                         .HasColumnType("integer");
@@ -627,6 +646,17 @@ namespace Persistence.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Domain.AssetCategory", b =>
+                {
+                    b.HasOne("Domain.Icon", "Icon")
+                        .WithMany("AssetCategories")
+                        .HasForeignKey("IconId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Icon");
+                });
+
             modelBuilder.Entity("Domain.Budget", b =>
                 {
                     b.HasOne("Domain.User", "User")
@@ -639,14 +669,14 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Domain.BudgetCategory", b =>
                 {
                     b.HasOne("Domain.Budget", "Budget")
-                        .WithMany("BudgetCategories")
+                        .WithMany("Categories")
                         .HasForeignKey("BudgetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Category", "Category")
                         .WithMany("Budgets")
-                        .HasForeignKey("BudgetId")
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -657,15 +687,25 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Category", b =>
                 {
-                    b.HasOne("Domain.Category", "MainCategory")
+                    b.HasOne("Domain.Icon", "Icon")
                         .WithMany("Categories")
+                        .HasForeignKey("IconId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Category", "MainCategory")
+                        .WithMany("SubCategories")
                         .HasForeignKey("MainCategoryId");
 
-                    b.HasOne("Domain.User", null)
+                    b.HasOne("Domain.User", "User")
                         .WithMany("Categories")
                         .HasForeignKey("UserId");
 
+                    b.Navigation("Icon");
+
                     b.Navigation("MainCategory");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Counterparty", b =>
@@ -841,14 +881,14 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Budget", b =>
                 {
-                    b.Navigation("BudgetCategories");
+                    b.Navigation("Categories");
                 });
 
             modelBuilder.Entity("Domain.Category", b =>
                 {
                     b.Navigation("Budgets");
 
-                    b.Navigation("Categories");
+                    b.Navigation("SubCategories");
 
                     b.Navigation("Transactions");
                 });
@@ -861,6 +901,13 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Domain.Currency", b =>
                 {
                     b.Navigation("Accounts");
+                });
+
+            modelBuilder.Entity("Domain.Icon", b =>
+                {
+                    b.Navigation("AssetCategories");
+
+                    b.Navigation("Categories");
                 });
 
             modelBuilder.Entity("Domain.Loan", b =>

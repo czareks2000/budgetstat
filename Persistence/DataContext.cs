@@ -25,6 +25,7 @@ namespace Persistence
         public DbSet<AssetCategory> AssetCategories { get; set; }
         public DbSet<Transaction>  Transactions { get; set; }
         public DbSet<Transfer> Transfers { get; set; }
+        public DbSet<Icon> Icons { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -36,13 +37,13 @@ namespace Persistence
 
             builder.Entity<BudgetCategory>()
                 .HasOne(bc => bc.Budget)
-                .WithMany(b => b.BudgetCategories)
+                .WithMany(b => b.Categories)
                 .HasForeignKey(bc => bc.BudgetId);
 
             builder.Entity<BudgetCategory>()
                 .HasOne(bc => bc.Category)
                 .WithMany(b => b.Budgets)
-                .HasForeignKey(bc => bc.BudgetId);
+                .HasForeignKey(bc => bc.CategoryId);
 
             builder.Entity<Transfer>()
                 .HasOne(t => t.FromAccount)
@@ -56,11 +57,6 @@ namespace Persistence
 
             //default values
 
-            builder.Entity<Account>()
-                .Property(a => a.Status)
-                .HasDefaultValue(AccountStatus.Visible)
-                .HasSentinel(default);
-
             builder.Entity<Transaction>()
                 .Property(t => t.Considered)
                 .HasDefaultValue(true);
@@ -69,20 +65,9 @@ namespace Persistence
                 .Property(t => t.Planned)
                 .HasDefaultValue(false);
 
-            builder.Entity<Budget>()
-                .Property(b => b.Period)
-                .HasDefaultValue(BudgetPeriod.Month)
-                .HasSentinel(default);
-
             builder.Entity<Loan>()
                .Property(l => l.CurrentAmount)
                .HasDefaultValue(0);
-
-            builder.Entity<Loan>()
-               .Property(l => l.LoanStatus)
-               .HasDefaultValue(LoanStatus.InProgress)
-               .HasSentinel(default);
-
         }
     }
 }

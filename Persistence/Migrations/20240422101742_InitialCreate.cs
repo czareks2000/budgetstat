@@ -27,20 +27,6 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AssetCategories",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Icon = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AssetCategories", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Currencies",
                 columns: table => new
                 {
@@ -53,6 +39,19 @@ namespace Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Currencies", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Icons",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Icons", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -109,6 +108,26 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AssetCategories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    IconId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AssetCategories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AssetCategories_Icons_IconId",
+                        column: x => x.IconId,
+                        principalTable: "Icons",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Accounts",
                 columns: table => new
                 {
@@ -117,8 +136,9 @@ namespace Persistence.Migrations
                     Name = table.Column<string>(type: "text", nullable: true),
                     Balance = table.Column<decimal>(type: "numeric", nullable: false),
                     CurrencyId = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
-                    Status = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
+                    Status = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -223,42 +243,13 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Assets",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    AssetCategoryId = table.Column<int>(type: "integer", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Amount = table.Column<decimal>(type: "numeric", nullable: false),
-                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    UserId = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Assets", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Assets_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Assets_AssetCategories_AssetCategoryId",
-                        column: x => x.AssetCategoryId,
-                        principalTable: "AssetCategories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Budgets",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: true),
-                    Period = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
+                    Period = table.Column<int>(type: "integer", nullable: false),
                     Amount = table.Column<decimal>(type: "numeric", nullable: false),
                     UserId = table.Column<string>(type: "text", nullable: true)
                 },
@@ -279,7 +270,7 @@ namespace Persistence.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: true),
-                    Icon = table.Column<string>(type: "text", nullable: true),
+                    IconId = table.Column<int>(type: "integer", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
                     IsMain = table.Column<bool>(type: "boolean", nullable: false),
                     MainCategoryId = table.Column<int>(type: "integer", nullable: true),
@@ -298,6 +289,12 @@ namespace Persistence.Migrations
                         column: x => x.MainCategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Categories_Icons_IconId",
+                        column: x => x.IconId,
+                        principalTable: "Icons",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -317,6 +314,35 @@ namespace Persistence.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Assets",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    AssetCategoryId = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Value = table.Column<decimal>(type: "numeric", nullable: false),
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Assets", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Assets_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Assets_AssetCategories_AssetCategoryId",
+                        column: x => x.AssetCategoryId,
+                        principalTable: "AssetCategories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -364,8 +390,8 @@ namespace Persistence.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BudgetCategories_Categories_BudgetId",
-                        column: x => x.BudgetId,
+                        name: "FK_BudgetCategories_Categories_CategoryId",
+                        column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -417,7 +443,7 @@ namespace Persistence.Migrations
                     RepaymentDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
                     UserId = table.Column<string>(type: "text", nullable: true),
-                    LoanStatus = table.Column<int>(type: "integer", nullable: false, defaultValue: 0)
+                    LoanStatus = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -523,6 +549,11 @@ namespace Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_AssetCategories_IconId",
+                table: "AssetCategories",
+                column: "IconId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Assets_AssetCategoryId",
                 table: "Assets",
                 column: "AssetCategoryId");
@@ -533,9 +564,19 @@ namespace Persistence.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_BudgetCategories_CategoryId",
+                table: "BudgetCategories",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Budgets_UserId",
                 table: "Budgets",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Categories_IconId",
+                table: "Categories",
+                column: "IconId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Categories_MainCategoryId",
@@ -651,6 +692,9 @@ namespace Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Counterparties");
+
+            migrationBuilder.DropTable(
+                name: "Icons");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
