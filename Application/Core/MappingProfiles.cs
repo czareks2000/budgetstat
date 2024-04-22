@@ -1,3 +1,4 @@
+using Application.Dto;
 using AutoMapper;
 using Domain;
 
@@ -7,7 +8,8 @@ namespace Application.Core
     {
         public MappingProfiles()
         {
-            
+            CreateMap<Account, AccountDto>();
+            CreateMap<Currency, CurrencyDto>();
         }
     }
 }

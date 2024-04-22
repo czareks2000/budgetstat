@@ -1,16 +1,17 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [AllowAnonymous]
-    public class AccountController : BaseApiController
+    public class AccountController(
+        IAccountService accountService) : BaseApiController
     {
+        private readonly IAccountService _accountService = accountService;
 
-        [HttpGet("accounts/all")]
-        public IActionResult Accounts()
+        [HttpGet("accounts")] //api/accounts
+        public async Task<IActionResult> GetAccounts()
         {
-            return Ok();
+            return HandleResult(await _accountService.GetAll());
         }
     }
 }
