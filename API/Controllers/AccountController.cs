@@ -1,14 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [Route("api/account/")]
-    [ApiController]
-    public class AccountController : ControllerBase
+    [AllowAnonymous]
+    public class AccountController : BaseApiController
     {
 
-        [HttpGet("all")]
+        [HttpGet("accounts/all")]
         public IActionResult Accounts()
         {
             return Ok();

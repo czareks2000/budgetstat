@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Application.Core;
+using Application.Interfaces;
+using Application.Services;
+using Infrastructure.Security;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace API.Extentions
@@ -18,11 +22,21 @@ namespace API.Extentions
             });
 
 
-            services.AddCors(opt => {
-                opt.AddPolicy("CorsPolicy", policy => {
+            services.AddCors(opt =>
+            {
+                opt.AddPolicy("CorsPolicy", policy =>
+                {
                     policy.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
                 });
             });
+
+            services.AddHttpContextAccessor();
+
+            services.AddScoped<IUserAccessor, UserAccessor>();
+
+            services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+
+            services.AddScoped<IAccountService, AccountService>();
 
             return services;
         }
