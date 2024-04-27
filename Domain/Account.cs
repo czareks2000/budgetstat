@@ -8,7 +8,7 @@ namespace Domain
         public string Name { get; set; }
         public decimal Balance { get; set; }
         public int CurrencyId { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public string Description { get; set; }
         public AccountStatus Status { get; set; } = AccountStatus.Visible;
         public string UserId { get; set; }

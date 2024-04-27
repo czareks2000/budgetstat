@@ -1,6 +1,6 @@
 ﻿using Domain.Enums;
 
-namespace Application.Dto
+namespace Application.Dto.Account
 {
     public class AccountDto
     {
