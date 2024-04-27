@@ -1,6 +1,7 @@
 ﻿using Application.Core;
 using Application.Interfaces;
 using Application.Services;
+using Infrastructure.Currency;
 using Infrastructure.Security;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -33,10 +34,14 @@ namespace API.Extentions
             services.AddHttpContextAccessor();
 
             services.AddScoped<IUserAccessor, UserAccessor>();
+            services.AddScoped<ICurrencyService, CurrencyService>();
 
+            
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 
+
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<ITransactionService, TransactionService>();
 
             return services;
         }
