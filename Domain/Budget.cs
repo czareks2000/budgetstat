@@ -9,8 +9,10 @@ namespace Domain
         public BudgetPeriod Period { get; set; } = BudgetPeriod.Month;
         public decimal Amount { get; set; }
         public string UserId { get; set; }
+        public int CurrencyId { get; set; }
 
         public virtual User User { get; set; }
+        public virtual Currency Currency { get; set; }
         public virtual ICollection<BudgetCategory> Categories { get; set; }
     }
 }

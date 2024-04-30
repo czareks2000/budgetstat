@@ -30,9 +30,6 @@ namespace Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("Balance")
-                        .HasColumnType("numeric");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -60,6 +57,35 @@ namespace Persistence.Migrations
                     b.ToTable("Accounts");
                 });
 
+            modelBuilder.Entity("Domain.AccountBalance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Balance")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("CurrencyId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("CurrencyId");
+
+                    b.ToTable("AccountBalances");
+                });
+
             modelBuilder.Entity("Domain.Asset", b =>
                 {
                     b.Property<int>("Id")
@@ -69,6 +95,9 @@ namespace Persistence.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AssetCategoryId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CurrencyId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("Date")
@@ -83,12 +112,11 @@ namespace Persistence.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("text");
 
-                    b.Property<decimal>("Value")
-                        .HasColumnType("numeric");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AssetCategoryId");
+
+                    b.HasIndex("CurrencyId");
 
                     b.HasIndex("UserId");
 
@@ -116,6 +144,35 @@ namespace Persistence.Migrations
                     b.ToTable("AssetCategories");
                 });
 
+            modelBuilder.Entity("Domain.AssetValue", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AssetId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CurrencyId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssetId");
+
+                    b.HasIndex("CurrencyId");
+
+                    b.ToTable("AssetValues");
+                });
+
             modelBuilder.Entity("Domain.Budget", b =>
                 {
                     b.Property<int>("Id")
@@ -127,6 +184,9 @@ namespace Persistence.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("numeric");
 
+                    b.Property<int>("CurrencyId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
@@ -137,6 +197,8 @@ namespace Persistence.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CurrencyId");
 
                     b.HasIndex("UserId");
 
@@ -359,6 +421,9 @@ namespace Persistence.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(true);
 
+                    b.Property<int>("CurrencyId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone");
 
@@ -376,6 +441,8 @@ namespace Persistence.Migrations
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("CurrencyId");
+
                     b.ToTable("Transactions");
                 });
 
@@ -390,6 +457,9 @@ namespace Persistence.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("numeric");
 
+                    b.Property<int>("CurrencyId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone");
 
@@ -400,6 +470,8 @@ namespace Persistence.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CurrencyId");
 
                     b.HasIndex("FromAccountId");
 
@@ -626,6 +698,25 @@ namespace Persistence.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Domain.AccountBalance", b =>
+                {
+                    b.HasOne("Domain.Account", "Account")
+                        .WithMany("AccountBalances")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Currency", "Currency")
+                        .WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+
+                    b.Navigation("Currency");
+                });
+
             modelBuilder.Entity("Domain.Asset", b =>
                 {
                     b.HasOne("Domain.AssetCategory", "AssetCategory")
@@ -634,11 +725,19 @@ namespace Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Domain.Currency", "Currency")
+                        .WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.User", "User")
                         .WithMany("Assets")
                         .HasForeignKey("UserId");
 
                     b.Navigation("AssetCategory");
+
+                    b.Navigation("Currency");
 
                     b.Navigation("User");
                 });
@@ -654,11 +753,38 @@ namespace Persistence.Migrations
                     b.Navigation("Icon");
                 });
 
+            modelBuilder.Entity("Domain.AssetValue", b =>
+                {
+                    b.HasOne("Domain.Asset", "Asset")
+                        .WithMany("AssetValues")
+                        .HasForeignKey("AssetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Currency", "Currency")
+                        .WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Asset");
+
+                    b.Navigation("Currency");
+                });
+
             modelBuilder.Entity("Domain.Budget", b =>
                 {
+                    b.HasOne("Domain.Currency", "Currency")
+                        .WithMany("Budgets")
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.User", "User")
                         .WithMany("Budgets")
                         .HasForeignKey("UserId");
+
+                    b.Navigation("Currency");
 
                     b.Navigation("User");
                 });
@@ -772,13 +898,27 @@ namespace Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Domain.Currency", "Currency")
+                        .WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Account");
 
                     b.Navigation("Category");
+
+                    b.Navigation("Currency");
                 });
 
             modelBuilder.Entity("Domain.Transfer", b =>
                 {
+                    b.HasOne("Domain.Currency", "Currency")
+                        .WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.Account", "FromAccount")
                         .WithMany("Sources")
                         .HasForeignKey("FromAccountId")
@@ -790,6 +930,8 @@ namespace Persistence.Migrations
                         .HasForeignKey("ToAccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Currency");
 
                     b.Navigation("FromAccount");
 
@@ -860,6 +1002,8 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Account", b =>
                 {
+                    b.Navigation("AccountBalances");
+
                     b.Navigation("Destinations");
 
                     b.Navigation("Loans");
@@ -869,6 +1013,11 @@ namespace Persistence.Migrations
                     b.Navigation("Sources");
 
                     b.Navigation("Transactions");
+                });
+
+            modelBuilder.Entity("Domain.Asset", b =>
+                {
+                    b.Navigation("AssetValues");
                 });
 
             modelBuilder.Entity("Domain.AssetCategory", b =>
@@ -898,6 +1047,8 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Domain.Currency", b =>
                 {
                     b.Navigation("Accounts");
+
+                    b.Navigation("Budgets");
                 });
 
             modelBuilder.Entity("Domain.Icon", b =>

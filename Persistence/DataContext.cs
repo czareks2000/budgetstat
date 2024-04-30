@@ -13,19 +13,27 @@ namespace Persistence
         {
         }
 
+        public DbSet<Currency> Currencies { get; set; }
+        public DbSet<Icon> Icons { get; set; }
+
         public DbSet<Account> Accounts { get; set; }
+        public DbSet<AccountBalance> AccountBalances { get; set; }
+
         public DbSet<Budget> Budgets { get; set; }
         public DbSet<BudgetCategory> BudgetCategories { get; set; }
+
         public DbSet<Category> Categories { get; set; }
+
         public DbSet<Counterparty> Counterparties { get; set; }
-        public DbSet<Currency> Currencies { get; set; }
         public DbSet<Loan> Loans { get; set; }
         public DbSet<Payoff> Payoffs { get; set; }
+
         public DbSet<Asset> Assets { get; set; }
         public DbSet<AssetCategory> AssetCategories { get; set; }
-        public DbSet<Transaction>  Transactions { get; set; }
+        public DbSet<AssetValue> AssetValues { get; set; }
+
+        public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Transfer> Transfers { get; set; }
-        public DbSet<Icon> Icons { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -54,6 +62,11 @@ namespace Persistence
                 .HasOne(t => t.ToAccount)
                 .WithMany(a => a.Destinations)
                 .HasForeignKey(t => t.ToAccountId);
+
+           /* builder.Entity<Account>()
+                .HasMany(a => a.AccountBalances)
+                .WithOne(ab => ab.Account)
+                .HasForeignKey(ab => ab.AccountId);*/
 
             //default values
 

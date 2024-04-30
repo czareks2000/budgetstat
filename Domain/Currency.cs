@@ -8,5 +8,6 @@
         public string Symbol { get; set; }
 
         public virtual ICollection<Account> Accounts { get; set; }
+        public virtual ICollection<Budget> Budgets { get; set; }
     }
 }

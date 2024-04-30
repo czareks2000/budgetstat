@@ -68,7 +68,14 @@ namespace Persistence
                 new()
                 {
                     Name = "Bank",
-                    Balance = 25000,
+                    AccountBalances = new List<AccountBalance>
+                    {
+                        new AccountBalance
+                        {
+                            Balance = 25000,
+                            Currency = currencies[2]
+                        }
+                    },
                     Currency = currencies[2],
                     Description = "",
                     User = users[0],
@@ -77,7 +84,14 @@ namespace Persistence
                 new()
                 {
                     Name = "Cash",
-                    Balance = 10000,
+                    AccountBalances = new List<AccountBalance>
+                    {
+                        new AccountBalance
+                        {
+                            Balance = 10000,
+                            Currency = currencies[2]
+                        }
+                    },
                     Currency = currencies[2],
                     Description = "",
                     User = users[0],
@@ -382,7 +396,8 @@ namespace Persistence
                     Considered = true,
                     Planned = false,
                     Account = accounts[0],
-                    Category = expenseCategories[1].SubCategories.ToList()[0]
+                    Category = expenseCategories[1].SubCategories.ToList()[0],
+                    Currency = currencies[2]
                 },
                 new Transaction
                 {
@@ -393,7 +408,8 @@ namespace Persistence
                     Considered = true,
                     Planned = false,
                     Account = accounts[0],
-                    Category = expenseCategories[3].SubCategories.ToList()[3]
+                    Category = expenseCategories[3].SubCategories.ToList()[3],
+                    Currency = currencies[2]
                 },
 
                 // Transactions for accounts[1]
@@ -406,7 +422,8 @@ namespace Persistence
                     Considered = true,
                     Planned = false,
                     Account = accounts[1],
-                    Category = expenseCategories[1].SubCategories.ToList()[1]
+                    Category = expenseCategories[1].SubCategories.ToList()[1],
+                    Currency = currencies[2]
                 },
                 new Transaction
                 {
@@ -417,7 +434,8 @@ namespace Persistence
                     Considered = true,
                     Planned = false,
                     Account = accounts[1],
-                    Category = expenseCategories[2].SubCategories.ToList()[1]
+                    Category = expenseCategories[2].SubCategories.ToList()[1],
+                    Currency = currencies[2]
                 }
             };
 
@@ -432,7 +450,8 @@ namespace Persistence
                     Amount = 200.00m,
                     Date = DateTime.UtcNow,
                     FromAccount = accounts[0],
-                    ToAccount = accounts[1]
+                    ToAccount = accounts[1],
+                    Currency = currencies[2]
                 }
             };
 
@@ -446,6 +465,7 @@ namespace Persistence
                 {
                     Name = "Groceries",
                     Period = BudgetPeriod.Week,
+                    Currency = currencies[2],
                     Amount = 200.00m,
                     User = users[0]
                 },
@@ -453,6 +473,7 @@ namespace Persistence
                 {
                     Name = "Entertainment",
                     Period = BudgetPeriod.Month,
+                    Currency = currencies[2],
                     Amount = 300.00m,
                     User = users[0]
                 },
@@ -460,6 +481,7 @@ namespace Persistence
                 {
                     Name = "Travel",
                     Period = BudgetPeriod.Year,
+                    Currency = currencies[2],
                     Amount = 2000.00m,
                     User = users[0]
                 }
@@ -537,8 +559,36 @@ namespace Persistence
 
             var assets = new List<Asset>()
             {
-                new Asset { Name = "Apartment", Value = 500000.00m, Date = DateTime.UtcNow.AddMonths(-2), User = users[0], AssetCategory = assetCategories[1]},
-                new Asset { Name = "Car", Value = 35000.00m, Date = DateTime.UtcNow.AddMonths(-24), User = users[0], AssetCategory = assetCategories[2]},
+                new Asset 
+                { 
+                    Name = "Apartment", 
+                    AssetValues = new List<AssetValue>{ 
+                        new AssetValue
+                        {
+                            Value = 500000.00m , 
+                            Currency = currencies[2]
+                        }
+                    }, 
+                    Date = DateTime.UtcNow.AddMonths(-2), 
+                    User = users[0], 
+                    AssetCategory = assetCategories[1],
+                    Currency = currencies[2]
+                },
+                new Asset 
+                { 
+                    Name = "Car", 
+                    AssetValues =  new List<AssetValue>{
+                        new AssetValue
+                        {
+                            Value = 35000.00m ,
+                            Currency = currencies[2]
+                        }
+                    }, 
+                    Date = DateTime.UtcNow.AddMonths(-24), 
+                    User = users[0], 
+                    AssetCategory = assetCategories[2],
+                    Currency = currencies[2]
+                }
             };
 
             context.Assets.AddRange(assets);
