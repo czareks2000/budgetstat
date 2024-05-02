@@ -63,11 +63,6 @@ namespace Persistence
                 .WithMany(a => a.Destinations)
                 .HasForeignKey(t => t.ToAccountId);
 
-           /* builder.Entity<Account>()
-                .HasMany(a => a.AccountBalances)
-                .WithOne(ab => ab.Account)
-                .HasForeignKey(ab => ab.AccountId);*/
-
             //default values
 
             builder.Entity<Transaction>()

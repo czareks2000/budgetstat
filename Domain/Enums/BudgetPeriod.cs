@@ -2,7 +2,7 @@
 {
     public enum BudgetPeriod
     {
-        Week,
+        Week = 1,
         Month, 
         Year
     }

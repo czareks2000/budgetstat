@@ -39,9 +39,11 @@ namespace API.Extentions
             
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 
-
+            services.AddScoped<IUtilities, Utilities>();
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IBudgetService, BudgetService>();
             services.AddScoped<ITransactionService, TransactionService>();
+            
 
             return services;
         }

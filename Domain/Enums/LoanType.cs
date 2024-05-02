@@ -2,7 +2,7 @@
 {
     public enum LoanType
     {
-        Credit,
+        Credit = 1,
         Debt
     }
 }

@@ -2,7 +2,7 @@
 {
     public enum LoanStatus
     {
-        InProgress,
+        InProgress = 1,
         PaidOff
     }
 }

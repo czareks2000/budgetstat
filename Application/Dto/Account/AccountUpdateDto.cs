@@ -1,7 +1,4 @@
-﻿using Application.Core.CustomDataAnnotations;
-using System.ComponentModel.DataAnnotations;
-
-namespace Application.Dto.Account
+﻿namespace Application.Dto.Account
 {
     public class AccountUpdateDto
     {

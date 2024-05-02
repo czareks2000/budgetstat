@@ -2,25 +2,78 @@
 using Application.Dto.Budget;
 using Application.Interfaces;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Domain;
+using Domain.Enums;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Services
 {
     public class BudgetService(
         DataContext context,
-        IUserAccessor userAccessor,
-        ICurrencyService currencyService,
+        IUtilities utilities,
         IMapper mapper) : IBudgetService
     {
         private readonly DataContext _context = context;
-        private readonly IUserAccessor _userAccessor = userAccessor;
-        private readonly ICurrencyService _currencyService = currencyService;
-        private readonly IMapper _mapper = mapper; 
+        private readonly IUtilities _utilities = utilities;
+        private readonly IMapper _mapper = mapper;
 
         public async Task<Result<int>> Create(BudgetCreateDto newBudget)
         {
-            await Task.Delay(1);
-            throw new NotImplementedException();
+            var user = await _utilities.GetCurrentUserAsync();
+
+            if (user == null) return Result<int>.Failure("User not found");
+
+            //sprawdzenie czy podane kategorie istnieją
+            var categoriesExist = await _context.Categories
+                .AnyAsync(c => !newBudget.CategoryIds.Contains(c.Id));
+
+            if (!categoriesExist) return Result<int>.Failure("Invalid categories");
+
+            var categoriesQuery = _context.Categories
+                .Where(c => newBudget.CategoryIds.Contains(c.Id));
+
+            //sprawdzenie czy kategorie mają typ expense
+            foreach (var category in categoriesQuery)
+                if (category.Type != TransactionType.Expense)
+                    return Result<int>.Failure("Invalid categories");
+
+            //usuwamy kategorie podrzędne, jeżeli podana została ich kategoria nadrzędna
+            var mainCategories = categoriesQuery.Where(c => c.IsMain).ToList();
+            var subCategories = categoriesQuery.Where(c => !c.IsMain).ToList();
+
+            for (int i = subCategories.Count - 1; i >= 0; i--)
+            {
+                var category = subCategories[i];
+                if (mainCategories.FirstOrDefault(c => c.Id == category.MainCategoryId) != null)
+                {
+                    subCategories.RemoveAt(i);
+                }
+            }
+
+            var categories = mainCategories.Concat(subCategories).ToList();
+
+            var budget = _mapper.Map<Budget>(newBudget);
+
+            var budgetCategories = new List<BudgetCategory>();
+
+            foreach (var category in categories)
+                budgetCategories.Add(new BudgetCategory
+                {
+                    Category = category
+                });
+
+            budget.Categories = budgetCategories;
+            budget.Currency = user.DefaultCurrency;
+            budget.User = user;
+
+            _context.Budgets.Add(budget);
+
+            if (await _context.SaveChangesAsync() == 0)
+                return Result<int>.Failure("Failed to create budget");
+
+            return Result<int>.Success(budget.Id);
         }
 
         public async Task<Result<object>> Delete(int budgetId)
@@ -37,16 +90,111 @@ namespace Application.Services
             return Result<object>.Success(null);
         }
 
-        public async Task<Result<IEnumerable<BudgetDto>>> GetAll()
+        public async Task<Result<List<BudgetDto>>> GetAll()
+        {
+            var user = await _utilities.GetCurrentUserAsync();
+
+            if (user == null) return Result<List<BudgetDto>>.Failure("User not found");
+
+            var budgetsDto = await _context.Budgets
+                .Include(b => b.Currency)
+                .Include(b => b.Categories)
+                    .ThenInclude(c => c.Category)
+                        .ThenInclude(c => c.Icon)
+                .Include(b => b.Currency)
+                .Where(b => b.User == user)
+                .ProjectTo<BudgetDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            foreach (var budget in budgetsDto)
+            {
+                budget.ConvertedAmount = _utilities
+                    .ConvertToDefaultCurrency(user, budget.Currency.Code, budget.Amount);
+                
+                var categoryIds = budget.Categories.Select(c => c.Id).ToList();
+
+                budget.CurrentAmount = await CurrentAmount(user, categoryIds, budget.Period);
+            }
+                
+            return Result<List<BudgetDto>>.Success(budgetsDto);
+        }
+
+        public async Task<Result<BudgetDto>> Update(int budgetId, BudgetUpdateDto updatedBudget)
+        {
+            //name - zwyłka zmiana nazwy
+            //period - zwykła zmiana okresu
+            //amount - zwykła zmiana wartości
+
+            //categories - może zrobić oddzielny endpoint aktualizujący listę kategorii
+
+            //po aktualizacji obliczyć CurrentAmount (funkcja oddzielna)
+
+            await Task.Delay(1);
+            throw new NotImplementedException();
+        }
+
+        public async Task<Result<BudgetDto>> UpdateCategories(int budgetId, List<int> categoryIds)
         {
             await Task.Delay(1);
             throw new NotImplementedException();
         }
 
-        public async Task<Result<BudgetDto>> Update(int budgetId, BudgetUpdateDto updatedBudget)
+        // funkcja zwarająca łączną wartość wydatków na dane kategorie w domyślniej walucie w danym okresie
+        private async Task<decimal> CurrentAmount(User user, List<int> categoryIds, BudgetPeriod period)
         {
-            await Task.Delay(1);
-            throw new NotImplementedException();
+            DateTime now = DateTime.UtcNow;
+            DateTime startDate;
+
+            switch (period)
+            {
+                case BudgetPeriod.Week:
+                    // od ostatniego poniedziałku
+                    int daysToMonday = ((int)DayOfWeek.Monday - (int)now.DayOfWeek + 7) % 7;
+                    startDate = DateTime.UtcNow.Date.AddDays(-daysToMonday);
+                    break;
+                case BudgetPeriod.Month:
+                    // od początku aktualnego miesiąca
+                    startDate = DateTime.SpecifyKind(new DateTime(now.Year, now.Month, 1), DateTimeKind.Utc);
+                    break;
+                case BudgetPeriod.Year:
+                    // od początku aktualnego roku
+                    startDate = DateTime.SpecifyKind(new DateTime(now.Year, 1, 1), DateTimeKind.Utc);
+                    break;
+                default:
+                    throw new ArgumentException("Invalid BudgetPeriod value", nameof(period));
+            }
+
+            // sprawdzenie czy kategoria jest głowną,
+            // jak tak to zamiast niej pobranie wszystkich jej podkategorii z bazy
+            var categoriesQuery = _context.Categories
+                .Where(c => categoryIds.Contains(c.Id));
+
+            var mainCategoriesIds = categoriesQuery.Where(c => c.IsMain).Select(c => c.Id).ToList();
+            var subCategories = categoriesQuery.Where(c => !c.IsMain).ToList();
+
+            subCategories =
+            [
+                .. subCategories,
+                .. _context.Categories
+                        .Where(c => !c.IsMain)
+                        .Where(c => mainCategoriesIds.Contains((int)c.MainCategoryId))
+            ];
+
+            // pobranie Transactions typu expense z danego okresu danego użytkownika o danych kategoriach
+            var transactions = await _context.Transactions
+                .Where(t => t.Account.UserId == user.Id)
+                .Where(t => t.Category.Type == TransactionType.Expense)
+                .Where(t => subCategories.Contains(t.Category))
+                .Where(t => t.Date >= startDate && t.Date <= now)
+                .ToListAsync();
+
+            // obliczenie current amount an podstawie wartości transakcji, uwzględniając konwersje waluty
+            decimal currentAmount = 0;
+
+            foreach (var t in transactions )
+                currentAmount += _utilities.ConvertToDefaultCurrency(user, t.Currency.Code, t.Amount);
+
+            return currentAmount;
         }
     }
 }

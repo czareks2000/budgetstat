@@ -2,6 +2,9 @@
 {
     public interface ICurrencyService
     {
-        decimal Convert(string inputCurrency, string outputCurrency, decimal value);
+        // konwersja waluty po aktualnym kursie
+        decimal Convert(string inputCurrencyCode, string outputCurrencyCode, decimal value);
+        // konwersja waluty po kursie historycznym
+        decimal Convert(string inputCurrencyCode, string outputCurrencyCode, decimal value, DateTime date);
     }
 }

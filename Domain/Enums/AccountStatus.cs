@@ -2,7 +2,7 @@
 {
     public enum AccountStatus
     {
-        Hidden = 0,
-        Visible = 1
+        Hidden = 1,
+        Visible
     }
 }
