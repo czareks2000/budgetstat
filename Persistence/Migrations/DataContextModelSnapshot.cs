@@ -97,12 +97,6 @@ namespace Persistence.Migrations
                     b.Property<int>("AssetCategoryId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("CurrencyId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
@@ -115,8 +109,6 @@ namespace Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AssetCategoryId");
-
-                    b.HasIndex("CurrencyId");
 
                     b.HasIndex("UserId");
 
@@ -330,6 +322,9 @@ namespace Persistence.Migrations
                     b.Property<int>("CounterpartyId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("CurrencyId")
+                        .HasColumnType("integer");
+
                     b.Property<decimal>("CurrentAmount")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("numeric")
@@ -362,6 +357,8 @@ namespace Persistence.Migrations
 
                     b.HasIndex("CounterpartyId");
 
+                    b.HasIndex("CurrencyId");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Loans");
@@ -381,6 +378,9 @@ namespace Persistence.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("numeric");
 
+                    b.Property<int>("CurrencyId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone");
 
@@ -393,6 +393,8 @@ namespace Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
+
+                    b.HasIndex("CurrencyId");
 
                     b.HasIndex("LoanId");
 
@@ -725,19 +727,11 @@ namespace Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Currency", "Currency")
-                        .WithMany()
-                        .HasForeignKey("CurrencyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Domain.User", "User")
                         .WithMany("Assets")
                         .HasForeignKey("UserId");
 
                     b.Navigation("AssetCategory");
-
-                    b.Navigation("Currency");
 
                     b.Navigation("User");
                 });
@@ -854,6 +848,12 @@ namespace Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Domain.Currency", "Currency")
+                        .WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.User", "User")
                         .WithMany("Loans")
                         .HasForeignKey("UserId");
@@ -861,6 +861,8 @@ namespace Persistence.Migrations
                     b.Navigation("Account");
 
                     b.Navigation("Counterparty");
+
+                    b.Navigation("Currency");
 
                     b.Navigation("User");
                 });
@@ -873,6 +875,12 @@ namespace Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Domain.Currency", "Currency")
+                        .WithMany()
+                        .HasForeignKey("CurrencyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.Loan", "Loan")
                         .WithMany("Payoffs")
                         .HasForeignKey("LoanId")
@@ -880,6 +888,8 @@ namespace Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Account");
+
+                    b.Navigation("Currency");
 
                     b.Navigation("Loan");
                 });

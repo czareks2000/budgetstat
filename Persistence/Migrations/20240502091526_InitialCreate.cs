@@ -330,10 +330,8 @@ namespace Persistence.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     AssetCategoryId = table.Column<int>(type: "integer", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: true),
-                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
-                    UserId = table.Column<string>(type: "text", nullable: true),
-                    CurrencyId = table.Column<int>(type: "integer", nullable: false)
+                    UserId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -347,12 +345,6 @@ namespace Persistence.Migrations
                         name: "FK_Assets_AssetCategories_AssetCategoryId",
                         column: x => x.AssetCategoryId,
                         principalTable: "AssetCategories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Assets_Currencies_CurrencyId",
-                        column: x => x.CurrencyId,
-                        principalTable: "Currencies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -497,7 +489,8 @@ namespace Persistence.Migrations
                     RepaymentDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
                     UserId = table.Column<string>(type: "text", nullable: true),
-                    LoanStatus = table.Column<int>(type: "integer", nullable: false)
+                    LoanStatus = table.Column<int>(type: "integer", nullable: false),
+                    CurrencyId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -517,6 +510,12 @@ namespace Persistence.Migrations
                         name: "FK_Loans_Counterparties_CounterpartyId",
                         column: x => x.CounterpartyId,
                         principalTable: "Counterparties",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Loans_Currencies_CurrencyId",
+                        column: x => x.CurrencyId,
+                        principalTable: "Currencies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -559,7 +558,8 @@ namespace Persistence.Migrations
                     Amount = table.Column<decimal>(type: "numeric", nullable: false),
                     AccountId = table.Column<int>(type: "integer", nullable: false),
                     Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true)
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    CurrencyId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -568,6 +568,12 @@ namespace Persistence.Migrations
                         name: "FK_Payoffs_Accounts_AccountId",
                         column: x => x.AccountId,
                         principalTable: "Accounts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Payoffs_Currencies_CurrencyId",
+                        column: x => x.CurrencyId,
+                        principalTable: "Currencies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -651,11 +657,6 @@ namespace Persistence.Migrations
                 column: "AssetCategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Assets_CurrencyId",
-                table: "Assets",
-                column: "CurrencyId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Assets_UserId",
                 table: "Assets",
                 column: "UserId");
@@ -716,6 +717,11 @@ namespace Persistence.Migrations
                 column: "CounterpartyId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Loans_CurrencyId",
+                table: "Loans",
+                column: "CurrencyId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Loans_UserId",
                 table: "Loans",
                 column: "UserId");
@@ -724,6 +730,11 @@ namespace Persistence.Migrations
                 name: "IX_Payoffs_AccountId",
                 table: "Payoffs",
                 column: "AccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payoffs_CurrencyId",
+                table: "Payoffs",
+                column: "CurrencyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payoffs_LoanId",

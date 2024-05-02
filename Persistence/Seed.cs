@@ -527,11 +527,12 @@ namespace Persistence
                     RepaymentDate = DateTime.UtcNow.AddMonths(5),
                     Description = "Credit for home renovation",
                     User = users[0],
-                    LoanStatus = LoanStatus.InProgress, 
+                    LoanStatus = LoanStatus.InProgress,
+                    Currency = currencies[2],
                     Payoffs = new List<Payoff>()
                     {
-                        new Payoff() { Amount = 2500.00m, Account = accounts[0], Date = DateTime.UtcNow.AddDays(-3) },
-                        new Payoff() { Amount = 2500.00m, Account = accounts[0], Date = DateTime.UtcNow }
+                        new Payoff() { Amount = 2500.00m, Account = accounts[0], Date = DateTime.UtcNow.AddDays(-3), Currency = currencies[2] },
+                        new Payoff() { Amount = 2500.00m, Account = accounts[0], Date = DateTime.UtcNow, Currency = currencies[2] },
                     }
                 },
                 new Loan
@@ -546,9 +547,10 @@ namespace Persistence
                     Description = "Car",
                     User = users[0], 
                     LoanStatus = LoanStatus.InProgress,
+                    Currency = currencies[2],
                     Payoffs = new List<Payoff>()
                     {
-                        new Payoff() { Amount = 1000.00m, Account = accounts[0], Date = DateTime.UtcNow, Description = "First installment" },
+                        new Payoff() { Amount = 1000.00m, Account = accounts[0], Date = DateTime.UtcNow, Description = "First installment", Currency = currencies[2] }
                     }
                 }
             };
@@ -566,13 +568,13 @@ namespace Persistence
                         new AssetValue
                         {
                             Value = 500000.00m , 
-                            Currency = currencies[2]
+                            Currency = currencies[2],
+                            Date = DateTime.UtcNow.AddMonths(-2),
                         }
                     }, 
-                    Date = DateTime.UtcNow.AddMonths(-2), 
+                    
                     User = users[0], 
-                    AssetCategory = assetCategories[1],
-                    Currency = currencies[2]
+                    AssetCategory = assetCategories[1]
                 },
                 new Asset 
                 { 
@@ -581,13 +583,12 @@ namespace Persistence
                         new AssetValue
                         {
                             Value = 35000.00m ,
-                            Currency = currencies[2]
+                            Currency = currencies[2],
+                            Date = DateTime.UtcNow.AddMonths(-24),
                         }
                     }, 
-                    Date = DateTime.UtcNow.AddMonths(-24), 
                     User = users[0], 
-                    AssetCategory = assetCategories[2],
-                    Currency = currencies[2]
+                    AssetCategory = assetCategories[2]
                 }
             };
 

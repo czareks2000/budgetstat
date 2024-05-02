@@ -15,10 +15,12 @@ namespace Domain
         public string Description { get; set; }
         public string UserId { get; set; }
         public LoanStatus LoanStatus { get; set; } = LoanStatus.InProgress;
+        public int CurrencyId { get; set; }
 
         public User User { get; set; }
         public virtual Account Account { get; set; }
         public virtual Counterparty Counterparty { get; set; }
         public virtual ICollection<Payoff> Payoffs { get; set; }
+        public virtual Currency Currency { get; set; }
     }
 }
