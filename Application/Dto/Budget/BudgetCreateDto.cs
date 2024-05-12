@@ -15,7 +15,7 @@ namespace Application.Dto.Budget
         [EnumDataType(typeof(BudgetPeriod), ErrorMessage = "Period is empty or invalid")]
         public BudgetPeriod Period { get; set; }
         [Required]
-        [GreaterThanZeroOrNull(ErrorMessage = "The amount must be positive")]
+        [GreaterThanZero(ErrorMessage = "The amount must be positive")]
         public decimal Amount { get; set; }
     }
 }

@@ -90,11 +90,6 @@ namespace Application.Services
 
             updatedAccount.Name ??= account.Name;
             updatedAccount.Description ??= account.Description;
-            if (updatedAccount.CurrencyId == 0)
-                updatedAccount.CurrencyId = account.CurrencyId;
-
-            if (_utilities.CheckIfCurrencyExists(updatedAccount.CurrencyId))
-                return Result<AccountDto>.Failure("Invalid currency id");
             
             _mapper.Map(updatedAccount, account);
 
@@ -127,15 +122,6 @@ namespace Application.Services
                 return Result<object>.Failure("Failed to change account status");
 
             return Result<object>.Success(null);
-        }
-
-        // zwraca saldo konta w defaultowej walucie użytkownika
-        private decimal ConvertedBalance(User user, AccountDto accountDto)
-        {
-            if (user.CurrencyId != accountDto.Currency.Id)
-                return _currencyService.Convert(user.DefaultCurrency.Code, accountDto.Currency.Code, accountDto.Balance);
-            else
-                return accountDto.Balance;
         }
     }
 }

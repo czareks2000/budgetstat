@@ -5,7 +5,7 @@
         public int Id { get; set; }
         public decimal Balance { get; set; }
         public int CurrencyId { get; set; }
-        public DateTime Date { get; set; } = DateTime.UtcNow;
+        public DateTime Date { get; set; } = DateTime.UtcNow.Date;
         public int AccountId { get; set; }
 
         public virtual Currency Currency { get; set; }

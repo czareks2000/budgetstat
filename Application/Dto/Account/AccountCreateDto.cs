@@ -9,7 +9,7 @@ namespace Application.Dto.Account
         public string Name { get; set; }
         [GreaterOrEqualToZero(ErrorMessage = "Account balance cannot be negative")]
         public decimal Balance { get; set; }
-        [GreaterThanZeroOrNull(ErrorMessage = "Invalid currency id")]
+        [GreaterThanZero(ErrorMessage = "Invalid currency id")]
         public int CurrencyId { get; set; }
         public string Description { get; set; }
     }

@@ -7,8 +7,6 @@ using Domain;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
-using System.Collections.Generic;
-using System.Security.Principal;
 
 namespace Application.Services
 {
