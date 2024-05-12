@@ -258,6 +258,8 @@ namespace Application.Services
 
             // pobranie Transactions typu expense z danego okresu danego użytkownika o danych kategoriach
             var transactions = await _context.Transactions
+                .Where(t => t.Considered)
+                .Where(t => !t.Planned)
                 .Where(t => t.Account.UserId == user.Id)
                 .Where(t => t.Category.Type == TransactionType.Expense)
                 .Where(t => subCategories.Contains(t.Category))
