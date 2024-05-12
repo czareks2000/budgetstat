@@ -1,6 +1,7 @@
 ﻿using Application.Dto.Account;
 using Application.Interfaces;
 using Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -22,14 +23,16 @@ namespace API.Controllers
             return HandleResult(await _accountService.Create(newAccount));
         }
 
+        [Authorize(Policy = "IsOwner")]
         [HttpPut("accounts/{accountId}")] //api/accounts/{accountId}
         public async Task<IActionResult> UpdateAccount(int accountId, AccountUpdateDto newAccount)
         {
             return HandleResult(await _accountService.Update(accountId, newAccount));
         }
 
+        [Authorize(Policy = "IsOwner")]
         [HttpPatch("accounts/{accountId}/{newStatus}")] //api/accounts/{accountId}/{newStatus}
-        public async Task<IActionResult> UpdateAccount(int accountId, AccountStatus newStatus)
+        public async Task<IActionResult> UpdateAccountStatus(int accountId, AccountStatus newStatus)
         {
             return HandleResult(await _accountService.ChangeStatus(accountId, newStatus));
         }

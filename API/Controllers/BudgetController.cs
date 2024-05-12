@@ -1,5 +1,6 @@
 ﻿using Application.Dto.Budget;
 using Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -21,12 +22,14 @@ namespace API.Controllers
             return HandleResult(await _budgetService.Create(newBudget));
         }
 
+        [Authorize(Policy = "IsOwner")]
         [HttpDelete("budgets/{budgetId}")] //api/budgets/{budgetId}
         public async Task<IActionResult> DeleteBudget(int budgetId)
         {
             return HandleResult(await _budgetService.Delete(budgetId));
         }
 
+        [Authorize(Policy = "IsOwner")]
         [HttpPut("budgets/{budgetId}")] //api/budgets/{budgetId}
         public async Task<IActionResult> UpdateBudget(int budgetId, BudgetUpdateDto updatedBudget)
         {

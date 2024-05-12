@@ -1,7 +1,9 @@
 ﻿using API.Interfaces;
 using API.Services;
 using Domain;
+using Infrastructure.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
 using System.Text;
@@ -36,8 +38,14 @@ namespace API.Extentions
                     };
                 });
 
-            services.AddAuthorization();
+            services.AddAuthorization(opt => {
+                opt.AddPolicy("IsOwner", policy =>
+                {
+                    policy.Requirements.Add(new IsOwnerRequirements());
+                });
+            });
 
+            services.AddTransient<IAuthorizationHandler, IsOwnerRequirementsHandler>();
             services.AddScoped<ITokenService, TokenService>();
 
             return services;
