@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 using System.Security.Claims;
 
@@ -38,6 +39,15 @@ namespace Infrastructure.Security
                 ownerId = _dataContext.Budgets
                     .Where(b => b.Id == budgetId)
                     .Select(b => b.UserId)
+                    .FirstOrDefault();
+            }
+            else if (RouteContainsKey("transactionId"))
+            {
+                var transactionId = GetRouteValue("transactionId");
+                ownerId = _dataContext.Transactions
+                    .Where(t => t.Id == transactionId)
+                    .Include(t => t.Account)
+                    .Select(t => t.Account.UserId)
                     .FirstOrDefault();
             }
             // tutaj dodać kolejne sprawdzanie odpowiednich Id

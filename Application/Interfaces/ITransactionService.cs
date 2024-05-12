@@ -12,6 +12,7 @@ namespace Application.Interfaces
         // potwierdzenie zaplanowanej transakcji 
         // edycja transakcji 
         // usunięcie transakcji
+        Task<Result<object>> Delete(int transactionId);
         // przegląd transakcji
         // wyświetlenie kalendarza transakcji
 

@@ -16,5 +16,12 @@ namespace API.Controllers
         {
             return HandleResult(await _transactionService.Create(accountId, newTransaction));
         }
+
+        [Authorize(Policy = "IsOwner")]
+        [HttpDelete("transactions/{transactionId}")] //api/transactions/{transactionId}
+        public async Task<IActionResult> DeleteTransaction(int transactionId)
+        {
+            return HandleResult(await _transactionService.Delete(transactionId));
+        }
     }
 }

@@ -103,5 +103,40 @@ namespace Application.Services
 
             return Result<int>.Success(transaction.Id);
         }
+
+        public async Task<Result<object>> Delete(int transactionId)
+        {
+            var transaction = await _context.Transactions
+                .Include(t => t.Category)
+                .FirstOrDefaultAsync(t => t.Id == transactionId);
+
+            if (transaction == null) return null;
+
+            _context.Transactions.Remove(transaction);
+
+            // aktualizacja sald konta
+
+            var accountBalances = _context.AccountBalances
+                .Where(ab => ab.AccountId == transaction.AccountId)
+                .OrderByDescending(ab => ab.Date).ToList();
+
+            var isExpense = transaction.Category.Type == TransactionType.Expense;
+
+            foreach (var ab in accountBalances)
+            {
+                if (ab.Date.Date < transaction.Date.Date)
+                    break;
+
+                if (isExpense)
+                    ab.Balance += transaction.Amount;
+                else
+                    ab.Balance -= transaction.Amount;
+            }
+
+            if (await _context.SaveChangesAsync() == 0)
+                return Result<object>.Failure("Failed to delete transaction");
+
+            return Result<object>.Success(null);
+        }
     }
 }
