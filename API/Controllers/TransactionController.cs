@@ -1,4 +1,7 @@
-﻿using Application.Interfaces;
+﻿using Application.Dto.Transactions;
+using Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
@@ -6,5 +9,12 @@ namespace API.Controllers
         ITransactionService transactionService) : BaseApiController
     {
         private readonly ITransactionService _transactionService = transactionService;
+
+        [Authorize(Policy = "IsOwner")]
+        [HttpPost("account/{accountId}/transactions")] //api/account/{accountId}/transactions
+        public async Task<IActionResult> CreateTransaction(int accountId, TransactionCreateDto newTransaction)
+        {
+            return HandleResult(await _transactionService.Create(accountId, newTransaction));
+        }
     }
 }

@@ -1,6 +1,7 @@
 using Application.Dto;
 using Application.Dto.Account;
 using Application.Dto.Budget;
+using Application.Dto.Transactions;
 using AutoMapper;
 using Domain;
 
@@ -37,6 +38,8 @@ namespace Application.Core
                     .MapFrom(src => src.Category.Type));
 
             CreateMap<Category, CategoryDto>();
+
+            CreateMap<TransactionCreateDto, Transaction>();
         }
     }
 }
