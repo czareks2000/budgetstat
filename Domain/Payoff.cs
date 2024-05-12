@@ -6,7 +6,7 @@
         public int LoanId { get; set; }
         public decimal Amount { get; set; }
         public int AccountId { get; set; }
-        public DateTime Date { get; set; } = DateTime.UtcNow;
+        public DateTime Date { get; set; } = DateTime.UtcNow.Date;
         public string Description { get; set; }
         public int CurrencyId { get; set; }
 
