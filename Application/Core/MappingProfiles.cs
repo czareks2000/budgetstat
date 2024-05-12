@@ -18,9 +18,14 @@ namespace Application.Core
 
             CreateMap<Currency, CurrencyDto>();
 
+            CreateMap<Budget, BudgetDto>()
+                .ForMember(dest => dest.Categories, opt => opt
+                    .MapFrom(src => src.Categories));
             CreateMap<BudgetCreateDto, Budget>()
                 .ForMember(b => b.Categories, opt => opt
                     .MapFrom(src => new List<BudgetCategory>()));
+            CreateMap<BudgetUpdateDto, Budget>();
+
             CreateMap<BudgetCategory, CategoryDto>()
                 .ForMember(dest => dest.Id, opt => opt
                     .MapFrom(src => src.Category.Id))
@@ -30,11 +35,8 @@ namespace Application.Core
                     .MapFrom(src => src.Category.Icon.Name))
                 .ForMember(dest => dest.Type, opt => opt
                     .MapFrom(src => src.Category.Type));
-            CreateMap<Category, CategoryDto>();
-            CreateMap<Budget, BudgetDto>()
-                .ForMember(dest => dest.Categories, opt => opt
-                    .MapFrom(src => src.Categories));
 
+            CreateMap<Category, CategoryDto>();
         }
     }
 }

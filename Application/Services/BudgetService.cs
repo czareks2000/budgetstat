@@ -7,6 +7,8 @@ using Domain;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using System.Collections.Generic;
+using System.Security.Principal;
 
 namespace Application.Services
 {
@@ -25,46 +27,15 @@ namespace Application.Services
 
             if (user == null) return Result<int>.Failure("User not found");
 
-            //sprawdzenie czy podane kategorie istnieją
-            var categoriesExist = await _context.Categories
-                .AnyAsync(c => !newBudget.CategoryIds.Contains(c.Id));
+            // sprawdzenie czy podane kategorie są poprawne
+            var categories = ValidateCategories(newBudget.CategoryIds);
 
-            if (!categoriesExist) return Result<int>.Failure("Invalid categories");
-
-            var categoriesQuery = _context.Categories
-                .Where(c => newBudget.CategoryIds.Contains(c.Id));
-
-            //sprawdzenie czy kategorie mają typ expense
-            foreach (var category in categoriesQuery)
-                if (category.Type != TransactionType.Expense)
-                    return Result<int>.Failure("Invalid categories");
-
-            //usuwamy kategorie podrzędne, jeżeli podana została ich kategoria nadrzędna
-            var mainCategories = categoriesQuery.Where(c => c.IsMain).ToList();
-            var subCategories = categoriesQuery.Where(c => !c.IsMain).ToList();
-
-            for (int i = subCategories.Count - 1; i >= 0; i--)
-            {
-                var category = subCategories[i];
-                if (mainCategories.FirstOrDefault(c => c.Id == category.MainCategoryId) != null)
-                {
-                    subCategories.RemoveAt(i);
-                }
-            }
-
-            var categories = mainCategories.Concat(subCategories).ToList();
+            if (categories == null)
+                return Result<int>.Failure("Invalid categories");
 
             var budget = _mapper.Map<Budget>(newBudget);
 
-            var budgetCategories = new List<BudgetCategory>();
-
-            foreach (var category in categories)
-                budgetCategories.Add(new BudgetCategory
-                {
-                    Category = category
-                });
-
-            budget.Categories = budgetCategories;
+            budget.Categories = CreateBudgetCategoryList(categories);
             budget.Currency = user.DefaultCurrency;
             budget.User = user;
 
@@ -101,7 +72,6 @@ namespace Application.Services
                 .Include(b => b.Categories)
                     .ThenInclude(c => c.Category)
                         .ThenInclude(c => c.Icon)
-                .Include(b => b.Currency)
                 .Where(b => b.User == user)
                 .ProjectTo<BudgetDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
@@ -121,22 +91,128 @@ namespace Application.Services
 
         public async Task<Result<BudgetDto>> Update(int budgetId, BudgetUpdateDto updatedBudget)
         {
-            //name - zwyłka zmiana nazwy
-            //period - zwykła zmiana okresu
-            //amount - zwykła zmiana wartości
+            var budget = await _context.Budgets
+                .Include(b => b.Categories)
+                .FirstOrDefaultAsync(b => b.Id == budgetId);
 
-            //categories - może zrobić oddzielny endpoint aktualizujący listę kategorii
+            if (budget == null) return null;
 
-            //po aktualizacji obliczyć CurrentAmount (funkcja oddzielna)
+            // aktualizacja zwyłych pól
+            updatedBudget.Name ??= budget.Name;
+            updatedBudget.Period ??= budget.Period;
+            updatedBudget.Amount ??= budget.Amount;
 
-            await Task.Delay(1);
-            throw new NotImplementedException();
+            _mapper.Map(updatedBudget, budget);
+
+            // aktualizacja kategorii
+            var newCategoryIds = updatedBudget.CategoryIds;
+
+            if (newCategoryIds != null)
+            {
+                var categories = ValidateCategories(newCategoryIds);
+
+                if (categories == null)
+                    return Result<BudgetDto>.Failure("Invalid categories");
+
+                budget.Categories = CreateBudgetCategoryList(categories);
+            }
+
+            // wprowadzanie zmian 
+            _context.Budgets.Update(budget);
+
+            // zatwierdzenie zmian
+            if (await _context.SaveChangesAsync() == 0)
+                return Result<BudgetDto>.Failure("Failed to update budget");
+
+            budget = await _context.Budgets
+                .Include(b => b.Currency)
+                .Include(b => b.Categories)
+                    .ThenInclude(c => c.Category)
+                        .ThenInclude(c => c.Icon)
+                .FirstOrDefaultAsync(b => b.Id == budgetId);
+
+            var budgetDto = _mapper.Map<BudgetDto>(budget);
+            var categoryIds = budgetDto.Categories.Select(c => c.Id).ToList();
+
+            var user = await _utilities.GetCurrentUserAsync();
+
+            budgetDto.ConvertedAmount = _utilities
+                    .ConvertToDefaultCurrency(user, budget.Currency.Code, budget.Amount);
+
+            budgetDto.CurrentAmount = await CurrentAmount(user, categoryIds, budget.Period);
+
+            return Result<BudgetDto>.Success(budgetDto);
         }
 
-        public async Task<Result<BudgetDto>> UpdateCategories(int budgetId, List<int> categoryIds)
+        // sprawdzenie czy podane kategorie istnieją
+        private bool CategoriesExist(List<int> categoryIds)
         {
-            await Task.Delay(1);
-            throw new NotImplementedException();
+            return categoryIds.All(id => _context.Categories.Any(c => c.Id == id));
+        }
+
+        // sprawdzenie czy kategorie mają typ expense
+        private bool IsExpenseCategories(List<int> categoryIds)
+        {
+            var categoriesQuery = _context.Categories
+                .Where(c => categoryIds.Contains(c.Id));
+
+            //sprawdzenie czy kategorie mają typ expense
+            foreach (var category in categoriesQuery)
+                if (category.Type != TransactionType.Expense)
+                    return false;
+
+            return true;
+        }
+
+        // usuwa kategorie podrzędne, jeżeli podana została ich kategoria nadrzędna
+        // zwraca zminimalizowaną liste kategorii
+        private List<Category> RemoveExcessCategories(List<int> categoryIds)
+        {
+            var categoriesQuery = _context.Categories
+                .Where(c => categoryIds.Contains(c.Id));
+
+            var mainCategories = categoriesQuery.Where(c => c.IsMain).ToList();
+            var subCategories = categoriesQuery.Where(c => !c.IsMain).ToList();
+
+            for (int i = subCategories.Count - 1; i >= 0; i--)
+            {
+                var category = subCategories[i];
+                if (mainCategories.FirstOrDefault(c => c.Id == category.MainCategoryId) != null)
+                {
+                    subCategories.RemoveAt(i);
+                }
+            }
+
+            return mainCategories.Concat(subCategories).ToList();
+        }
+
+        // sprawdza czy podane kategorie są prawidłowe i zwraca listę obiektów tych kategorii
+        private List<Category> ValidateCategories(List<int> categoryIds)
+        {
+            //sprawdzenie czy podane kategorie istnieją
+            if (!CategoriesExist(categoryIds))
+                return null;
+
+            //sprawdzenie czy kategorie mają typ expense
+            if (!IsExpenseCategories(categoryIds))
+                return null;
+
+            //usuwamy kategorie podrzędne, jeżeli podana została ich kategoria nadrzędna
+            return RemoveExcessCategories(categoryIds);
+        }
+
+        // zwraca listę typu List<BudgetCategory> na podstawie listy typu List<Category>
+        private static List<BudgetCategory> CreateBudgetCategoryList(List<Category> categories)
+        {
+            var budgetCategories = new List<BudgetCategory>();
+
+            foreach (var category in categories)
+                budgetCategories.Add(new BudgetCategory
+                {
+                    Category = category
+                });
+
+            return budgetCategories;
         }
 
         // funkcja zwarająca łączną wartość wydatków na dane kategorie w domyślniej walucie w danym okresie

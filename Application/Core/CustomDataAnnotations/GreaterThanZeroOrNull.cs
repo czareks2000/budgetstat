@@ -1,13 +1,13 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Application.Core.CustomDataAnnotations
 {
-    public class GreaterThanZero: ValidationAttribute
+    public class GreaterThanZeroOrNull : ValidationAttribute
     {
         public override bool IsValid(object value)
         {
             if (value == null)
-                return false;
+                return true;
 
             if (value is decimal decimalValue)
             {
