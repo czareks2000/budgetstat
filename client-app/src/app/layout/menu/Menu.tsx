@@ -1,0 +1,145 @@
+import { useState } from 'react';
+
+import Toolbar from '@mui/material/Toolbar';
+import Divider from '@mui/material/Divider';
+import { AppBar, Box, Drawer, Typography } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+
+import MenuIcon from '@mui/icons-material/Menu';
+import { Balance, BarChart, CalendarMonth, FileUpload, Home, NoteAlt, PendingActions, SwapHoriz, Tune, Wallet } from '@mui/icons-material';
+
+import NavLinks from './NavLinks';
+
+interface Props {
+    appName: string;
+    drawerWidth?: number;
+}
+
+const Menu = ({ appName, drawerWidth = 288 }: Props) => {
+    const [mobileOpen, setMobileOpen] = useState(false);
+    const [isClosing, setIsClosing] = useState(false);
+
+    const handleDrawerClose = () => {
+        setIsClosing(true);
+        setMobileOpen(false);
+    };
+
+    const handleDrawerTransitionEnd = () => {
+        setIsClosing(false);
+    };
+
+    const handleDrawerToggle = () => {
+        if (!isClosing) {
+        setMobileOpen(!mobileOpen);
+        }
+    };
+
+    const drawer = (
+        <div>
+          <Toolbar />
+          <Box m={3}>
+            <Typography variant="h6" noWrap component="div">
+              Balance:
+            </Typography>
+            <Typography variant="h4" noWrap component="div">
+              234 405 zł
+            </Typography>
+            <Typography variant="subtitle1" noWrap component="div">
+              This month: +2350 zł
+            </Typography>
+          </Box>
+    
+          <Divider sx={{ bgcolor: "#0099FF", borderBottomWidth: 2 }} />
+    
+          <Box m={1}>
+            <NavLinks items={[
+                    {text: 'Home', icon: <Home />, link: 'home'}, 
+                    {text: 'Stats', icon: <BarChart />, link: 'stats'}, 
+                    {text: 'Calendar', icon: <CalendarMonth />, link: 'calendar'}
+                ]}/>
+          </Box>
+    
+          <Divider sx={{ bgcolor: "#0099FF", borderBottomWidth: 2 }} />
+    
+          <Box m={1}>
+            <NavLinks items={[
+                    {text: 'Accounts', icon: <Wallet />, link: 'accounts'}, 
+                    {text: 'Transactions', icon: <SwapHoriz />, link: 'transactions'}, 
+                    {text: 'Budgets', icon: <NoteAlt />, link: 'budgets'},
+                    {text: 'Loans', icon: <PendingActions/>, link: 'loans'},
+                    {text: 'Net worth', icon: <Balance />, link: 'net-worth'}
+                ]}/>
+          </Box>
+          
+          <Divider sx={{ bgcolor: "#0099FF", borderBottomWidth: 2 }} />
+    
+          <Box m={1}>
+            <NavLinks items={[
+                      {text: 'Import/Export', icon: <FileUpload />, link: 'import-export'}, 
+                      {text: 'Prferences', icon: <Tune />, link: 'preferences'}
+                  ]}/>
+          </Box>
+        </div>
+      );
+
+    return (
+      <>
+        <AppBar
+            position="fixed"
+            sx={{
+                zIndex: 1300
+            }}
+        >
+            <Toolbar>
+            <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                edge="start"
+                onClick={handleDrawerToggle}
+                sx={{ mr: 2, display: { sm: 'none' } }}
+            >
+                <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap component="div">
+                {appName}
+            </Typography>
+            </Toolbar>
+        </AppBar>
+
+        <Box
+          component="nav"
+          sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+          aria-label="side menu"
+        >
+          <Drawer
+            variant="temporary"
+            open={mobileOpen}
+            onTransitionEnd={handleDrawerTransitionEnd}
+            onClose={handleDrawerClose}
+            ModalProps={{
+                keepMounted: true, // Better open performance on mobile.
+            }}
+            sx={{
+                display: { xs: 'block', sm: 'none' },
+                '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+                
+            }}
+          >
+            {drawer}
+          </Drawer>
+          <Drawer
+            variant="permanent"
+            sx={{
+                display: { xs: 'none', sm: 'block' },
+                '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            }}
+            open
+          >
+            {drawer}
+          </Drawer>
+        </Box>
+      </>
+    )
+  }
+  
+  export default Menu
