@@ -83,6 +83,7 @@ namespace Application.Services
         public async Task<Result<AccountDto>> Update(int accountId, AccountUpdateDto updatedAccount)
         {
             var account = _context.Accounts
+                .Include(a => a.Currency)
                 .Include(a => a.AccountBalances)
                 .FirstOrDefault(c => c.Id == accountId);
 

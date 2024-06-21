@@ -23,5 +23,13 @@ namespace API.Controllers
         {
             return HandleResult(await _transactionService.Delete(transactionId));
         }
+
+        [Authorize(Policy = "IsOwner")]
+        [HttpPatch("transactions/{transactionId}/considered")] //api/transactions/{transactionId}
+        public async Task<IActionResult> ToggleConsideredFlag(int transactionId)
+        {
+            return HandleResult(await _transactionService.ToggleConsideredFlag(transactionId));
+        }
+
     }
 }

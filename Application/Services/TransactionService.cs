@@ -138,5 +138,76 @@ namespace Application.Services
 
             return Result<object>.Success(null);
         }
+
+        public async Task<Result<bool>> ToggleConsideredFlag(int transactionId)
+        {
+            var transaction = await _context.Transactions.FirstOrDefaultAsync(t => t.Id == transactionId);
+
+            if (transaction == null) return null;
+
+            transaction.Considered = !transaction.Considered;
+
+            if (await _context.SaveChangesAsync() == 0)
+                return Result<bool>.Failure("Failed to toggle considered status.");
+
+            return Result<bool>.Success(transaction.Considered);
+        }
+
+        public async Task<Result<TransactionDto>> Update(int transactionId, TransactionUpdateDto updatedTransaction)
+        {
+            var transaction = await _context.Transactions
+                .Include(t => t.Account)
+                    .ThenInclude(a => a.AccountBalances)
+                .FirstOrDefaultAsync(t => t.Id == transactionId);
+
+            if (transaction == null) return null;
+
+            var category = await _context.Categories
+                .FirstOrDefaultAsync(c => c.Id == updatedTransaction.CategoryId);
+
+            if (category == null || category.IsMain)
+                return Result<TransactionDto>.Failure("Invalid category. It does not exist or is the main category");
+
+            var currency = await _context.Currencies
+                .FirstOrDefaultAsync(c => c.Id == updatedTransaction.CurrencyId);
+
+            if (currency == null)
+                return Result<TransactionDto>.Failure("Invalid currency");
+
+            var user = await _utilities.GetCurrentUserAsync();
+
+            var newAccount = await _context.Accounts
+                .Include(a => a.AccountBalances)
+                .FirstOrDefaultAsync(a => a.Id == updatedTransaction.AccountId && a.UserId == user.Id);
+
+            if (newAccount == null)
+                return Result<TransactionDto>.Failure("Invalid account. It does not exist or does not belong to the user.");
+
+            transaction.Category = category;
+            // przy zmianie waluty, wartość transakcji nie jest zmieniana
+            transaction.Currency = currency;
+
+            if (transaction.AccountId != newAccount.Id)
+            {
+                var oldAccount = transaction.Account;
+                transaction.Account = newAccount;
+
+                // dodać aktualizację sald starego i nowego konta
+            }
+
+            _mapper.Map(updatedTransaction, transaction);
+
+            if (await _context.SaveChangesAsync() == 0)
+                return Result<TransactionDto>.Failure("Failed to update transaction");
+
+            var transactionDto = _mapper.Map<TransactionDto>(transaction);
+
+            return Result<TransactionDto>.Success(transactionDto);
+        }
+
+        public Task<Result<object>> ConfirmTransaction(int transactionId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

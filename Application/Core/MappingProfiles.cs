@@ -40,6 +40,8 @@ namespace Application.Core
             CreateMap<Category, CategoryDto>();
 
             CreateMap<TransactionCreateDto, Transaction>();
+            CreateMap<TransactionUpdateDto, Transaction>();
+            CreateMap<Transaction, TransactionDto>();
         }
     }
 }
