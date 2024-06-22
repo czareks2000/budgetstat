@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import Toolbar from '@mui/material/Toolbar';
 import Divider from '@mui/material/Divider';
-import { AppBar, Box, Button, Drawer, Stack, Typography } from '@mui/material';
+import { AppBar, Box, Button, Drawer, Link as MuiLink, Typography } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 
 import MenuIcon from '@mui/icons-material/Menu';
@@ -11,6 +11,7 @@ import { Balance, BarChart, CalendarMonth, FileUpload, Home, NoteAlt, PendingAct
 import NavLinks from './NavLinks';
 import { useStore } from '../../stores/store';
 import { observer } from 'mobx-react-lite';
+import { Link } from 'react-router-dom';
 
 interface Props {
     appName: string;
@@ -104,7 +105,9 @@ export default observer(function Menu({ appName, drawerWidth = 288 }: Props) {
                   <MenuIcon />
               </IconButton>
               <Typography variant="h6" noWrap component="div">
-                  {appName}
+                  <MuiLink component={Link} to={'/'} underline='none' color='inherit'>
+                    {appName}
+                  </MuiLink>
               </Typography>
               <Button 
                 variant='text' 

@@ -6,6 +6,7 @@ import { router } from "../router/Routes";
 
 export default class UserStore {
     user: User | null = null;
+    logging = false;
 
     constructor() {
         makeAutoObservable(this);
@@ -26,6 +27,7 @@ export default class UserStore {
             runInAction(() => {
                 this.user = user;
             });
+            router.navigate('home');
         } catch (error) {
             console.log(error);
             throw error;
@@ -33,6 +35,7 @@ export default class UserStore {
     }
 
     login = async (creds: UserFormValues) => {
+        this.logging = true;
         try {
             const user = await agent.Auth.login(creds);
             store.commonStore.setToken(user.token);
@@ -40,10 +43,12 @@ export default class UserStore {
             runInAction(() => {
                 this.user = user;
             });
-            router.navigate('home');
+            router.navigate('/home');
         } catch (error) {
             console.log(error);
             throw error;
+        } finally {
+            this.logging = false;
         }
     }
 

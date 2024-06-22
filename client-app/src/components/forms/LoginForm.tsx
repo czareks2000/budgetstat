@@ -1,7 +1,8 @@
 import { observer } from "mobx-react-lite"
 import { useStore } from "../../app/stores/store";
 import { ErrorMessage, Form, Formik } from "formik";
-import { Button, Stack, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
+import LoadingButton from '@mui/lab/LoadingButton';
 import TextInput from "../formInputs/TextInput";
 
 export default observer(function LoginForm() {
@@ -29,14 +30,15 @@ export default observer(function LoginForm() {
                                 component="span"
                             />
                         </Typography>
-                        <Button 
+                        <LoadingButton 
                             color="primary" 
                             variant="contained" 
                             fullWidth 
                             type="submit" 
-                            disabled={isSubmitting}>
+                            disabled={isSubmitting}
+                            loading={isSubmitting}>
                             Submit
-                        </Button>
+                        </LoadingButton>
                     </Stack>              
                 </Form>
             )}
