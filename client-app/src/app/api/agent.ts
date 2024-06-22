@@ -69,10 +69,10 @@ const requests = {
 }
 
 const Auth = {
-    current: () => requests.get<User>('/account'),
-    login: (user: UserFormValues) => requests.post<User>('/account/login', user),
-    register: (user: UserFormValues) => requests.post<User>('/account/register', user),
-    changePassword: (values: ChangePasswordFormValues) => requests.post<void>('/account/changepassword/', values)
+    current: () => requests.get<User>('/auth'),
+    login: (user: UserFormValues) => requests.post<User>('/auth/login', user),
+    register: (user: UserFormValues) => requests.post<User>('/auth/register', user),
+    changePassword: (values: ChangePasswordFormValues) => requests.post<void>('/auth/changepassword/', values)
 }
 
 const Accounts = {

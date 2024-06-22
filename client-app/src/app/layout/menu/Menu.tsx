@@ -2,22 +2,25 @@ import { useState } from 'react';
 
 import Toolbar from '@mui/material/Toolbar';
 import Divider from '@mui/material/Divider';
-import { AppBar, Box, Drawer, Typography } from '@mui/material';
+import { AppBar, Box, Button, Drawer, Stack, Typography } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 
 import MenuIcon from '@mui/icons-material/Menu';
 import { Balance, BarChart, CalendarMonth, FileUpload, Home, NoteAlt, PendingActions, SwapHoriz, Tune, Wallet } from '@mui/icons-material';
 
 import NavLinks from './NavLinks';
+import { useStore } from '../../stores/store';
+import { observer } from 'mobx-react-lite';
 
 interface Props {
     appName: string;
     drawerWidth?: number;
 }
 
-const Menu = ({ appName, drawerWidth = 288 }: Props) => {
+export default observer(function Menu({ appName, drawerWidth = 288 }: Props) {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
+    const {userStore: {logout}} = useStore();
 
     const handleDrawerClose = () => {
         setIsClosing(true);
@@ -91,18 +94,25 @@ const Menu = ({ appName, drawerWidth = 288 }: Props) => {
             }}
         >
             <Toolbar>
-            <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                edge="start"
-                onClick={handleDrawerToggle}
-                sx={{ mr: 2, display: { sm: 'none' } }}
-            >
-                <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" noWrap component="div">
-                {appName}
-            </Typography>
+              <IconButton
+                  color="inherit"
+                  aria-label="open drawer"
+                  edge="start"
+                  onClick={handleDrawerToggle}
+                  sx={{ mr: 2, display: { sm: 'none' } }}
+              >
+                  <MenuIcon />
+              </IconButton>
+              <Typography variant="h6" noWrap component="div">
+                  {appName}
+              </Typography>
+              <Button 
+                variant='text' 
+                color='inherit' 
+                sx={{ marginLeft: "auto" }}
+                onClick={logout}>
+                Logout
+                </Button>
             </Toolbar>
         </AppBar>
 
@@ -140,6 +150,4 @@ const Menu = ({ appName, drawerWidth = 288 }: Props) => {
         </Box>
       </>
     )
-  }
-  
-  export default Menu
+  })

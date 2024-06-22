@@ -17,7 +17,7 @@ interface Props {
             {items.map((item, index) => (
             <Link component={NavLink} key={index} to={item.link} underline='none' color='inherit'>
             <ListItem disablePadding>  
-                <ListItemButton>
+                <ListItemButton disableRipple>
                     <ListItemIcon>
                         {item.icon}
                     </ListItemIcon>

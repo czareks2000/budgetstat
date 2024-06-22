@@ -14,6 +14,7 @@ import Preferences from "../../pages/preferences/Preferences";
 import Settings from "../../pages/settings/Settings";
 import Stats from "../../pages/stats/Stats";
 import Transactions from "../../pages/transactions/Transactions";
+import Login from "../../pages/login/Login";
 
 export const routes: RouteObject[] = [
     {
@@ -34,6 +35,7 @@ export const routes: RouteObject[] = [
                 {path: 'transactions', element: <Transactions />},
                 {path: 'not-found', element: <NotFound />},
             ]},
+            {path: 'login', element: <Login />},
             {path: 'server-error', element: <ServerError />},
             {path: '*', element: <NotFound />}
         ]

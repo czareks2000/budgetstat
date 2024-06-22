@@ -40,6 +40,7 @@ export default class UserStore {
             runInAction(() => {
                 this.user = user;
             });
+            router.navigate('home');
         } catch (error) {
             console.log(error);
             throw error;
