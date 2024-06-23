@@ -1,6 +1,7 @@
 import { makeAutoObservable, reaction } from "mobx";
 import { ServerError } from "../models/ServerError"
 import { Info } from "../models/Info";
+import { store } from "./store";
 
 export default class CommonStore {
     serverError: ServerError | null = null;
@@ -49,5 +50,13 @@ export default class CommonStore {
 
     setApploaded = () => { 
         this.appLoaded = true;
+    }
+
+    loadAppData = async () => {
+        try {
+            await store.accountStore.loadAccounts();
+        } catch (error) {
+            console.log(error);
+        } 
     }
 }

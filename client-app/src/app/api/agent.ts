@@ -2,6 +2,10 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { router } from "../router/Routes";
 import { store } from "../stores/store";
 import { ChangePasswordFormValues, User, UserFormValues } from "../models/User";
+import { Account } from "../models/Account";
+import { AccountStatus } from "../models/enums/AccountStatus";
+import { Transaction } from "../models/Transaction";
+import { Budget } from "../models/Budget";
 
 const sleep = (delay: number) => {
     return new Promise((resolve) => {
@@ -76,12 +80,30 @@ const Auth = {
 }
 
 const Accounts = {
-    requests
+    list: () => requests.get<Account[]>('/accounts'),
+    create: (account: Account) => requests.post<Account>('/accounts', account),
+    update: (accountId: number, account: Account) => requests.put<Account>(`/accounts/${accountId}`, account),
+    changeStatus: (accountId: number, newStatus: AccountStatus) => requests.patch<void>(`/accounts/${accountId}/${newStatus}`, {})
+}
+
+const Transactions = {
+    create: (accountId: number, transaction: Transaction) => requests.post<number>(`/account/${accountId}/transactions`, transaction),
+    toggleConsidered: (transactionId: number) => requests.patch<boolean>(`/transactions/${transactionId}/considered`, {}),
+    delete: (transactionId: number) => requests.del<void>(`/transactions/${transactionId}`)
+}
+
+const Budgets = {
+    list: () => requests.get<Budget[]>('/budgets'),
+    create: (budget: Budget) => requests.post<number>('/budgets', budget),
+    update: (budgetId: number, budget: Budget) => requests.put<Budget>(`/budgets/${budgetId}`, budget),
+    delete: (budgetId: number) => requests.del<void>(`/budgets/${budgetId}`)
 }
 
 const agent = {
+    Auth,
     Accounts,
-    Auth
+    Transactions,
+    Budgets
 }
 
 export default agent;

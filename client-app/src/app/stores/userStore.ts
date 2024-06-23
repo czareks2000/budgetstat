@@ -48,7 +48,7 @@ export default class UserStore {
             console.log(error);
             throw error;
         } finally {
-            this.logging = false;
+            runInAction(() => this.logging = false);
         }
     }
 

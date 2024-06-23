@@ -100,7 +100,7 @@ export default observer(function Menu({ appName, drawerWidth = 288 }: Props) {
                   aria-label="open drawer"
                   edge="start"
                   onClick={handleDrawerToggle}
-                  sx={{ mr: 2, display: { sm: 'none' } }}
+                  sx={{ mr: 2, display: { md: 'none' } }}
               >
                   <MenuIcon />
               </IconButton>
@@ -121,7 +121,7 @@ export default observer(function Menu({ appName, drawerWidth = 288 }: Props) {
 
         <Box
           component="nav"
-          sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+          sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
           aria-label="side menu"
         >
           <Drawer
@@ -133,7 +133,7 @@ export default observer(function Menu({ appName, drawerWidth = 288 }: Props) {
                 keepMounted: true, // Better open performance on mobile.
             }}
             sx={{
-                display: { xs: 'block', sm: 'none' },
+                display: { xs: 'block', md: 'none' },
                 '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
                 
             }}
@@ -143,7 +143,7 @@ export default observer(function Menu({ appName, drawerWidth = 288 }: Props) {
           <Drawer
             variant="permanent"
             sx={{
-                display: { xs: 'none', sm: 'block' },
+                display: { xs: 'none', md: 'block' },
                 '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
             }}
             open

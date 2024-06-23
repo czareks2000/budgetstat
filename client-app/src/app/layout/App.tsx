@@ -1,7 +1,7 @@
 import './App.css'
 
 import Toolbar from '@mui/material/Toolbar';
-import { Box, CircularProgress, CssBaseline } from '@mui/material';
+import { Box, CssBaseline } from '@mui/material';
 
 import Menu from './menu/Menu';
 import { Outlet, useLocation } from 'react-router-dom';
@@ -19,7 +19,9 @@ export default observer(function App() {
 
   useEffect(() => {
     if (commonStore.token) {
-      userStore.getUser().finally(() => commonStore.setApploaded());
+      userStore.getUser()
+        .then(() => commonStore.loadAppData())
+          .finally(() => commonStore.setApploaded());
     } else {
       commonStore.setApploaded();
     }
