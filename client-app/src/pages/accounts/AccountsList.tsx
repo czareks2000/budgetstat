@@ -9,7 +9,7 @@ const AccountsList = ({accounts}: Props) => {
     return (
         <>
         {accounts.map(account => 
-            <AccountItem account={account}/>
+            <AccountItem key={account.id} account={account}/>
         )}
         </>
     )

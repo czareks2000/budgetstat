@@ -2,12 +2,16 @@ import { Box, Card, CardActions, CardContent, Divider, Grid, IconButton, Switch,
 import { Account } from "../../app/models/Account";
 import { Delete, Edit } from "@mui/icons-material";
 import { AccountStatus } from "../../app/models/enums/AccountStatus";
+import { observer } from "mobx-react-lite";
+import { useStore } from "../../app/stores/store";
+import { formatNumber } from "../../app/utils/FormatNumber";
 
 interface Props {
     account: Account;
 }
 
-const AccountItem = ({account}: Props) => {
+export default observer(function AccountItem({account}: Props) {
+    const {accountStore: {changeStatus}} = useStore();
 
     const isVisible = () => {
         return account.status === AccountStatus.Visible;
@@ -27,7 +31,7 @@ const AccountItem = ({account}: Props) => {
                     </Grid>
                     <Grid item xs={'auto'} >
                         <Typography variant="h4" color={'primary'}>
-                            {account.balance} zł
+                            {formatNumber(account.balance)} {account.currency.symbol}
                         </Typography>
                     </Grid>
                 </Grid>
@@ -35,7 +39,9 @@ const AccountItem = ({account}: Props) => {
             <Divider/>
             <CardActions >
                 <Grid container justifyContent="space-between">
-                    <Switch checked={isVisible()} />
+                    <Switch 
+                        checked={isVisible()} 
+                        onClick={() => changeStatus(account.id, account.status)}/>
                     <Box>
                         <IconButton aria-label="edit">
                             <Edit />
@@ -48,6 +54,4 @@ const AccountItem = ({account}: Props) => {
             </CardActions>
         </Card>
     )
-}
-
-export default AccountItem
+})

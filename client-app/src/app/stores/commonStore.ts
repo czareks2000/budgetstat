@@ -55,6 +55,7 @@ export default class CommonStore {
     loadAppData = async () => {
         try {
             await store.accountStore.loadAccounts();
+            await store.currencyStore.loadCurrencies();
         } catch (error) {
             console.log(error);
         } 

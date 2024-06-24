@@ -7,7 +7,7 @@ interface Props {
     label?: string;
 }
 
-export default function TextInput(props: Props) {
+export default function NumberInput(props: Props) {
     const [field, meta] = useField(props.name);
     return (
         <>
@@ -15,6 +15,7 @@ export default function TextInput(props: Props) {
                 id={field.name}
                 {...field} 
                 {...props}
+                value={field.value === null ? '' : field.value}
                 error={meta.touched && Boolean(meta.error)}
                 helperText={meta.touched && meta.error}
                 autoComplete='off'
