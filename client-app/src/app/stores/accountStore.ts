@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { Account } from "../models/Account";
+import { Account, AccountFormValues } from "../models/Account";
 import agent from "../api/agent";
+import { AccountStatus } from "../models/enums/AccountStatus";
 
 export default class AccountStore {
     accountsRegistry = new Map<number, Account>();
@@ -12,6 +13,19 @@ export default class AccountStore {
 
     get accounts() {
         return Array.from(this.accountsRegistry.values());
+    }
+
+    get totalBalance() {
+        const accounts = Array.from(this.accountsRegistry.values());
+
+        let balance = 0;
+
+        accounts.forEach(account => {
+            if (account.status === AccountStatus.Visible)
+                balance += account.convertedBalance;
+        });
+        
+        return balance;
     }
 
     private setAccount = (account: Account) => {
@@ -33,8 +47,40 @@ export default class AccountStore {
         } 
     }
 
+    createAccount = async (account: AccountFormValues) => {
+        try {
+            const createdAccount = await agent.Accounts.create(account);
+        
+            runInAction(() => {
+                this.setAccount(createdAccount);
+            });    
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    changeStatus = async (accountId: number, currentStatus: AccountStatus) => {
+        try {
+            const newStatus = this.newStatus(currentStatus);
+            const account = this.getAccount(accountId);
+
+            if (account)
+                account.status = newStatus;
+
+            await agent.Accounts.changeStatus(accountId, newStatus);  
+        } catch (error) {
+            console.log(error);
+        } 
+    }
+
     private convertToDate(date: Date) {
         const result = new Date(date);
         return result;
     }
+
+    private newStatus(currentStatus: AccountStatus)
+    {
+        return currentStatus === AccountStatus.Visible ? AccountStatus.Hidden : AccountStatus.Visible;
+    }
+
 }

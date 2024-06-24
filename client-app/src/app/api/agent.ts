@@ -2,10 +2,11 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { router } from "../router/Routes";
 import { store } from "../stores/store";
 import { ChangePasswordFormValues, User, UserFormValues } from "../models/User";
-import { Account } from "../models/Account";
+import { Account, AccountFormValues } from "../models/Account";
 import { AccountStatus } from "../models/enums/AccountStatus";
 import { Transaction } from "../models/Transaction";
 import { Budget } from "../models/Budget";
+import { Currency } from "../models/Currency";
 
 const sleep = (delay: number) => {
     return new Promise((resolve) => {
@@ -81,7 +82,7 @@ const Auth = {
 
 const Accounts = {
     list: () => requests.get<Account[]>('/accounts'),
-    create: (account: Account) => requests.post<Account>('/accounts', account),
+    create: (account: AccountFormValues) => requests.post<Account>('/accounts', account),
     update: (accountId: number, account: Account) => requests.put<Account>(`/accounts/${accountId}`, account),
     changeStatus: (accountId: number, newStatus: AccountStatus) => requests.patch<void>(`/accounts/${accountId}/${newStatus}`, {})
 }
@@ -99,11 +100,16 @@ const Budgets = {
     delete: (budgetId: number) => requests.del<void>(`/budgets/${budgetId}`)
 }
 
+const Currencies = {
+    list: () => requests.get<Currency[]>('/currencies'),
+}
+
 const agent = {
     Auth,
     Accounts,
     Transactions,
-    Budgets
+    Budgets,
+    Currencies
 }
 
 export default agent;

@@ -12,3 +12,10 @@ export interface Account {
     currency: Currency;
     currencyId?: number;
 }
+
+export interface AccountFormValues {
+    name: string;
+    balance: number | null;
+    description: string;
+    currencyId: number | string;
+}

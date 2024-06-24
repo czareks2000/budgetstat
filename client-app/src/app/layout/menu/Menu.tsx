@@ -12,6 +12,7 @@ import NavLinks from './NavLinks';
 import { useStore } from '../../stores/store';
 import { observer } from 'mobx-react-lite';
 import { Link } from 'react-router-dom';
+import { formatNumber } from '../../utils/FormatNumber';
 
 interface Props {
     appName: string;
@@ -21,7 +22,7 @@ interface Props {
 export default observer(function Menu({ appName, drawerWidth = 288 }: Props) {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
-    const {userStore: {logout}} = useStore();
+    const {userStore: {logout}, accountStore: {totalBalance}} = useStore();
 
     const handleDrawerClose = () => {
         setIsClosing(true);
@@ -46,10 +47,10 @@ export default observer(function Menu({ appName, drawerWidth = 288 }: Props) {
               Balance:
             </Typography>
             <Typography variant="h4" noWrap component="div">
-              234 405 zł
+              {formatNumber(totalBalance)} zł
             </Typography>
             <Typography variant="subtitle1" noWrap component="div">
-              This month: +2350 zł
+              This month: + {formatNumber(2350.52)} zł
             </Typography>
           </Box>
     
