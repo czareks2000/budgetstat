@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Currency
 {
-    public class CurrencyService : ICurrencyService
+    public class CurrencyRatesService : ICurrencyRatesService
     {
         public decimal Convert(string inputCurrencyCode, string outputCurrencyCode, decimal value)
         {

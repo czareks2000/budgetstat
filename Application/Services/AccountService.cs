@@ -13,12 +13,12 @@ namespace Application.Services
     public class AccountService(
         DataContext context, 
         IUtilities utilities,
-        ICurrencyService currencyService,
+        ICurrencyRatesService currencyService,
         IMapper mapper) : IAccountService
     {
         private readonly DataContext _context = context;
         private readonly IUtilities _utilities = utilities;
-        private readonly ICurrencyService _currencyService = currencyService;
+        private readonly ICurrencyRatesService _currencyService = currencyService;
         private readonly IMapper _mapper = mapper;
 
         // funkcja zwraca liste wszytkich kont użytkownika 

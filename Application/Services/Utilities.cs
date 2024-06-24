@@ -7,11 +7,11 @@ namespace Application.Services
 {
     public class Utilities(
         DataContext context,
-        ICurrencyService currencyService,
+        ICurrencyRatesService currencyService,
         IUserAccessor userAccessor) : IUtilities
     {
         private readonly DataContext _context = context;
-        private readonly ICurrencyService _currencyService = currencyService;
+        private readonly ICurrencyRatesService _currencyService = currencyService;
         private readonly IUserAccessor _userAccessor = userAccessor;
 
         // zwraca użytkownika, który wywołał funkcje

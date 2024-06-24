@@ -34,7 +34,7 @@ namespace API.Extentions
             services.AddHttpContextAccessor();
 
             services.AddScoped<IUserAccessor, UserAccessor>();
-            services.AddScoped<ICurrencyService, CurrencyService>();
+            services.AddScoped<ICurrencyRatesService, CurrencyRatesService>();
 
             
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
@@ -43,6 +43,7 @@ namespace API.Extentions
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IBudgetService, BudgetService>();
             services.AddScoped<ITransactionService, TransactionService>();
+            services.AddScoped<ICurrencyService, CurrencyService>();
             
 
             return services;
