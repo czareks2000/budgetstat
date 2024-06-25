@@ -36,7 +36,7 @@ axios.interceptors.response.use(async response => {
                 }
                 throw modalStateErrors.flat();
             } else {
-                store.commonStore.setError(data);
+                //store.commonStore.setError(data);
             }
             break;
         case 401:
@@ -84,7 +84,9 @@ const Accounts = {
     list: () => requests.get<Account[]>('/accounts'),
     create: (account: AccountFormValues) => requests.post<Account>('/accounts', account),
     update: (accountId: number, account: Account) => requests.put<Account>(`/accounts/${accountId}`, account),
-    changeStatus: (accountId: number, newStatus: AccountStatus) => requests.patch<void>(`/accounts/${accountId}/${newStatus}`, {})
+    changeStatus: (accountId: number, newStatus: AccountStatus) => requests.patch<void>(`/accounts/${accountId}/${newStatus}`, {}),
+    delete: (accountId: number, deleteRelatedTransactions: boolean) => 
+        requests.del<void>(`/accounts/${accountId}?deleteRelatedTransactions=${deleteRelatedTransactions}`)
 }
 
 const Transactions = {

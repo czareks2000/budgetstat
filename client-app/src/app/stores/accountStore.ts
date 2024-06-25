@@ -11,6 +11,11 @@ export default class AccountStore {
         makeAutoObservable(this);
     }
 
+    clearStore = () => {
+        this.accountsRegistry.clear();
+        this.accountsLoaded = false;
+    }
+
     get accounts() {
         return Array.from(this.accountsRegistry.values());
     }
@@ -53,6 +58,18 @@ export default class AccountStore {
         
             runInAction(() => {
                 this.setAccount(createdAccount);
+            });    
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    deleteAccount = async (accountId: number, deleteRelatedTransactions: boolean) => {
+        try {
+            await agent.Accounts.delete(accountId, deleteRelatedTransactions);
+        
+            runInAction(() => {
+                this.accountsRegistry.delete(accountId);
             });    
         } catch (error) {
             console.log(error);

@@ -1,4 +1,4 @@
-import { Box, Card, CardActions, CardContent, Divider, Grid, IconButton, Switch, Typography } from "@mui/material";
+import { Box, Card, CardActions, CardContent, Divider, Grid, IconButton, Switch, Tooltip, Typography } from "@mui/material";
 import { Account } from "../../app/models/Account";
 import { Delete, Edit } from "@mui/icons-material";
 import { AccountStatus } from "../../app/models/enums/AccountStatus";
@@ -39,16 +39,37 @@ export default observer(function AccountItem({account}: Props) {
             <Divider/>
             <CardActions >
                 <Grid container justifyContent="space-between">
-                    <Switch 
-                        checked={isVisible()} 
-                        onClick={() => changeStatus(account.id, account.status)}/>
+                    <Tooltip 
+                            title={isVisible() ? "Hide" : "Make Visible"}
+                            placement="right"
+                            arrow
+                            enterDelay={500}
+                            leaveDelay={200}>
+                        <Switch 
+                            checked={isVisible()} 
+                            onClick={() => changeStatus(account.id, account.status)}/>
+                    </Tooltip>
                     <Box>
-                        <IconButton aria-label="edit">
-                            <Edit />
-                        </IconButton>
-                        <IconButton aria-label="delete">
-                            <Delete />
-                        </IconButton>
+                        <Tooltip 
+                            title='Edit'
+                            placement="left"
+                            arrow
+                            enterDelay={500}
+                            leaveDelay={200}>
+                            <IconButton aria-label="edit">
+                                <Edit />
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip 
+                            title='Delete'
+                            placement="right"
+                            arrow
+                            enterDelay={500}
+                            leaveDelay={200}>
+                            <IconButton aria-label="delete">
+                                <Delete />
+                            </IconButton>
+                        </Tooltip>
                     </Box>
                 </Grid>
             </CardActions>

@@ -10,6 +10,11 @@ export default class CurrencyStore {
     constructor() {
         makeAutoObservable(this);
     }
+    
+    clearStore = () => {
+        this.currencies = [];
+        this.currenciesLoaded = false;
+    }
 
     loadCurrencies = async () => {
         try {

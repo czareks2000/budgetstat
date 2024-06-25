@@ -6,7 +6,6 @@ import { router } from "../router/Routes";
 
 export default class UserStore {
     user: User | null = null;
-    logging = false;
 
     constructor() {
         makeAutoObservable(this);
@@ -35,25 +34,22 @@ export default class UserStore {
     }
 
     login = async (creds: UserFormValues) => {
-        this.logging = true;
         try {
             const user = await agent.Auth.login(creds);
             store.commonStore.setToken(user.token);
-            store.commonStore.clearInfo();
+            await store.commonStore.loadAppData();
             runInAction(() => {
                 this.user = user;
             });
-            router.navigate('/home');
         } catch (error) {
             console.log(error);
             throw error;
-        } finally {
-            runInAction(() => this.logging = false);
         }
     }
 
     logout = () => {
         store.commonStore.setToken(null);
+        store.commonStore.clearAppData();
         this.user = null;
         router.navigate('/');
     }
@@ -61,7 +57,6 @@ export default class UserStore {
     changePassword = async (values: ChangePasswordFormValues) => {
         try {
             await agent.Auth.changePassword(values);
-            store.commonStore.setSuccess("Password changed");
         } catch (error) {
             console.log(error);
             throw error;
