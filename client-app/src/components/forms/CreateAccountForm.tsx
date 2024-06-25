@@ -53,7 +53,7 @@ export default observer(function CreateAccountForm({onSubmit}: Props) {
 
                     {/* Button */}
                     <LoadingButton 
-                        color="primary" 
+                        color="success" 
                         variant="contained" 
                         fullWidth 
                         type="submit" 

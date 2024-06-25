@@ -15,7 +15,7 @@ export interface Account {
 
 export interface AccountFormValues {
     name: string;
-    balance: number | null;
+    balance?: number | null;
     description: string;
-    currencyId: number | string;
+    currencyId?: number | string;
 }

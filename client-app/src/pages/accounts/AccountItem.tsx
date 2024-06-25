@@ -1,4 +1,4 @@
-import { Box, Card, CardActions, CardContent, Divider, Grid, IconButton, Switch, Tooltip, Typography } from "@mui/material";
+import { Box, Card, CardActions, CardContent, Divider, Grid, IconButton, Switch, Tooltip, Typography, selectClasses } from "@mui/material";
 import { Account } from "../../app/models/Account";
 import { Delete, Edit } from "@mui/icons-material";
 import { AccountStatus } from "../../app/models/enums/AccountStatus";
@@ -8,10 +8,11 @@ import { formatNumber } from "../../app/utils/FormatNumber";
 
 interface Props {
     account: Account;
+    toggleEditForm: (state: boolean) => void;
 }
 
-export default observer(function AccountItem({account}: Props) {
-    const {accountStore: {changeStatus}} = useStore();
+export default observer(function AccountItem({account, toggleEditForm}: Props) {
+    const {accountStore: {changeStatus, selectAccount}} = useStore();
 
     const isVisible = () => {
         return account.status === AccountStatus.Visible;
@@ -56,7 +57,12 @@ export default observer(function AccountItem({account}: Props) {
                             arrow
                             enterDelay={500}
                             leaveDelay={200}>
-                            <IconButton aria-label="edit">
+                            <IconButton 
+                                aria-label="edit"
+                                onClick={() => {
+                                    selectAccount(account);
+                                    toggleEditForm(true);
+                                }}>
                                 <Edit />
                             </IconButton>
                         </Tooltip>

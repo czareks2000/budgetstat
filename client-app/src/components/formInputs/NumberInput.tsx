@@ -15,6 +15,7 @@ export default function NumberInput(props: Props) {
                 id={field.name}
                 {...field} 
                 {...props}
+                type="number"
                 value={field.value === null ? '' : field.value}
                 error={meta.touched && Boolean(meta.error)}
                 helperText={meta.touched && meta.error}

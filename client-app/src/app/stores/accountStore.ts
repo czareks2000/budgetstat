@@ -5,6 +5,7 @@ import { AccountStatus } from "../models/enums/AccountStatus";
 
 export default class AccountStore {
     accountsRegistry = new Map<number, Account>();
+    selectedAccount: Account | undefined = undefined; 
     accountsLoaded = false;
 
     constructor() {
@@ -42,6 +43,14 @@ export default class AccountStore {
         return this.accountsRegistry.get(id);
     }
 
+    selectAccount = (account: Account) => {
+        this.selectedAccount = account;
+    }
+    
+    deselectAccount = () => {
+        this.selectedAccount = undefined;
+    }
+
     loadAccounts = async () => {
         try {
             const accounts = await agent.Accounts.list();
@@ -70,6 +79,18 @@ export default class AccountStore {
         
             runInAction(() => {
                 this.accountsRegistry.delete(accountId);
+            });    
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    updateAccount = async (accountId: number, account: AccountFormValues) => {
+        try {
+            const updatedAccount = await agent.Accounts.update(accountId, account);
+        
+            runInAction(() => {
+                this.setAccount(updatedAccount);
             });    
         } catch (error) {
             console.log(error);

@@ -3,13 +3,14 @@ import AccountItem from "./AccountItem";
 
 interface Props {
     accounts: Account[];
+    toggleEditForm: (state: boolean) => void;
 }
 
-const AccountsList = ({accounts}: Props) => {
+const AccountsList = ({accounts, toggleEditForm}: Props) => {
     return (
         <>
         {accounts.map(account => 
-            <AccountItem key={account.id} account={account}/>
+            <AccountItem key={account.id} account={account} toggleEditForm={toggleEditForm}/>
         )}
         </>
     )
