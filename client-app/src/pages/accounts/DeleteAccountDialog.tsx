@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite"
 import { useStore } from "../../app/stores/store";
 import { useState } from "react";
-import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControlLabel, Typography } from "@mui/material";
+import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 
 interface Props {
