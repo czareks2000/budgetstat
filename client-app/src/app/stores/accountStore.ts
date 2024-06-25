@@ -79,6 +79,7 @@ export default class AccountStore {
         
             runInAction(() => {
                 this.accountsRegistry.delete(accountId);
+                this.deselectAccount();
             });    
         } catch (error) {
             console.log(error);

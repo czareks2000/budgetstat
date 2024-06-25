@@ -389,7 +389,6 @@ namespace Persistence
                 // Transactions for accounts[0]
                 new Transaction
                 {
-                    Id = 1,
                     Amount = 100.50m,
                     Date = DateTime.UtcNow.AddDays(-10),
                     Description = "Supermarket",
@@ -401,7 +400,6 @@ namespace Persistence
                 },
                 new Transaction
                 {
-                    Id = 2,
                     Amount = 50.00m,
                     Date = DateTime.UtcNow.AddDays(-8),
                     Description = "Gas station",
@@ -415,7 +413,6 @@ namespace Persistence
                 // Transactions for accounts[1]
                 new Transaction
                 {
-                    Id = 3,
                     Amount = 200.00m,
                     Date = DateTime.UtcNow.AddDays(-8),
                     Description = "Dinner with friends",
@@ -427,7 +424,6 @@ namespace Persistence
                 },
                 new Transaction
                 {
-                    Id = 4,
                     Amount = 80.00m,
                     Date = DateTime.UtcNow.AddDays(-5),
                     Description = "Movie tickets",

@@ -15,5 +15,6 @@ namespace Application.Interfaces
         // zmiana statusu konta
         Task<Result<object>> ChangeStatus(int accountId, AccountStatus newStatus);
         // usunięcie konta
+        Task<Result<object>> Delete(int accountId, bool deleteRelatedTransactions);
     }
 }

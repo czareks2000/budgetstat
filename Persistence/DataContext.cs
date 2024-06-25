@@ -63,6 +63,12 @@ namespace Persistence
                 .WithMany(a => a.Destinations)
                 .HasForeignKey(t => t.ToAccountId);
 
+            // Zapobieganie kaskadowemu usuwaniu
+            builder.Entity<Account>()
+                .HasMany(a => a.Transactions)
+                .WithOne(t => t.Account)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
             //default values
 
             builder.Entity<Transaction>()

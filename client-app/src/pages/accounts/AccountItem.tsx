@@ -9,9 +9,10 @@ import { formatNumber } from "../../app/utils/FormatNumber";
 interface Props {
     account: Account;
     toggleEditForm: (state: boolean) => void;
+    openDeleteDialog: () => void;
 }
 
-export default observer(function AccountItem({account, toggleEditForm}: Props) {
+export default observer(function AccountItem({account, toggleEditForm, openDeleteDialog}: Props) {
     const {accountStore: {changeStatus, selectAccount}} = useStore();
 
     const isVisible = () => {
@@ -72,7 +73,12 @@ export default observer(function AccountItem({account, toggleEditForm}: Props) {
                             arrow
                             enterDelay={500}
                             leaveDelay={200}>
-                            <IconButton aria-label="delete">
+                            <IconButton 
+                                aria-label="delete"
+                                onClick={() => {
+                                    selectAccount(account);
+                                    openDeleteDialog();
+                                }}>
                                 <Delete />
                             </IconButton>
                         </Tooltip>

@@ -36,5 +36,12 @@ namespace API.Controllers
         {
             return HandleResult(await _accountService.ChangeStatus(accountId, newStatus));
         }
+
+        [Authorize(Policy = "IsOwner")]
+        [HttpDelete("accounts/{accountId}")] //api/accounts/{accountId}?deleteRelatedTransactions=true
+        public async Task<IActionResult> DeleteAccount(int accountId, [FromQuery] bool deleteRelatedTransactions = false)
+        {
+            return HandleResult(await _accountService.Delete(accountId, deleteRelatedTransactions));
+        }
     }
 }

@@ -124,5 +124,27 @@ namespace Application.Services
 
             return Result<object>.Success(null);
         }
+
+        public async Task<Result<object>> Delete(int accountId, bool deleteRelatedTransactions)
+        {
+            var account = await _context.Accounts
+                .Include(a => a.Transactions)
+                .FirstOrDefaultAsync(c => c.Id == accountId);
+
+            if (account == null) return null;
+
+            if (deleteRelatedTransactions)
+            {
+                foreach (var transaction in account.Transactions)
+                    _context.Transactions.Remove(transaction);
+            }
+
+            _context.Accounts.Remove(account);
+
+            if (await _context.SaveChangesAsync() == 0)
+                return Result<object>.Failure("Failed to change account status");
+
+            return Result<object>.Success(null);
+        }
     }
 }

@@ -6,9 +6,11 @@ import AccountsList from "./AccountsList";
 import CreateAccount from "./CreateAccount";
 import { useState } from "react";
 import EditAccount from "./EditAccount";
+import DeleteAccountDialog from "./DeleteAccountDialog";
 
 export default observer(function Accounts() {
     const {accountStore: {accounts, selectedAccount}} = useStore();
+
     const [showCreateForm, setShowCreateForm] = useState(true);
     const [showEditForm, setShowEditForm] = useState(false);
 
@@ -17,19 +19,32 @@ export default observer(function Accounts() {
         setShowEditForm(state);
     }
 
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+
+    const handleOpenDeleteDialog = () => {
+        setOpenDeleteDialog(true);
+        toggleEditForm(false);
+    }
+
     return (
-        <Grid container spacing={2}>
-            <Grid item xs={12} lg={6}>
-                <Stack spacing={2}>
-                    <AccountsList accounts={accounts} toggleEditForm={toggleEditForm}/>
-                </Stack>
+        <>
+            <DeleteAccountDialog key={selectedAccount?.id} open={openDeleteDialog} setOpen={setOpenDeleteDialog}/>
+            <Grid container spacing={2}>
+                <Grid item xs={12} lg={6}>
+                    <Stack spacing={2}>
+                        <AccountsList 
+                            accounts={accounts} 
+                            toggleEditForm={toggleEditForm} 
+                            openDeleteDialog={handleOpenDeleteDialog}/>
+                    </Stack>
+                </Grid>
+                <Grid item xs={12} lg={6}>
+                    <Stack spacing={2}>
+                        {showCreateForm && <CreateAccount />}
+                        {showEditForm && <EditAccount toggleEditForm={toggleEditForm} account={selectedAccount!}/>}
+                    </Stack>
+                </Grid>
             </Grid>
-            <Grid item xs={12} lg={6}>
-                <Stack spacing={2}>
-                    {showCreateForm && <CreateAccount />}
-                    {showEditForm && <EditAccount toggleEditForm={toggleEditForm} account={selectedAccount!}/>}
-                </Stack>
-            </Grid>
-        </Grid>
+        </>
     )
 })
