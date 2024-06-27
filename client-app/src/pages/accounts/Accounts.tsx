@@ -1,12 +1,13 @@
 import { observer } from "mobx-react-lite"
 import { useStore } from "../../app/stores/store";
-import { Grid, Stack } from "@mui/material";
+import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
 
 import AccountsList from "./AccountsList";
 import CreateAccount from "./CreateAccount";
 import { useState } from "react";
 import EditAccount from "./EditAccount";
 import DeleteAccountDialog from "./DeleteAccountDialog";
+import PageHeader from "../../components/common/PageHeader";
 
 export default observer(function Accounts() {
     const {accountStore: {accounts, selectedAccount}} = useStore();
@@ -32,6 +33,7 @@ export default observer(function Accounts() {
             <Grid container spacing={2}>
                 <Grid item xs={12} lg={6}>
                     <Stack spacing={2}>
+                        <Divider>Accounts</Divider>
                         <AccountsList 
                             accounts={accounts} 
                             toggleEditForm={toggleEditForm} 
@@ -40,8 +42,14 @@ export default observer(function Accounts() {
                 </Grid>
                 <Grid item xs={12} lg={6}>
                     <Stack spacing={2}>
-                        {showCreateForm && <CreateAccount />}
-                        {showEditForm && <EditAccount toggleEditForm={toggleEditForm} account={selectedAccount!}/>}
+                        {showCreateForm && <>
+                            <Divider>Create Account</Divider>
+                            <CreateAccount />
+                        </>}
+                        {showEditForm && <>
+                            <Divider>Edit Account</Divider>
+                            <EditAccount toggleEditForm={toggleEditForm} account={selectedAccount!}/>
+                        </>}
                     </Stack>
                 </Grid>
             </Grid>

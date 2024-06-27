@@ -22,7 +22,7 @@ interface Props {
 export default observer(function Menu({ appName, drawerWidth = 288 }: Props) {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
-    const {userStore: {logout}, accountStore: {totalBalance}} = useStore();
+    const {userStore: {logout}, accountStore: {totalBalance}, currencyStore: {defaultCurrency}} = useStore();
 
     const handleDrawerClose = () => {
         setIsClosing(true);
@@ -47,10 +47,10 @@ export default observer(function Menu({ appName, drawerWidth = 288 }: Props) {
               Balance:
             </Typography>
             <Typography variant="h4" noWrap component="div">
-              {formatNumber(totalBalance)} zł
+              {formatNumber(totalBalance)} {defaultCurrency?.symbol}
             </Typography>
             <Typography variant="subtitle1" noWrap component="div">
-              This month: + {formatNumber(2350.52)} zł
+              This month: + {formatNumber(2350.52)} {defaultCurrency?.symbol}
             </Typography>
           </Box>
     

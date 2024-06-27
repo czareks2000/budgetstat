@@ -19,9 +19,7 @@ export default observer(function App() {
 
   useEffect(() => {
     if (commonStore.token) {
-      userStore.getUser()
-        .then(() => commonStore.loadAppData())
-          .finally(() => commonStore.setApploaded());
+      userStore.getUser();
     } else {
       commonStore.setApploaded();
     }

@@ -1,4 +1,4 @@
-import { makeAutoObservable, reaction } from "mobx";
+import { makeAutoObservable, reaction, runInAction } from "mobx";
 import { ServerError } from "../models/ServerError"
 import { store } from "./store";
 
@@ -38,19 +38,24 @@ export default class CommonStore {
         this.appLoaded = true;
     }
 
-    loadAppData = async () => {
+    loadAppData = async (currencyId: number) => {
         try {
             await store.accountStore.loadAccounts();
+            await store.budgetStore.loadBudgets();
             await store.currencyStore.loadCurrencies();
+            store.currencyStore.setDefaultCurrency(currencyId);
         } catch (error) {
             console.log(error);
-        } 
+        } finally {
+            runInAction(() => this.setApploaded())
+        }
     }
 
     clearAppData = async () => {
         try {
             store.accountStore.clearStore();
             store.currencyStore.clearStore();
+            store.budgetStore.clearStore();
         } catch (error) {
             console.log(error);
         }

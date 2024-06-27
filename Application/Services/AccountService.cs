@@ -142,7 +142,7 @@ namespace Application.Services
             _context.Accounts.Remove(account);
 
             if (await _context.SaveChangesAsync() == 0)
-                return Result<object>.Failure("Failed to change account status");
+                return Result<object>.Failure("Failed to delete account");
 
             return Result<object>.Success(null);
         }

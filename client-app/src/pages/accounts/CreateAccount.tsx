@@ -1,4 +1,4 @@
-import { Box, Paper } from "@mui/material"
+import { Box, Divider, Paper } from "@mui/material"
 import { observer } from "mobx-react-lite"
 import CreateAccountForm from "../../components/forms/CreateAccountForm"
 import { AccountFormValues } from "../../app/models/Account";

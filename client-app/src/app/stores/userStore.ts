@@ -37,7 +37,7 @@ export default class UserStore {
         try {
             const user = await agent.Auth.login(creds);
             store.commonStore.setToken(user.token);
-            await store.commonStore.loadAppData();
+            await store.commonStore.loadAppData(user.currencyId);
             runInAction(() => {
                 this.user = user;
             });
@@ -66,7 +66,10 @@ export default class UserStore {
     getUser = async () => {
         try {
             const user = await agent.Auth.current();
-            runInAction(() => this.user = user);
+            runInAction(() => {
+                this.user = user;
+                store.commonStore.loadAppData(user.currencyId);
+            });
         } catch (error) {
             console.log(error);
         }

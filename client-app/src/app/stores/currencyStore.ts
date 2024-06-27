@@ -5,6 +5,7 @@ import { Option } from "../models/Option";
 
 export default class CurrencyStore {
     currencies: Currency[] = [];
+    defaultCurrency: Currency | undefined = undefined;
     currenciesLoaded = false;
 
     constructor() {
@@ -26,6 +27,11 @@ export default class CurrencyStore {
         } catch (error) {
             console.log(error);
         } 
+    }
+
+    setDefaultCurrency = (currencyId: number) => {
+        if (this.currenciesLoaded)
+            this.defaultCurrency = this.currencies.find(c => c.id === currencyId);
     }
 
     get currenciesAsOptions(): Option[] {

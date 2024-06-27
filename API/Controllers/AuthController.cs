@@ -103,6 +103,7 @@ namespace API.Controllers
                 UserName = user.UserName,
                 Email = user.Email,
                 Token = _tokenService.CreateToken(user),
+                CurrencyId = user.CurrencyId
             };
         }
     }
