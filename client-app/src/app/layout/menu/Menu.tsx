@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import Toolbar from '@mui/material/Toolbar';
 import Divider from '@mui/material/Divider';
-import { AppBar, Box, Button, Drawer, Link as MuiLink, Typography } from '@mui/material';
+import { AppBar, Avatar, Box, Button, Drawer, Link as MuiLink, Stack, Typography } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 
 import MenuIcon from '@mui/icons-material/Menu';
@@ -40,7 +40,7 @@ export default observer(function Menu({ appName, drawerWidth = 288 }: Props) {
     };
 
     const drawer = (
-        <div>
+        <Box>
           <Toolbar />
           <Box m={3}>
             <Typography variant="h6" noWrap component="div">
@@ -84,18 +84,15 @@ export default observer(function Menu({ appName, drawerWidth = 288 }: Props) {
                       {text: 'Prferences', icon: <Tune />, link: 'preferences'}
                   ]}/>
           </Box>
-        </div>
+        </Box>
       );
 
     return (
       <>
         <AppBar
             position="fixed"
-            sx={{
-                zIndex: 1300
-            }}
         >
-            <Toolbar>
+            <Toolbar sx={{backgroundColor: 'white', color: '#636363'}}>
               <IconButton
                   color="inherit"
                   aria-label="open drawer"
@@ -107,7 +104,10 @@ export default observer(function Menu({ appName, drawerWidth = 288 }: Props) {
               </IconButton>
               <Typography variant="h6" noWrap component="div">
                   <MuiLink component={Link} to={'/'} underline='none' color='inherit'>
-                    {appName}
+                    <Stack direction={'row'} alignItems={'center'} spacing={1}>
+                      {/* <Avatar src='/logo.png' sx={{width: 32, height: 32, display: {xs: 'none', md: 'block'}}}/> */}
+                      <Box>{appName}</Box>
+                    </Stack>
                   </MuiLink>
               </Typography>
               <Button 
@@ -135,8 +135,12 @@ export default observer(function Menu({ appName, drawerWidth = 288 }: Props) {
             }}
             sx={{
                 display: { xs: 'block', md: 'none' },
-                '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-                
+                '& .MuiDrawer-paper': { 
+                  boxSizing: 'border-box', 
+                  width: drawerWidth,
+                  backgroundColor: "backgroundColor.dark",
+                  color: 'white',
+                },
             }}
           >
             {drawer}
@@ -145,7 +149,12 @@ export default observer(function Menu({ appName, drawerWidth = 288 }: Props) {
             variant="permanent"
             sx={{
                 display: { xs: 'none', md: 'block' },
-                '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+                '& .MuiDrawer-paper': { 
+                  boxSizing: 'border-box', 
+                  width: drawerWidth, 
+                  backgroundColor: "backgroundColor.dark",
+                  color: 'white',
+                },    
             }}
             open
           >

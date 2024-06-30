@@ -1,3 +1,38 @@
+:root{
+    --primary: #0099FF;
+    --background-light: #F2F3F8;
+    --background-dark: #242939;
+}
+
 body {
-    background-color: #F2F3F8 !important;
+    background-color: var(--background-light) !important;
+}
+
+.active span, .active svg {
+    color: var(--primary) !important;
+}
+
+.MuiListItem-root:hover, 
+.MuiListItem-root:hover svg{
+    color: var(--primary);
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+  
+/* Track */
+::-webkit-scrollbar-track {
+    background: white;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #9e9e9e;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #757575;
 }

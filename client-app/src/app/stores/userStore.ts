@@ -72,6 +72,6 @@ export default class UserStore {
             });
         } catch (error) {
             console.log(error);
-        }
+        } 
     }
 }

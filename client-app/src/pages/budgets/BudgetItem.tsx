@@ -88,11 +88,11 @@ export default observer(function BudgetItem({budget}: Props) {
                                     {budget.name}
                                 </Typography>
                             </Stack>
-                            <Box>
+                            <Stack direction={'row'} spacing={1}>
                                 {budget.categories.map((category) =>
                                     <Chip key={category.id} label={category.name} />
                                 )}
-                            </Box>
+                            </Stack>
                         </Grid>
                         <Grid item xs={'auto'} >
                             <Box mr={-1}>

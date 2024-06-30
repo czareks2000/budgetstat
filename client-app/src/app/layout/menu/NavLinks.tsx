@@ -16,13 +16,16 @@ interface Props {
         <List>
             {items.map((item, index) => (
             <Link component={NavLink} key={index} to={item.link} underline='none' color='inherit'>
-            <ListItem disablePadding>  
-                <ListItemButton disableRipple>
-                    <ListItemIcon>
-                        {item.icon}
-                    </ListItemIcon>
-                    <ListItemText primary={item.text} />
-                </ListItemButton>
+                <ListItem disablePadding >  
+                    <ListItemButton disableRipple>
+                        <ListItemIcon 
+                            sx={{
+                                color: 'white'
+                            }}>
+                            {item.icon}
+                        </ListItemIcon>
+                        <ListItemText primary={item.text} />
+                    </ListItemButton>
                 </ListItem>
             </Link>
         ))}
