@@ -1,6 +1,5 @@
 import { Box, Divider, Paper, Stack } from "@mui/material"
 import { observer } from "mobx-react-lite"
-import { FormikHelpers } from "formik";
 import { useStore } from "../../app/stores/store";
 import { BudgetFormValues, BudgetDto } from "../../app/models/Budget";
 import BudgetForm from "../../components/forms/Budget/BudgetForm";
@@ -11,18 +10,18 @@ import { useEffect } from "react";
 
 export default observer(function EditBudget() {
     const {
-        budgetStore: {updateBudget, selectedBudget, selectBudget}, 
+        budgetStore: {updateBudget, selectedBudget, selectBudget, deselectBudget}, 
         categoryStore: {convertToCategoryOptions}
     } = useStore();
   
-    function handleUpdate(budget: BudgetDto, formikHelpers: FormikHelpers<BudgetFormValues>): void {
+    function handleUpdate(budget: BudgetDto): void {
         updateBudget(selectedBudget!.id, budget).then(() => {
-            formikHelpers.resetForm();
             router.navigate('/budgets');
         });
     }
 
     const handleCancel = () => {
+        deselectBudget();
         router.navigate('/budgets');
     }
 
@@ -41,19 +40,19 @@ export default observer(function EditBudget() {
     }
   
     return (
-    <ResponsiveContainer content={
-        <Stack spacing={2}>
-            <Divider>Edit Budget</Divider>
-            <Paper>
-                <Box p={2}>
-                    <BudgetForm 
-                        initialValues={initialValues} 
-                        onSubmit={handleUpdate} 
-                        onCancel={handleCancel}
-                        submitText="Save"/>
-                </Box>
-            </Paper>
-        </Stack>
-    }/>
-  )
+        <ResponsiveContainer content={
+            <Stack spacing={2}>
+                <Divider>Edit Budget</Divider>
+                <Paper>
+                    <Box p={2}>
+                        <BudgetForm 
+                            initialValues={initialValues} 
+                            onSubmit={handleUpdate} 
+                            onCancel={handleCancel}
+                            submitText="Save"/>
+                    </Box>
+                </Paper>
+            </Stack>
+        }/>
+    )
 })

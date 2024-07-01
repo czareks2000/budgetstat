@@ -17,6 +17,8 @@ import Transactions from "../../pages/transactions/Transactions";
 import Login from "../../pages/login/Login";
 import CreateBudget from "../../pages/budgets/CreateBudget";
 import EditBudget from "../../pages/budgets/EditBudget";
+import CreateAccount from "../../pages/accounts/CreateAccount";
+import EditAccount from "../../pages/accounts/EditAccount";
 
 export const routes: RouteObject[] = [
     {
@@ -25,6 +27,8 @@ export const routes: RouteObject[] = [
         children: [
             {element: <RequireAuth />, children: [
                 {path: 'accounts', element: <Accounts />},
+                {path: 'account/create', element: <CreateAccount />},
+                {path: 'account/:id/edit', element: <EditAccount />},
                 {path: 'budgets', element: <Budgets />},
                 {path: 'budget/create', element: <CreateBudget />},
                 {path: 'budget/:id/edit', element: <EditBudget />},

@@ -9,10 +9,10 @@ import { Button, Stack } from "@mui/material";
 interface Props {
     initialValues: AccountFormValues;
     onSubmit: (account: AccountFormValues) => void;
-    toggleEditForm: (state: boolean) => void;
+    onCancel: () => void;
 }
 
-export default observer(function EditAccountForm({initialValues, onSubmit, toggleEditForm}: Props) {
+export default observer(function EditAccountForm({initialValues, onSubmit, onCancel}: Props) {
     const validationSchema = Yup.object({
         name: Yup.string().required('Name is required'),
         desription: Yup.string().notRequired()
@@ -41,7 +41,7 @@ export default observer(function EditAccountForm({initialValues, onSubmit, toggl
                             color="error"
                             variant="contained"
                             fullWidth
-                            onClick={() => toggleEditForm(false)}>
+                            onClick={onCancel}>
                             Cancel
                         </Button>
                         <LoadingButton 

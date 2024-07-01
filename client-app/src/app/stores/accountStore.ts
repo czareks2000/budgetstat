@@ -43,8 +43,8 @@ export default class AccountStore {
         return this.accountsRegistry.get(id);
     }
 
-    selectAccount = (account: Account) => {
-        this.selectedAccount = account;
+    selectAccount = (accountId: number) => {
+        this.selectedAccount = this.getAccount(accountId);
     }
     
     deselectAccount = () => {

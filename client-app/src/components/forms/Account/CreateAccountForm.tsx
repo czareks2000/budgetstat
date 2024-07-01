@@ -4,16 +4,17 @@ import * as Yup from "yup";
 import TextInput from "../../formInputs/TextInput";
 import { LoadingButton } from "@mui/lab";
 import { AccountFormValues } from "../../../app/models/Account";
-import { Stack } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import SelectInput from "../../formInputs/SelectInput";
 import { useStore } from "../../../app/stores/store";
 import NumberInput from "../../formInputs/NumberInput";
 
 interface Props {
     onSubmit: (account: AccountFormValues, formikHelpers: FormikHelpers<AccountFormValues>) => void;
+    onCancel: () => void;
 }
 
-export default observer(function CreateAccountForm({onSubmit}: Props) {
+export default observer(function CreateAccountForm({onSubmit, onCancel}: Props) {
     const {currencyStore: {currenciesAsOptions}} = useStore();
 
     const validationSchema = Yup.object({
@@ -50,17 +51,26 @@ export default observer(function CreateAccountForm({onSubmit}: Props) {
                     <SelectInput label="Currency" name="currencyId" options={currenciesAsOptions}/>
                     {/* Description */}
                     <TextInput label="Description" name="description"/>
-
-                    {/* Button */}
-                    <LoadingButton 
-                        color="success" 
-                        variant="contained" 
-                        fullWidth 
-                        type="submit" 
-                        disabled={!(dirty && isValid) || isSubmitting}
-                        loading={isSubmitting}>
-                        Create
-                    </LoadingButton>
+                   
+                    {/* Buttons */}
+                     <Stack direction={'row'} spacing={2}>
+                        <Button 
+                            color="error"
+                            variant="contained"
+                            fullWidth
+                            onClick={onCancel}>
+                            Cancel
+                        </Button>
+                        <LoadingButton 
+                            color="success" 
+                            variant="contained" 
+                            fullWidth 
+                            type="submit" 
+                            disabled={!(dirty && isValid) || isSubmitting}
+                            loading={isSubmitting}>
+                            Create
+                        </LoadingButton>
+                    </Stack>
                 </Stack>
             </Form>
         )

@@ -5,14 +5,14 @@ import { AccountStatus } from "../../app/models/enums/AccountStatus";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../app/stores/store";
 import { formatNumber } from "../../app/utils/FormatNumber";
+import { router } from "../../app/router/Routes";
 
 interface Props {
     account: Account;
-    toggleEditForm: (state: boolean) => void;
     openDeleteDialog: () => void;
 }
 
-export default observer(function AccountItem({account, toggleEditForm, openDeleteDialog}: Props) {
+export default observer(function AccountItem({account, openDeleteDialog}: Props) {
     const {accountStore: {changeStatus, selectAccount}} = useStore();
 
     const isVisible = () => {
@@ -20,13 +20,13 @@ export default observer(function AccountItem({account, toggleEditForm, openDelet
     }
 
     const handleDeleteButtonClick = () => {
-        selectAccount(account);
+        selectAccount(account.id);
         openDeleteDialog();
     }
 
     const handleEditButtonClick = () => {
-        selectAccount(account);
-        toggleEditForm(true);
+        selectAccount(account.id);
+        router.navigate(`/account/${account.id}/edit`)
     }
 
     const handleSwitchButtonClick = () => {

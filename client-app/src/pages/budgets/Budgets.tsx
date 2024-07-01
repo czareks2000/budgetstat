@@ -1,12 +1,12 @@
-import { Divider, Fab, Stack } from "@mui/material"
+import { Divider, Stack } from "@mui/material"
 import { observer } from "mobx-react-lite"
 import { useStore } from "../../app/stores/store"
 import BudgetsList from "./BudgetsList"
 import DeleteBudgetDialog from "./DeleteBudgetDialog"
 import { useState } from "react"
-import { Add } from "@mui/icons-material"
 import { router } from "../../app/router/Routes"
 import ResponsiveContainer from "../../components/common/ResponsiveContainer"
+import FloatingAddButton from "../../components/common/FloatingAddButton"
 
 export default observer(function Budgets() {
     const {budgetStore: {weeklyBudgets, monthlyBudgets, annualBudgets, selectedBudget}} = useStore()
@@ -24,17 +24,7 @@ export default observer(function Budgets() {
     return (
     <>  
         <DeleteBudgetDialog key={selectedBudget?.id} open={openDeleteDialog} setOpen={setOpenDeleteDialog} />
-        <Fab 
-            color="primary" 
-            aria-label="add"
-            onClick={handleAddButtonClick} 
-            sx={{
-                position: "fixed",
-                bottom: (theme) => theme.spacing(4),
-                right: (theme) => theme.spacing(4)
-            }}>
-            <Add />
-        </Fab>
+        <FloatingAddButton onClick={handleAddButtonClick}/>
         <ResponsiveContainer content={
             <Stack spacing={2}>
                 {weeklyBudgets.length > 0 && <>

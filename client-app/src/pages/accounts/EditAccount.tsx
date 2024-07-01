@@ -1,37 +1,56 @@
-import { Box, Paper } from "@mui/material"
+import { Box, Divider, Paper, Stack } from "@mui/material"
 import { observer } from "mobx-react-lite"
-import { Account, AccountFormValues } from "../../app/models/Account";
+import { AccountFormValues } from "../../app/models/Account";
 import { useStore } from "../../app/stores/store";
 import EditAccountForm from "../../components/forms/Account/EditAccountForm";
+import { router } from "../../app/router/Routes";
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
+import ResponsiveContainer from "../../components/common/ResponsiveContainer";
 
-interface Props {
-    account: Account;
-    toggleEditForm: (state: boolean) => void;
-}
-
-export default observer(function EditAccount({account, toggleEditForm}: Props) {
-    const {accountStore: {updateAccount, selectedAccount}} = useStore();
+export default observer(function EditAccount() {
+    const {
+        accountStore: {
+            updateAccount, selectedAccount, selectAccount, deselectAccount
+        }
+    } = useStore();
     
-    // create
     function handleUpdate(updatedAccount: AccountFormValues): void {
-        updateAccount(account.id, updatedAccount)
-            .then(() => toggleEditForm(false));
+        updateAccount(selectedAccount!.id, updatedAccount)
+            .then(() => router.navigate('/accounts'));
     }
 
+    const handleCancel = () => {
+        deselectAccount();
+        router.navigate('/accounts');
+    }
+
+    const {id} = useParams();
+    useEffect(() => {
+        if (id) selectAccount(parseInt(id));
+    }, [id, selectAccount])
+
+    if (!selectedAccount) return <></>
+
     const initialValues: AccountFormValues = {
-        name: account.name,
-        description: account.description,
+        name: selectedAccount.name,
+        description: selectedAccount.description,
     }
     
     return (
-        <Paper>
-            <Box p={2}>
-                <EditAccountForm 
-                    key={selectedAccount?.id} 
-                    onSubmit={handleUpdate} 
-                    toggleEditForm={toggleEditForm} 
-                    initialValues={initialValues}/>
-            </Box>
-        </Paper>
+        <ResponsiveContainer content={
+            <Stack spacing={2}>
+                <Divider>Edit Account</Divider>
+                <Paper>
+                    <Box p={2}>
+                        <EditAccountForm 
+                            key={selectedAccount?.id} 
+                            onSubmit={handleUpdate} 
+                            onCancel={handleCancel}
+                            initialValues={initialValues}/>
+                    </Box>
+                </Paper>
+            </Stack>
+        }/>
     )
 })

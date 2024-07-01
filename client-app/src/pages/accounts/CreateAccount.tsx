@@ -1,9 +1,11 @@
-import { Box, Paper } from "@mui/material"
+import { Box, Divider, Paper, Stack } from "@mui/material"
 import { observer } from "mobx-react-lite"
 import CreateAccountForm from "../../components/forms/Account/CreateAccountForm"
 import { AccountFormValues } from "../../app/models/Account";
 import { FormikHelpers } from "formik";
 import { useStore } from "../../app/stores/store";
+import ResponsiveContainer from "../../components/common/ResponsiveContainer";
+import { router } from "../../app/router/Routes";
 
 export default observer(function CreateAccount() {
   const {accountStore: {createAccount}} = useStore();
@@ -11,15 +13,25 @@ export default observer(function CreateAccount() {
   // create
   function handleCreate(account: AccountFormValues, formikHelpers: FormikHelpers<AccountFormValues>): void {
     createAccount(account).then(() => {
+        router.navigate('/accounts');
         formikHelpers.resetForm();
     });
-}
+  }
+
+  const handleCancel = () => {
+    router.navigate('/accounts');
+  }
   
   return (
-    <Paper>
-      <Box p={2}>
-        <CreateAccountForm onSubmit={handleCreate}/>
-      </Box>
-    </Paper>
+    <ResponsiveContainer content={
+        <Stack spacing={2}>
+            <Divider>Create Account</Divider>
+            <Paper>
+              <Box p={2}>
+                <CreateAccountForm onSubmit={handleCreate} onCancel={handleCancel}/>
+              </Box>
+            </Paper>
+        </Stack>
+    }/>
   )
 })
