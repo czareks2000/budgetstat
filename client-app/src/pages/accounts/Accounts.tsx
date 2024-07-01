@@ -1,13 +1,12 @@
 import { observer } from "mobx-react-lite"
 import { useStore } from "../../app/stores/store";
-import { Box, Divider, Grid, Stack, Typography } from "@mui/material";
+import { Divider, Grid, Stack } from "@mui/material";
 
 import AccountsList from "./AccountsList";
 import CreateAccount from "./CreateAccount";
 import { useState } from "react";
 import EditAccount from "./EditAccount";
 import DeleteAccountDialog from "./DeleteAccountDialog";
-import PageHeader from "../../components/common/PageHeader";
 
 export default observer(function Accounts() {
     const {accountStore: {accounts, selectedAccount}} = useStore();

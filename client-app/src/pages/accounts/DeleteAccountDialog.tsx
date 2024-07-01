@@ -9,7 +9,7 @@ interface Props {
     setOpen: (state: boolean) => void;
 }
 
-export default observer(function Accounts({open, setOpen}: Props) {
+export default observer(function DeleteAccountDialog({open, setOpen}: Props) {
     const {accountStore: {selectedAccount, deleteAccount}} = useStore();
 
     const [deleteRelatedTransactions, setDeleteRelatedTransactions] = useState(false);

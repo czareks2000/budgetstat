@@ -19,6 +19,20 @@ export default observer(function AccountItem({account, toggleEditForm, openDelet
         return account.status === AccountStatus.Visible;
     }
 
+    const handleDeleteButtonClick = () => {
+        selectAccount(account);
+        openDeleteDialog();
+    }
+
+    const handleEditButtonClick = () => {
+        selectAccount(account);
+        toggleEditForm(true);
+    }
+
+    const handleSwitchButtonClick = () => {
+        changeStatus(account.id, account.status);
+    }
+
     return (
         <Card key={account.id} >
             <CardContent>
@@ -49,7 +63,7 @@ export default observer(function AccountItem({account, toggleEditForm, openDelet
                             leaveDelay={200}>
                         <Switch 
                             checked={isVisible()} 
-                            onClick={() => changeStatus(account.id, account.status)}/>
+                            onClick={handleSwitchButtonClick}/>
                     </Tooltip>
                     <Box>
                         <Tooltip 
@@ -60,10 +74,7 @@ export default observer(function AccountItem({account, toggleEditForm, openDelet
                             leaveDelay={200}>
                             <IconButton 
                                 aria-label="edit"
-                                onClick={() => {
-                                    selectAccount(account);
-                                    toggleEditForm(true);
-                                }}>
+                                onClick={handleEditButtonClick}>
                                 <Edit />
                             </IconButton>
                         </Tooltip>
@@ -75,10 +86,7 @@ export default observer(function AccountItem({account, toggleEditForm, openDelet
                             leaveDelay={200}>
                             <IconButton 
                                 aria-label="delete"
-                                onClick={() => {
-                                    selectAccount(account);
-                                    openDeleteDialog();
-                                }}>
+                                onClick={handleDeleteButtonClick}>
                                 <Delete />
                             </IconButton>
                         </Tooltip>
