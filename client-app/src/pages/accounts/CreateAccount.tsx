@@ -1,6 +1,6 @@
 import { Box, Paper } from "@mui/material"
 import { observer } from "mobx-react-lite"
-import CreateAccountForm from "../../components/forms/CreateAccountForm"
+import CreateAccountForm from "../../components/forms/Account/CreateAccountForm"
 import { AccountFormValues } from "../../app/models/Account";
 import { FormikHelpers } from "formik";
 import { useStore } from "../../app/stores/store";

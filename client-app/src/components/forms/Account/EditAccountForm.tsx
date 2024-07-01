@@ -1,9 +1,9 @@
 import { Form, Formik } from "formik";
 import { observer } from "mobx-react-lite"
 import * as Yup from "yup";
-import TextInput from "../formInputs/TextInput";
+import TextInput from "../../formInputs/TextInput";
 import { LoadingButton } from "@mui/lab";
-import { AccountFormValues } from "../../app/models/Account";
+import { AccountFormValues } from "../../../app/models/Account";
 import { Button, Stack } from "@mui/material";
 
 interface Props {

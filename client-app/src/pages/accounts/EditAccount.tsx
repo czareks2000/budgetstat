@@ -2,7 +2,7 @@ import { Box, Paper } from "@mui/material"
 import { observer } from "mobx-react-lite"
 import { Account, AccountFormValues } from "../../app/models/Account";
 import { useStore } from "../../app/stores/store";
-import EditAccountForm from "../../components/forms/EditAccountForm";
+import EditAccountForm from "../../components/forms/Account/EditAccountForm";
 
 interface Props {
     account: Account;

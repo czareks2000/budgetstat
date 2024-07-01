@@ -1,9 +1,9 @@
 import { observer } from "mobx-react-lite"
-import { useStore } from "../../app/stores/store";
+import { useStore } from "../../../app/stores/store";
 import { ErrorMessage, Form, Formik } from "formik";
 import { Stack, Typography } from "@mui/material";
 import LoadingButton from '@mui/lab/LoadingButton';
-import TextInput from "../formInputs/TextInput";
+import TextInput from "../../formInputs/TextInput";
 
 export default observer(function LoginForm() {
     const {userStore} = useStore();

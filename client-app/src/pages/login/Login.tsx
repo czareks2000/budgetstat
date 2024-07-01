@@ -1,6 +1,6 @@
 import { Stack, Typography } from "@mui/material"
 import { observer } from "mobx-react-lite"
-import LoginForm from "../../components/forms/LoginForm"
+import LoginForm from "../../components/forms/Auth/LoginForm"
 import { useStore } from "../../app/stores/store";
 import { Navigate } from "react-router-dom";
 

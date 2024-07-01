@@ -1,13 +1,13 @@
 import { Form, Formik, FormikHelpers } from "formik";
 import { observer } from "mobx-react-lite"
 import * as Yup from "yup";
-import TextInput from "../formInputs/TextInput";
+import TextInput from "../../formInputs/TextInput";
 import { LoadingButton } from "@mui/lab";
-import { AccountFormValues } from "../../app/models/Account";
+import { AccountFormValues } from "../../../app/models/Account";
 import { Stack } from "@mui/material";
-import SelectInput from "../formInputs/SelectInput";
-import { useStore } from "../../app/stores/store";
-import NumberInput from "../formInputs/NumberInput";
+import SelectInput from "../../formInputs/SelectInput";
+import { useStore } from "../../../app/stores/store";
+import NumberInput from "../../formInputs/NumberInput";
 
 interface Props {
     onSubmit: (account: AccountFormValues, formikHelpers: FormikHelpers<AccountFormValues>) => void;

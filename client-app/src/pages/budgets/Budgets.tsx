@@ -6,6 +6,7 @@ import DeleteBudgetDialog from "./DeleteBudgetDialog"
 import { useState } from "react"
 import { Add } from "@mui/icons-material"
 import { router } from "../../app/router/Routes"
+import ResponsiveContainer from "../../components/common/ResponsiveContainer"
 
 export default observer(function Budgets() {
     const {budgetStore: {weeklyBudgets, monthlyBudgets, annualBudgets, selectedBudget}} = useStore()
@@ -34,33 +35,28 @@ export default observer(function Budgets() {
             }}>
             <Add />
         </Fab>
-        <Grid container>
-            <Grid item xs lg xl/>
-            <Grid item xs={12} lg={8} xl={6}>
-                <Stack spacing={2}>
-                    {weeklyBudgets.length > 0 && <>
-                        <Divider>Weekly Budgets</Divider>
-                        <BudgetsList 
-                            budgets={weeklyBudgets}
-                            openDeleteDialog={handleOpenDeleteDialog}/>
-                    </>}
-                    {monthlyBudgets.length > 0 && <>
-                        <Divider>Monthly Budgets</Divider>
-                        <BudgetsList 
-                            budgets={monthlyBudgets} 
-                            openDeleteDialog={handleOpenDeleteDialog}/>
-                    </>}
-                    {annualBudgets.length > 0 && <>
-                        <Divider>Annual Budgets</Divider>
-                        <BudgetsList 
-                            budgets={annualBudgets} 
-                            openDeleteDialog={handleOpenDeleteDialog}/>
-                    </>}
-                </Stack>
-            </Grid>
-            <Grid item xs lg xl/>
-        </Grid>
-        
+        <ResponsiveContainer content={
+            <Stack spacing={2}>
+                {weeklyBudgets.length > 0 && <>
+                    <Divider>Weekly Budgets</Divider>
+                    <BudgetsList 
+                        budgets={weeklyBudgets}
+                        openDeleteDialog={handleOpenDeleteDialog}/>
+                </>}
+                {monthlyBudgets.length > 0 && <>
+                    <Divider>Monthly Budgets</Divider>
+                    <BudgetsList 
+                        budgets={monthlyBudgets} 
+                        openDeleteDialog={handleOpenDeleteDialog}/>
+                </>}
+                {annualBudgets.length > 0 && <>
+                    <Divider>Annual Budgets</Divider>
+                    <BudgetsList 
+                        budgets={annualBudgets} 
+                        openDeleteDialog={handleOpenDeleteDialog}/>
+                </>}
+            </Stack>
+        }/>
     </>
     )
 })
