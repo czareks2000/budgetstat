@@ -1,10 +1,11 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { Budget } from "../models/Budget";
+import { Budget, BudgetFormValues } from "../models/Budget";
 import agent from "../api/agent";
 import { BudgetPeriod } from "../models/enums/BudgetPeriod";
 
 export default class BudgetStore {
     budgetsRegistry = new Map<number, Budget>();
+    selectedBudget: Budget | undefined = undefined;
     budgetsLoaded = false;
 
     constructor() {
@@ -46,6 +47,14 @@ export default class BudgetStore {
         // nastepnie pobrać z bazy budget o danym id
     }
 
+    selectBudget = (budget: Budget) => {
+        this.selectedBudget = budget;
+    }
+    
+    deselectBudget = () => {
+        this.selectedBudget = undefined;
+    }
+
     loadBudgets = async () => {
         try {
             const budgets = await agent.Budgets.list();
@@ -56,4 +65,20 @@ export default class BudgetStore {
         } 
     }
 
+    createBudget = async (budget: BudgetFormValues) => {
+        console.log(budget);
+    }
+
+    deleteBudget = async (budgetId: number) => {
+        try {
+            await agent.Budgets.delete(budgetId);
+
+            runInAction(() => {
+                this.budgetsRegistry.delete(budgetId);
+                this.deselectBudget();
+            });     
+        } catch (error) {
+            console.log(error);
+        } 
+    }
 }
