@@ -13,14 +13,14 @@ export interface Budget {
     categories: Category[];
 }
 
-export interface BudgetCreateFormValues {
+export interface BudgetFormValues {
     name: string;
     categories: CategoryOption[];
     period: BudgetPeriod;
     amount: number | null;
 }
 
-export interface BudgetCreateDto {
+export interface BudgetDto {
     name: string;
     categoryIds: number[];
     period: BudgetPeriod;

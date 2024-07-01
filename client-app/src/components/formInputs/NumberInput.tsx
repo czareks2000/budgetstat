@@ -1,14 +1,26 @@
-import { TextField } from "@mui/material";
+import { InputAdornment, TextField } from "@mui/material";
 import { useField } from "formik";
 
 interface Props {
     name: string;
     placeholder?: string;
     label?: string;
+    adornment?: boolean;
+    adornmentPosition?: 'start' | 'end';
+    adormentText?: string;
 }
 
 export default function NumberInput(props: Props) {
     const [field, meta] = useField(props.name);
+
+    const InputProps = props.adornment ? 
+        (props.adornmentPosition === 'start' ?
+            { startAdornment: <InputAdornment position='start'>{props.adormentText}</InputAdornment> }
+            :
+            { endAdornment: <InputAdornment position='end'>{props.adormentText}</InputAdornment> }
+        )
+    : {};
+
     return (
         <>
             <TextField
@@ -20,6 +32,7 @@ export default function NumberInput(props: Props) {
                 error={meta.touched && Boolean(meta.error)}
                 helperText={meta.touched && meta.error}
                 autoComplete='off'
+                InputProps={InputProps}
             />
         </>
         

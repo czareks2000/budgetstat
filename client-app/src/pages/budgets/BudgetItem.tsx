@@ -4,6 +4,7 @@ import { Box, Card, CardContent, Chip, Divider, Grid, IconButton, LinearProgress
 import { Delete, Edit } from "@mui/icons-material";
 import { useStore } from "../../app/stores/store";
 import { BudgetPeriod } from "../../app/models/enums/BudgetPeriod";
+import { router } from "../../app/router/Routes";
 
 interface Props {
     budget: Budget;
@@ -80,8 +81,13 @@ export default observer(function BudgetItem({budget, openDeleteDialog}: Props) {
     }
 
     const handleDeleteButtonClick = () => {
-        selectBudget(budget);
+        selectBudget(budget.id);
         openDeleteDialog();
+    }
+
+    const handleEditButtonClick = () => {
+        selectBudget(budget.id);
+        router.navigate(`/budget/${budget.id}/edit`);
     }
   
     return (
@@ -113,7 +119,7 @@ export default observer(function BudgetItem({budget, openDeleteDialog}: Props) {
                                         <IconButton 
                                             size="medium"
                                             aria-label="edit"
-                                            onClick={() => {}}>
+                                            onClick={handleEditButtonClick}>
                                             <Edit />
                                         </IconButton>
                                     </Tooltip>

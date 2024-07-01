@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { Budget, BudgetCreateDto } from "../models/Budget";
+import { Budget, BudgetDto } from "../models/Budget";
 import agent from "../api/agent";
 import { BudgetPeriod } from "../models/enums/BudgetPeriod";
 
@@ -47,8 +47,8 @@ export default class BudgetStore {
         // nastepnie pobrać z bazy budget o danym id
     }
 
-    selectBudget = (budget: Budget) => {
-        this.selectedBudget = budget;
+    selectBudget = (budgetId: number) => {
+        this.selectedBudget = this.getBudget(budgetId);
     }
     
     deselectBudget = () => {
@@ -65,7 +65,7 @@ export default class BudgetStore {
         } 
     }
 
-    createBudget = async (budget: BudgetCreateDto) => {
+    createBudget = async (budget: BudgetDto) => {
         try {
             const createdBudget = await agent.Budgets.create(budget);
 
@@ -88,5 +88,18 @@ export default class BudgetStore {
         } catch (error) {
             console.log(error);
         } 
+    }
+
+    updateBudget = async (budgetId: number, budget: BudgetDto) => {
+        try {
+            const updatedBudget = await agent.Budgets.update(budgetId, budget);
+        
+            runInAction(() => {
+                this.setBudget(updatedBudget);
+                this.deselectBudget();
+            });    
+        } catch (error) {
+            console.log(error);
+        }
     }
 }

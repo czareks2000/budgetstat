@@ -5,7 +5,7 @@ import TextInput from "../../formInputs/TextInput";
 import { LoadingButton } from "@mui/lab";
 import { Button, Stack } from "@mui/material";
 import { useStore } from "../../../app/stores/store";
-import { BudgetCreateFormValues, BudgetCreateDto } from "../../../app/models/Budget";
+import { BudgetFormValues, BudgetDto } from "../../../app/models/Budget";
 import { BudgetPeriod } from "../../../app/models/enums/BudgetPeriod";
 import SelectInput from "../../formInputs/SelectInput";
 import { enumToOptions } from "../../../app/models/Option";
@@ -14,12 +14,16 @@ import CategoryGroupedInput from "../../formInputs/CategoryGroupedInput";
 import { CategoryOption } from "../../../app/models/Category";
 
 interface Props {
-    onSubmit: (budget: BudgetCreateDto, formikHelpers: FormikHelpers<BudgetCreateFormValues>) => void;
+    initialValues: BudgetFormValues;
+    onSubmit: (budget: BudgetDto, formikHelpers: FormikHelpers<BudgetFormValues>) => void;
     onCancel: () => void;
+    submitText: string;
 }
 
-export default observer(function CreateBudgetForm({onSubmit, onCancel}: Props) {
-    const {categoryStore: {expenseSubCategories}} = useStore();
+export default observer(function BudgetForm({initialValues, onSubmit, onCancel, submitText}: Props) {
+    const {
+        categoryStore: {expenseSubCategories},
+        currencyStore: {defaultCurrency}} = useStore();
 
     const validationSchema = Yup.object({
         name: Yup.string().required('Name is required'),
@@ -31,20 +35,13 @@ export default observer(function CreateBudgetForm({onSubmit, onCancel}: Props) {
             .positive('The amount must be positive'),
     });
 
-    const initialValues: BudgetCreateFormValues = {
-        name: "",
-        categories: [],
-        period: BudgetPeriod.Month,
-        amount: null,
-    }
-    
     return (
       <>
         <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
             onSubmit={(values, formikHelpers) => {
-                const transformedValues: BudgetCreateDto = {
+                const transformedValues: BudgetDto = {
                     ...values,
                     categoryIds: values.categories.map((category: CategoryOption) => category.id),
                 };
@@ -67,7 +64,8 @@ export default observer(function CreateBudgetForm({onSubmit, onCancel}: Props) {
                     <CategoryGroupedInput label="Categories" name={"categories"} options={expenseSubCategories} />
 
                     {/* Amount */}
-                    <NumberInput label="Amount" name="amount"/>
+                    <NumberInput label="Amount" name="amount" 
+                        adornment adornmentPosition="end" adormentText={defaultCurrency?.symbol}/>
 
                     {/* Buttons */}
                     <Stack direction={'row'} spacing={2}>
@@ -85,7 +83,7 @@ export default observer(function CreateBudgetForm({onSubmit, onCancel}: Props) {
                             fullWidth
                             disabled={!(dirty && isValid) || isSubmitting}
                             loading={isSubmitting}>
-                            Save
+                            {submitText}
                         </LoadingButton>
                     </Stack>
                 </Stack>

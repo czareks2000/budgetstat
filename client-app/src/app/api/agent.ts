@@ -5,7 +5,7 @@ import { ChangePasswordFormValues, User, UserFormValues } from "../models/User";
 import { Account, AccountFormValues } from "../models/Account";
 import { AccountStatus } from "../models/enums/AccountStatus";
 import { Transaction } from "../models/Transaction";
-import { Budget, BudgetCreateDto } from "../models/Budget";
+import { Budget, BudgetDto } from "../models/Budget";
 import { Currency } from "../models/Currency";
 import { MainCategory } from "../models/Category";
 
@@ -100,8 +100,8 @@ const Transactions = {
 
 const Budgets = {
     list: () => requests.get<Budget[]>('/budgets'),
-    create: (budget: BudgetCreateDto) => requests.post<Budget>('/budgets', budget),
-    update: (budgetId: number, budget: Budget) => requests.put<Budget>(`/budgets/${budgetId}`, budget),
+    create: (budget: BudgetDto) => requests.post<Budget>('/budgets', budget),
+    update: (budgetId: number, budget: BudgetDto) => requests.put<Budget>(`/budgets/${budgetId}`, budget),
     delete: (budgetId: number) => requests.del<void>(`/budgets/${budgetId}`)
 }
 

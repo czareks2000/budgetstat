@@ -149,14 +149,10 @@ namespace Application.Services
                 .FirstOrDefaultAsync(b => b.Id == budgetId);
 
             var budgetDto = _mapper.Map<BudgetDto>(budget);
-            var categoryIds = budgetDto.Categories.Select(c => c.Id).ToList();
 
             var user = await _utilities.GetCurrentUserAsync();
 
-            budgetDto.ConvertedAmount = _utilities
-                    .ConvertToDefaultCurrency(user, budget.Currency.Code, budget.Amount);
-
-            budgetDto.CurrentAmount = await CurrentAmount(user, categoryIds, budget.Period);
+            budgetDto = await CalculateAmounts(user, budgetDto);
 
             return Result<BudgetDto>.Success(budgetDto);
         }
