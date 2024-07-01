@@ -1,4 +1,5 @@
-﻿using Domain.Enums;
+﻿using Application.Dto.Category;
+using Domain.Enums;
 
 namespace Application.Dto.Budget
 {

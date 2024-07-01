@@ -1,12 +1,13 @@
 ﻿using Domain;
 
-namespace Application.Dto
+namespace Application.Dto.Category
 {
-    public class CategoryDto
+    public class MainCategoryDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Icon { get; set; }
         public TransactionType Type { get; set; }
+        public List<CategoryDto> SubCategories { get; set; }
     }
 }

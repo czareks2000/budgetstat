@@ -44,6 +44,7 @@ namespace API.Extentions
             services.AddScoped<IBudgetService, BudgetService>();
             services.AddScoped<ITransactionService, TransactionService>();
             services.AddScoped<ICurrencyService, CurrencyService>();
+            services.AddScoped<ICategoryService, CategoryService>();
             
 
             return services;

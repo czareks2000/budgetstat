@@ -1,6 +1,7 @@
 using Application.Dto;
 using Application.Dto.Account;
 using Application.Dto.Budget;
+using Application.Dto.Category;
 using Application.Dto.Transactions;
 using AutoMapper;
 using Domain;
@@ -37,7 +38,12 @@ namespace Application.Core
                 .ForMember(dest => dest.Type, opt => opt
                     .MapFrom(src => src.Category.Type));
 
-            CreateMap<Category, CategoryDto>();
+            CreateMap<Category, CategoryDto>()
+                .ForMember(dest => dest.Icon, opt => opt
+                    .MapFrom(src => src.Icon.Name));
+            CreateMap<Category, MainCategoryDto>()
+                .ForMember(dest => dest.Icon, opt => opt
+                    .MapFrom(src => src.Icon.Name));
 
             CreateMap<TransactionCreateDto, Transaction>();
             CreateMap<TransactionUpdateDto, Transaction>();
