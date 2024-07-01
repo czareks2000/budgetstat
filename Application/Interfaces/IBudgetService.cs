@@ -6,7 +6,7 @@ namespace Application.Interfaces
     public interface IBudgetService
     {   
         // utworzenie budżetu
-        Task<Result<int>> Create(BudgetCreateDto newBudget);
+        Task<Result<BudgetDto>> Create(BudgetCreateDto newBudget);
         // edycja budżetu
         Task<Result<BudgetDto>> Update(int budgetId, BudgetUpdateDto updatedBudget);
         // usunięcie bużetu

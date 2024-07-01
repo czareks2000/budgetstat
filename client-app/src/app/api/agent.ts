@@ -5,8 +5,9 @@ import { ChangePasswordFormValues, User, UserFormValues } from "../models/User";
 import { Account, AccountFormValues } from "../models/Account";
 import { AccountStatus } from "../models/enums/AccountStatus";
 import { Transaction } from "../models/Transaction";
-import { Budget } from "../models/Budget";
+import { Budget, BudgetCreateDto } from "../models/Budget";
 import { Currency } from "../models/Currency";
+import { MainCategory } from "../models/Category";
 
 const sleep = (delay: number) => {
     return new Promise((resolve) => {
@@ -17,7 +18,7 @@ const sleep = (delay: number) => {
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 
 axios.interceptors.response.use(async response => {
-    if (import.meta.env.DEV) await sleep(0);
+    if (import.meta.env.DEV) await sleep(500);
     return response;
 }, (error: AxiosError) => {
     const {data, status, config} = error.response as AxiosResponse;
@@ -99,7 +100,7 @@ const Transactions = {
 
 const Budgets = {
     list: () => requests.get<Budget[]>('/budgets'),
-    create: (budget: Budget) => requests.post<number>('/budgets', budget),
+    create: (budget: BudgetCreateDto) => requests.post<Budget>('/budgets', budget),
     update: (budgetId: number, budget: Budget) => requests.put<Budget>(`/budgets/${budgetId}`, budget),
     delete: (budgetId: number) => requests.del<void>(`/budgets/${budgetId}`)
 }
@@ -108,12 +109,17 @@ const Currencies = {
     list: () => requests.get<Currency[]>('/currencies'),
 }
 
+const Categories = {
+    all: () => requests.get<MainCategory[]>('/categories'),
+}
+
 const agent = {
     Auth,
     Accounts,
     Transactions,
     Budgets,
-    Currencies
+    Currencies,
+    Categories
 }
 
 export default agent;

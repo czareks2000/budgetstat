@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { Budget, BudgetFormValues } from "../models/Budget";
+import { Budget, BudgetCreateDto } from "../models/Budget";
 import agent from "../api/agent";
 import { BudgetPeriod } from "../models/enums/BudgetPeriod";
 
@@ -65,8 +65,16 @@ export default class BudgetStore {
         } 
     }
 
-    createBudget = async (budget: BudgetFormValues) => {
-        console.log(budget);
+    createBudget = async (budget: BudgetCreateDto) => {
+        try {
+            const createdBudget = await agent.Budgets.create(budget);
+
+            runInAction(() => {
+                this.setBudget(createdBudget);
+            });    
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     deleteBudget = async (budgetId: number) => {

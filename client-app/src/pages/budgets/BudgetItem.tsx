@@ -7,10 +7,11 @@ import { BudgetPeriod } from "../../app/models/enums/BudgetPeriod";
 
 interface Props {
     budget: Budget;
+    openDeleteDialog: () => void;
 }
 
-export default observer(function BudgetItem({budget}: Props) {
-    const {currencyStore: {defaultCurrency}} = useStore();
+export default observer(function BudgetItem({budget, openDeleteDialog}: Props) {
+    const {currencyStore: {defaultCurrency}, budgetStore: {selectBudget}} = useStore();
     
     const progressColor = () => {
         const percentage = (budget.currentAmount / budget.convertedAmount) * 100;
@@ -77,6 +78,11 @@ export default observer(function BudgetItem({budget}: Props) {
 
         return `${dd}.${mm}.${yyyy}`;
     }
+
+    const handleDeleteButtonClick = () => {
+        selectBudget(budget);
+        openDeleteDialog();
+    }
   
     return (
         <Card key={budget.id}>
@@ -88,11 +94,13 @@ export default observer(function BudgetItem({budget}: Props) {
                                     {budget.name}
                                 </Typography>
                             </Stack>
-                            <Stack direction={'row'} spacing={1}>
-                                {budget.categories.map((category) =>
-                                    <Chip key={category.id} label={category.name} />
+                            <Grid direction={'row'} container spacing={1}>
+                                {budget.categories.map((category) => 
+                                    <Grid item key={category.id}>
+                                        <Chip key={category.id} label={category.name} />
+                                    </Grid>
                                 )}
-                            </Stack>
+                            </Grid>
                         </Grid>
                         <Grid item xs={'auto'} >
                             <Box mr={-1}>
@@ -117,7 +125,7 @@ export default observer(function BudgetItem({budget}: Props) {
                                         leaveDelay={200}>
                                         <IconButton 
                                             aria-label="delete"
-                                            onClick={() => {}}>
+                                            onClick={handleDeleteButtonClick}>
                                             <Delete />
                                         </IconButton>
                                     </Tooltip>

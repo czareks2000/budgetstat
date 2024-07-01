@@ -44,6 +44,7 @@ export default class CommonStore {
             await store.budgetStore.loadBudgets();
             await store.currencyStore.loadCurrencies();
             store.currencyStore.setDefaultCurrency(currencyId);
+            await store.categoryStore.loadCategories();
         } catch (error) {
             console.log(error);
         } finally {
@@ -56,6 +57,7 @@ export default class CommonStore {
             store.accountStore.clearStore();
             store.currencyStore.clearStore();
             store.budgetStore.clearStore();
+            store.categoryStore.clearStore();
         } catch (error) {
             console.log(error);
         }

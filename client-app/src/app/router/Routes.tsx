@@ -15,6 +15,7 @@ import Settings from "../../pages/settings/Settings";
 import Stats from "../../pages/stats/Stats";
 import Transactions from "../../pages/transactions/Transactions";
 import Login from "../../pages/login/Login";
+import CreateBudget from "../../pages/budgets/CreateBudget";
 
 export const routes: RouteObject[] = [
     {
@@ -24,6 +25,7 @@ export const routes: RouteObject[] = [
             {element: <RequireAuth />, children: [
                 {path: 'accounts', element: <Accounts />},
                 {path: 'budgets', element: <Budgets />},
+                {path: 'budget/create', element: <CreateBudget />},
                 {path: 'calendar', element: <Calendar />},
                 {path: 'home', element: <Home />},
                 {path: 'import-export', element: <ImportExport />},

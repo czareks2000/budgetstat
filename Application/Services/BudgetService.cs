@@ -19,17 +19,17 @@ namespace Application.Services
         private readonly IUtilities _utilities = utilities;
         private readonly IMapper _mapper = mapper;
 
-        public async Task<Result<int>> Create(BudgetCreateDto newBudget)
+        public async Task<Result<BudgetDto>> Create(BudgetCreateDto newBudget)
         {
             var user = await _utilities.GetCurrentUserAsync();
 
-            if (user == null) return Result<int>.Failure("User not found");
+            if (user == null) return Result<BudgetDto>.Failure("User not found");
 
             // sprawdzenie czy podane kategorie są poprawne
             var categories = ValidateCategories(newBudget.CategoryIds);
 
             if (categories == null)
-                return Result<int>.Failure("Invalid categories");
+                return Result<BudgetDto>.Failure("Invalid categories");
 
             var budget = _mapper.Map<Budget>(newBudget);
 
@@ -40,9 +40,21 @@ namespace Application.Services
             _context.Budgets.Add(budget);
 
             if (await _context.SaveChangesAsync() == 0)
-                return Result<int>.Failure("Failed to create budget");
+                return Result<BudgetDto>.Failure("Failed to create budget");
 
-            return Result<int>.Success(budget.Id);
+            var budgetDto = await _context.Budgets
+                    .Include(b => b.Currency)
+                .Include(b => b.Categories)
+                    .ThenInclude(c => c.Category)
+                        .ThenInclude(c => c.Icon)
+                .Where(b => b.User == user)
+                .Where(b => b.Id == budget.Id)
+                .ProjectTo<BudgetDto>(_mapper.ConfigurationProvider)
+                .FirstAsync();
+
+            budgetDto = await CalculateAmounts(user, budgetDto);
+
+            return Result<BudgetDto>.Success(budgetDto);
         }
 
         public async Task<Result<object>> Delete(int budgetId)
@@ -74,17 +86,24 @@ namespace Application.Services
                 .ProjectTo<BudgetDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
 
-            foreach (var budget in budgetsDto)
-            {
-                budget.ConvertedAmount = _utilities
-                    .ConvertToDefaultCurrency(user, budget.Currency.Code, budget.Amount);
-                
-                var categoryIds = budget.Categories.Select(c => c.Id).ToList();
+            var result = new List<BudgetDto>();
 
-                budget.CurrentAmount = await CurrentAmount(user, categoryIds, budget.Period);
-            }
+            foreach (var budget in budgetsDto)
+                result.Add(await CalculateAmounts(user, budget));
                 
             return Result<List<BudgetDto>>.Success(budgetsDto);
+        }
+
+        private async Task<BudgetDto> CalculateAmounts(User user, BudgetDto budget)
+        {
+            budget.ConvertedAmount = _utilities
+                    .ConvertToDefaultCurrency(user, budget.Currency.Code, budget.Amount);
+
+            var categoryIds = budget.Categories.Select(c => c.Id).ToList();
+
+            budget.CurrentAmount = await CurrentAmount(user, categoryIds, budget.Period);
+
+            return budget;
         }
 
         public async Task<Result<BudgetDto>> Update(int budgetId, BudgetUpdateDto updatedBudget)
@@ -181,7 +200,35 @@ namespace Application.Services
                 }
             }
 
-            return mainCategories.Concat(subCategories).ToList();
+            // Grupowanie podkategorii według kategorii nadrzędnej
+            var groupedSubCategories = subCategories.GroupBy(c => c.MainCategoryId);
+
+            foreach (var group in groupedSubCategories)
+            {
+                var mainCategoryId = group.Key;
+
+                if (mainCategoryId.HasValue)
+                {
+                    var mainCategory = _context.Categories
+                        .Include(c => c.SubCategories)
+                        .FirstOrDefault(c => c.Id == mainCategoryId.Value);
+
+                    // Sprawdzenie, czy wszystkie podkategorie są podane
+                    if (mainCategory != null && mainCategory.SubCategories.Count == group.Count())
+                    {
+                        // Usunięcie podkategorii z listy
+                        subCategories.RemoveAll(c => c.MainCategoryId == mainCategoryId);
+
+                        // Dodanie kategorii nadrzędnej do listy
+                        if (!mainCategories.Contains(mainCategory))
+                        {
+                            mainCategories.Add(mainCategory);
+                        }
+                    }
+                }
+            }
+
+            return [.. mainCategories, .. subCategories];
         }
 
         // sprawdza czy podane kategorie są prawidłowe i zwraca listę obiektów tych kategorii
