@@ -155,7 +155,7 @@ namespace Application.Services
 
         public Task<Result<List<TransactionDto>>> CreatePlannedTransactions(int accountId, PlannedTransactionsDto plannedTransactions)
         {
-            // utworzyć transakcje bez aktualizacji sald w danej ilości
+            // utworzyć transakcje bez aktualizacji sald w danej ilości (planned true)
             throw new NotImplementedException();
         }
 
