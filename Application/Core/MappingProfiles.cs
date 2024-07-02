@@ -2,7 +2,8 @@ using Application.Dto;
 using Application.Dto.Account;
 using Application.Dto.Budget;
 using Application.Dto.Category;
-using Application.Dto.Transactions;
+using Application.Dto.Transaction;
+using Application.Dto.Transfer;
 using AutoMapper;
 using Domain;
 
@@ -48,6 +49,9 @@ namespace Application.Core
             CreateMap<TransactionCreateDto, Transaction>();
             CreateMap<TransactionUpdateDto, Transaction>();
             CreateMap<Transaction, TransactionDto>();
+
+            CreateMap<TransferCreateUpdateDto, Transfer>();
+            CreateMap<Transfer, TransferDto>();
         }
     }
 }

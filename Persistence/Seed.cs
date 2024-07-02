@@ -443,11 +443,11 @@ namespace Persistence
             {
                 new Transfer
                 {
-                    Amount = 200.00m,
+                    FromAmount = 200.00m,
+                    ToAmount = 200.00m,
                     Date = DateTime.UtcNow,
                     FromAccount = accounts[0],
-                    ToAccount = accounts[1],
-                    Currency = currencies[2]
+                    ToAccount = accounts[1]
                 }
             };
 

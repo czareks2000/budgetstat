@@ -1,7 +1,7 @@
 ﻿using Application.Core.CustomDataAnnotations;
 using System.ComponentModel.DataAnnotations;
 
-namespace Application.Dto.Transactions
+namespace Application.Dto.Transaction
 {
     public class TransactionCreateDto
     {

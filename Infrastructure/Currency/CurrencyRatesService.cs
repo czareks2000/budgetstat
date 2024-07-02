@@ -13,5 +13,10 @@ namespace Infrastructure.Currency
         {
             return value + 10;
         }
+
+        public decimal CurrentRate(string inputCurrencyCode, string outputCurrencyCode)
+        {
+            return 1;
+        }
     }
 }

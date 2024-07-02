@@ -50,6 +50,15 @@ namespace Infrastructure.Security
                     .Select(t => t.Account.UserId)
                     .FirstOrDefault();
             }
+            else if (RouteContainsKey("transferId"))
+            {
+                var transferId = GetRouteValue("transferId");
+                ownerId = _dataContext.Transfers
+                    .Where(t => t.Id == transferId)
+                    .Include(t => t.ToAccount)
+                    .Select(t => t.ToAccount.UserId)
+                    .FirstOrDefault();
+            }
             // tutaj dodać kolejne sprawdzanie odpowiednich Id
 
             if (ownerId == null) return Task.CompletedTask;

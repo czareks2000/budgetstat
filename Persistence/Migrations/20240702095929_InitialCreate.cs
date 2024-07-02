@@ -383,11 +383,11 @@ namespace Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    FromAmount = table.Column<decimal>(type: "numeric", nullable: false),
+                    ToAmount = table.Column<decimal>(type: "numeric", nullable: false),
                     FromAccountId = table.Column<int>(type: "integer", nullable: false),
                     ToAccountId = table.Column<int>(type: "integer", nullable: false),
-                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CurrencyId = table.Column<int>(type: "integer", nullable: false)
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -402,12 +402,6 @@ namespace Persistence.Migrations
                         name: "FK_Transfers_Accounts_ToAccountId",
                         column: x => x.ToAccountId,
                         principalTable: "Accounts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Transfers_Currencies_CurrencyId",
-                        column: x => x.CurrencyId,
-                        principalTable: "Currencies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -444,7 +438,7 @@ namespace Persistence.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Amount = table.Column<decimal>(type: "numeric", nullable: false),
                     CategoryId = table.Column<int>(type: "integer", nullable: false),
-                    AccountId = table.Column<int>(type: "integer", nullable: false),
+                    AccountId = table.Column<int>(type: "integer", nullable: true),
                     Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
                     Considered = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
@@ -458,8 +452,7 @@ namespace Persistence.Migrations
                         name: "FK_Transactions_Accounts_AccountId",
                         column: x => x.AccountId,
                         principalTable: "Accounts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Transactions_Categories_CategoryId",
                         column: x => x.CategoryId,
@@ -754,11 +747,6 @@ namespace Persistence.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Transactions_CurrencyId",
                 table: "Transactions",
-                column: "CurrencyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Transfers_CurrencyId",
-                table: "Transfers",
                 column: "CurrencyId");
 
             migrationBuilder.CreateIndex(

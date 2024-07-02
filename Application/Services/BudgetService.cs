@@ -94,16 +94,26 @@ namespace Application.Services
             return Result<List<BudgetDto>>.Success(budgetsDto);
         }
 
-        private async Task<BudgetDto> CalculateAmounts(User user, BudgetDto budget)
+        public async Task<Result<BudgetDto>> Get(int budgetId)
         {
-            budget.ConvertedAmount = _utilities
-                    .ConvertToDefaultCurrency(user, budget.Currency.Code, budget.Amount);
+            var user = await _utilities.GetCurrentUserAsync();
 
-            var categoryIds = budget.Categories.Select(c => c.Id).ToList();
+            if (user == null) return Result<BudgetDto>.Failure("User not found");
 
-            budget.CurrentAmount = await CurrentAmount(user, categoryIds, budget.Period);
+            var budget = await _context.Budgets
+                .Include(b => b.Currency)
+                .Include(b => b.Categories)
+                    .ThenInclude(c => c.Category)
+                        .ThenInclude(c => c.Icon)
+                .FirstOrDefaultAsync(b => b.Id == budgetId);
 
-            return budget;
+            if (budget == null) return null;
+
+            var budgetDto = _mapper.Map<BudgetDto>(budget);
+
+            budgetDto = await CalculateAmounts(user, budgetDto);
+
+            return Result<BudgetDto>.Success(budgetDto);
         }
 
         public async Task<Result<BudgetDto>> Update(int budgetId, BudgetUpdateDto updatedBudget)
@@ -155,6 +165,18 @@ namespace Application.Services
             budgetDto = await CalculateAmounts(user, budgetDto);
 
             return Result<BudgetDto>.Success(budgetDto);
+        }
+
+        private async Task<BudgetDto> CalculateAmounts(User user, BudgetDto budget)
+        {
+            budget.ConvertedAmount = _utilities
+                    .ConvertToDefaultCurrency(user, budget.Currency.Code, budget.Amount);
+
+            var categoryIds = budget.Categories.Select(c => c.Id).ToList();
+
+            budget.CurrentAmount = await CurrentAmount(user, categoryIds, budget.Period);
+
+            return budget;
         }
 
         // sprawdzenie czy podane kategorie istnieją

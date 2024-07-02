@@ -1,16 +1,17 @@
 ﻿using Application.Core;
-using Application.Dto.Budget;
-using Application.Dto.Transactions;
+using Application.Dto.Transaction;
+using Application.Dto.Transfer;
 
 namespace Application.Interfaces
 {
     public interface ITransactionService
     {
         // wprowadzenie transakcji
-        Task<Result<int>> Create(int accountId, TransactionCreateDto newTransaction);
+        Task<Result<TransactionDto>> Create(int accountId, TransactionCreateDto newTransaction);
         // zaplanowanie transakcji
+        Task<Result<List<TransactionDto>>> CreatePlannedTransactions(int accountId, PlannedTransactionsDto plannedTransactions);
         // potwierdzenie zaplanowanej transakcji 
-        Task<Result<object>> ConfirmTransaction(int transactionId);
+        Task<Result<TransactionDto>> ConfirmTransaction(int transactionId);
         // edycja transakcji 
         Task<Result<TransactionDto>> Update(int transactionId, TransactionUpdateDto updatedTransaction);
         // zmiana pola considered
@@ -18,10 +19,14 @@ namespace Application.Interfaces
         // usunięcie transakcji
         Task<Result<object>> Delete(int transactionId);
         // przegląd transakcji
+
         // wyświetlenie kalendarza transakcji
 
         // wprowadzanie transferu
+        Task<Result<TransferDto>> Create(TransferCreateUpdateDto newTransfer);
         // usunięcie transferu
+        Task<Result<object>> DeleteTransfer(int transferId);
         // edycja transferu
+        Task<Result<TransferDto>> Update(int transferId, TransferCreateUpdateDto updatedTransfer);
     }
 }

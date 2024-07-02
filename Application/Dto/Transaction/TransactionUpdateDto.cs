@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Application.Dto.Transactions
+namespace Application.Dto.Transaction
 {
     public class TransactionUpdateDto
     {
@@ -12,9 +12,6 @@ namespace Application.Dto.Transactions
         public int AccountId { get; set; }
         [Required]
         public DateTime Date { get; set; }
-        [Required]
         public string Description { get; set; }
-        [Required]
-        public int CurrencyId { get; set; }
     }
 }

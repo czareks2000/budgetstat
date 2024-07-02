@@ -1,4 +1,5 @@
-﻿using Application.Dto.Transactions;
+﻿using Application.Dto.Transaction;
+using Application.Dto.Transfer;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,5 +32,31 @@ namespace API.Controllers
             return HandleResult(await _transactionService.ToggleConsideredFlag(transactionId));
         }
 
+        [Authorize(Policy = "IsOwner")]
+        [HttpPut("transactions/{transactionId}")] //api/transactions/{transactionId}
+        public async Task<IActionResult> UpdateTransaction(int transactionId, TransactionUpdateDto updatedTransaction)
+        {
+            return HandleResult(await _transactionService.Update(transactionId, updatedTransaction));
+        }
+
+        [HttpPost("transfers")] //api/transfers
+        public async Task<IActionResult> CreateTransfer(TransferCreateUpdateDto newTransfer)
+        {
+            return HandleResult(await _transactionService.Create(newTransfer));
+        }
+
+        [Authorize(Policy = "IsOwner")]
+        [HttpDelete("transfers/{transferId}")] //api/transfers/{transferId}
+        public async Task<IActionResult> DeleteTransfer(int transferId)
+        {
+            return HandleResult(await _transactionService.DeleteTransfer(transferId));
+        }
+
+        [Authorize(Policy = "IsOwner")]
+        [HttpPut("transfers/{transferId}")] //api/transfers/{transferId}
+        public async Task<IActionResult> UpdateTransfer(int transferId, TransferCreateUpdateDto updatedTransfer)
+        {
+            return HandleResult(await _transactionService.Update(transferId, updatedTransfer));
+        }
     }
 }

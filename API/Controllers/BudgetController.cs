@@ -16,6 +16,13 @@ namespace API.Controllers
             return HandleResult(await _budgetService.GetAll());
         }
 
+        [Authorize(Policy = "IsOwner")]
+        [HttpGet("budgets/{budgetId}")] //api/budgets/{budgetId}
+        public async Task<IActionResult> Get(int budgetId)
+        {
+            return HandleResult(await _budgetService.Get(budgetId));
+        }
+
         [HttpPost("budgets")] //api/budgets
         public async Task<IActionResult> CreateBudget(BudgetCreateDto newBudget)
         {

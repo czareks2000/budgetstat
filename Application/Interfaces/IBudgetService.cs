@@ -13,5 +13,7 @@ namespace Application.Interfaces
         Task<Result<object>> Delete(int budgetId);
         // pobranie listy budżetów
         Task<Result<List<BudgetDto>>> GetAll();
+        // pobranie pojednyczego bużetu
+        Task<Result<BudgetDto>> Get(int budgetId);
     }
 }

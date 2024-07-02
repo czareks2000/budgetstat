@@ -12,8 +12,8 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240625163246_DeleteBehaviorClientSetNullOnAccountsTable")]
-    partial class DeleteBehaviorClientSetNullOnAccountsTable
+    [Migration("20240702095929_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -459,24 +459,22 @@ namespace Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("numeric");
-
-                    b.Property<int>("CurrencyId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("FromAccountId")
                         .HasColumnType("integer");
 
+                    b.Property<decimal>("FromAmount")
+                        .HasColumnType("numeric");
+
                     b.Property<int>("ToAccountId")
                         .HasColumnType("integer");
 
-                    b.HasKey("Id");
+                    b.Property<decimal>("ToAmount")
+                        .HasColumnType("numeric");
 
-                    b.HasIndex("CurrencyId");
+                    b.HasKey("Id");
 
                     b.HasIndex("FromAccountId");
 
@@ -924,12 +922,6 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Domain.Transfer", b =>
                 {
-                    b.HasOne("Domain.Currency", "Currency")
-                        .WithMany()
-                        .HasForeignKey("CurrencyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Domain.Account", "FromAccount")
                         .WithMany("Sources")
                         .HasForeignKey("FromAccountId")
@@ -941,8 +933,6 @@ namespace Persistence.Migrations
                         .HasForeignKey("ToAccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Currency");
 
                     b.Navigation("FromAccount");
 

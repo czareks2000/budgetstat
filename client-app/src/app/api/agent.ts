@@ -99,6 +99,7 @@ const Transactions = {
 }
 
 const Budgets = {
+    one: (budgetId: number) => requests.get<Budget>(`/budgets/${budgetId}`),
     list: () => requests.get<Budget[]>('/budgets'),
     create: (budget: BudgetDto) => requests.post<Budget>('/budgets', budget),
     update: (budgetId: number, budget: BudgetDto) => requests.put<Budget>(`/budgets/${budgetId}`, budget),
