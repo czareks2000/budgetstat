@@ -58,7 +58,7 @@ namespace Application.Services
 
                 var newTransactionDate = newTransaction.Date.Date;
 
-                if (!UpdateAccountBalances(account.Id, newTransactionDate, isExpense, newTransaction.Amount))
+                if (!_utilities.UpdateAccountBalances(account.Id, newTransactionDate, isExpense, newTransaction.Amount))
                     return Result<TransactionDto>.Failure($"Insufficient funds in the account. Change the date or amount.");
             }
 
@@ -91,7 +91,7 @@ namespace Application.Services
                 int accountId = (int)transaction.AccountId;
                 var wasExpense = transaction.Category.Type == TransactionType.Expense;
 
-                RestoreAccountBalances(accountId, wasExpense, transaction.Amount, transaction.Date);
+                _utilities.RestoreAccountBalances(accountId, wasExpense, transaction.Amount, transaction.Date);
             }
 
             // zapisanie zmian w bazie
@@ -133,7 +133,7 @@ namespace Application.Services
             // aktualizacja salda nowego konta
             var isExpense = newCategory.Type == TransactionType.Expense;
 
-            if (!UpdateAccountBalances(newAccount.Id, transaction.Date, isExpense, updatedTransaction.Amount))
+            if (!_utilities.UpdateAccountBalances(newAccount.Id, transaction.Date, isExpense, updatedTransaction.Amount))
                 return Result<TransactionDto>.Failure("Insufficient funds in the account. Change the date or amount.");
 
             // aktualizacja salda starego konta
@@ -142,7 +142,7 @@ namespace Application.Services
                 int accountId = (int)transaction.AccountId;
                 var wasExpense = transaction.Category.Type == TransactionType.Expense;
 
-                RestoreAccountBalances(accountId, wasExpense, transaction.Amount, transaction.Date);
+                _utilities.RestoreAccountBalances(accountId, wasExpense, transaction.Amount, transaction.Date);
             }
 
             // aktualizacja transakcji
@@ -240,7 +240,7 @@ namespace Application.Services
             var isExpense = transaction.Category.Type == TransactionType.Expense;
             var accountId = transaction.Account.Id;
 
-            if (!UpdateAccountBalances(accountId, transaction.Date, isExpense, transaction.Amount))
+            if (!_utilities.UpdateAccountBalances(accountId, transaction.Date, isExpense, transaction.Amount))
                 return Result<object>.Failure("Insufficient funds in the account. Change the date or amount.");
 
             // zapisanie zmian w bazie
@@ -290,10 +290,10 @@ namespace Application.Services
             _context.Transfers.Add(transfer);
 
             // aktualizacja sald kont
-            if (!UpdateAccountBalances(fromAccount.Id, transfer.Date, true, transfer.FromAmount))
+            if (!_utilities.UpdateAccountBalances(fromAccount.Id, transfer.Date, true, transfer.FromAmount))
                 return Result<TransferDto>.Failure("Insufficient funds in the FromAccount. Change the date or amount.");
 
-            UpdateAccountBalances(toAccount.Id, transfer.Date, false, transfer.ToAmount);
+            _utilities.UpdateAccountBalances(toAccount.Id, transfer.Date, false, transfer.ToAmount);
 
             // zapisanie zmian w bazie
             if (await _context.SaveChangesAsync() == 0)
@@ -317,8 +317,8 @@ namespace Application.Services
             _context.Transfers.Remove(transfer);
 
             // aktualizacja sald kont
-            RestoreAccountBalances(transfer.FromAccountId, true, transfer.FromAmount, transfer.Date);
-            RestoreAccountBalances(transfer.ToAccountId, false, transfer.ToAmount, transfer.Date);
+            _utilities.RestoreAccountBalances(transfer.FromAccountId, true, transfer.FromAmount, transfer.Date);
+            _utilities.RestoreAccountBalances(transfer.ToAccountId, false, transfer.ToAmount, transfer.Date);
 
             // zapisanie zmian w bazie
             if (await _context.SaveChangesAsync() == 0)
@@ -336,8 +336,8 @@ namespace Application.Services
             if (transfer == null) return null;
 
             // przywrócenie sald kont
-            RestoreAccountBalances(transfer.FromAccountId, true, transfer.FromAmount, transfer.Date);
-            RestoreAccountBalances(transfer.ToAccountId, false, transfer.ToAmount, transfer.Date);
+            _utilities.RestoreAccountBalances(transfer.FromAccountId, true, transfer.FromAmount, transfer.Date);
+            _utilities.RestoreAccountBalances(transfer.ToAccountId, false, transfer.ToAmount, transfer.Date);
 
             var user = await _utilities.GetCurrentUserAsync();
 
@@ -364,10 +364,10 @@ namespace Application.Services
             _context.Transfers.Update(transfer);
 
             // aktualizacja sald kont
-            if (!UpdateAccountBalances(fromAccount.Id, transfer.Date, true, transfer.FromAmount))
+            if (!_utilities.UpdateAccountBalances(fromAccount.Id, transfer.Date, true, transfer.FromAmount))
                 return Result<TransferDto>.Failure("Insufficient funds in the FromAccount. Change the date or amount.");
 
-            UpdateAccountBalances(toAccount.Id, transfer.Date, false, transfer.ToAmount);
+            _utilities.UpdateAccountBalances(toAccount.Id, transfer.Date, false, transfer.ToAmount);
 
             // zapisanie zmian w bazie
             if (await _context.SaveChangesAsync() == 0)
@@ -378,86 +378,5 @@ namespace Application.Services
 
             return Result<TransferDto>.Success(transferDto);
         }
-        
-        private bool UpdateAccountBalances(int accountId, DateTime newTransactionDate, bool isExpense, decimal newTransactionAmount)
-        {
-            var account = _context.Accounts
-                .Include(a => a.Currency)
-                .Include(a => a.AccountBalances)
-                .FirstOrDefault(a => a.Id == accountId);
-
-
-            // pobieramy saldo konta z najbliższego dnia przed datą nowej transakcji
-            // (lub jeżeli jest to z tego samego dnia co nowa transakcja)
-            var accountBalance = account.AccountBalances
-                .Where(ab => ab.Date.Date <= newTransactionDate)
-                .OrderByDescending(ab => ab.Date)
-                .FirstOrDefault();
-
-            // jeżeli nie znaleziono salda spełnającego warunki to brane jest najstarsze saldo
-            accountBalance ??= account.AccountBalances.OrderBy(ab => ab.Date).FirstOrDefault();
-
-            // sprawdzenie czy są wstarczające środki na koncie
-            if (isExpense && accountBalance.Balance < newTransactionAmount)
-                return false;
-
-            // Aktualizacja sald
-            foreach (var ab in account.AccountBalances.OrderByDescending(ab => ab.Date))
-            {
-                if (ab.Date.Date < newTransactionDate)
-                    break;
-
-                if (isExpense)
-                    ab.Balance -= newTransactionAmount;
-                else
-                    ab.Balance += newTransactionAmount;
-            }
-
-            // Jeżeli nie istnieje saldo z tą samą datą, tworzymy nowy obiekt AccountBalance
-            if (!account.AccountBalances.Any(ab => ab.Date.Date == newTransactionDate))
-            {
-                // Tworzenie nowego obiektu AccountBalance z datą z newTransaction.Date
-                var newAccountBalance = new AccountBalance
-                {
-                    Date = newTransactionDate,
-                    Account = account,
-                    Currency = account.Currency,
-                };
-
-                if (newTransactionDate < accountBalance.Date.Date)
-                    newAccountBalance.Balance = accountBalance.Balance;
-                else
-                    newAccountBalance.Balance = isExpense
-                        ? accountBalance.Balance - newTransactionAmount
-                        : accountBalance.Balance + newTransactionAmount;
-
-                _context.AccountBalances.Add(newAccountBalance);
-            }
-
-            return true;
-        }
-
-        private void RestoreAccountBalances(int accountId, bool wasExpense, decimal amount, DateTime date)
-        {
-            var accountBalances = _context.AccountBalances
-                .Where(ab => ab.AccountId == accountId)
-                .OrderByDescending(ab => ab.Date).ToList();
-
-            if (accountBalances.Count == 0)
-                return;
-
-            foreach (var ab in accountBalances)
-            {
-                if (ab.Date.Date < date.Date)
-                    break;
-
-                if (wasExpense)
-                    ab.Balance += amount;
-                else
-                    ab.Balance -= amount;
-            }
-        }
-
-        
     }
 }

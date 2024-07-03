@@ -10,7 +10,7 @@ namespace Domain
         public decimal CurrentAmount { get; set; } = 0;
         public decimal FullAmount { get; set; }
         public int CounterpartyId { get; set; }
-        public DateTime LoanDate { get; set; }
+        public DateTime LoanDate { get; set; } = DateTime.UtcNow.Date;
         public DateTime RepaymentDate { get; set; }
         public string Description { get; set; }
         public string UserId { get; set; }
@@ -20,7 +20,7 @@ namespace Domain
         public User User { get; set; }
         public virtual Account Account { get; set; }
         public virtual Counterparty Counterparty { get; set; }
-        public virtual ICollection<Payoff> Payoffs { get; set; }
+        public virtual ICollection<Payoff> Payoffs { get; set; } = new List<Payoff>();
         public virtual Currency Currency { get; set; }
     }
 }

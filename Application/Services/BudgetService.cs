@@ -23,8 +23,6 @@ namespace Application.Services
         {
             var user = await _utilities.GetCurrentUserAsync();
 
-            if (user == null) return Result<BudgetDto>.Failure("User not found");
-
             // sprawdzenie czy podane kategorie są poprawne
             var categories = ValidateCategories(newBudget.CategoryIds);
 
@@ -75,8 +73,6 @@ namespace Application.Services
         {
             var user = await _utilities.GetCurrentUserAsync();
 
-            if (user == null) return Result<List<BudgetDto>>.Failure("User not found");
-
             var budgetsDto = await _context.Budgets
                 .Include(b => b.Currency)
                 .Include(b => b.Categories)
@@ -97,8 +93,6 @@ namespace Application.Services
         public async Task<Result<BudgetDto>> Get(int budgetId)
         {
             var user = await _utilities.GetCurrentUserAsync();
-
-            if (user == null) return Result<BudgetDto>.Failure("User not found");
 
             var budget = await _context.Budgets
                 .Include(b => b.Currency)

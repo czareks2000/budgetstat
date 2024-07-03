@@ -20,9 +20,7 @@ namespace Application.Services
         public async Task<Result<List<MainCategoryDto>>> GetAll()
         {
             var user = await _utilities.GetCurrentUserAsync();
-
-            if (user == null) return Result<List<MainCategoryDto>>.Failure("User not found");
-
+            
             var categoriesDto = await _context.Categories
                 .Where(c => c.User == user)
                 .Where(c => c.IsMain)

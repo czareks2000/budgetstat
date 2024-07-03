@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -57,6 +58,22 @@ namespace Infrastructure.Security
                     .Where(t => t.Id == transferId)
                     .Include(t => t.ToAccount)
                     .Select(t => t.ToAccount.UserId)
+                    .FirstOrDefault();
+            }
+            else if (RouteContainsKey("counterpartyId"))
+            {
+                var counterpartyId = GetRouteValue("counterpartyId");
+                ownerId = _dataContext.Counterparties
+                    .Where(c => c.Id == counterpartyId)
+                    .Select(c => c.UserId)
+                    .FirstOrDefault();
+            }
+            else if (RouteContainsKey("loanId"))
+            {
+                var loanId = GetRouteValue("loanId");
+                ownerId = _dataContext.Loans
+                    .Where(c => c.Id == loanId)
+                    .Select(c => c.UserId)
                     .FirstOrDefault();
             }
             // tutaj dodać kolejne sprawdzanie odpowiednich Id

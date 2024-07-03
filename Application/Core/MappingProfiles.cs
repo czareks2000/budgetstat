@@ -2,6 +2,8 @@ using Application.Dto;
 using Application.Dto.Account;
 using Application.Dto.Budget;
 using Application.Dto.Category;
+using Application.Dto.Counterparty;
+using Application.Dto.Loan;
 using Application.Dto.Transaction;
 using Application.Dto.Transfer;
 using AutoMapper;
@@ -15,7 +17,9 @@ namespace Application.Core
         {
             CreateMap<Account, AccountDto>()
                 .ForMember(dest => dest.Balance, opt => opt
-                    .MapFrom(src => src.AccountBalances.OrderBy(ab => ab.Date).FirstOrDefault().Balance));
+                    .MapFrom(src => src.AccountBalances
+                        .Where(ab => ab.Date.Date <= DateTime.UtcNow.Date)
+                        .OrderByDescending(ab => ab.Date).FirstOrDefault().Balance));
             CreateMap<AccountCreateDto, Account>();
             CreateMap<AccountUpdateDto, Account>();
 
@@ -53,6 +57,13 @@ namespace Application.Core
 
             CreateMap<TransferCreateUpdateDto, Transfer>();
             CreateMap<Transfer, TransferDto>();
+
+            CreateMap<CounterpartyCreateDto, Counterparty>();
+            CreateMap<Counterparty, CounterpartyDto>();
+
+            CreateMap<LoanCreateDto, Loan>();
+            CreateMap<LoanUpdateDto, Loan>();
+            CreateMap<Loan, LoanDto>();
         }
     }
 }

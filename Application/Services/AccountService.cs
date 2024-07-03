@@ -26,8 +26,6 @@ namespace Application.Services
         {
             var user = await _utilities.GetCurrentUserAsync();
 
-            if (user == null) return Result<List<AccountDto>>.Failure("User not found");
-
             var accountsDto = await _context.Accounts
                 .Where(a => a.User == user)
                 .Include(a => a.Currency)
@@ -47,8 +45,6 @@ namespace Application.Services
         public async Task<Result<AccountDto>> Create(AccountCreateDto newAccount)
         {
             var user = await _utilities.GetCurrentUserAsync();
-
-            if (user == null) return Result<AccountDto>.Failure("User not found");
 
             if (_utilities.CheckIfCurrencyExists(newAccount.CurrencyId))
                 return Result<AccountDto>.Failure("Invalid currency id");
