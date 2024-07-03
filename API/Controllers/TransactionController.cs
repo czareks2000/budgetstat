@@ -19,6 +19,20 @@ namespace API.Controllers
         }
 
         [Authorize(Policy = "IsOwner")]
+        [HttpPost("account/{accountId}/transactions/planned")] //api/account/{accountId}/transactions/planned
+        public async Task<IActionResult> CreatePlannedTransaction(int accountId, PlannedTransactionDto plannedTransaction)
+        {
+            return HandleResult(await _transactionService.CreatePlannedTransactions(accountId, plannedTransaction));
+        }
+
+        [Authorize(Policy = "IsOwner")]
+        [HttpPut("transactions/{transactionId}/confirm")] //api/transactions/{transactionId}/confirm
+        public async Task<IActionResult> ConfirmTransaction(int transactionId)
+        {
+            return HandleResult(await _transactionService.ConfirmTransaction(transactionId));
+        }
+
+        [Authorize(Policy = "IsOwner")]
         [HttpDelete("transactions/{transactionId}")] //api/transactions/{transactionId}
         public async Task<IActionResult> DeleteTransaction(int transactionId)
         {

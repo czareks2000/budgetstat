@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Application.Dto.Transaction
 {
-    public class PlannedTransactionsDto
+    public class PlannedTransactionDto
     {
         [Required]
         [GreaterThanZero(ErrorMessage = "The amount must be positive")]
