@@ -1,4 +1,4 @@
-﻿using Domain;
+﻿using Domain.Enums;
 
 namespace Application.Dto.Category
 {

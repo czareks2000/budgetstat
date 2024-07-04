@@ -1,7 +1,7 @@
 ﻿using Application.Dto.Counterparty;
 using Application.Dto.Loan;
 using Application.Interfaces;
-using Domain;
+using Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

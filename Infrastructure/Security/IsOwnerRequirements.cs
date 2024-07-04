@@ -93,6 +93,14 @@ namespace Infrastructure.Security
                     .Select(c => c.UserId)
                     .FirstOrDefault();
             }
+            else if (RouteContainsKey("assetId"))
+            {
+                var assetId = GetRouteValue("assetId");
+                ownerId = _dataContext.Assets
+                    .Where(a => a.Id == assetId)
+                    .Select(c => c.UserId)
+                    .FirstOrDefault();
+            }
             // tutaj dodać kolejne sprawdzanie odpowiednich Id
 
             if (ownerId == null) return Task.CompletedTask;

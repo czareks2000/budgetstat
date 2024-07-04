@@ -3,6 +3,7 @@ using Application.Dto.Transaction;
 using Application.Dto.Transfer;
 using Application.Interfaces;
 using AutoMapper;
+using Domain.Enums;
 using Domain;
 using Microsoft.EntityFrameworkCore;
 using Persistence;

@@ -1,7 +1,7 @@
 ﻿using Application.Core;
 using Application.Dto.Counterparty;
 using Application.Dto.Loan;
-using Domain;
+using Domain.Enums;
 
 namespace Application.Interfaces
 {
