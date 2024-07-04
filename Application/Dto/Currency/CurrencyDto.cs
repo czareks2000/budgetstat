@@ -1,4 +1,4 @@
-﻿namespace Application.Dto
+﻿namespace Application.Dto.Currency
 {
     public class CurrencyDto
     {

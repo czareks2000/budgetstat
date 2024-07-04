@@ -1,5 +1,5 @@
 ﻿using Application.Core;
-using Application.Dto.Currency;
+using Application.Dto.Icon;
 using Application.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -8,20 +8,20 @@ using Persistence;
 
 namespace Application.Services
 {
-    public class CurrencyService(
+    public class IconService(
         DataContext context,
-        IMapper mapper) : ICurrencyService
+        IMapper mapper) : IIconService
     {
         private readonly DataContext _context = context;
         private readonly IMapper _mapper = mapper;
 
-        public async Task<Result<List<CurrencyDto>>> GetAll()
+        public async Task<Result<List<IconDto>>> GetIcons()
         {
-            var currenciesDto = await _context.Currencies
-                .ProjectTo<CurrencyDto>(_mapper.ConfigurationProvider)
+            var icons = await _context.Icons
+                .ProjectTo<IconDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
 
-            return Result<List<CurrencyDto>>.Success(currenciesDto);
+            return Result<List<IconDto>>.Success(icons);
         }
     }
 }

@@ -1,8 +1,9 @@
-using Application.Dto;
 using Application.Dto.Account;
 using Application.Dto.Budget;
 using Application.Dto.Category;
 using Application.Dto.Counterparty;
+using Application.Dto.Currency;
+using Application.Dto.Icon;
 using Application.Dto.Loan;
 using Application.Dto.Transaction;
 using Application.Dto.Transfer;
@@ -67,6 +68,8 @@ namespace Application.Core
 
             CreateMap<PayoffCreateDto, Payoff>();
             CreateMap<Payoff, PayoffDto>();
+
+            CreateMap<Icon, IconDto>();
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Application.Core;
-using Application.Dto;
+using Application.Dto.Currency;
 
 namespace Application.Interfaces
 {

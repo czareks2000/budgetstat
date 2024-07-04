@@ -1,4 +1,5 @@
-﻿using Domain.Enums;
+﻿using Application.Dto.Currency;
+using Domain.Enums;
 
 namespace Application.Dto.Account
 {

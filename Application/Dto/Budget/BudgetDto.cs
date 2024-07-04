@@ -1,4 +1,5 @@
 ﻿using Application.Dto.Category;
+using Application.Dto.Currency;
 using Domain.Enums;
 
 namespace Application.Dto.Budget
