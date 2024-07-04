@@ -1,6 +1,7 @@
 ﻿using Application.Dto.Counterparty;
 using Application.Dto.Loan;
 using Application.Interfaces;
+using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,10 +31,10 @@ namespace API.Controllers
             return HandleResult(await _loanService.GetAllCounterparties());
         }
 
-        [HttpGet("loans")] //api/loans
-        public async Task<IActionResult> GetAllLoans()
+        [HttpGet("loans")] //api/loans?loanStatus=1
+        public async Task<IActionResult> GetLoans([FromQuery] LoanStatus loanStatus = LoanStatus.InProgress)
         {
-            return HandleResult(await _loanService.GetAll());
+            return HandleResult(await _loanService.GetLoans(loanStatus));
         }
 
         [HttpPost("loans")] //api/loans
@@ -46,6 +47,27 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateLoan(int loanId, LoanUpdateDto updatedLoan)
         {
             return HandleResult(await _loanService.UpdateLoan(loanId, updatedLoan));
+        }
+
+        [Authorize(Policy = "IsOwner")]
+        [HttpDelete("loans/{loanId}")] //api/loans/{loanId}
+        public async Task<IActionResult> DeleteLoan(int loanId)
+        {
+            return HandleResult(await _loanService.DeleteLoan(loanId));
+        }
+
+        [Authorize(Policy = "IsOwner")]
+        [HttpPost("loans/{loanId}/payoff")] //api/loans/{loanId}/payoff
+        public async Task<IActionResult> CreatePayoff(int loanId, PayoffCreateDto newPayoff)
+        {
+            return HandleResult(await _loanService.CreatePayoff(loanId, newPayoff));
+        }
+
+        [Authorize(Policy = "IsOwner")]
+        [HttpDelete("payoff/{payoffId}")] //api/payoff/{payoffId}
+        public async Task<IActionResult> DeletePayoff(int payoffId)
+        {
+            return HandleResult(await _loanService.DeletePayoff(payoffId));
         }
     }
 }

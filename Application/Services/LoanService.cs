@@ -111,12 +111,14 @@ namespace Application.Services
             return Result<LoanDto>.Success(loanDto);
         }
 
-        public async Task<Result<List<LoanDto>>> GetAll()
+        public async Task<Result<List<LoanDto>>> GetLoans(LoanStatus loanStatus)
         {
             var user = await _utilities.GetCurrentUserAsync();
 
             var loanDtos = await _context.Loans
+                .Include(l => l.Payoffs)
                 .Where(l => l.UserId == user.Id)
+                .Where(l => l.LoanStatus == loanStatus)
                 .ProjectTo<LoanDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
 
@@ -126,9 +128,14 @@ namespace Application.Services
         public async Task<Result<LoanDto>> UpdateLoan(int loanId, LoanUpdateDto updatedLoan)
         {
             var loan = await _context.Loans
+                .Include(l => l.Payoffs)
                 .FirstOrDefaultAsync(l => l.Id == loanId);
 
             if (loan == null) return null;
+
+            // sprawdzenie czy spłacone
+            if (loan.LoanStatus == LoanStatus.PaidOff)
+                return Result<LoanDto>.Failure("Cant edit loan with PaidOff status.");
 
             // sprawdzenie czy nowa kwota jest nie mniejsza niż currentAmount
             var oldFullAmount = loan.FullAmount;
@@ -167,13 +174,139 @@ namespace Application.Services
         {
             var loan = await _context.Loans
                 .Include(l => l.Payoffs)
+                .Include(l => l.Account)
                 .FirstOrDefaultAsync(l => l.Id == loanId);
 
             if (loan == null) return null;
 
-            // cofnąć saldo kont na podstawie payoffs
-            // cofnąć saldo orginalnego konta na podstawie fullAmount
-            throw new NotImplementedException();
+            if (loan.LoanStatus == LoanStatus.InProgress)
+            {
+                // cofnięcie sald kont na podstawie payoffs
+                var wasExpense = loan.LoanType == LoanType.Debt;
+                foreach (var pay in loan.Payoffs)
+                {
+                    _utilities.RestoreAccountBalances(
+                        (int)pay.AccountId, wasExpense, pay.Amount, pay.Date
+                    );
+                }
+
+                // cofnięcie salda orginalnego konta na podstawie fullAmount
+                wasExpense = loan.LoanType == LoanType.Credit;
+
+                _utilities.RestoreAccountBalances(
+                    (int)loan.AccountId, wasExpense, loan.FullAmount, loan.LoanDate
+                );
+            }            
+
+            // usunięcie Loan
+            _context.Loans.Remove(loan);
+
+            // zapisanie zmian w bazie
+            if (await _context.SaveChangesAsync() == 0)
+                return Result<object>.Failure("Failed to delete loan");
+
+            return Result<object>.Success(null);
+        }
+
+        public async Task<Result<LoanDto>> CreatePayoff(int loanId, PayoffCreateDto newPayoff)
+        {
+            var loan = await _context.Loans
+                .Include(l => l.Payoffs)
+                .FirstOrDefaultAsync(l => l.Id == loanId); 
+
+            if (loan == null) return null;
+
+            // sprawdzenie konta
+            var user = await _utilities.GetCurrentUserAsync();
+
+            var account = await _context.Accounts
+                .Include(a => a.Currency)
+                .FirstOrDefaultAsync(a => a.Id == newPayoff.AccountId && a.UserId == user.Id);
+
+            if (account == null)
+                return Result<LoanDto>
+                    .Failure("Invalid account. It does not exist or does not belong to the user");
+
+            // sprawdzenie czy konto ma tą samą walutę co loan
+            if (account.CurrencyId != loan.CurrencyId)
+                return Result<LoanDto>
+                    .Failure($"The account must have the same currency in which the loan was made " +
+                        $"({account.Currency.Code}).");
+
+            // utworzenie payoff'a
+            var payoff = _mapper.Map<Payoff>(newPayoff);
+            payoff.Loan = loan;
+            payoff.Account = account;
+            payoff.Currency = account.Currency;
+
+            loan.Payoffs.Add(payoff);
+
+            _context.Payoffs.Add(payoff);
+
+            // sprawdzenie czy podano odpowiednią kwotę
+            var missingAmount = loan.FullAmount - loan.CurrentAmount;
+            var newCurrentAmount = loan.CurrentAmount + payoff.Amount;
+
+            if (newCurrentAmount > loan.FullAmount)
+                return Result<LoanDto>
+                    .Failure($"Amount cannot be greater than {missingAmount}");
+
+            // aktualizacja loan
+            if (newCurrentAmount == loan.FullAmount)
+                loan.LoanStatus = LoanStatus.PaidOff;
+
+            loan.CurrentAmount = newCurrentAmount;
+
+            _context.Loans.Update(loan);
+
+            // aktualizacja salda konta
+            var isExpense = loan.LoanType == LoanType.Debt;
+            if(!_utilities.UpdateAccountBalances(account.Id, payoff.Date, isExpense, payoff.Amount))
+                return Result<LoanDto>
+                    .Failure($"Insufficient funds in the account. Change the date or amount.");
+
+            // zapisanie zmian w bazie
+            if (await _context.SaveChangesAsync() == 0)
+                return Result<LoanDto>.Failure("Failed to create payoff");
+
+            // utworzenie obiektu DTO
+            var loanDto = _mapper.Map<LoanDto>(loan);
+
+            return Result<LoanDto>.Success(loanDto);
+        }
+
+        public async Task<Result<LoanDto>> DeletePayoff(int payoffId)
+        {
+            var payoff = await _context.Payoffs
+                .Include(p => p.Loan)
+                .FirstOrDefaultAsync(p => p.Id == payoffId);
+
+            if (payoff == null) return null;
+
+            // aktualiazaja salda
+            var wasExpense = payoff.Loan.LoanType == LoanType.Debt;
+            _utilities.RestoreAccountBalances(
+                payoff.AccountId, wasExpense, payoff.Amount, payoff.Date
+            );
+
+            // aktualizacja loan
+            var loan = payoff.Loan;
+            loan.CurrentAmount -= payoff.Amount;
+            loan.LoanStatus = LoanStatus.InProgress;
+
+            _context.Loans.Update(loan);
+
+            // usunięcie payoff
+            _context.Payoffs.Remove(payoff);
+
+            // zapisanie zmian w bazie
+            if (await _context.SaveChangesAsync() == 0)
+                return Result<LoanDto>.Failure("Failed to create payoff");
+
+            // utworzenie obiektu DTO
+            var loanDto = _mapper.Map<LoanDto>(payoff.Loan);
+
+            return Result<LoanDto>.Success(loanDto);
         }
     }
 }

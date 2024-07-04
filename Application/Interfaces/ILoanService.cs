@@ -1,6 +1,7 @@
 ﻿using Application.Core;
 using Application.Dto.Counterparty;
 using Application.Dto.Loan;
+using Domain;
 
 namespace Application.Interfaces
 {
@@ -15,15 +16,16 @@ namespace Application.Interfaces
 
         // utworzenie zobowiązania
         Task<Result<LoanDto>> CreateLoan(LoanCreateDto newLoan);
-        // przegląd zobowiązań
-        Task<Result<List<LoanDto>>> GetAll();
+        // przegląd zobowiązań (podział na InProgress i PaidOff)
+        Task<Result<List<LoanDto>>> GetLoans(LoanStatus loanStatus);
         // edycja zobowiązania
         Task<Result<LoanDto>> UpdateLoan(int loanId, LoanUpdateDto updatedLoan);
         // usunięcie zobowiązania
         Task<Result<object>> DeleteLoan(int loanId);
 
         // spłata zobowiązania
+        Task<Result<LoanDto>> CreatePayoff(int loanId, PayoffCreateDto newPayoff);
         // usunięcie spłaconej raty
-        // przegląd historii spłaconych rat
+        Task<Result<LoanDto>> DeletePayoff(int payoffId);
     }
 }

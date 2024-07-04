@@ -76,8 +76,17 @@ namespace Infrastructure.Security
                     .Select(c => c.UserId)
                     .FirstOrDefault();
             }
+            else if (RouteContainsKey("payoffId"))
+            {
+                var payoffId = GetRouteValue("payoffId");
+                ownerId = _dataContext.Payoffs
+                    .Where(c => c.Id == payoffId)
+                    .Include(p => p.Account)
+                    .Select(c => c.Account.UserId)
+                    .FirstOrDefault();
+            }
             // tutaj dodać kolejne sprawdzanie odpowiednich Id
-
+            
             if (ownerId == null) return Task.CompletedTask;
 
             if (ownerId == userId) context.Succeed(requirement);

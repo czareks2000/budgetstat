@@ -64,6 +64,9 @@ namespace Application.Core
             CreateMap<LoanCreateDto, Loan>();
             CreateMap<LoanUpdateDto, Loan>();
             CreateMap<Loan, LoanDto>();
+
+            CreateMap<PayoffCreateDto, Payoff>();
+            CreateMap<Payoff, PayoffDto>();
         }
     }
 }
