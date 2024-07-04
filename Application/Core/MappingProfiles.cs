@@ -1,4 +1,5 @@
 using Application.Dto.Account;
+using Application.Dto.Asset;
 using Application.Dto.Budget;
 using Application.Dto.Category;
 using Application.Dto.Counterparty;
@@ -16,13 +17,13 @@ namespace Application.Core
     {
         public MappingProfiles()
         {
+            CreateMap<AccountCreateDto, Account>();
+            CreateMap<AccountUpdateDto, Account>();
             CreateMap<Account, AccountDto>()
                 .ForMember(dest => dest.Balance, opt => opt
                     .MapFrom(src => src.AccountBalances
                         .Where(ab => ab.Date.Date <= DateTime.UtcNow.Date)
                         .OrderByDescending(ab => ab.Date).FirstOrDefault().Balance));
-            CreateMap<AccountCreateDto, Account>();
-            CreateMap<AccountUpdateDto, Account>();
 
             CreateMap<Currency, CurrencyDto>();
 
@@ -44,6 +45,8 @@ namespace Application.Core
                 .ForMember(dest => dest.Type, opt => opt
                     .MapFrom(src => src.Category.Type));
 
+            CreateMap<CategoryCreateDto, Category>();
+            CreateMap<CategoryUpdateDto, Category>();
             CreateMap<Category, CategoryDto>()
                 .ForMember(dest => dest.Icon, opt => opt
                     .MapFrom(src => src.Icon.Name));
@@ -68,6 +71,13 @@ namespace Application.Core
 
             CreateMap<PayoffCreateDto, Payoff>();
             CreateMap<Payoff, PayoffDto>();
+            
+            CreateMap<AssetCreateDto, Asset>();
+            CreateMap<AssetUpdateDto, Asset>();
+            CreateMap<Asset, AssetDto>();
+
+            CreateMap<AssetCategory, AssetCategoryDto>();
+            CreateMap<AssetValue, AssetValueDto>();
 
             CreateMap<Icon, IconDto>();
         }
