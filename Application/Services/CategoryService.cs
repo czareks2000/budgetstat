@@ -30,5 +30,20 @@ namespace Application.Services
 
             return Result<List<MainCategoryDto>>.Success(categoriesDto);
         }
+
+        public Task<Result<MainCategoryDto>> CreateCategory(CategoryCreateDto newCategory)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<object>> DeleteCategory(int categoryId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<MainCategoryDto>> UpdateCategory(CategoryUpdateDto updatedCategory)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

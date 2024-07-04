@@ -85,8 +85,16 @@ namespace Infrastructure.Security
                     .Select(c => c.Account.UserId)
                     .FirstOrDefault();
             }
+            else if (RouteContainsKey("categoryId"))
+            {
+                var categoryId = GetRouteValue("categoryId");
+                ownerId = _dataContext.Categories
+                    .Where(c => c.Id == categoryId)
+                    .Select(c => c.UserId)
+                    .FirstOrDefault();
+            }
             // tutaj dodać kolejne sprawdzanie odpowiednich Id
-            
+
             if (ownerId == null) return Task.CompletedTask;
 
             if (ownerId == userId) context.Succeed(requirement);

@@ -8,7 +8,10 @@ namespace Application.Interfaces
         // przeglądanie kategorii
         Task<Result<List<MainCategoryDto>>> GetAll();
         // dodatnie kategorii
+        Task<Result<MainCategoryDto>> CreateCategory(CategoryCreateDto newCategory);
         // usunięcie kategorii
+        Task<Result<object>> DeleteCategory(int categoryId);
         // edycja kategorii
+        Task<Result<MainCategoryDto>> UpdateCategory(CategoryUpdateDto updatedCategory);
     }
 }
