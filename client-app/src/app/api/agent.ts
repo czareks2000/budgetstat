@@ -4,10 +4,15 @@ import { store } from "../stores/store";
 import { ChangePasswordFormValues, User, UserFormValues } from "../models/User";
 import { Account, AccountFormValues } from "../models/Account";
 import { AccountStatus } from "../models/enums/AccountStatus";
-import { Transaction } from "../models/Transaction";
+import { PlannedTransactionCreateValues, Transaction, TransactionCreateValues, TransactionUpdateValues } from "../models/Transaction";
 import { Budget, BudgetDto } from "../models/Budget";
 import { Currency } from "../models/Currency";
 import { MainCategory } from "../models/Category";
+import { Transfer, TransferCreateUpdateValues } from "../models/Transfer";
+import { Counterparty, CounterpartyCreateValues } from "../models/Counterparty";
+import { Loan, LoanCreateValues, LoanUpdateValues } from "../models/Loan";
+import { PayoffCreateValues } from "../models/Payoff";
+import { LoanStatus } from "../models/enums/LoanStatus";
 
 const sleep = (delay: number) => {
     return new Promise((resolve) => {
@@ -77,41 +82,92 @@ const requests = {
 }
 
 const Auth = {
-    current: () => requests.get<User>('/auth'),
-    login: (user: UserFormValues) => requests.post<User>('/auth/login', user),
-    register: (user: UserFormValues) => requests.post<User>('/auth/register', user),
-    changePassword: (values: ChangePasswordFormValues) => requests.post<void>('/auth/changepassword/', values)
+    current: () => 
+        requests.get<User>('/auth'),
+    login: (user: UserFormValues) => 
+        requests.post<User>('/auth/login', user),
+    register: (user: UserFormValues) => 
+        requests.post<User>('/auth/register', user),
+    changePassword: (values: ChangePasswordFormValues) => 
+        requests.post<void>('/auth/changepassword/', values)
 }
 
 const Accounts = {
-    list: () => requests.get<Account[]>('/accounts'),
-    create: (account: AccountFormValues) => requests.post<Account>('/accounts', account),
-    update: (accountId: number, account: AccountFormValues) => requests.put<Account>(`/accounts/${accountId}`, account),
-    changeStatus: (accountId: number, newStatus: AccountStatus) => requests.patch<void>(`/accounts/${accountId}/${newStatus}`, {}),
+    list: () => 
+        requests.get<Account[]>('/accounts'),
+    create: (account: AccountFormValues) => 
+        requests.post<Account>('/accounts', account),
+    update: (accountId: number, account: AccountFormValues) => 
+        requests.put<Account>(`/accounts/${accountId}`, account),
+    changeStatus: (accountId: number, newStatus: AccountStatus) => 
+        requests.patch<void>(`/accounts/${accountId}/${newStatus}`, {}),
     delete: (accountId: number, deleteRelatedTransactions: boolean) => 
         requests.del<void>(`/accounts/${accountId}?deleteRelatedTransactions=${deleteRelatedTransactions}`)
 }
 
 const Transactions = {
-    create: (accountId: number, transaction: Transaction) => requests.post<number>(`/account/${accountId}/transactions`, transaction),
-    toggleConsidered: (transactionId: number) => requests.patch<boolean>(`/transactions/${transactionId}/considered`, {}),
-    delete: (transactionId: number) => requests.del<void>(`/transactions/${transactionId}`)
+    createTransaction: (accountId: number, transaction: TransactionCreateValues) => 
+        requests.post<Transaction>(`/account/${accountId}/transactions`, transaction),
+    createPlanned: (accountId: number, transaction: PlannedTransactionCreateValues) => 
+        requests.post<Transaction[]>(`/account/${accountId}/transactions/planned`, transaction),
+    createTransfer: (transfer: TransferCreateUpdateValues) =>
+        requests.post<Transfer>("/transfers", transfer),
+    toggleConsidered: (transactionId: number) => 
+        requests.patch<boolean>(`/transactions/${transactionId}/considered`, {}),
+    deleteTransaction: (transactionId: number) => 
+        requests.del<void>(`/transactions/${transactionId}`),
+    deleteTransfer: (transferId: number) =>
+        requests.del<void>(`/transfers/${transferId}`),
+    updateTransaction: (transactionId: number, transaction:TransactionUpdateValues) => 
+        requests.put<Transaction>(`/transactions/${transactionId}`, transaction),
+    updateTransfer: (transferId: number, transfer: TransferCreateUpdateValues) =>
+        requests.put<Transfer>(`/transfers/${transferId}`, transfer),
+    confirmTransaction: (transactionId: number) => 
+        requests.patch<void>(`/transactions/${transactionId}/confirm`, {})
 }
 
 const Budgets = {
-    one: (budgetId: number) => requests.get<Budget>(`/budgets/${budgetId}`),
-    list: () => requests.get<Budget[]>('/budgets'),
-    create: (budget: BudgetDto) => requests.post<Budget>('/budgets', budget),
-    update: (budgetId: number, budget: BudgetDto) => requests.put<Budget>(`/budgets/${budgetId}`, budget),
-    delete: (budgetId: number) => requests.del<void>(`/budgets/${budgetId}`)
+    one: (budgetId: number) => 
+        requests.get<Budget>(`/budgets/${budgetId}`),
+    list: () => 
+        requests.get<Budget[]>('/budgets'),
+    create: (budget: BudgetDto) => 
+        requests.post<Budget>('/budgets', budget),
+    update: (budgetId: number, budget: BudgetDto) => 
+        requests.put<Budget>(`/budgets/${budgetId}`, budget),
+    delete: (budgetId: number) => 
+        requests.del<void>(`/budgets/${budgetId}`)
 }
 
 const Currencies = {
-    list: () => requests.get<Currency[]>('/currencies'),
+    list: () => 
+        requests.get<Currency[]>('/currencies'),
 }
 
 const Categories = {
-    all: () => requests.get<MainCategory[]>('/categories'),
+    all: () => 
+        requests.get<MainCategory[]>('/categories'),
+}
+
+const Loans = {
+    createCounterparty: (counterparty: CounterpartyCreateValues) => 
+        requests.post<Counterparty>('/counterparty', counterparty),
+    createLoan: (loan: LoanCreateValues) =>
+        requests.post<Loan>('/loans', loan),
+    createPayoff: (loanId: number, payoff: PayoffCreateValues) => 
+        requests.post<Loan>(`/loans/${loanId}/payoff`, payoff),
+    updateLoan: (loanId: number, loan: LoanUpdateValues) => 
+        requests.put<Loan>(`/loans/${loanId}`, loan),
+    getCounterparties: () =>
+        requests.get<Counterparty[]>('/counterparties'),
+    getLoans: (loanStatus: LoanStatus) =>
+        requests.get<Loan[]>(`/loans?loanStatus=${loanStatus}`),
+    deleteCounterparty: (counterpartyId: number) => 
+        requests.del<void>(`/counterparty/${counterpartyId}`),
+    deleteLoan: (loanId: number) => 
+        requests.del<void>(`/loans/${loanId}`),
+    deletePayoff: (payoffId: number) => 
+        requests.del<void>(`/payoff/${payoffId}`),
 }
 
 const agent = {
@@ -120,7 +176,8 @@ const agent = {
     Transactions,
     Budgets,
     Currencies,
-    Categories
+    Categories,
+    Loans
 }
 
 export default agent;

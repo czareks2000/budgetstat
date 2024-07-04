@@ -26,7 +26,7 @@ namespace API.Controllers
         }
 
         [Authorize(Policy = "IsOwner")]
-        [HttpPut("transactions/{transactionId}/confirm")] //api/transactions/{transactionId}/confirm
+        [HttpPatch("transactions/{transactionId}/confirm")] //api/transactions/{transactionId}/confirm
         public async Task<IActionResult> ConfirmTransaction(int transactionId)
         {
             return HandleResult(await _transactionService.ConfirmTransaction(transactionId));

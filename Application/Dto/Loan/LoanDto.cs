@@ -17,6 +17,6 @@ namespace Application.Dto.Loan
         public LoanStatus LoanStatus { get; set; }
         public int CurrencyId { get; set; }
 
-        public virtual List<PayoffDto> Payoffs { get; set; }
+        public List<PayoffDto> Payoffs { get; set; }
     }
 }
