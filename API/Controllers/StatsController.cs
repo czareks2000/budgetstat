@@ -3,9 +3,9 @@
 namespace API.Controllers
 {
     public class StatsController(
-        IStatsService statsService) : BaseApiController
+        ISettingsService statsService) : BaseApiController
     {
-        private readonly IStatsService _statsService = statsService;
+        private readonly ISettingsService _statsService = statsService;
 
     }
 }

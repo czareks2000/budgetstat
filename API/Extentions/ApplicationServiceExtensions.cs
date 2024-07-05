@@ -50,6 +50,7 @@ namespace API.Extentions
             services.AddScoped<IIconService, IconService>();
             services.AddScoped<IStatsService, StatsService>();
             services.AddScoped<IFileService, FileService>();
+            services.AddScoped<ISettingsService, SettingsService>();
 
             return services;
         }

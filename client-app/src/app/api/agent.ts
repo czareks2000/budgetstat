@@ -196,6 +196,11 @@ const Assets = {
         requests.post<Asset>(`/assets/${assetId}`, asset),
 }
 
+const Settings = {
+    setDefaultCurrency: (currencyId: number) =>
+        requests.patch<Currency>(`/settings?defaultCurrency=${currencyId}`, {})
+}
+
 const agent = {
     Auth,
     Accounts,
@@ -205,7 +210,8 @@ const agent = {
     Categories,
     Loans,
     Icons,
-    Assets
+    Assets,
+    Settings
 }
 
 export default agent;
