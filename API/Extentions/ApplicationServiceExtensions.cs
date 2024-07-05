@@ -48,6 +48,7 @@ namespace API.Extentions
             services.AddScoped<ILoanService, LoanService>();
             services.AddScoped<IAssetService, AssetService>();
             services.AddScoped<IIconService, IconService>();
+            services.AddScoped<IStatsService, StatsService>();
 
             return services;
         }
