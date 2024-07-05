@@ -6,7 +6,7 @@ import { AppBar, Avatar, Box, Button, Drawer, Link as MuiLink, Stack, Typography
 import IconButton from '@mui/material/IconButton';
 
 import MenuIcon from '@mui/icons-material/Menu';
-import { Balance, BarChart, CalendarMonth, FileUpload, Home, NoteAlt, PendingActions, SwapHoriz, Tune, Wallet } from '@mui/icons-material';
+import { Balance, BarChart, CalendarMonth, FileUpload, Home, Logout, NoteAlt, PendingActions, SwapHoriz, Tune, Wallet } from '@mui/icons-material';
 
 import NavLinks from './NavLinks';
 import { useStore } from '../../stores/store';
@@ -114,9 +114,10 @@ export default observer(function Menu({ appName, drawerWidth = 288 }: Props) {
                 variant='text' 
                 color='inherit' 
                 sx={{ marginLeft: "auto" }}
-                onClick={logout}>
+                onClick={logout}
+                startIcon={<Logout/>}>
                 Logout
-                </Button>
+              </Button>
             </Toolbar>
         </AppBar>
 
