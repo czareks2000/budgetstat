@@ -13,6 +13,8 @@ import { Counterparty, CounterpartyCreateValues } from "../models/Counterparty";
 import { Loan, LoanCreateValues, LoanUpdateValues } from "../models/Loan";
 import { PayoffCreateValues } from "../models/Payoff";
 import { LoanStatus } from "../models/enums/LoanStatus";
+import { Icon } from "../models/Icon";
+import { Asset, AssetCategory, AssetCreateUpdateValues } from "../models/Asset";
 
 const sleep = (delay: number) => {
     return new Promise((resolve) => {
@@ -170,6 +172,24 @@ const Loans = {
         requests.del<void>(`/payoff/${payoffId}`),
 }
 
+const Icons = {
+    list: () => 
+        requests.get<Icon[]>('/icons'),
+}
+
+const Assets = {
+    getAssetCategories: () =>
+        requests.get<AssetCategory[]>('/assets/categories'),
+    list: () =>
+        requests.get<Asset[]>('/assets'),
+    create: (asset: AssetCreateUpdateValues) =>
+        requests.post<Asset>('/assets', asset),
+    delete: (assetId: number) => 
+        requests.del<void>(`/assets/${assetId}`),
+    update: (assetId: number, asset: AssetCreateUpdateValues) =>
+        requests.post<Asset>(`/assets/${assetId}`, asset),
+}
+
 const agent = {
     Auth,
     Accounts,
@@ -177,7 +197,9 @@ const agent = {
     Budgets,
     Currencies,
     Categories,
-    Loans
+    Loans,
+    Icons,
+    Assets
 }
 
 export default agent;

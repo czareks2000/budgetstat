@@ -72,12 +72,16 @@ namespace Application.Core
             CreateMap<PayoffCreateDto, Payoff>();
             CreateMap<Payoff, PayoffDto>();
             
-            CreateMap<AssetCreateDto, Asset>();
-            CreateMap<AssetUpdateDto, Asset>();
-            CreateMap<Asset, AssetDto>();
+            CreateMap<AssetCreateUpdateDto, Asset>();
+            CreateMap<Asset, AssetDto>()
+                .ForMember(dest => dest.AssetValue, opt => opt
+                    .MapFrom(src => src.AssetValues
+                        .OrderByDescending(ab => ab.Date).FirstOrDefault().Value))
+                .ForMember(dest => dest.CurrencyId, opt => opt
+                        .MapFrom(src => src.AssetValues
+                            .OrderByDescending(ab => ab.Date).FirstOrDefault().CurrencyId));
 
             CreateMap<AssetCategory, AssetCategoryDto>();
-            CreateMap<AssetValue, AssetValueDto>();
 
             CreateMap<Icon, IconDto>();
         }

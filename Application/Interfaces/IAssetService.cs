@@ -9,11 +9,11 @@ namespace Application.Interfaces
         Task<Result<List<AssetCategoryDto>>> GetAssetCategories();
 
         // dodanie zasobu
-        Task<Result<AssetDto>> CreateAsset(AssetCreateDto newAsset);
+        Task<Result<AssetDto>> CreateAsset(AssetCreateUpdateDto newAsset);
         // usunięcie zasobu
         Task<Result<object>> DeleteAsset(int assetId);
         // edycja zasobu
-        Task<Result<AssetDto>> UpdateAsset(int assedId, AssetUpdateDto updatedAsset);
+        Task<Result<AssetDto>> UpdateAsset(int assetId, AssetCreateUpdateDto updatedAsset);
         // przegląd zasobów (wartości assetów powinny być przeliczone do defaultowej waluty)
         Task<Result<List<AssetDto>>> GetAssets();
     }

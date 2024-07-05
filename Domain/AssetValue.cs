@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
         public decimal Value { get; set; }
-        public DateTime Date { get; set; } = DateTime.UtcNow.Date;
+        public DateTime Date { get; set; } = DateTime.UtcNow;
         public int CurrencyId { get; set; }
         public int AssetId { get; set; }
 

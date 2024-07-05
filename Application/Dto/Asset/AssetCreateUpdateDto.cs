@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Application.Dto.Asset
 {
-    public class AssetCreateDto
+    public class AssetCreateUpdateDto
     {
         [Required]
         [GreaterThanZero(ErrorMessage = "Invalid category id")]
