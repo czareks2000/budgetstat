@@ -53,6 +53,7 @@ export default class AccountStore {
 
     loadAccounts = async () => {
         try {
+            
             const accounts = await agent.Accounts.list();
             accounts.forEach(account => this.setAccount(account));
             runInAction(() => this.accountsLoaded = true)      
