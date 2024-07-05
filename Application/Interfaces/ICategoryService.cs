@@ -12,6 +12,6 @@ namespace Application.Interfaces
         // usunięcie kategorii
         Task<Result<object>> DeleteCategory(int categoryId);
         // edycja kategorii
-        Task<Result<MainCategoryDto>> UpdateCategory(CategoryUpdateDto updatedCategory);
+        Task<Result<MainCategoryDto>> UpdateCategory(int categoryId, CategoryUpdateDto updatedCategory);
     }
 }

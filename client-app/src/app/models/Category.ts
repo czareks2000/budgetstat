@@ -23,3 +23,16 @@ export interface CategoryOption {
     mainCategoryName: string,
     mainCategoryId: number
 }
+
+export interface CategoryCreateValues {
+    name: string;
+    iconId: number;
+    type: TransactionType;
+    isMain: boolean;
+    mainCategoryId?: number;
+}   
+
+export interface CategoryUpdateValues {
+    name: string;
+    iconId: number;
+}

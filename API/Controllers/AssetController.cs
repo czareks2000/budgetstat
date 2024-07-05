@@ -1,5 +1,6 @@
 ﻿using Application.Dto.Asset;
 using Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -27,12 +28,14 @@ namespace API.Controllers
             return HandleResult(await _assetService.CreateAsset(newAsset));
         }
 
+        [Authorize(Policy = "IsOwner")]
         [HttpDelete("assets/{assetId}")] //api/assets/{assetId}
         public async Task<IActionResult> GetAssets(int assetId)
         {
             return HandleResult(await _assetService.DeleteAsset(assetId));
         }
 
+        [Authorize(Policy = "IsOwner")]
         [HttpPut("assets/{assetId}")] //api/assets/{assetId}
         public async Task<IActionResult> UpdateAsset(int assetId, AssetCreateUpdateDto updatedAsset)
         {

@@ -7,7 +7,7 @@ import { AccountStatus } from "../models/enums/AccountStatus";
 import { PlannedTransactionCreateValues, Transaction, TransactionCreateValues, TransactionUpdateValues } from "../models/Transaction";
 import { Budget, BudgetDto } from "../models/Budget";
 import { Currency } from "../models/Currency";
-import { MainCategory } from "../models/Category";
+import { CategoryCreateValues, CategoryUpdateValues, MainCategory } from "../models/Category";
 import { Transfer, TransferCreateUpdateValues } from "../models/Transfer";
 import { Counterparty, CounterpartyCreateValues } from "../models/Counterparty";
 import { Loan, LoanCreateValues, LoanUpdateValues } from "../models/Loan";
@@ -149,6 +149,12 @@ const Currencies = {
 const Categories = {
     all: () => 
         requests.get<MainCategory[]>('/categories'),
+    create: (category: CategoryCreateValues) => 
+        requests.post<MainCategory>('/categories', category),
+    update: (categoryId: number, category: CategoryUpdateValues) => 
+        requests.put<MainCategory>(`/categories/${categoryId}`, category),
+    delete: (categoryId: number) => 
+        requests.del<void>(`/categories/${categoryId}`)
 }
 
 const Loans = {
