@@ -474,7 +474,7 @@ namespace Persistence.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     LoanType = table.Column<int>(type: "integer", nullable: false),
-                    AccountId = table.Column<int>(type: "integer", nullable: false),
+                    AccountId = table.Column<int>(type: "integer", nullable: true),
                     CurrentAmount = table.Column<decimal>(type: "numeric", nullable: false, defaultValue: 0m),
                     FullAmount = table.Column<decimal>(type: "numeric", nullable: false),
                     CounterpartyId = table.Column<int>(type: "integer", nullable: false),
@@ -492,8 +492,7 @@ namespace Persistence.Migrations
                         name: "FK_Loans_Accounts_AccountId",
                         column: x => x.AccountId,
                         principalTable: "Accounts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Loans_AspNetUsers_UserId",
                         column: x => x.UserId,

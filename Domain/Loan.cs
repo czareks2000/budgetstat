@@ -6,7 +6,7 @@ namespace Domain
     {
         public int Id { get; set; }
         public LoanType LoanType { get; set; }
-        public int AccountId { get; set; }
+        public int? AccountId { get; set; }
         public decimal CurrentAmount { get; set; } = 0;
         public decimal FullAmount { get; set; }
         public int CounterpartyId { get; set; }

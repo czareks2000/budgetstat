@@ -129,9 +129,14 @@ namespace Application.Services
         {
             var loan = await _context.Loans
                 .Include(l => l.Payoffs)
+                .Include(l => l.Account)
                 .FirstOrDefaultAsync(l => l.Id == loanId);
 
             if (loan == null) return null;
+
+            // sprawdzenie czy ma przypisane konto
+            if (loan.Account == null)
+                return Result<LoanDto>.Failure("You can't edit a loan with no account assigned to it");
 
             // sprawdzenie czy spłacone
             if (loan.LoanStatus == LoanStatus.PaidOff)
@@ -149,7 +154,7 @@ namespace Application.Services
             // aktualizacja sald
             var isExpense = loan.LoanType == LoanType.Credit;
             var difference = newFullAmount - oldFullAmount;
-            if (!_utilities.UpdateAccountBalances(loan.AccountId, loan.LoanDate, isExpense, difference))
+            if (!_utilities.UpdateAccountBalances((int)loan.AccountId, loan.LoanDate, isExpense, difference))
                 return Result<LoanDto>.Failure($"Insufficient funds in the account.");
 
             // aktualizacja zobowiązania
@@ -210,6 +215,14 @@ namespace Application.Services
 
         public async Task<Result<LoanDto>> CreatePayoff(int loanId, PayoffCreateDto newPayoff)
         {
+            // sprawdzenie czy data nie jest w przyszłości
+            var currentDate = DateTime.UtcNow.Date;
+
+            if(newPayoff.Date.Date > currentDate)
+                return Result<LoanDto>
+                    .Failure("Date cannot be in the future");
+
+            // sprawdzenie czy istnieje
             var loan = await _context.Loans
                 .Include(l => l.Payoffs)
                 .FirstOrDefaultAsync(l => l.Id == loanId); 

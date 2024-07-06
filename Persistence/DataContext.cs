@@ -69,6 +69,11 @@ namespace Persistence
                 .WithOne(t => t.Account)
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
+            builder.Entity<Account>()
+                .HasMany(a => a.Loans)
+                .WithOne(t => t.Account)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
             //default values
 
             builder.Entity<Transaction>()
