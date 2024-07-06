@@ -12,6 +12,9 @@ import { useStore } from '../stores/store';
 import Loading from '../../components/Loading';
 import { theme } from './Theme';
 
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+
 const drawerWidth = 288;
 
 export default observer(function App() {
@@ -30,6 +33,7 @@ export default observer(function App() {
 
   return (
     <ThemeProvider theme={theme}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
         <CssBaseline />
         {location.pathname === '/' 
         ? 
@@ -48,6 +52,7 @@ export default observer(function App() {
 
           </Box>
         )}
+      </LocalizationProvider>
     </ThemeProvider>
   );
 })

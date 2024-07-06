@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { Payoff } from "./Payoff";
 import { LoanStatus } from "./enums/LoanStatus";
 import { LoanType } from "./enums/LoanType";
@@ -19,10 +20,10 @@ export interface Loan {
 
 export interface LoanCreateValues {
     loanType: LoanType;
-    accountId: number;
-    fullAmount: number;
-    counterpartyId: number;
-    repaymentDate: Date;
+    accountId: number | string;
+    fullAmount: number | null;
+    counterpartyId: number| string;
+    repaymentDate: dayjs.Dayjs | Date;
     description?: string;
 }
 

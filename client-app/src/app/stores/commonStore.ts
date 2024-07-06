@@ -1,6 +1,7 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 import { ServerError } from "../models/ServerError"
 import { store } from "./store";
+import { LoanStatus } from "../models/enums/LoanStatus";
 
 export default class CommonStore {
     serverError: ServerError | null = null;
@@ -45,6 +46,8 @@ export default class CommonStore {
             await store.currencyStore.loadCurrencies();
             store.currencyStore.setDefaultCurrency(currencyId);
             await store.categoryStore.loadCategories();
+            await store.loanStore.loadLoans(LoanStatus.InProgress);
+            await store.loanStore.loadCounterparties();
         } catch (error) {
             console.log(error);
         } finally {
@@ -58,6 +61,7 @@ export default class CommonStore {
             store.currencyStore.clearStore();
             store.budgetStore.clearStore();
             store.categoryStore.clearStore();
+            store.loanStore.clearStore();
         } catch (error) {
             console.log(error);
         }

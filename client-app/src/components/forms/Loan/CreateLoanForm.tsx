@@ -1,0 +1,129 @@
+import { observer } from "mobx-react-lite";
+import { LoanCreateValues } from "../../../app/models/Loan";
+import { Button, Stack } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+import { Form, Formik, FormikHelpers } from "formik";
+import { LoanType } from "../../../app/models/enums/LoanType";
+import * as Yup from "yup";
+import NumberInput from "../../formInputs/NumberInput";
+import { useStore } from "../../../app/stores/store";
+import { enumToOptions } from "../../../app/models/Option";
+import SelectInput from "../../formInputs/SelectInput";
+
+import dayjs from "dayjs";
+import MyDatePicker from "../../formInputs/MyDatePicker";
+import TextInput from "../../formInputs/TextInput";
+
+interface Props {
+    onSubmit: () => void;
+    onCancel: () => void;
+}
+
+export default observer(function CrateLoanForm({onSubmit, onCancel}: Props) {
+    const {
+        accountStore: {accountsAsOptions, getAccountCurrencySymbol},
+        loanStore: {createLoan, counterpartiesAsOptions}} = useStore();
+    
+    const validationSchema = Yup.object({
+        loanType: Yup.number().required('Choose loan type'),
+        accountId: Yup.string().required('Choose account'),
+        fullAmount: Yup.number()
+            .required('Amount is required')
+            .positive('The amount must be positive'),
+        counterpartyId: Yup.string().required('Choose counterparty'),
+        repaymentDate: Yup.date()
+            .required('Repayment date is required')
+            .min(dayjs().startOf('day').toDate(), 'Repayment date cannot be in the past'),
+        description: Yup.string().notRequired()
+    });
+
+    const initialValues: LoanCreateValues = {
+        loanType: LoanType.Credit,
+        accountId: "",
+        fullAmount: null,
+        counterpartyId: "",
+        repaymentDate: dayjs().add(7, 'days'),
+        description: ""
+    }
+
+    const handleCreateLoanFormSubmit = (loan: LoanCreateValues, helpers: FormikHelpers<LoanCreateValues>) => {
+        const transformedValues: LoanCreateValues = {
+            ...loan,
+            repaymentDate: dayjs(loan.repaymentDate).toDate()
+        }
+        
+        createLoan(transformedValues).then(() => {
+            onSubmit();
+        }).catch((err) => {
+            helpers.setErrors({
+                fullAmount: err
+            });
+            helpers.setSubmitting(false);
+        });
+    }
+    
+    return (
+        <>
+            <Formik
+                initialValues={initialValues}
+                validationSchema={validationSchema}
+                onSubmit={handleCreateLoanFormSubmit}>
+            {({ isValid, dirty, isSubmitting, values }) => (
+                <Form>
+                    <Stack spacing={2}>
+                        {/* LoanType */}
+                        <SelectInput
+                            label="Loan Type" name={"loanType"}
+                            options={enumToOptions(LoanType)} />
+
+                        {/* Account */}
+                        <SelectInput
+                            label="Account" name={"accountId"}
+                            options={accountsAsOptions} />
+
+                        {/* Amount currency zmienic na account currency*/}
+                        <NumberInput label="Amount" name={"fullAmount"}
+                            adornment adornmentPosition="end" 
+                            adormentText={getAccountCurrencySymbol(values.accountId)} />
+
+                        {/* Counterparty albo tutaj freeSolo */}
+                        {/* albo oddzielny formularz podtym do tworzenia couterparty */}
+                        <SelectInput
+                            label="Counterparty" name={"counterpartyId"}
+                            options={counterpartiesAsOptions} />
+                            
+                        {/* Repayment Date */}
+                        <MyDatePicker 
+                            defaultValue={dayjs().add(7, 'days')}
+                            label="Repayment Date" 
+                            name={"repaymentDate"}/>
+
+                        {/* Description */}
+                        <TextInput label="Description" name="description" />
+
+                        {/* Buttons */}
+                        <Stack direction={'row'} spacing={2}>
+                            <Button
+                                color="error"
+                                variant="contained"
+                                fullWidth
+                                onClick={onCancel}>
+                                Cancel
+                            </Button>
+                            <LoadingButton
+                                color="success"
+                                variant="contained"
+                                type="submit"
+                                fullWidth
+                                disabled={!(dirty && isValid) || isSubmitting}
+                                loading={isSubmitting}>
+                                Create
+                            </LoadingButton>
+                        </Stack>
+                    </Stack>
+                </Form>
+            )}
+            </Formik>
+        </>
+    )
+})

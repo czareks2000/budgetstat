@@ -6,6 +6,8 @@ namespace Application.Interfaces
 {
     public interface IAccountService
     {
+        // pobranie pojedynczego konta
+        Task<Result<AccountDto>> Get(int accountId);
         // pobranie listy kont
         Task<Result<List<AccountDto>>> GetAll();
         // utworzenie konta

@@ -2,6 +2,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 import { Account, AccountFormValues } from "../models/Account";
 import agent from "../api/agent";
 import { AccountStatus } from "../models/enums/AccountStatus";
+import { Option } from "../models/Option";
 
 export default class AccountStore {
     accountsRegistry = new Map<number, Account>();
@@ -19,6 +20,13 @@ export default class AccountStore {
 
     get accounts() {
         return Array.from(this.accountsRegistry.values());
+    }
+
+    get accountsAsOptions(): Option[] {
+        return this.accounts.map(account =>({
+            value: account.id,
+            text: `${account.name} (${account.currency.code})`
+        }));
     }
 
     get totalBalance() {
@@ -51,12 +59,24 @@ export default class AccountStore {
         this.selectedAccount = undefined;
     }
 
+    getAccountCurrencySymbol = (accountId: number | string) => {
+        return this.getAccount(parseInt(accountId as string))?.currency.symbol;
+    }
+
     loadAccounts = async () => {
         try {
-            
             const accounts = await agent.Accounts.list();
             accounts.forEach(account => this.setAccount(account));
             runInAction(() => this.accountsLoaded = true)      
+        } catch (error) {
+            console.log(error);
+        } 
+    }
+
+    loadAccount = async (accountId: number) => {
+        try {
+            const account = await agent.Accounts.one(accountId);
+            runInAction(() => this.setAccount(account));     
         } catch (error) {
             console.log(error);
         } 

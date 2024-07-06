@@ -26,7 +26,9 @@ export default function NumberInput(props: Props) {
             <TextField
                 id={field.name}
                 {...field} 
-                {...props}
+                name={props.name}
+                placeholder={props.placeholder}
+                label={props.label}
                 type="number"
                 value={field.value === null ? '' : field.value}
                 error={meta.touched && Boolean(meta.error)}

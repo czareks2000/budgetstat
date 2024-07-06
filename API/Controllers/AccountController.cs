@@ -11,6 +11,13 @@ namespace API.Controllers
     {
         private readonly IAccountService _accountService = accountService;
 
+        [Authorize(Policy = "IsOwner")]
+        [HttpGet("accounts/{accountId}")] //api/accounts
+        public async Task<IActionResult> GetAccounts(int accountId)
+        {
+            return HandleResult(await _accountService.Get(accountId));
+        }
+
         [HttpGet("accounts")] //api/accounts
         public async Task<IActionResult> GetAccounts()
         {

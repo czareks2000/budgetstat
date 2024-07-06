@@ -99,7 +99,7 @@ namespace Application.Services
             // zaktualizowanie sald konta
             var isExpense = loan.LoanType == LoanType.Credit;
             if(!_utilities.UpdateAccountBalances(account.Id, loan.LoanDate, isExpense, loan.FullAmount))
-                return Result<LoanDto>.Failure($"Insufficient funds in the account. Change the date or amount.");
+                return Result<LoanDto>.Failure($"Insufficient funds in the account.");
 
             // zapisanie zmian w bazie
             if (await _context.SaveChangesAsync() == 0)

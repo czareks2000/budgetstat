@@ -19,6 +19,7 @@ import CreateBudget from "../../pages/budgets/CreateBudget";
 import EditBudget from "../../pages/budgets/EditBudget";
 import CreateAccount from "../../pages/accounts/CreateAccount";
 import EditAccount from "../../pages/accounts/EditAccount";
+import CreateLoan from "../../pages/loans/CreateLoan";
 
 export const routes: RouteObject[] = [
     {
@@ -36,6 +37,7 @@ export const routes: RouteObject[] = [
                 {path: 'home', element: <Home />},
                 {path: 'import-export', element: <ImportExport />},
                 {path: 'loans', element: <Loans />},
+                {path: 'loan/create', element: <CreateLoan />},
                 {path: 'net-worth', element: <NetWorth />},
                 {path: 'preferences', element: <Preferences />},
                 {path: 'settings', element: <Settings />},

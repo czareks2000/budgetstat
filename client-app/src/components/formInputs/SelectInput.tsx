@@ -4,7 +4,6 @@ import { Option } from "../../app/models/Option";
 
 interface Props {
     name: string;
-    placeholder?: string;
     label?: string;
     options: Option[];
 }

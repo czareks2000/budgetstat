@@ -95,6 +95,8 @@ const Auth = {
 }
 
 const Accounts = {
+    one: (accountId: number) => 
+        requests.get<Account>(`/accounts/${accountId}`),
     list: () => 
         requests.get<Account[]>('/accounts'),
     create: (account: AccountFormValues) => 

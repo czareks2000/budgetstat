@@ -19,6 +19,26 @@ namespace Application.Services
         private readonly IUtilities _utilities = utilities;
         private readonly IMapper _mapper = mapper;
 
+        public async Task<Result<AccountDto>> Get(int accountId)
+        {
+            var user = await _utilities.GetCurrentUserAsync();
+
+            var accountDto = await _context.Accounts
+                .Where(a => a.User == user)
+                .Include(a => a.Currency)
+                .Include(a => a.AccountBalances)
+                .ProjectTo<AccountDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(a => a.Id == accountId);
+
+            if (accountDto == null) return null;
+
+            // przeliczenie salda do defaultowej waluty użytkownika
+            accountDto.ConvertedBalance = _utilities
+                .ConvertToDefaultCurrency(user, accountDto.Currency.Code, accountDto.Balance);
+
+            return Result<AccountDto>.Success(accountDto);
+        }
+
         // funkcja zwraca liste wszytkich kont użytkownika 
         public async Task<Result<List<AccountDto>>> GetAll()
         {
