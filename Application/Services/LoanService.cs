@@ -144,13 +144,13 @@ namespace Application.Services
 
             if (newFullAmount < currentAmount)
                 return Result<LoanDto>
-                    .Failure("The new amount of the loan cannot be less than the amount already repaid.");
+                    .Failure($"The new amount of the loan cannot be less than the amount already repaid ({currentAmount}).");
 
             // aktualizacja sald
             var isExpense = loan.LoanType == LoanType.Credit;
             var difference = newFullAmount - oldFullAmount;
             if (!_utilities.UpdateAccountBalances(loan.AccountId, loan.LoanDate, isExpense, difference))
-                return Result<LoanDto>.Failure($"Insufficient funds in the account. Change the date or amount.");
+                return Result<LoanDto>.Failure($"Insufficient funds in the account.");
 
             // aktualizacja zobowiązania
             _mapper.Map(updatedLoan, loan);

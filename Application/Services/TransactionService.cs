@@ -20,7 +20,7 @@ namespace Application.Services
         private readonly IMapper _mapper = mapper;
 
         public async Task<Result<TransactionDto>> Create(int accountId, TransactionCreateDto newTransaction)
-        {
+        {   
             // sprawdzenie czy konto istnieje
             var account = await _context.Accounts
                 .Include(a => a.Currency)
@@ -30,7 +30,10 @@ namespace Application.Services
             if (account == null) return null;
 
             // sprawdzenie czy kategoria istnieje i czy nie jest głowną kategorią
+            var user = await _utilities.GetCurrentUserAsync();
+
             var category = _context.Categories
+                .Where(c => c.UserId == user.Id)
                 .FirstOrDefault(category => category.Id == newTransaction.CategoryId);
 
             if (category == null || category.IsMain) 
@@ -112,17 +115,13 @@ namespace Application.Services
             if (transaction == null) return null;
 
             // walidacja kategorii
+            var user = await _utilities.GetCurrentUserAsync();
             var newCategory = await _context.Categories
+                .Where(c => c.UserId == user.Id)
                 .FirstOrDefaultAsync(c => c.Id == updatedTransaction.CategoryId);
 
             if (newCategory == null || newCategory.IsMain)
                 return Result<TransactionDto>.Failure("Invalid category. It does not exist or is the main category");   
-
-            // walidacja usera
-            var user = await _utilities.GetCurrentUserAsync();
-
-            if (user == null)
-                return Result<TransactionDto>.Failure("User not found");
 
             // walidacja konta
             var newAccount = await _context.Accounts
@@ -172,7 +171,9 @@ namespace Application.Services
             if (account == null) return null;
 
             // sprawdzenie czy kategoria istnieje i czy nie jest głowną kategorią
+            var user = await _utilities.GetCurrentUserAsync();
             var category = _context.Categories
+                .Where(c => c.UserId == user.Id)
                 .FirstOrDefault(category => category.Id == plannedTransaction.CategoryId);
 
             if (category == null || category.IsMain)

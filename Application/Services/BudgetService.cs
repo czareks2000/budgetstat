@@ -173,10 +173,11 @@ namespace Application.Services
             return budget;
         }
 
-        // sprawdzenie czy podane kategorie istnieją
-        private bool CategoriesExist(List<int> categoryIds)
+        // sprawdzenie czy podane kategorie istnieją i należą do usera
+        private bool CategoriesExistAndBelongToUser(List<int> categoryIds)
         {
-            return categoryIds.All(id => _context.Categories.Any(c => c.Id == id));
+            var user = _utilities.GetCurrentUserAsync().Result;
+            return categoryIds.All(id => _context.Categories.Where(c => c.UserId == user.Id).Any(c => c.Id == id));
         }
 
         // sprawdzenie czy kategorie mają typ expense
@@ -246,8 +247,8 @@ namespace Application.Services
         // sprawdza czy podane kategorie są prawidłowe i zwraca listę obiektów tych kategorii
         private List<Category> ValidateCategories(List<int> categoryIds)
         {
-            //sprawdzenie czy podane kategorie istnieją
-            if (!CategoriesExist(categoryIds))
+            //sprawdzenie czy podane kategorie istnieją i należą do usera
+            if (!CategoriesExistAndBelongToUser(categoryIds))
                 return null;
 
             //sprawdzenie czy kategorie mają typ expense
