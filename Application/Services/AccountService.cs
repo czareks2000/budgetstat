@@ -143,9 +143,13 @@ namespace Application.Services
         {
             var account = await _context.Accounts
                 .Include(a => a.Transactions)
+                .Include(a => a.Loans)
                 .FirstOrDefaultAsync(c => c.Id == accountId);
 
             if (account == null) return null;
+
+            if (account.Loans.Where(l => l.LoanStatus == LoanStatus.InProgress).Any())
+                return Result<object>.Failure("The account cannot be deleted. Loans with InProgress status are assigned to it.");
 
             if (deleteRelatedTransactions)
             {
