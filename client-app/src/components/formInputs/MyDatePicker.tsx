@@ -20,8 +20,8 @@ export default function MyDatePicker(props: Props) {
                 format={"DD/MM/YYYY"}
                 slotProps={{
                     textField: {
-                        error: meta.touched && Boolean(meta.error),
-                        helperText: meta.touched && meta.error,
+                        error: Boolean(meta.error),
+                        helperText: meta.error,
                         name: props.name,
                         onBlur: () => helpers.setTouched(true, true),
                     }
