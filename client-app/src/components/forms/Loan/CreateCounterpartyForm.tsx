@@ -1,18 +1,16 @@
 import { observer } from "mobx-react-lite";
 import { Stack } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
-import { Form, Formik } from "formik";
+import { Form, Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
 
 import { CounterpartyCreateValues } from "../../../app/models/Counterparty";
 import TextInput from "../../formInputs/TextInput";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-    onSubmit: (loan: CounterpartyCreateValues) => void;
-}
+export default observer(function CrateCounterpartyForm() {
+    const {loanStore: {createCounterparty}} = useStore();
 
-export default observer(function CrateCounterpartyForm({onSubmit}: Props) {
-    
     const validationSchema = Yup.object({
         name: Yup.string().required('Name is required'),
     });
@@ -20,13 +18,21 @@ export default observer(function CrateCounterpartyForm({onSubmit}: Props) {
     const initialValues: CounterpartyCreateValues = {
         name: ""
     }
+
+    const handleSubmit = (cp: CounterpartyCreateValues, 
+        helpers: FormikHelpers<CounterpartyCreateValues>) => 
+    {
+        createCounterparty(cp).then(() =>{
+            helpers.resetForm();
+        })
+    }
     
     return (
         <>
             <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}
-                onSubmit={(values) => {onSubmit(values)}}>
+                onSubmit={(values, helpers) => {handleSubmit(values, helpers)}}>
             {({ isValid, dirty, isSubmitting }) => (
                 <Form>
                     <Stack spacing={2}>

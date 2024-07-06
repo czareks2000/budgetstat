@@ -3,7 +3,6 @@ import ResponsiveContainer from '../../components/common/ResponsiveContainer'
 import { Box, Divider, Paper, Stack } from '@mui/material'
 import CreateLoanForm from '../../components/forms/Loan/CreateLoanForm'
 import { router } from '../../app/router/Routes'
-import { CounterpartyCreateValues } from '../../app/models/Counterparty'
 import CreateCounterpartyForm from '../../components/forms/Loan/CreateCounterpartyForm'
 
 export default observer(function CreateLoan() {  
@@ -13,10 +12,6 @@ export default observer(function CreateLoan() {
 
     const handleCreateLoanFormCancel = () => {
         router.navigate('/loans');
-    }
-
-    const handleCreateCounterpartyFormSubmit = (counterparty: CounterpartyCreateValues) => {
-        console.log(counterparty);
     }
   
     return (
@@ -33,8 +28,7 @@ export default observer(function CreateLoan() {
             <Divider>Create Counterparty</Divider>
             <Paper>
                 <Box p={2}>
-                    <CreateCounterpartyForm 
-                        onSubmit={handleCreateCounterpartyFormSubmit} />
+                    <CreateCounterpartyForm />
                 </Box>
             </Paper>
         </Stack>

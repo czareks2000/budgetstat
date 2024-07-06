@@ -1,6 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import { Loan, LoanCreateValues } from "../models/Loan";
-import { Counterparty } from "../models/Counterparty";
+import { Counterparty, CounterpartyCreateValues } from "../models/Counterparty";
 import { LoanStatus } from "../models/enums/LoanStatus";
 import agent from "../api/agent";
 import { Option } from "../models/Option";
@@ -94,5 +94,14 @@ export default class LoanStore {
             value: cp.id,
             text: cp.name
         }))
+    }
+
+    createCounterparty = async (counterparty: CounterpartyCreateValues) => {
+        try {
+            var cp = await agent.Loans.createCounterparty(counterparty);
+            runInAction(() => this.counterparties.push(cp))
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
