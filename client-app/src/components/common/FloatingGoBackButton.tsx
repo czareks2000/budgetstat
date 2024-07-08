@@ -1,4 +1,4 @@
-import { Add } from "@mui/icons-material"
+import { ArrowBack } from "@mui/icons-material"
 import { Fab } from "@mui/material"
 
 interface Props {
@@ -6,20 +6,20 @@ interface Props {
     onClick: () => void;
 }
 
-const FloatingAddButton = ({position = 0, onClick}: Props) => {
+const FloatingGoBackButton = ({position = 0, onClick}: Props) => {
   return (
     <Fab 
-        color="primary" 
-        aria-label="add"
+        color={"error"} 
+        aria-label="go back"
         onClick={onClick} 
         sx={{
             position: "fixed",
             bottom: (theme) => theme.spacing(4 + (position * 8)),
             right: (theme) => theme.spacing(4)
         }}>
-        <Add />
+        <ArrowBack />
     </Fab>
   )
 }
 
-export default FloatingAddButton
+export default FloatingGoBackButton

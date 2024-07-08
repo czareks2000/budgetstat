@@ -11,7 +11,6 @@ import ImportExport from "../../pages/importexport/ImportExport";
 import Loans from "../../pages/loans/Loans";
 import NetWorth from "../../pages/networth/NetWorth";
 import Preferences from "../../pages/preferences/Preferences";
-import Settings from "../../pages/settings/Settings";
 import Stats from "../../pages/stats/Stats";
 import Transactions from "../../pages/transactions/Transactions";
 import Login from "../../pages/login/Login";
@@ -20,6 +19,10 @@ import EditBudget from "../../pages/budgets/EditBudget";
 import CreateAccount from "../../pages/accounts/CreateAccount";
 import EditAccount from "../../pages/accounts/EditAccount";
 import CreateLoan from "../../pages/loans/CreateLoan";
+import CounterpartyDetails from "../../pages/loans/CounterpartyDetails";
+import LoanDetails from "../../pages/loans/LoanDetails";
+import CounterpartyPaidoffLoans from "../../pages/loans/CounterpartyPaidoffLoans";
+import EditLoan from "../../pages/loans/EditLoan";
 
 export const routes: RouteObject[] = [
     {
@@ -27,22 +30,32 @@ export const routes: RouteObject[] = [
         element: <App/>,
         children: [
             {element: <RequireAuth />, children: [
-                {path: 'accounts', element: <Accounts />},
-                {path: 'account/create', element: <CreateAccount />},
-                {path: 'account/:id/edit', element: <EditAccount />},
-                {path: 'budgets', element: <Budgets />},
-                {path: 'budget/create', element: <CreateBudget />},
-                {path: 'budget/:id/edit', element: <EditBudget />},
-                {path: 'calendar', element: <Calendar />},
                 {path: 'home', element: <Home />},
-                {path: 'import-export', element: <ImportExport />},
-                {path: 'loans', element: <Loans />},
-                {path: 'loan/create', element: <CreateLoan />},
-                {path: 'net-worth', element: <NetWorth />},
-                {path: 'preferences', element: <Preferences />},
-                {path: 'settings', element: <Settings />},
                 {path: 'stats', element: <Stats />},
+                {path: 'calendar', element: <Calendar />},
+
+                {path: 'accounts', element: <Accounts />},
+                {path: 'accounts/create', element: <CreateAccount />},
+                {path: 'accounts/:id/edit', element: <EditAccount />},
+                
                 {path: 'transactions', element: <Transactions />},
+
+                {path: 'budgets', element: <Budgets />},
+                {path: 'budgets/create', element: <CreateBudget />},
+                {path: 'budgets/:id/edit', element: <EditBudget />},
+
+                {path: 'loans', element: <Loans />},
+                {path: 'loans/create', element: <CreateLoan />},
+                {path: 'loans/:id/edit', element: <EditLoan />},
+                {path: 'loans/counterparty/:id', element: <CounterpartyDetails />},
+                {path: 'loans/counterparty/:id/paidoff', element: <CounterpartyPaidoffLoans />},
+                {path: 'loans/:id', element: <LoanDetails />},
+                
+                {path: 'net-worth', element: <NetWorth />},
+
+                {path: 'import-export', element: <ImportExport />},
+                {path: 'preferences', element: <Preferences />},
+                
                 {path: 'not-found', element: <NotFound />},
             ]},
             {path: 'login', element: <Login />},

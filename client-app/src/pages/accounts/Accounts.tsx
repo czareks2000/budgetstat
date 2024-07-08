@@ -19,7 +19,7 @@ export default observer(function Accounts() {
     }
 
     const handleAddButtonClick = () => {
-        router.navigate('/account/create');
+        router.navigate('/accounts/create');
     }
 
     return (

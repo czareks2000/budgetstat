@@ -3,6 +3,7 @@ import { Account, AccountFormValues } from "../models/Account";
 import agent from "../api/agent";
 import { AccountStatus } from "../models/enums/AccountStatus";
 import { Option } from "../models/Option";
+import { convertToDate } from "../utils/ConvertToDate";
 
 export default class AccountStore {
     accountsRegistry = new Map<number, Account>();
@@ -43,7 +44,7 @@ export default class AccountStore {
     }
 
     private setAccount = (account: Account) => {
-        account.createdAt = this.convertToDate(account.createdAt);
+        account.createdAt = convertToDate(account.createdAt);
         this.accountsRegistry.set(account.id, account);
     }
 
@@ -131,11 +132,6 @@ export default class AccountStore {
         } catch (error) {
             console.log(error);
         } 
-    }
-
-    private convertToDate(date: Date) {
-        const result = new Date(date);
-        return result;
     }
 
     private newStatus(currentStatus: AccountStatus)

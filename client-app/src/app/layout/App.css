@@ -12,11 +12,6 @@ body {
     color: var(--primary) !important;
 }
 
-.MuiListItem-root:hover, 
-.MuiListItem-root:hover svg{
-    color: var(--primary);
-}
-
 /* width */
 ::-webkit-scrollbar {
     width: 10px;

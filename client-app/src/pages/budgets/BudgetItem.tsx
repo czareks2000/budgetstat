@@ -87,7 +87,7 @@ export default observer(function BudgetItem({budget, openDeleteDialog}: Props) {
 
     const handleEditButtonClick = () => {
         selectBudget(budget.id);
-        router.navigate(`/budget/${budget.id}/edit`);
+        router.navigate(`/budgets/${budget.id}/edit`);
     }
   
     return (

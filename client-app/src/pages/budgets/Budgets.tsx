@@ -18,7 +18,7 @@ export default observer(function Budgets() {
     }
 
     const handleAddButtonClick = () => {
-        router.navigate('/budget/create');
+        router.navigate('/budgets/create');
     }
 
     return (

@@ -31,3 +31,11 @@ export interface LoanUpdateValues {
     fullAmount: number;
     repaymentDate: Date;
 }
+
+export interface GroupedLoan {
+    counterpartyId: number;
+    currencyId: number;
+    currentAmount: number;
+    fullAmount: number;
+    nearestRepaymentDate: Date;
+}

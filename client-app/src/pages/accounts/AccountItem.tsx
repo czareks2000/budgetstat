@@ -4,8 +4,9 @@ import { Delete, Edit } from "@mui/icons-material";
 import { AccountStatus } from "../../app/models/enums/AccountStatus";
 import { observer } from "mobx-react-lite";
 import { useStore } from "../../app/stores/store";
-import { formatNumber } from "../../app/utils/FormatNumber";
+
 import { router } from "../../app/router/Routes";
+import { formatAmount } from "../../app/utils/FormatAmount";
 
 interface Props {
     account: Account;
@@ -26,7 +27,7 @@ export default observer(function AccountItem({account, openDeleteDialog}: Props)
 
     const handleEditButtonClick = () => {
         selectAccount(account.id);
-        router.navigate(`/account/${account.id}/edit`)
+        router.navigate(`/accounts/${account.id}/edit`)
     }
 
     const handleSwitchButtonClick = () => {
@@ -47,7 +48,7 @@ export default observer(function AccountItem({account, openDeleteDialog}: Props)
                     </Grid>
                     <Grid item xs={'auto'} >
                         <Typography variant="h4" color={'primary'}>
-                            {formatNumber(account.balance)} {account.currency.symbol}
+                            {formatAmount(account.balance)} {account.currency.symbol}
                         </Typography>
                     </Grid>
                 </Grid>

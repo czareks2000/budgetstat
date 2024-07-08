@@ -1,5 +1,7 @@
 import { Link, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { NavLink } from "react-router-dom";
+import { theme } from "../Theme";
+import NoDecorationLink from "../../../components/common/NoDecorationLink";
 
 interface NavLinkItem{
     text: string;
@@ -15,19 +17,31 @@ interface Props {
     return (
         <List>
             {items.map((item, index) => (
-            <Link component={NavLink} key={index} to={item.link} underline='none' color='inherit'>
-                <ListItem disablePadding >  
-                    <ListItemButton disableRipple>
+            <NoDecorationLink key={index} to={item.link} content={
+                <ListItem disablePadding>  
+                    <ListItemButton disableRipple
+                        sx={{
+                            '&:hover': {
+                                '& .MuiListItemText-primary': {
+                                    color: theme.palette.primary.main,
+                                },
+                                '& .MuiListItemIcon-root': {
+                                    color: theme.palette.primary.main,
+                                },
+                            },
+                        }}>
                         <ListItemIcon 
-                            sx={{
-                                color: 'white'
-                            }}>
+                            className="MuiListItemIcon-root"
+                            sx={{ color: 'white'}}>
                             {item.icon}
                         </ListItemIcon>
-                        <ListItemText primary={item.text} />
+                        <ListItemText primary={item.text} 
+                            primaryTypographyProps={{
+                                className: 'MuiListItemText-primary',
+                            }}/>
                     </ListItemButton>
                 </ListItem>
-            </Link>
+            }/>
         ))}
         </List>
     )

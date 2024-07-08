@@ -12,7 +12,8 @@ import NavLinks from './NavLinks';
 import { useStore } from '../../stores/store';
 import { observer } from 'mobx-react-lite';
 import { Link } from 'react-router-dom';
-import { formatNumber } from '../../utils/FormatNumber';
+import { formatAmount } from '../../utils/FormatAmount';
+
 
 interface Props {
     appName: string;
@@ -47,10 +48,10 @@ export default observer(function Menu({ appName, drawerWidth = 288 }: Props) {
               Balance:
             </Typography>
             <Typography variant="h4" noWrap component="div">
-              {formatNumber(totalBalance)} {defaultCurrency?.symbol}
+              {formatAmount(totalBalance)} {defaultCurrency?.symbol}
             </Typography>
             <Typography variant="subtitle1" noWrap component="div">
-              This month: + {formatNumber(2350.52)} {defaultCurrency?.symbol}
+              This month: + {formatAmount(2350.52)} {defaultCurrency?.symbol}
             </Typography>
           </Box>
     

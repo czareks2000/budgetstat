@@ -4,7 +4,7 @@ import Toolbar from '@mui/material/Toolbar';
 import { Box, CssBaseline, ThemeProvider } from '@mui/material';
 
 import Menu from './menu/Menu';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, ScrollRestoration, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import Login from '../../pages/login/Login';
 import { useEffect } from 'react';
@@ -35,6 +35,7 @@ export default observer(function App() {
     <ThemeProvider theme={theme}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <CssBaseline />
+        <ScrollRestoration/>
         {location.pathname === '/' 
         ? 
           <Login /> 

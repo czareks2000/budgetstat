@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export interface Payoff {
     id: number;
     loanId: number;
@@ -9,8 +11,8 @@ export interface Payoff {
 }
 
 export interface PayoffCreateValues {
-    amount: number;
-    accountId: number;
-    date: Date;
+    amount: number | null;
+    accountId: number | string;
+    date: dayjs.Dayjs | Date;
     description?: string;
 }

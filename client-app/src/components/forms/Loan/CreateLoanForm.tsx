@@ -15,11 +15,12 @@ import MyDatePicker from "../../formInputs/MyDatePicker";
 import TextInput from "../../formInputs/TextInput";
 
 interface Props {
+    counterpartyId?: string | null;
     onSubmit: () => void;
     onCancel: () => void;
 }
 
-export default observer(function CrateLoanForm({onSubmit, onCancel}: Props) {
+export default observer(function CrateLoanForm({counterpartyId, onSubmit, onCancel}: Props) {
     const {
         accountStore: {accountsAsOptions, getAccountCurrencySymbol},
         loanStore: {createLoan, counterpartiesAsOptions}} = useStore();
@@ -41,7 +42,7 @@ export default observer(function CrateLoanForm({onSubmit, onCancel}: Props) {
         loanType: LoanType.Credit,
         accountId: "",
         fullAmount: null,
-        counterpartyId: "",
+        counterpartyId: counterpartyId || "",
         repaymentDate: dayjs().add(7, 'days'),
         description: ""
     }
@@ -81,13 +82,12 @@ export default observer(function CrateLoanForm({onSubmit, onCancel}: Props) {
                             label="Account" name={"accountId"}
                             options={accountsAsOptions} />
 
-                        {/* Amount currency zmienic na account currency*/}
+                        {/* Amount */}
                         <NumberInput label="Amount" name={"fullAmount"}
                             adornment adornmentPosition="end" 
                             adormentText={getAccountCurrencySymbol(values.accountId)} />
 
-                        {/* Counterparty albo tutaj freeSolo */}
-                        {/* albo oddzielny formularz podtym do tworzenia couterparty */}
+                        {/* Counterparty */}
                         <SelectInput
                             label="Counterparty" name={"counterpartyId"}
                             options={counterpartiesAsOptions} />
