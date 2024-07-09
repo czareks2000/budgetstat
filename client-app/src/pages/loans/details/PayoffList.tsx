@@ -31,7 +31,7 @@ const PayoffList = ({payoffs, currencySymbol, onDelete}: Props) => {
                 }>
                 <ListItemText primary={
                     `${formatAmount(payoff.amount)} ${currencySymbol} - ${convertToString(payoff.date)} `}
-                    secondary={payoff.description || <i>(no description)</i>}/>
+                    secondary={<i>{payoff.description || "(no description)"}</i>}/>
             </ListItem>                    
         )}
         </List>

@@ -5,6 +5,7 @@ import { Delete, Edit } from "@mui/icons-material";
 import { useStore } from "../../app/stores/store";
 import { BudgetPeriod } from "../../app/models/enums/BudgetPeriod";
 import { router } from "../../app/router/Routes";
+import { formatAmount } from "../../app/utils/FormatAmount";
 
 interface Props {
     budget: Budget;
@@ -52,7 +53,7 @@ export default observer(function BudgetItem({budget, openDeleteDialog}: Props) {
         const mm = String(start.getMonth() + 1).padStart(2, '0'); // January is 0
         const yyyy = start.getFullYear();
 
-        return `${dd}.${mm}.${yyyy}`;
+        return `${dd}/${mm}/${yyyy}`;
     }
 
     const endDate = () => {
@@ -77,7 +78,7 @@ export default observer(function BudgetItem({budget, openDeleteDialog}: Props) {
         const mm = String(end.getMonth() + 1).padStart(2, '0'); // January is 0
         const yyyy = end.getFullYear();
 
-        return `${dd}.${mm}.${yyyy}`;
+        return `${dd}/${mm}/${yyyy}`;
     }
 
     const handleDeleteButtonClick = () => {
@@ -110,32 +111,19 @@ export default observer(function BudgetItem({budget, openDeleteDialog}: Props) {
                         </Grid>
                         <Grid item xs={'auto'} >
                             <Box mr={-1}>
-                                    <Tooltip 
-                                        title='Edit'
-                                        placement="top"
-                                        arrow
-                                        enterDelay={500}
-                                        leaveDelay={200}>
-                                        <IconButton 
-                                            size="medium"
-                                            aria-label="edit"
-                                            onClick={handleEditButtonClick}>
-                                            <Edit />
-                                        </IconButton>
-                                    </Tooltip>
-                                    <Tooltip 
-                                        title='Delete'
-                                        placement="top"
-                                        arrow
-                                        enterDelay={500}
-                                        leaveDelay={200}>
-                                        <IconButton 
-                                            aria-label="delete"
-                                            onClick={handleDeleteButtonClick}>
-                                            <Delete />
-                                        </IconButton>
-                                    </Tooltip>
-                                </Box>
+                                <IconButton 
+                                    size="medium"
+                                    aria-label="edit"
+                                    onClick={handleEditButtonClick}>
+                                    <Edit />
+                                </IconButton>
+                                  
+                                <IconButton 
+                                    aria-label="delete"
+                                    onClick={handleDeleteButtonClick}>
+                                    <Delete />
+                                </IconButton>  
+                            </Box>
                         </Grid>
                     </Grid>
                     <Divider />
@@ -167,12 +155,12 @@ export default observer(function BudgetItem({budget, openDeleteDialog}: Props) {
                             </Grid>
                             <Grid item>
                                 <Typography variant="body1">
-                                    {budget.currentAmount} / {budget.convertedAmount} {defaultCurrency?.symbol}
+                                    {formatAmount(budget.currentAmount)} / {formatAmount(budget.convertedAmount)} {defaultCurrency?.symbol}
                                 </Typography>
                             </Grid>
                             <Grid item>
                                 <Typography variant="body1">
-                                    {budget.convertedAmount} {defaultCurrency?.symbol}
+                                    {formatAmount(budget.convertedAmount)} {defaultCurrency?.symbol}
                                 </Typography>
                             </Grid>
                         </Grid>

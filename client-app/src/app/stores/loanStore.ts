@@ -43,7 +43,7 @@ export default class LoanStore {
         this.selectedLoan = this.getLoanById(loanId);
     }
     
-    deselectAccount = () => {
+    deselectLoan = () => {
         this.selectedLoan = undefined;
     }
 
@@ -93,13 +93,15 @@ export default class LoanStore {
                 existingGroup.fullAmount += fullAmountAdjustment;
                 existingGroup.nearestRepaymentDate = 
                     new Date(Math.min(existingGroup.nearestRepaymentDate.getTime(), loan.repaymentDate.getTime()));
+                existingGroup.loanType = fullAmountAdjustment >= 0 ? LoanType.Credit : LoanType.Debt;
             } else {
                 groupedLoansMap.set(key, {
                     counterpartyId: loan.counterpartyId,
                     currencyId: loan.currencyId,
                     currentAmount: currentAmountAdjustment,
                     fullAmount: fullAmountAdjustment,
-                    nearestRepaymentDate: loan.repaymentDate
+                    nearestRepaymentDate: loan.repaymentDate,
+                    loanType: fullAmountAdjustment >= 0 ? LoanType.Credit : LoanType.Debt
                 });
             }
         });

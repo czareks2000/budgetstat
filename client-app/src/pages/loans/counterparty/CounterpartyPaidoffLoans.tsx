@@ -3,12 +3,13 @@ import ResponsiveContainer from "../../../components/common/ResponsiveContainer"
 import { Divider, Stack } from "@mui/material"
 import FloatingGoBackButton from "../../../components/common/FloatingGoBackButton"
 import { router } from "../../../app/router/Routes"
-import CounterpartySummaryItem from "./CounterpartySummaryItem"
 import { useStore } from "../../../app/stores/store"
 import { useParams } from "react-router-dom"
 import { LoanType } from "../../../app/models/enums/LoanType"
 import { LoanStatus } from "../../../app/models/enums/LoanStatus"
 import LoanItem from "../LoanItem"
+import CounterpartySummaryWithPagination from "./CounterpartySummaryWithPagination"
+import FloatingAddButton from "../../../components/common/FloatingAddButton"
 
 export default observer(function CounterpartyPaidoffLoans() {
     const {loanStore: {getCounterpartyLoans, getCounterpartyGroupedLoans}} = useStore()
@@ -19,6 +20,10 @@ export default observer(function CounterpartyPaidoffLoans() {
         router.navigate(`/loans/counterparty/${id}`);
     }
 
+    const handleAddButtonClick = () => {
+        router.navigate(`/loans/create?counterpartyId=${id}`);
+    }
+
     const summaries = getCounterpartyGroupedLoans(Number(id));
 
     const credits = getCounterpartyLoans(Number(id), LoanType.Credit, LoanStatus.PaidOff);
@@ -26,15 +31,16 @@ export default observer(function CounterpartyPaidoffLoans() {
     
     return (
         <>
-        <FloatingGoBackButton onClick={handleGoBack}/>
+        <FloatingGoBackButton onClick={handleGoBack} position={1}/>
+        <FloatingAddButton onClick={handleAddButtonClick} position={0}/>
         <ResponsiveContainer content={
             <Stack spacing={2}>
-                <Divider>Counterparty loans details</Divider>
-                {summaries.map((summary) =>
-                    <CounterpartySummaryItem 
-                        key={`${summary.counterpartyId}-${summary.currencyId}`}
-                        summary={summary}/>
-                )}
+                <Divider>Counterparty details</Divider>
+                <CounterpartySummaryWithPagination summaries={summaries} 
+                    onClick={handleGoBack}
+                    buttonText="Current loans"
+                />
+                
                 {credits.length == 0 && debts.length == 0 &&
                 <Divider>There is no history</Divider>
                 }

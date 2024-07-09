@@ -1,7 +1,6 @@
-import { Link, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
-import { NavLink } from "react-router-dom";
+import { List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { theme } from "../Theme";
-import NoDecorationLink from "../../../components/common/NoDecorationLink";
+import NoDecorationNavLink from "../../../components/common/NoDecorationNavLink";
 
 interface NavLinkItem{
     text: string;
@@ -17,7 +16,7 @@ interface Props {
     return (
         <List>
             {items.map((item, index) => (
-            <NoDecorationLink key={index} to={item.link} content={
+            <NoDecorationNavLink key={index} to={item.link} content={
                 <ListItem disablePadding>  
                     <ListItemButton disableRipple
                         sx={{

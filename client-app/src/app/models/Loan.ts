@@ -38,4 +38,5 @@ export interface GroupedLoan {
     currentAmount: number;
     fullAmount: number;
     nearestRepaymentDate: Date;
+    loanType: LoanType;
 }

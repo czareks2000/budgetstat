@@ -49,6 +49,7 @@ export default observer(function App() {
             >
               <Toolbar />
               <Outlet/>
+              <Box height={150}/>
             </Box>
 
           </Box>

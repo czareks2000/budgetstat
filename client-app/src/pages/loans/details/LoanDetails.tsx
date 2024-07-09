@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite"
 import ResponsiveContainer from "../../../components/common/ResponsiveContainer"
-import { Accordion, AccordionDetails, AccordionSummary, Box, Divider, Paper, Stack } from "@mui/material"
+import { Accordion, AccordionDetails, AccordionSummary, Divider, Stack } from "@mui/material"
 import { useStore } from "../../../app/stores/store";
 import { useParams } from "react-router-dom";
 import FloatingGoBackButton from "../../../components/common/FloatingGoBackButton";
@@ -47,9 +47,9 @@ export default observer(function LoanDetails() {
             <Stack spacing={2}>
 
                 <Divider>Loan details</Divider>
-                <LoanItem loan={loan}/>
+                <LoanItem key={loan.id} loan={loan}/>
 
-                <Divider>Create payoff</Divider>
+                <Divider>Repayment</Divider>
                 <Accordion expanded={isOpen} onChange={handleToggle}>
                     <AccordionSummary
                     expandIcon={<ExpandMore />}
