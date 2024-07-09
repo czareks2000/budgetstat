@@ -2,8 +2,7 @@ import { observer } from "mobx-react-lite"
 import FloatingAddButton from "../../../components/common/FloatingAddButton"
 import { router } from "../../../app/router/Routes";
 import ResponsiveContainer from "../../../components/common/ResponsiveContainer";
-import { Accordion, AccordionDetails, AccordionSummary, Divider, Pagination, Stack } from "@mui/material";
-import CounterpartySummaryItem from "./CounterpartySummaryItem";
+import { Accordion, AccordionDetails, AccordionSummary, Divider, Stack } from "@mui/material";
 import FloatingGoBackButton from "../../../components/common/FloatingGoBackButton";
 import { useStore } from "../../../app/stores/store";
 import { useParams } from "react-router-dom";

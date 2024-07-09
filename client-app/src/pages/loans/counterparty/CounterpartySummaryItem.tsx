@@ -1,21 +1,19 @@
 import { Box, Card, CardContent, Grid, LinearProgress, Stack, Typography } from "@mui/material"
 import { observer } from "mobx-react-lite"
-import { router } from "../../../app/router/Routes";
 import { GroupedLoan } from "../../../app/models/Loan";
 import { useStore } from "../../../app/stores/store";
 import { convertToString } from "../../../app/utils/ConvertToString";
 import { formatAmount } from "../../../app/utils/FormatAmount";
-import { ArrowForward, History } from "@mui/icons-material";
+import { ArrowForward } from "@mui/icons-material";
 import { Counterparty } from "../../../app/models/Counterparty";
 import { Currency } from "../../../app/models/Currency";
 import { LoanType } from "../../../app/models/enums/LoanType";
 
 interface Props {
     summary: GroupedLoan;
-    archiveLink?: boolean;
 }
 
-export default observer(function CounterpartySummaryItem({summary, archiveLink}: Props) {
+export default observer(function CounterpartySummaryItem({summary}: Props) {
     const {
         loanStore: {counterparties},
         currencyStore: {currencies}
@@ -99,22 +97,6 @@ export default observer(function CounterpartySummaryItem({summary, archiveLink}:
                 sx={{height: 10}} 
                 color={progressColor()}/>
         </CardContent>
-        {/* <Divider />
-        <CardActions>
-            <Box mr={-1}>
-                {archiveLink &&
-                <IconButton 
-                    size="medium"
-                    aria-label="edit"
-                    onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleShowArchive();
-                    }}>
-                    <History />
-                </IconButton>}                            
-            </Box>
-        </CardActions> */}
     </Card>
     )
 })

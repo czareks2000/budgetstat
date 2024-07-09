@@ -24,7 +24,6 @@ const CounterpartySummaryWithPagination = ({summaries, onClick, buttonText}: Pro
     <>
         <CounterpartySummaryItem
             key={`${summaries[indexOfCurrentSummary].counterpartyId}-${summaries[indexOfCurrentSummary].currencyId}`}
-            archiveLink
             summary={summaries[indexOfCurrentSummary]}
         />
         <Grid container justifyContent="flex-end">

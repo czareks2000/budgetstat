@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite"
 import { Budget } from "../../app/models/Budget";
-import { Box, Card, CardContent, Chip, Divider, Grid, IconButton, LinearProgress, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Card, CardContent, Chip, Divider, Grid, IconButton, LinearProgress, Stack, Typography } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 import { useStore } from "../../app/stores/store";
 import { BudgetPeriod } from "../../app/models/enums/BudgetPeriod";
