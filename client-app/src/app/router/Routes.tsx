@@ -19,9 +19,9 @@ import EditBudget from "../../pages/budgets/EditBudget";
 import CreateAccount from "../../pages/accounts/CreateAccount";
 import EditAccount from "../../pages/accounts/EditAccount";
 import CreateLoan from "../../pages/loans/CreateLoan";
-import CounterpartyDetails from "../../pages/loans/CounterpartyDetails";
-import LoanDetails from "../../pages/loans/LoanDetails";
-import CounterpartyPaidoffLoans from "../../pages/loans/CounterpartyPaidoffLoans";
+import CounterpartyDetails from "../../pages/loans/counterparty/CounterpartyDetails";
+import LoanDetails from "../../pages/loans/details/LoanDetails";
+import CounterpartyPaidoffLoans from "../../pages/loans/counterparty/CounterpartyPaidoffLoans";
 import EditLoan from "../../pages/loans/EditLoan";
 
 export const routes: RouteObject[] = [

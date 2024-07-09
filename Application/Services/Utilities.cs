@@ -69,7 +69,7 @@ namespace Application.Services
             // Aktualizacja sald
             foreach (var ab in account.AccountBalances.OrderByDescending(ab => ab.Date))
             {
-                if (ab.Date.Date < newOperationDate)
+                if (ab.Date.Date < newOperationDate.Date)
                     break;
 
                 if (isExpense)
@@ -79,17 +79,17 @@ namespace Application.Services
             }
 
             // Jeżeli nie istnieje saldo z tą samą datą, tworzymy nowy obiekt AccountBalance
-            if (!account.AccountBalances.Any(ab => ab.Date.Date == newOperationDate))
+            if (!account.AccountBalances.Any(ab => ab.Date.Date == newOperationDate.Date))
             {
                 // Tworzenie nowego obiektu AccountBalance z datą newOperationDate
                 var newAccountBalance = new AccountBalance
                 {
-                    Date = newOperationDate,
+                    Date = newOperationDate.Date,
                     Account = account,
                     Currency = account.Currency,
                 };
 
-                if (newOperationDate < accountBalance.Date.Date)
+                if (newOperationDate.Date < accountBalance.Date.Date)
                     newAccountBalance.Balance = accountBalance.Balance;
                 else
                     newAccountBalance.Balance = isExpense

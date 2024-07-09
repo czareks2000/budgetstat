@@ -39,6 +39,14 @@ export default class LoanStore {
         this.counterpartiesLoaded = false;
     }
 
+    selectLoan = (loanId: number) => {
+        this.selectedLoan = this.getLoanById(loanId);
+    }
+    
+    deselectAccount = () => {
+        this.selectedLoan = undefined;
+    }
+
     private setLoan = (loan: Loan) => {
         loan.loanDate = convertToDate(loan.loanDate);
         loan.repaymentDate = convertToDate(loan.repaymentDate);
@@ -158,10 +166,24 @@ export default class LoanStore {
             runInAction(() => {
                 this.setLoan(updatedLoan);
                 store.accountStore.loadAccount(updatedLoan.accountId);
+                this.selectedLoan = updatedLoan;
             })
         } catch (error) {
             console.log(error);
             throw (error as AxiosError).response!.data;
+        }
+    }
+
+    deletePayoff = async (payoffId: number) => {
+        try {
+            const updatedLoan = await agent.Loans.deletePayoff(payoffId);
+            runInAction(() => {
+                this.setLoan(updatedLoan);
+                store.accountStore.loadAccount(updatedLoan.accountId);
+                this.selectedLoan = updatedLoan;
+            });
+        } catch (error) {
+            console.log(error);
         }
     }
 

@@ -177,7 +177,7 @@ const Loans = {
     deleteLoan: (loanId: number) => 
         requests.del<void>(`/loans/${loanId}`),
     deletePayoff: (payoffId: number) => 
-        requests.del<void>(`/payoff/${payoffId}`),
+        requests.del<Loan>(`/payoff/${payoffId}`),
 }
 
 const Icons = {

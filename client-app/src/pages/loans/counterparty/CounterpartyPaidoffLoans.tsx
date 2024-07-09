@@ -1,14 +1,14 @@
 import { observer } from "mobx-react-lite"
-import ResponsiveContainer from "../../components/common/ResponsiveContainer"
+import ResponsiveContainer from "../../../components/common/ResponsiveContainer"
 import { Divider, Stack } from "@mui/material"
-import FloatingGoBackButton from "../../components/common/FloatingGoBackButton"
-import { router } from "../../app/router/Routes"
+import FloatingGoBackButton from "../../../components/common/FloatingGoBackButton"
+import { router } from "../../../app/router/Routes"
 import CounterpartySummaryItem from "./CounterpartySummaryItem"
-import { useStore } from "../../app/stores/store"
+import { useStore } from "../../../app/stores/store"
 import { useParams } from "react-router-dom"
-import { LoanType } from "../../app/models/enums/LoanType"
-import { LoanStatus } from "../../app/models/enums/LoanStatus"
-import LoanItem from "./LoanItem"
+import { LoanType } from "../../../app/models/enums/LoanType"
+import { LoanStatus } from "../../../app/models/enums/LoanStatus"
+import LoanItem from "../LoanItem"
 
 export default observer(function CounterpartyPaidoffLoans() {
     const {loanStore: {getCounterpartyLoans, getCounterpartyGroupedLoans}} = useStore()

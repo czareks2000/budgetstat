@@ -1,10 +1,10 @@
 import { Box, Button, Paper, Typography } from "@mui/material"
 import { observer } from "mobx-react-lite"
-import { router } from "../../app/router/Routes";
-import { GroupedLoan } from "../../app/models/Loan";
-import { useStore } from "../../app/stores/store";
-import { convertToString } from "../../app/utils/ConvertToString";
-import { formatAmount } from "../../app/utils/FormatAmount";
+import { router } from "../../../app/router/Routes";
+import { GroupedLoan } from "../../../app/models/Loan";
+import { useStore } from "../../../app/stores/store";
+import { convertToString } from "../../../app/utils/ConvertToString";
+import { formatAmount } from "../../../app/utils/FormatAmount";
 
 interface Props {
     summary: GroupedLoan;

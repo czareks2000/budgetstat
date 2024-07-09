@@ -3,7 +3,7 @@ import ResponsiveContainer from "../../components/common/ResponsiveContainer"
 import FloatingAddButton from "../../components/common/FloatingAddButton"
 import { router } from "../../app/router/Routes"
 import { Box, Divider, Stack } from "@mui/material"
-import CounterpartySummaryItem from "./CounterpartySummaryItem"
+import CounterpartySummaryItem from "./counterparty/CounterpartySummaryItem"
 import { useStore } from "../../app/stores/store"
 import NoDecorationLink from "../../components/common/NoDecorationLink"
 

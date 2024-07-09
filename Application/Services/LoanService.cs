@@ -276,7 +276,7 @@ namespace Application.Services
             var isExpense = loan.LoanType == LoanType.Debt;
             if(!_utilities.UpdateAccountBalances(account.Id, payoff.Date, isExpense, payoff.Amount))
                 return Result<LoanDto>
-                    .Failure($"Insufficient funds in the account. Change the account, amount or date.");
+                    .Failure($"Insufficient funds in the account.");
 
             // zapisanie zmian w bazie
             if (await _context.SaveChangesAsync() == 0)
@@ -317,7 +317,10 @@ namespace Application.Services
                 return Result<LoanDto>.Failure("Failed to create payoff");
 
             // utworzenie obiektu DTO
-            var loanDto = _mapper.Map<LoanDto>(payoff.Loan);
+            var loanDto = await _context.Loans
+                .Include(l => l.Payoffs)
+                .ProjectTo<LoanDto>(_mapper.ConfigurationProvider)
+                .FirstAsync(l => l.Id == loan.Id);
 
             return Result<LoanDto>.Success(loanDto);
         }

@@ -33,8 +33,9 @@ export default function NumberInput(props: Props) {
                 value={field.value === null ? '' : field.value}
                 error={meta.touched && Boolean(meta.error)}
                 helperText={meta.touched && meta.error}
-                autoComplete='off'
                 InputProps={InputProps}
+                autoComplete='off'
+                onWheel={(e) => (e.target as HTMLElement).blur()}
             />
         </>
         
