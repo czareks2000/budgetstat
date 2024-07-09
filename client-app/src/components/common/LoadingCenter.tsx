@@ -1,6 +1,6 @@
 import { CircularProgress, Stack } from "@mui/material"
 
-const Loading = () => {
+const LoadingCenter = () => {
   return (
     <>
         <Stack
@@ -15,4 +15,4 @@ const Loading = () => {
   )
 }
 
-export default Loading
+export default LoadingCenter

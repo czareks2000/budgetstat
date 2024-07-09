@@ -9,7 +9,7 @@ import { observer } from 'mobx-react-lite';
 import Login from '../../pages/login/Login';
 import { useEffect } from 'react';
 import { useStore } from '../stores/store';
-import Loading from '../../components/Loading';
+import Loading from '../../components/common/LoadingCenter';
 import { theme } from './Theme';
 
 import { LocalizationProvider } from '@mui/x-date-pickers';

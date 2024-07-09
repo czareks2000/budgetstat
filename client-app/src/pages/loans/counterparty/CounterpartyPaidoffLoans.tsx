@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite"
 import ResponsiveContainer from "../../../components/common/ResponsiveContainer"
-import { Divider, Stack } from "@mui/material"
+import { Box, CircularProgress, Divider, Stack } from "@mui/material"
 import FloatingGoBackButton from "../../../components/common/FloatingGoBackButton"
 import { router } from "../../../app/router/Routes"
 import { useStore } from "../../../app/stores/store"
@@ -10,11 +10,17 @@ import { LoanStatus } from "../../../app/models/enums/LoanStatus"
 import LoanItem from "../LoanItem"
 import CounterpartySummaryWithPagination from "./CounterpartySummaryWithPagination"
 import FloatingAddButton from "../../../components/common/FloatingAddButton"
+import { useEffect } from "react"
 
 export default observer(function CounterpartyPaidoffLoans() {
-    const {loanStore: {getCounterpartyLoans, getCounterpartyGroupedLoans}} = useStore()
+    const {loanStore: {getCounterpartyLoans, getCounterpartyGroupedLoans, loadLoans, loansPaidOffLoaded}} = useStore()
 
     const {id} = useParams();
+
+    useEffect(() => {
+        if (!loansPaidOffLoaded)
+            loadLoans(LoanStatus.PaidOff);
+    }, [loansPaidOffLoaded, loadLoans])
 
     const handleGoBack = () => {
         router.navigate(`/loans/counterparty/${id}`);
@@ -35,25 +41,35 @@ export default observer(function CounterpartyPaidoffLoans() {
         <FloatingAddButton onClick={handleAddButtonClick} position={0}/>
         <ResponsiveContainer content={
             <Stack spacing={2}>
-                <Divider>Counterparty details</Divider>
+                <Divider>Counterparty summary</Divider>
                 <CounterpartySummaryWithPagination summaries={summaries} 
                     onClick={handleGoBack}
                     buttonText="Current loans"
                 />
-                
-                {credits.length == 0 && debts.length == 0 &&
-                <Divider>There is no history</Divider>
+                {loansPaidOffLoaded ? 
+                <>
+                    {credits.length == 0 && debts.length == 0 &&
+                    <Divider>There is no history</Divider>
+                    }
+                    {credits.length > 0 &&
+                    <Divider>Credits history</Divider>}
+                    {credits.map((loan) => 
+                        <LoanItem key={loan.id} loan={loan}/>
+                    )}
+                    {debts.length > 0 &&
+                    <Divider>Debts history</Divider>}
+                    {debts.map((loan) => 
+                        <LoanItem key={loan.id} loan={loan} detailsAction/>
+                    )}
+                </>
+                :
+                <>
+                    <Divider>Loading...</Divider>
+                    <Box display={'flex'} justifyContent={'center'}>
+                        <CircularProgress />
+                    </Box>
+                </>
                 }
-                {credits.length > 0 &&
-                <Divider>Credits history</Divider>}
-                {credits.map((loan) => 
-                    <LoanItem key={loan.id} loan={loan}/>
-                )}
-                {debts.length > 0 &&
-                <Divider>Debts history</Divider>}
-                {debts.map((loan) => 
-                    <LoanItem key={loan.id} loan={loan}/>
-                )}
             </Stack>
         }/>
         </>

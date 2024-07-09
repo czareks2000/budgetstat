@@ -86,9 +86,10 @@ export default observer(function LoanItem({loan, detailsAction}: Props) {
                                     <Typography variant="subtitle2" gutterBottom>
                                         <i>{loan.description || "(no description)"}</i>
                                     </Typography>
+                                    {inProgress &&
                                     <Typography variant="subtitle1">
                                         Remaining: {formatAmount(remainingAmount)} {currency.symbol}
-                                    </Typography>
+                                    </Typography>}
                                 </Stack>
                             </Grid>
                             <Grid item xs={'auto'} >

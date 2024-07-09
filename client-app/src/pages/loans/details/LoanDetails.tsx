@@ -10,6 +10,7 @@ import CreatePayoffForm from "../../../components/forms/Loan/CreatePayoffForm";
 import PayoffList from "./PayoffList";
 import { useEffect, useState } from "react";
 import { ExpandMore } from "@mui/icons-material";
+import { LoanStatus } from "../../../app/models/enums/LoanStatus";
 
 export default observer(function LoanDetails() {
     const {
@@ -32,8 +33,13 @@ export default observer(function LoanDetails() {
 
     const currency = currencies.find(c => c.id === loan.currencyId);
 
+    const inProgress = loan.loanStatus === LoanStatus.InProgress;
+
     const handleGoBack = () => {
-        router.navigate(`/loans/counterparty/${loan?.counterpartyId}`);
+        if (inProgress)
+            router.navigate(`/loans/counterparty/${loan.counterpartyId}`);
+        else
+            router.navigate(`/loans/counterparty/${loan.counterpartyId}/paidoff`);
     }
 
     const handleDeletePayoff = (payoffId: number) => {
@@ -48,20 +54,23 @@ export default observer(function LoanDetails() {
 
                 <Divider>Loan details</Divider>
                 <LoanItem key={loan.id} loan={loan}/>
-
-                <Divider>Repayment</Divider>
-                <Accordion expanded={isOpen} onChange={handleToggle}>
-                    <AccordionSummary
-                    expandIcon={<ExpandMore />}
-                    aria-controls="create-payoff-form"
-                    id="create-payoff-form"
-                    >
-                        {!isOpen ? 'Click to open' : 'Click to hide'}
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <CreatePayoffForm loanId={loan.id}/>      
-                    </AccordionDetails>
-                </Accordion> 
+                
+                {inProgress &&
+                <>
+                    <Divider>Repayment</Divider>
+                    <Accordion expanded={isOpen} onChange={handleToggle}>
+                        <AccordionSummary
+                        expandIcon={<ExpandMore />}
+                        aria-controls="create-payoff-form"
+                        id="create-payoff-form"
+                        >
+                            {!isOpen ? 'Click to open' : 'Click to hide'}
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <CreatePayoffForm loanId={loan.id}/>      
+                        </AccordionDetails>
+                    </Accordion>
+                </>}
 
                 {loan.payoffs.length > 0 && <>
                     <Divider>Payoffs</Divider>
