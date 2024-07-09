@@ -1,13 +1,10 @@
 import { observer } from "mobx-react-lite";
-import { LoanCreateValues } from "../../../app/models/Loan";
-import { Button, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { Form, Formik, FormikHelpers } from "formik";
-import { LoanType } from "../../../app/models/enums/LoanType";
 import * as Yup from "yup";
 import NumberInput from "../../formInputs/NumberInput";
 import { useStore } from "../../../app/stores/store";
-import { enumToOptions } from "../../../app/models/Option";
 import SelectInput from "../../formInputs/SelectInput";
 
 import dayjs from "dayjs";
@@ -17,14 +14,12 @@ import { PayoffCreateValues } from "../../../app/models/Payoff";
 
 interface Props {
     loanId: number;
-    onSubmit: () => void;
-    onCancel: () => void;
 }
 
-export default observer(function CratePayoffForm({loanId, onSubmit, onCancel}: Props) {
+export default observer(function CratePayoffForm({loanId}: Props) {
     const {
-        accountStore: {accountsAsOptions, getAccountCurrencySymbol},
-        loanStore: {createPayoff}} = useStore();
+        accountStore: {getAccountsByCurrencyAsOptions, getAccountCurrencySymbol},
+        loanStore: {getLoanCurrencyId, createPayoff}} = useStore();
     
     const validationSchema = Yup.object({
         accountId: Yup.string().required('Choose account'),
@@ -45,6 +40,8 @@ export default observer(function CratePayoffForm({loanId, onSubmit, onCancel}: P
         description: ""
     }
 
+    const accountsOptions = getAccountsByCurrencyAsOptions(getLoanCurrencyId(loanId) as number);
+
     const handleCreateLoanFormSubmit = (payoff: PayoffCreateValues, helpers: FormikHelpers<PayoffCreateValues>) => {
         const transformedValues: PayoffCreateValues = {
             ...payoff,
@@ -52,13 +49,12 @@ export default observer(function CratePayoffForm({loanId, onSubmit, onCancel}: P
         }
         
         createPayoff(loanId, transformedValues).then(() => {
-            onSubmit();
+            helpers.resetForm();
         }).catch((err) => {
             helpers.setErrors({
                 amount: err
             });
             helpers.setSubmitting(false);
-            helpers.resetForm();
         });
     }
     
@@ -72,11 +68,9 @@ export default observer(function CratePayoffForm({loanId, onSubmit, onCancel}: P
                 <Form>
                     <Stack spacing={2}>
                         {/* Account */}
-                        {/* tutaj zmienić ze mogą być wybrane tyko konta z odpowiednią walutą */}
                         <SelectInput
                             label="Account" name={"accountId"}
-                            options={accountsAsOptions} />
-                            
+                            options={accountsOptions} />
 
                         {/* Amount */}
                         <NumberInput label="Amount" name={"amount"}

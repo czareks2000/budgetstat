@@ -276,7 +276,7 @@ namespace Application.Services
             var isExpense = loan.LoanType == LoanType.Debt;
             if(!_utilities.UpdateAccountBalances(account.Id, payoff.Date, isExpense, payoff.Amount))
                 return Result<LoanDto>
-                    .Failure($"Insufficient funds in the account. Change the date or amount.");
+                    .Failure($"Insufficient funds in the account. Change the account, amount or date.");
 
             // zapisanie zmian w bazie
             if (await _context.SaveChangesAsync() == 0)

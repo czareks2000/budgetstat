@@ -66,6 +66,10 @@ export default class LoanStore {
         }
     }
 
+    getLoanCurrencyId = (loanId: number) => {
+        return this.getLoanById(loanId)?.currencyId;
+    }
+
     get groupedLoansByCounterpartyAndCurrency(): GroupedLoan[] {
         const groupedLoansMap = new Map<string, GroupedLoan>();
 

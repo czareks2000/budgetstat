@@ -30,6 +30,15 @@ export default class AccountStore {
         }));
     }
 
+    getAccountsByCurrencyAsOptions = (currencyId: number): Option[] => {
+        return this.accounts
+            .filter(a => a.currency.id === currencyId)
+            .map(account => ({
+                value: account.id,
+                text: `${account.name} (${account.currency.code})`
+            }));
+    }
+
     get totalBalance() {
         const accounts = Array.from(this.accountsRegistry.values());
 

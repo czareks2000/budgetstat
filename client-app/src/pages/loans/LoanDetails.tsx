@@ -40,11 +40,7 @@ export default observer(function LoanDetails() {
                 <Divider>Create payoff</Divider>    
                 <Paper>
                     <Box p={2}>
-                        <CreatePayoffForm loanId={loan.id} onSubmit={function (): void {
-                                throw new Error("Function not implemented.");
-                            } } onCancel={function (): void {
-                                throw new Error("Function not implemented.");
-                            } }/>
+                        <CreatePayoffForm loanId={loan.id}/>
                     </Box>
                 </Paper>
                 {payoffs.length > 0 && 

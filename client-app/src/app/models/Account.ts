@@ -10,7 +10,6 @@ export interface Account {
     description: string;
     status: AccountStatus;
     currency: Currency;
-    currencyId?: number;
 }
 
 export interface AccountFormValues {
