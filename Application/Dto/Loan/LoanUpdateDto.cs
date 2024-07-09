@@ -10,5 +10,6 @@ namespace Application.Dto.Loan
         public decimal FullAmount { get; set; }
         [Required]
         public DateTime RepaymentDate { get; set; }
+        public string Description { get; set; }
     }
 }

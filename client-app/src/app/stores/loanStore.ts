@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { GroupedLoan, Loan, LoanCreateValues } from "../models/Loan";
+import { GroupedLoan, Loan, LoanCreateValues, LoanUpdateValues } from "../models/Loan";
 import { Counterparty, CounterpartyCreateValues } from "../models/Counterparty";
 import { LoanStatus } from "../models/enums/LoanStatus";
 import agent from "../api/agent";
@@ -160,6 +160,10 @@ export default class LoanStore {
             console.log(error);
             throw (error as AxiosError).response!.data;
         }
+    }
+
+    updateLoan = async (loanId: number, loan: LoanUpdateValues) => {
+
     }
 
     createPayoff = async (loanId: number, payoff: PayoffCreateValues) => {

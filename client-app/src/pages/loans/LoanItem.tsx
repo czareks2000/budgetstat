@@ -15,9 +15,10 @@ import NoDecorationLink from "../../components/common/NoDecorationLink";
 interface Props {
     loan: Loan;
     detailsAction?: boolean;
+    noButtons?: boolean;
 }
 
-export default observer(function LoanItem({loan, detailsAction}: Props) {
+export default observer(function LoanItem({loan, detailsAction, noButtons = false}: Props) {
     const {
         currencyStore: {currencies},
         loanStore: {counterparties},
@@ -93,29 +94,32 @@ export default observer(function LoanItem({loan, detailsAction}: Props) {
                                 </Stack>
                             </Grid>
                             <Grid item xs={'auto'} >
-                                <Box mr={-1}>
-                                    {inProgress &&
-                                    <IconButton 
-                                        size="medium"
-                                        aria-label="edit"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            handleEditClick();
-                                        }}>
-                                        <Edit />
-                                    </IconButton>}
-                                    
-                                    <IconButton 
-                                        aria-label="delete"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            handleDeleteClick();
-                                        }}>
-                                        <Delete />
-                                    </IconButton>                              
-                                </Box>
+                                {!noButtons && <>
+                                    <Box mr={-1}>
+                                        
+                                        {inProgress &&
+                                        <IconButton 
+                                            size="medium"
+                                            aria-label="edit"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                handleEditClick();
+                                            }}>
+                                            <Edit />
+                                        </IconButton>}
+                                        
+                                        <IconButton 
+                                            aria-label="delete"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                handleDeleteClick();
+                                            }}>
+                                            <Delete />
+                                        </IconButton>                     
+                                    </Box>
+                                </>}  
                             </Grid>
                         </Grid>
                     <Divider />

@@ -23,6 +23,10 @@ export default observer(function CounterpartyPaidoffLoans() {
     }, [loansPaidOffLoaded, loadLoans])
 
     const handleGoBack = () => {
+        router.navigate(`/loans`);
+    }
+
+    const handleCurrentLoansClick = () => {
         router.navigate(`/loans/counterparty/${id}`);
     }
 
@@ -43,7 +47,7 @@ export default observer(function CounterpartyPaidoffLoans() {
             <Stack spacing={2}>
                 <Divider>Counterparty summary</Divider>
                 <CounterpartySummaryWithPagination summaries={summaries} 
-                    onClick={handleGoBack}
+                    onClick={handleCurrentLoansClick}
                     buttonText="Current loans"
                 />
                 {loansPaidOffLoaded ? 

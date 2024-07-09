@@ -28,8 +28,9 @@ export interface LoanCreateValues {
 }
 
 export interface LoanUpdateValues {
-    fullAmount: number;
-    repaymentDate: Date;
+    fullAmount: number | null;
+    repaymentDate: dayjs.Dayjs | Date;
+    description: string;
 }
 
 export interface GroupedLoan {
