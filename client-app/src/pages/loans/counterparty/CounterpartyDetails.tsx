@@ -10,9 +10,9 @@ import { LoanType } from "../../../app/models/enums/LoanType";
 import LoanItem from "../LoanItem";
 import { useState } from "react";
 import { ExpandMore } from "@mui/icons-material";
-import CreatePayoffForm from "../../../components/forms/Loan/CreatePayoffForm";
 import CounterpartySummaryWithPagination from "./CounterpartySummaryWithPagination";
 import CounterpartyPaidoffLoans from "./CounterpartyPaidoffLoans";
+import CollectivePayoffForm from "../../../components/forms/Loan/CollectivePayoffForm";
 
 export default observer(function CounterpartyDetails() {
     const {loanStore: {getCounterpartyGroupedLoans, getCounterpartyLoans}} = useStore();
@@ -23,6 +23,9 @@ export default observer(function CounterpartyDetails() {
 
     const credits = getCounterpartyLoans(Number(id), LoanType.Credit);
     const debts = getCounterpartyLoans(Number(id), LoanType.Debt);
+
+    const loansCount = credits.length + debts.length;
+    const showPayoffForm = loansCount > 0;
 
     const [isAcordionOpen, setIsAcordionOpen] = useState(false);
 
@@ -55,20 +58,22 @@ export default observer(function CounterpartyDetails() {
                     onClick={handleShowHistoryToggle}
                     buttonText={showHistory ? "Current loans" : "Show history"}/>
 
-                {!showHistory && <>
-                <Divider>Collective repayment</Divider>
-                <Accordion expanded={isAcordionOpen} onChange={handleAcordionToggle}>
-                    <AccordionSummary
-                    expandIcon={<ExpandMore />}
-                    aria-controls="create-payoff-form"
-                    id="create-payoff-form"
-                    >
-                        {!isAcordionOpen ? 'Click to open' : 'Click to hide'}
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <CreatePayoffForm />      
-                    </AccordionDetails>
-                </Accordion></>}
+                {!showHistory && showPayoffForm &&
+                <>
+                    <Divider>Collective repayment</Divider>
+                    <Accordion expanded={isAcordionOpen} onChange={handleAcordionToggle}>
+                        <AccordionSummary
+                        expandIcon={<ExpandMore />}
+                        aria-controls="collective-payoff-form"
+                        id="collective-payoff-form"
+                        >
+                            {!isAcordionOpen ? 'Click to open' : 'Click to hide'}
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <CollectivePayoffForm counterpartyId={Number(id)} />      
+                        </AccordionDetails>
+                    </Accordion>
+                </>}
 
                 {showHistory && 
                     <CounterpartyPaidoffLoans />

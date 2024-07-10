@@ -11,7 +11,7 @@ import { CategoryCreateValues, CategoryUpdateValues, MainCategory } from "../mod
 import { Transfer, TransferCreateUpdateValues } from "../models/Transfer";
 import { Counterparty, CounterpartyCreateValues } from "../models/Counterparty";
 import { Loan, LoanCreateValues, LoanUpdateValues } from "../models/Loan";
-import { PayoffCreateValues } from "../models/Payoff";
+import { CollectivePayoffValues, PayoffCreateValues } from "../models/Payoff";
 import { LoanStatus } from "../models/enums/LoanStatus";
 import { Icon } from "../models/Icon";
 import { Asset, AssetCategory, AssetCreateUpdateValues } from "../models/Asset";
@@ -166,6 +166,8 @@ const Loans = {
         requests.post<Loan>('/loans', loan),
     createPayoff: (loanId: number, payoff: PayoffCreateValues) => 
         requests.post<Loan>(`/loans/${loanId}/payoff`, payoff),
+    colectivePayoff: (counterpartyId: number, payoff: CollectivePayoffValues) => 
+        requests.post<Loan[]>(`/counterparty/${counterpartyId}/payoff`, payoff),
     updateLoan: (loanId: number, loan: LoanUpdateValues) => 
         requests.put<Loan>(`/loans/${loanId}`, loan),
     getCounterparties: () =>

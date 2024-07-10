@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { LoanType } from "./enums/LoanType";
 
 export interface Payoff {
     id: number;
@@ -15,4 +16,11 @@ export interface PayoffCreateValues {
     accountId: number | string;
     date: dayjs.Dayjs | Date;
     description?: string;
+}
+
+export interface CollectivePayoffValues {
+    amount: number | null;
+    accountId: number | string;
+    date: dayjs.Dayjs | Date;
+    loanType: LoanType;
 }

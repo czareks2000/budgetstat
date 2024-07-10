@@ -27,6 +27,8 @@ namespace Application.Interfaces
 
         // spłata zobowiązania
         Task<Result<LoanDto>> CreatePayoff(int loanId, PayoffCreateDto newPayoff);
+        // zbiorowa spłata
+        Task<Result<List<LoanDto>>> CollectivePayoff(int counterpartyId, ColectivePayoffDto collectivePayoff);
         // usunięcie spłaconej raty
         Task<Result<LoanDto>> DeletePayoff(int payoffId);
     }

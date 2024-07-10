@@ -71,15 +71,21 @@ export default observer(function CounterpartySummaryItem({summary}: Props) {
                         </Typography>
                     </Stack>
                     <Stack>
-                        <Typography variant="body1">
-                            Paid: {formatAmount(summary.currentAmount)} / {formatAmount(summary.fullAmount)} {currency.symbol}
-                        </Typography>
-                        <Typography variant="body1">
-                            Remaining: {formatAmount(remainingAmount)} {currency.symbol}
-                        </Typography>
-                        <Typography variant="body1">
-                            Nearest repayment: {convertToString(summary.nearestRepaymentDate)}
-                        </Typography>
+                        {summary.nearestRepaymentDate ? <>
+                            <Typography variant="body1">
+                                Paid: {formatAmount(summary.currentAmount)} / {formatAmount(summary.fullAmount)} {currency.symbol}
+                            </Typography>
+                            <Typography variant="body1">
+                                Remaining: {formatAmount(remainingAmount)} {currency.symbol}
+                            </Typography>
+                            <Typography variant="body1">
+                                Nearest repayment: {convertToString(summary.nearestRepaymentDate!)}
+                            </Typography></>
+                        :<>
+                            <Typography variant="body1">
+                                This counterparty has no current loans
+                            </Typography>
+                        </>}
                     </Stack>
                 </Grid>
                 <Grid item xs={'auto'} >

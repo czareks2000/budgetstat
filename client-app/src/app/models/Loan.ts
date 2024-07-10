@@ -39,6 +39,6 @@ export interface GroupedLoan {
     currencyId: number;
     currentAmount: number;
     fullAmount: number;
-    nearestRepaymentDate: Date;
+    nearestRepaymentDate: Date | null;
     loanType: LoanType;
 }

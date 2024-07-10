@@ -9,17 +9,19 @@ import SelectInput from "../../formInputs/SelectInput";
 
 import dayjs from "dayjs";
 import MyDatePicker from "../../formInputs/MyDatePicker";
-import TextInput from "../../formInputs/TextInput";
-import { PayoffCreateValues } from "../../../app/models/Payoff";
+import { CollectivePayoffValues } from "../../../app/models/Payoff";
+import { LoanType } from "../../../app/models/enums/LoanType";
+import { enumToOptions } from "../../../app/models/Option";
 
+interface Props {
+    counterpartyId: number;
+}
 
-export default observer(function CratePayoffForm() {
+export default observer(function CollectivePayoffForm({counterpartyId}: Props) {
     const {
-        accountStore: {getAccountsByCurrencyAsOptions, getAccountCurrencySymbol},
-        loanStore: {getLoanCurrencyId, createPayoff, selectedLoan: loan}} = useStore();
+        accountStore: {accountsAsOptions, getAccountCurrencySymbol},
+        loanStore: {collectivePayoff} }= useStore();
     
-    if (!loan) return <></>
-
     const validationSchema = Yup.object({
         accountId: Yup.string().required('Choose account'),
         amount: Yup.number()
@@ -27,27 +29,24 @@ export default observer(function CratePayoffForm() {
             .positive('The amount must be positive'),
         date: Yup.date()
             .required('Repayment date is required')
-            .max(dayjs().add(1, 'day').startOf('day').toDate(), 'Repayment date cannot be in the future')
-            .min(dayjs(loan.loanDate).startOf('day').toDate(), 'Repayment date cannot be before loan date'),
-        description: Yup.string().notRequired()
+            .max(dayjs().add(1, 'day').startOf('day').toDate(), 'Repayment date cannot be in the future'),
+        loanType: Yup.number().required('Choose which type of loan you want to repay'),
     });
 
-    const initialValues: PayoffCreateValues = {
+    const initialValues: CollectivePayoffValues = {
         amount: null,
         accountId: "",
         date: dayjs(),
-        description: ""
+        loanType: LoanType.Credit
     }
 
-    const accountsOptions = getAccountsByCurrencyAsOptions(getLoanCurrencyId(loan.id) as number);
-
-    const handleCreateLoanFormSubmit = (payoff: PayoffCreateValues, helpers: FormikHelpers<PayoffCreateValues>) => {
-        const transformedValues: PayoffCreateValues = {
+    const handleCreateLoanFormSubmit = (payoff: CollectivePayoffValues, helpers: FormikHelpers<CollectivePayoffValues>) => {
+        const transformedValues: CollectivePayoffValues = {
             ...payoff,
             date: dayjs(payoff.date).toDate()
         }
         
-        createPayoff(loan.id, transformedValues).then(() => {
+        collectivePayoff(counterpartyId, transformedValues).then(() => {
             helpers.resetForm();
         }).catch((err) => {
             helpers.setErrors({
@@ -66,10 +65,15 @@ export default observer(function CratePayoffForm() {
             {({ isValid, dirty, isSubmitting, values }) => (
                 <Form>
                     <Stack spacing={2}>
+                        {/* LoanType */}
+                        <SelectInput
+                            label="Loan Type" name={"loanType"}
+                            options={enumToOptions(LoanType)} />
+                            
                         {/* Account */}
                         <SelectInput
                             label="Account" name={"accountId"}
-                            options={accountsOptions} />
+                            options={accountsAsOptions} />
 
                         {/* Amount */}
                         <NumberInput label="Amount" name={"amount"}
@@ -81,9 +85,6 @@ export default observer(function CratePayoffForm() {
                             defaultValue={dayjs()}
                             label="Date" 
                             name={"date"}/>
-
-                        {/* Description */}
-                        <TextInput label="Description" name="description" />
 
                         {/* Buttons */}
                         <LoadingButton

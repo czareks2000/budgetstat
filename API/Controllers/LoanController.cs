@@ -68,6 +68,13 @@ namespace API.Controllers
         {
             return HandleResult(await _loanService.CreatePayoff(loanId, newPayoff));
         }
+        
+        [Authorize(Policy = "IsOwner")]
+        [HttpPost("counterparty/{counterpartyId}/payoff")] //api/counterparty/{counterpartyId}/payoff
+        public async Task<IActionResult> CollectivePayoff(int counterpartyId, ColectivePayoffDto collectivePayoff)
+        {
+            return HandleResult(await _loanService.CollectivePayoff(counterpartyId, collectivePayoff));
+        }
 
         [Authorize(Policy = "IsOwner")]
         [HttpDelete("payoff/{payoffId}")] //api/payoff/{payoffId}

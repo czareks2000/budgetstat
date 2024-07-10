@@ -8,7 +8,7 @@ import { AxiosError } from "axios";
 import { store } from "./store";
 import { LoanType } from "../models/enums/LoanType";
 import { convertToDate } from "../utils/ConvertToDate";
-import { PayoffCreateValues } from "../models/Payoff";
+import { CollectivePayoffValues, PayoffCreateValues } from "../models/Payoff";
 
 export default class LoanStore {
     loansInProgressRegistry = new Map<number, Loan>();
@@ -60,8 +60,6 @@ export default class LoanStore {
         } catch (error) {
             console.log(error);
         }
-
-         
     }
     
     deselectLoan = () => {
@@ -137,7 +135,7 @@ export default class LoanStore {
                 existingGroup.currentAmount += currentAmountAdjustment;
                 existingGroup.fullAmount += fullAmountAdjustment;
                 existingGroup.nearestRepaymentDate = 
-                    new Date(Math.min(existingGroup.nearestRepaymentDate.getTime(), loan.repaymentDate.getTime()));
+                    new Date(Math.min(existingGroup.nearestRepaymentDate!.getTime(), loan.repaymentDate.getTime()));
 
                 remainingAmount = existingGroup.fullAmount - existingGroup.currentAmount;
                 existingGroup.loanType = remainingAmount >= 0 ? LoanType.Credit : LoanType.Debt;
@@ -153,11 +151,29 @@ export default class LoanStore {
             }
         });
 
+        // Add default GroupedLoan for counterparties without any loans
+        this.counterparties.forEach(counterparty => {
+            const hasLoans = Array.from(groupedLoansMap.values()).some(group => group.counterpartyId === counterparty.id);
+            if (!hasLoans) {
+                const defaultCurrencyId = store.currencyStore.defaultCurrency!.id;
+                const key = `${counterparty.id}-${defaultCurrencyId}`;
+                groupedLoansMap.set(key, {
+                    counterpartyId: counterparty.id,
+                    currencyId: defaultCurrencyId,
+                    currentAmount: 0,
+                    fullAmount: 0,
+                    nearestRepaymentDate: null,
+                    loanType: LoanType.Credit
+                });
+            }
+        });
+
         return Array.from(groupedLoansMap.values());
     }
 
     getCounterpartyGroupedLoans = (counterpartyId: number): GroupedLoan[] => {
-        return this.groupedLoansByCounterpartyAndCurrency.filter(gl => gl.counterpartyId === counterpartyId);
+        var summaries = this.groupedLoansByCounterpartyAndCurrency.filter(gl => gl.counterpartyId === counterpartyId);
+        return summaries;
     }
 
     getCounterpartyLoans = (counterpartyId: number,
@@ -202,6 +218,18 @@ export default class LoanStore {
             runInAction(() => {
                 this.setLoan(newLoan);
                 store.accountStore.loadAccount(newLoan.accountId);
+            })
+        } catch (error) {
+            console.log(error);
+            throw (error as AxiosError).response!.data;
+        }
+    }
+
+    collectivePayoff = async (counterpartyId: number, payoff: CollectivePayoffValues) => {
+        try {
+            const updatedLoans = await agent.Loans.colectivePayoff(counterpartyId, payoff);
+            runInAction(() => {
+                updatedLoans.forEach(loan => this.setLoan(loan));
             })
         } catch (error) {
             console.log(error);

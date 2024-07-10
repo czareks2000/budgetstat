@@ -1,8 +1,6 @@
 ﻿using Application.Core;
-using Application.Dto.Budget;
 using Application.Dto.Counterparty;
 using Application.Dto.Loan;
-using Application.Dto.Transaction;
 using Application.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -10,6 +8,7 @@ using Domain;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using System.Collections.Generic;
 
 namespace Application.Services
 {
@@ -303,6 +302,127 @@ namespace Application.Services
             var loanDto = _mapper.Map<LoanDto>(loan);
 
             return Result<LoanDto>.Success(loanDto);
+        }
+
+        public async Task<Result<List<LoanDto>>> CollectivePayoff(int counterpartyId, ColectivePayoffDto collectivePayoff)
+        {
+            // sprawdzenie czy data nie jest w przyszłości
+            var currentDate = DateTime.UtcNow.Date;
+
+            if (collectivePayoff.Date.Date > currentDate)
+                return Result<List<LoanDto>>
+                    .Failure("Date cannot be in the future");
+
+            // sprawdzenie czy istnieje
+            var counterparty = await _context.Counterparties
+                .Include(c => c.Loans)
+                .FirstOrDefaultAsync(c => c.Id == counterpartyId);
+
+            if (counterparty == null) return null;
+
+            // sprawdzenie konta
+            var user = await _utilities.GetCurrentUserAsync();
+
+            var account = await _context.Accounts
+                .Include(a => a.Currency)
+                .FirstOrDefaultAsync(a => a.Id == collectivePayoff.AccountId && a.UserId == user.Id);
+
+            if (account == null)
+                return Result<List<LoanDto>>
+                    .Failure("Invalid account. It does not exist or does not belong to the user");
+
+            // sprawdzenie czy istnieją loans
+            var loans = counterparty.Loans
+                .Where(l => l.LoanStatus == LoanStatus.InProgress)
+                .Where(l => l.LoanType == collectivePayoff.LoanType)
+                .Where(l => l.CurrencyId == account.CurrencyId)
+                .OrderBy(l => l.RepaymentDate)
+                .ToList();
+
+            if (!loans.Any())
+                return Result<List<LoanDto>>.Failure("There are no loans to repay");
+
+            // sprawdzenie amount
+            decimal fullAmount = 0;
+            decimal currentAmount = 0;
+            decimal missingAmount = 0;
+
+            foreach (var loan in loans)
+            {
+                fullAmount += loan.FullAmount;
+                currentAmount += loan.CurrentAmount;
+            }
+            missingAmount = fullAmount - currentAmount;
+
+            if (collectivePayoff.Amount > missingAmount)
+                return Result<List<LoanDto>>.Failure($"The amount cannot be greater than remaining amount ({missingAmount})");
+
+            // utworzenie payoffs
+            List<Loan> updatedLoans = new List<Loan>();
+            decimal availableAmount = collectivePayoff.Amount;
+            int loanIndex = 0;
+
+            while (availableAmount > 0)
+            {
+                var loan = loans[loanIndex];
+
+                // obliczenie ile przeznaczyć dostępnego amount
+                decimal currentLoanAmount = loan.CurrentAmount;
+                decimal fullLoanAmount = loan.FullAmount;
+                decimal missingLoanAmount = fullLoanAmount - currentLoanAmount;
+
+                decimal amount = 0;
+
+                if (missingLoanAmount > availableAmount)
+                    amount = availableAmount;
+                else
+                    amount = missingLoanAmount;
+
+                // utworzenie payoff'a
+                var payoff = new Payoff
+                {
+                    Amount = amount,
+                    Date = collectivePayoff.Date,
+                    Description = "collective repayment",
+                    Loan = loan,
+                    Account = account,
+                    Currency = account.Currency,
+                };
+
+                loan.Payoffs.Add(payoff);
+
+                _context.Payoffs.Add(payoff);
+
+                // aktualizacja loan
+                var newCurrentAmount = currentLoanAmount + payoff.Amount;
+
+                if (newCurrentAmount == loan.FullAmount)
+                    loan.LoanStatus = LoanStatus.PaidOff;
+
+                loan.CurrentAmount = newCurrentAmount;
+
+                _context.Loans.Update(loan);
+                updatedLoans.Add(loan);
+
+                // aktualizacja salda konta
+                var isExpense = loan.LoanType == LoanType.Debt;
+                if (!_utilities.UpdateAccountBalances(account.Id, payoff.Date, isExpense, payoff.Amount))
+                    return Result<List<LoanDto>>
+                        .Failure($"Insufficient funds in the account.");
+
+                // aktualizcja zmiennych pomocniczych
+                availableAmount -= amount;
+                loanIndex++;
+            }
+
+            // zapisanie zmian w bazie
+            if (await _context.SaveChangesAsync() == 0)
+                return Result<List<LoanDto>>.Failure("Failed to create payoffs");
+
+            // utworzenie obiektu dto
+            var loanDtos = _mapper.Map<List<LoanDto>>(updatedLoans);
+
+            return Result<List<LoanDto>>.Success(loanDtos);
         }
 
         public async Task<Result<LoanDto>> DeletePayoff(int payoffId)
