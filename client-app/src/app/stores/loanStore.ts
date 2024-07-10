@@ -229,7 +229,10 @@ export default class LoanStore {
         try {
             const updatedLoans = await agent.Loans.colectivePayoff(counterpartyId, payoff);
             runInAction(() => {
-                updatedLoans.forEach(loan => this.setLoan(loan));
+                updatedLoans.forEach(loan => {
+                    this.setLoan(loan);
+                    store.accountStore.loadAccount(loan.accountId);
+                });
             })
         } catch (error) {
             console.log(error);
