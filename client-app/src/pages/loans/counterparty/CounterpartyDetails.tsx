@@ -21,8 +21,10 @@ export default observer(function CounterpartyDetails() {
 
     const summaries = getCounterpartyGroupedLoans(Number(id));
 
-    const credits = getCounterpartyLoans(Number(id), LoanType.Credit);
-    const debts = getCounterpartyLoans(Number(id), LoanType.Debt);
+    const credits = getCounterpartyLoans(Number(id), LoanType.Credit)
+        .sort((a,b) => a.repaymentDate.getTime() - b.repaymentDate.getTime());
+    const debts = getCounterpartyLoans(Number(id), LoanType.Debt)
+        .sort((a,b) => a.repaymentDate.getTime() - b.repaymentDate.getTime());
 
     const loansCount = credits.length + debts.length;
     const showPayoffForm = loansCount > 0;
