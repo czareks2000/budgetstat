@@ -168,7 +168,12 @@ export default class LoanStore {
             }
         });
 
-        return Array.from(groupedLoansMap.values());
+        return Array.from(groupedLoansMap.values()).sort((a,b) => {
+            const remainingAmountA = Math.abs(a.fullAmount - a.currentAmount);
+            const remainingAmountB = Math.abs(b.fullAmount - b.currentAmount);
+    
+            return remainingAmountB -remainingAmountA;
+        });
     }
 
     getCounterpartyGroupedLoans = (counterpartyId: number): GroupedLoan[] => {
