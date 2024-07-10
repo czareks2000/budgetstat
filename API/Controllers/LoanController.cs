@@ -31,10 +31,10 @@ namespace API.Controllers
             return HandleResult(await _loanService.GetAllCounterparties());
         }
 
-        [HttpGet("loans")] //api/loans?loanStatus=1
-        public async Task<IActionResult> GetLoans([FromQuery] LoanStatus loanStatus = LoanStatus.InProgress)
+        [HttpGet("loans")] //api/loans?loanStatus=1&counterpartyId=1
+        public async Task<IActionResult> GetLoans([FromQuery] LoanStatus loanStatus = LoanStatus.InProgress, [FromQuery] int counterpartyId = 0)
         {
-            return HandleResult(await _loanService.GetLoans(loanStatus));
+            return HandleResult(await _loanService.GetLoans(loanStatus, counterpartyId));
         }
 
         [HttpPost("loans")] //api/loans

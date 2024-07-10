@@ -170,8 +170,8 @@ const Loans = {
         requests.put<Loan>(`/loans/${loanId}`, loan),
     getCounterparties: () =>
         requests.get<Counterparty[]>('/counterparties'),
-    getLoans: (loanStatus: LoanStatus) =>
-        requests.get<Loan[]>(`/loans?loanStatus=${loanStatus}`),
+    getLoans: (loanStatus: LoanStatus, counterpartyId: number) =>
+        requests.get<Loan[]>(`/loans?loanStatus=${loanStatus}&counterpartyId=${counterpartyId}`),
     deleteCounterparty: (counterpartyId: number) => 
         requests.del<void>(`/counterparty/${counterpartyId}`),
     deleteLoan: (loanId: number) => 

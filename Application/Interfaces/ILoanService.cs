@@ -17,7 +17,7 @@ namespace Application.Interfaces
         // utworzenie zobowiązania
         Task<Result<LoanDto>> CreateLoan(LoanCreateDto newLoan);
         // przegląd zobowiązań (podział na InProgress i PaidOff)
-        Task<Result<List<LoanDto>>> GetLoans(LoanStatus loanStatus);
+        Task<Result<List<LoanDto>>> GetLoans(LoanStatus loanStatus, int counterpartyId = 0);
         // edycja zobowiązania
         Task<Result<LoanDto>> UpdateLoan(int loanId, LoanUpdateDto updatedLoan);
         // usunięcie zobowiązania

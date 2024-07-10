@@ -16,6 +16,8 @@ export default class LoanStore {
 
     loansPaidOffRegistry = new Map<number, Loan>();
     loansPaidOffLoaded = false;
+
+    counterpartyLoansLoaded: number[] = [];
     
     selectedLoan: Loan | undefined = undefined; 
 
@@ -32,6 +34,7 @@ export default class LoanStore {
 
         this.loansPaidOffRegistry.clear();
         this.loansPaidOffLoaded = false;
+        this.counterpartyLoansLoaded= [];
 
         this.selectedLoan = undefined;
 
@@ -77,17 +80,23 @@ export default class LoanStore {
         this.loansInProgressRegistry.delete(loanId);
     }
 
-    loadLoans = async (loanStatus: LoanStatus) => {
+    loadLoans = async (loanStatus: LoanStatus, counterpartyId: number = 0) => {
         this.setLoadedLoansFlag(loanStatus, false);
         try {
-            const loans = await agent.Loans.getLoans(loanStatus);
+            const loans = await agent.Loans.getLoans(loanStatus, counterpartyId);
             runInAction(() => {
                 loans.forEach(loan => this.setLoan(loan));
                 this.setLoadedLoansFlag(loanStatus, true);
+                this.setPaidOffLoansLoaded(loanStatus, counterpartyId);
             })
         } catch (error) {
             console.log(error);
-        }
+        } 
+    }
+
+    private setPaidOffLoansLoaded = (loanStatus: LoanStatus, counterpartyId: number) => {
+        if (loanStatus === LoanStatus.PaidOff)
+            this.counterpartyLoansLoaded.push(counterpartyId);
     }
 
     getLoanCurrencyId = (loanId: number) => {

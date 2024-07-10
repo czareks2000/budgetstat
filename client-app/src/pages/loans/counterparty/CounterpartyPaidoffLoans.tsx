@@ -8,14 +8,14 @@ import LoanItem from "../LoanItem"
 import { useEffect } from "react"
 
 export default observer(function CounterpartyPaidoffLoans() {
-    const {loanStore: {getCounterpartyLoans, loadLoans, loansPaidOffLoaded}} = useStore()
+    const {loanStore: {getCounterpartyLoans, loadLoans, loansPaidOffLoaded, counterpartyLoansLoaded}} = useStore()
 
     const {id} = useParams();
 
     useEffect(() => {
-        if (!loansPaidOffLoaded)
-            loadLoans(LoanStatus.PaidOff);
-    }, [loansPaidOffLoaded, loadLoans])
+        if (!counterpartyLoansLoaded.includes(Number(id)))
+            loadLoans(LoanStatus.PaidOff, Number(id));
+    }, [loadLoans, counterpartyLoansLoaded])
 
     const credits = getCounterpartyLoans(Number(id), LoanType.Credit, LoanStatus.PaidOff);
     const debts = getCounterpartyLoans(Number(id), LoanType.Debt, LoanStatus.PaidOff);

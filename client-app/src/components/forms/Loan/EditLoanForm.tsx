@@ -35,7 +35,7 @@ export default observer(function EditLoanForm({loan, onSubmit, onCancel}: Props)
     const initialValues: LoanUpdateValues = {
         fullAmount: loan.fullAmount,
         repaymentDate: dayjs(loan.repaymentDate),
-        description: ""
+        description: loan.description || ""
     }
 
     const handleCreateLoanFormSubmit = (updatedloan: LoanUpdateValues, helpers: FormikHelpers<LoanUpdateValues>) => {

@@ -111,7 +111,7 @@ namespace Application.Services
             return Result<LoanDto>.Success(loanDto);
         }
 
-        public async Task<Result<List<LoanDto>>> GetLoans(LoanStatus loanStatus)
+        public async Task<Result<List<LoanDto>>> GetLoans(LoanStatus loanStatus, int counterpartyId = 0)
         {
             var user = await _utilities.GetCurrentUserAsync();
 
@@ -121,6 +121,9 @@ namespace Application.Services
                 .Where(l => l.LoanStatus == loanStatus)
                 .ProjectTo<LoanDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
+
+            if (counterpartyId > 0)
+                loanDtos = loanDtos.Where(l => l.CounterpartyId == counterpartyId).ToList();
 
             return Result<List<LoanDto>>.Success(loanDtos);
         }
