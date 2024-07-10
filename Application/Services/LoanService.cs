@@ -128,6 +128,20 @@ namespace Application.Services
             return Result<List<LoanDto>>.Success(loanDtos);
         }
 
+        public async Task<Result<LoanDto>> GetLoan(int loanId)
+        {
+            var loan = await _context.Loans
+                .Include(l => l.Payoffs)
+                .FirstOrDefaultAsync(l => l.Id == loanId);
+
+            if (loan == null) return null;
+
+            // utworzenie obiektu DTO
+            var loanDto = _mapper.Map<LoanDto>(loan);
+
+            return Result<LoanDto>.Success(loanDto);
+        }
+
         public async Task<Result<LoanDto>> UpdateLoan(int loanId, LoanUpdateDto updatedLoan)
         {
             var loan = await _context.Loans

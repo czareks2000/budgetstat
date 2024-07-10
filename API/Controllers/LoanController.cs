@@ -37,6 +37,12 @@ namespace API.Controllers
             return HandleResult(await _loanService.GetLoans(loanStatus, counterpartyId));
         }
 
+        [HttpGet("loans/{loanId}")] //api/loans/{loanId}
+        public async Task<IActionResult> GetLoan(int loanId)
+        {
+            return HandleResult(await _loanService.GetLoan(loanId));
+        }
+
         [HttpPost("loans")] //api/loans
         public async Task<IActionResult> CreateLoan(LoanCreateDto newLoan)
         {

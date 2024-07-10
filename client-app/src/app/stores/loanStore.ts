@@ -42,8 +42,26 @@ export default class LoanStore {
         this.counterpartiesLoaded = false;
     }
 
-    selectLoan = (loanId: number) => {
-        this.selectedLoan = this.getLoanById(loanId);
+    selectLoan = async (loanId: number) => {
+        try {
+            const loan = this.getLoanById(loanId);
+
+            if (loan) {
+                this.selectedLoan = loan;
+                return;
+            }
+
+            const loanFromDb = await agent.Loans.getLoan(loanId);
+            runInAction(() => {
+                this.setLoan(loanFromDb);
+                this.selectedLoan = loanFromDb;
+            })   
+
+        } catch (error) {
+            console.log(error);
+        }
+
+         
     }
     
     deselectLoan = () => {

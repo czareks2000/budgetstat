@@ -18,6 +18,8 @@ namespace Application.Interfaces
         Task<Result<LoanDto>> CreateLoan(LoanCreateDto newLoan);
         // przegląd zobowiązań (podział na InProgress i PaidOff)
         Task<Result<List<LoanDto>>> GetLoans(LoanStatus loanStatus, int counterpartyId = 0);
+        // pobranie pojedynczego loan
+        Task<Result<LoanDto>> GetLoan(int loanId);
         // edycja zobowiązania
         Task<Result<LoanDto>> UpdateLoan(int loanId, LoanUpdateDto updatedLoan);
         // usunięcie zobowiązania
