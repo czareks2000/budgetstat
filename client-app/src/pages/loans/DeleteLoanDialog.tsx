@@ -5,7 +5,6 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typogra
 import { LoadingButton } from "@mui/lab";
 import { Loan } from "../../app/models/Loan";
 import { router } from "../../app/router/Routes";
-import { formatAmount } from "../../app/utils/FormatAmount";
 import { LoanStatus } from "../../app/models/enums/LoanStatus";
 
 interface Props {

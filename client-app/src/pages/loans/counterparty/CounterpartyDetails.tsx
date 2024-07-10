@@ -12,6 +12,7 @@ import { useState } from "react";
 import { ExpandMore } from "@mui/icons-material";
 import CreatePayoffForm from "../../../components/forms/Loan/CreatePayoffForm";
 import CounterpartySummaryWithPagination from "./CounterpartySummaryWithPagination";
+import CounterpartyPaidoffLoans from "./CounterpartyPaidoffLoans";
 
 export default observer(function CounterpartyDetails() {
     const {loanStore: {getCounterpartyGroupedLoans, getCounterpartyLoans}} = useStore();
@@ -23,10 +24,16 @@ export default observer(function CounterpartyDetails() {
     const credits = getCounterpartyLoans(Number(id), LoanType.Credit);
     const debts = getCounterpartyLoans(Number(id), LoanType.Debt);
 
-    const [isOpen, setIsOpen] = useState(false);
+    const [isAcordionOpen, setIsAcordionOpen] = useState(false);
 
-    const handleToggle = () => {
-        setIsOpen(!isOpen);
+    const handleAcordionToggle = () => {
+        setIsAcordionOpen(!isAcordionOpen);
+    };
+
+    const [showHistory, setShowHistory] = useState(false);
+
+    const handleShowHistoryToggle = () => {
+        setShowHistory(!showHistory);
     };
 
     const handleAddButtonClick = () => {
@@ -35,10 +42,6 @@ export default observer(function CounterpartyDetails() {
 
     const handleGoBack = () => {
         router.navigate('/loans');
-    }
-
-    const handleShowHistory = () => {
-        router.navigate(`/loans/counterparty/${id}/paidoff`);
     }
     
     return (
@@ -49,23 +52,29 @@ export default observer(function CounterpartyDetails() {
             <Stack spacing={2}>
                 <Divider>Counterparty summary</Divider>
                 <CounterpartySummaryWithPagination summaries={summaries} 
-                    onClick={handleShowHistory}
-                    buttonText="Show history"/>
+                    onClick={handleShowHistoryToggle}
+                    buttonText={showHistory ? "Current loans" : "Show history"}/>
 
+                {!showHistory && <>
                 <Divider>Collective repayment</Divider>
-                <Accordion expanded={isOpen} onChange={handleToggle}>
+                <Accordion expanded={isAcordionOpen} onChange={handleAcordionToggle}>
                     <AccordionSummary
                     expandIcon={<ExpandMore />}
                     aria-controls="create-payoff-form"
                     id="create-payoff-form"
                     >
-                        {!isOpen ? 'Click to open' : 'Click to hide'}
+                        {!isAcordionOpen ? 'Click to open' : 'Click to hide'}
                     </AccordionSummary>
                     <AccordionDetails>
-                        <CreatePayoffForm loanId={1}/>      
+                        <CreatePayoffForm />      
                     </AccordionDetails>
-                </Accordion> 
+                </Accordion></>}
+
+                {showHistory && 
+                    <CounterpartyPaidoffLoans />
+                }
                 
+                {!showHistory && <>
                 {debts.length > 0 &&
                 <Divider>Debts</Divider>}
                 {debts.map((loan) => 
@@ -76,7 +85,7 @@ export default observer(function CounterpartyDetails() {
                 <Divider>Credits</Divider>}
                 {credits.map((loan) => 
                     <LoanItem key={loan.id} loan={loan} detailsAction/>
-                )}
+                )}</>}
             </Stack>
         }/>
         </>

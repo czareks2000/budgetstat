@@ -21,7 +21,6 @@ import EditAccount from "../../pages/accounts/EditAccount";
 import CreateLoan from "../../pages/loans/CreateLoan";
 import CounterpartyDetails from "../../pages/loans/counterparty/CounterpartyDetails";
 import LoanDetails from "../../pages/loans/details/LoanDetails";
-import CounterpartyPaidoffLoans from "../../pages/loans/counterparty/CounterpartyPaidoffLoans";
 import EditLoan from "../../pages/loans/EditLoan";
 
 export const routes: RouteObject[] = [
@@ -48,7 +47,6 @@ export const routes: RouteObject[] = [
                 {path: 'loans/create', element: <CreateLoan />},
                 {path: 'loans/:id/edit', element: <EditLoan />},
                 {path: 'loans/counterparty/:id', element: <CounterpartyDetails />},
-                {path: 'loans/counterparty/:id/paidoff', element: <CounterpartyPaidoffLoans />},
                 {path: 'loans/:id', element: <LoanDetails />},
                 
                 {path: 'net-worth', element: <NetWorth />},
