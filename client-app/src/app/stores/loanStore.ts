@@ -56,9 +56,25 @@ export default class LoanStore {
         });
 
         if (loan.loanStatus === LoanStatus.InProgress)
+        {
+            this.loansPaidOffRegistry.delete(loan.id);
             this.loansInProgressRegistry.set(loan.id, loan);
+        }
         else if (loan.loanStatus === LoanStatus.PaidOff)
+        {
+            this.loansInProgressRegistry.delete(loan.id);
             this.loansPaidOffRegistry.set(loan.id, loan);
+        }
+    }
+
+    private removeLoan = (loanId: number) => {
+        const loan = this.getLoanById(loanId);
+        
+        if(!loan) return;
+        
+        store.accountStore.loadAccount(loan.accountId);
+        this.loansPaidOffRegistry.delete(loanId);
+        this.loansInProgressRegistry.delete(loanId);
     }
 
     loadLoans = async (loanStatus: LoanStatus) => {
@@ -88,12 +104,16 @@ export default class LoanStore {
             const currentAmountAdjustment = loan.loanType === LoanType.Credit ? loan.currentAmount : -loan.currentAmount;
             const fullAmountAdjustment = loan.loanType === LoanType.Credit ? loan.fullAmount : -loan.fullAmount;
 
+            let remainingAmount = fullAmountAdjustment - currentAmountAdjustment;
+
             if (existingGroup) {
                 existingGroup.currentAmount += currentAmountAdjustment;
                 existingGroup.fullAmount += fullAmountAdjustment;
                 existingGroup.nearestRepaymentDate = 
                     new Date(Math.min(existingGroup.nearestRepaymentDate.getTime(), loan.repaymentDate.getTime()));
-                existingGroup.loanType = fullAmountAdjustment >= 0 ? LoanType.Credit : LoanType.Debt;
+
+                remainingAmount = existingGroup.fullAmount - existingGroup.currentAmount;
+                existingGroup.loanType = remainingAmount >= 0 ? LoanType.Credit : LoanType.Debt;
             } else {
                 groupedLoansMap.set(key, {
                     counterpartyId: loan.counterpartyId,
@@ -101,7 +121,7 @@ export default class LoanStore {
                     currentAmount: currentAmountAdjustment,
                     fullAmount: fullAmountAdjustment,
                     nearestRepaymentDate: loan.repaymentDate,
-                    loanType: fullAmountAdjustment >= 0 ? LoanType.Credit : LoanType.Debt
+                    loanType: remainingAmount >= 0 ? LoanType.Credit : LoanType.Debt
                 });
             }
         });
@@ -163,7 +183,27 @@ export default class LoanStore {
     }
 
     updateLoan = async (loanId: number, loan: LoanUpdateValues) => {
+        try {
+            const updatedLoan = await agent.Loans.updateLoan(loanId, loan);
+            runInAction(() => {
+                this.setLoan(updatedLoan);
+                store.accountStore.loadAccount(updatedLoan.accountId);
+            })
+        } catch (error) {
+            console.log(error);
+            throw (error as AxiosError).response!.data;
+        }
+    }
 
+    deleteLoan = async (loanId: number) => {
+        try {
+            await agent.Loans.deleteLoan(loanId);
+            runInAction(() => {
+                this.removeLoan(loanId);
+            })
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     createPayoff = async (loanId: number, payoff: PayoffCreateValues) => {

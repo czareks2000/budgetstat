@@ -13,14 +13,13 @@ import SelectInput from "../../formInputs/SelectInput";
 import dayjs from "dayjs";
 import MyDatePicker from "../../formInputs/MyDatePicker";
 import TextInput from "../../formInputs/TextInput";
+import { router } from "../../../app/router/Routes";
 
 interface Props {
     counterpartyId?: string | null;
-    onSubmit: () => void;
-    onCancel: () => void;
 }
 
-export default observer(function CrateLoanForm({counterpartyId, onSubmit, onCancel}: Props) {
+export default observer(function CrateLoanForm({counterpartyId}: Props) {
     const {
         accountStore: {accountsAsOptions, getAccountCurrencySymbol},
         loanStore: {createLoan, counterpartiesAsOptions}} = useStore();
@@ -51,6 +50,13 @@ export default observer(function CrateLoanForm({counterpartyId, onSubmit, onCanc
         description: ""
     }
 
+    const onCancel = () => {
+        if (counterpartyId)
+            router.navigate(`/loans/counterparty/${counterpartyId}`);
+        else
+            router.navigate(`/loans`);
+    }
+
     const handleCreateLoanFormSubmit = (loan: LoanCreateValues, helpers: FormikHelpers<LoanCreateValues>) => {
         const transformedValues: LoanCreateValues = {
             ...loan,
@@ -58,7 +64,7 @@ export default observer(function CrateLoanForm({counterpartyId, onSubmit, onCanc
         }
         
         createLoan(transformedValues).then(() => {
-            onSubmit();
+            router.navigate(`/loans/counterparty/${loan.counterpartyId}`);
         }).catch((err) => {
             helpers.setErrors({
                 fullAmount: err
@@ -66,6 +72,8 @@ export default observer(function CrateLoanForm({counterpartyId, onSubmit, onCanc
             helpers.setSubmitting(false);
         });
     }
+
+    
     
     return (
         <>

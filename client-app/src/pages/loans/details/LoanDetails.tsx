@@ -67,7 +67,7 @@ export default observer(function LoanDetails() {
                             {!isOpen ? 'Click to open' : 'Click to hide'}
                         </AccordionSummary>
                         <AccordionDetails>
-                            <CreatePayoffForm loanId={loan.id}/>      
+                            <CreatePayoffForm />      
                         </AccordionDetails>
                     </Accordion>
                 </>}

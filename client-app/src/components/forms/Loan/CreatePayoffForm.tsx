@@ -12,15 +12,14 @@ import MyDatePicker from "../../formInputs/MyDatePicker";
 import TextInput from "../../formInputs/TextInput";
 import { PayoffCreateValues } from "../../../app/models/Payoff";
 
-interface Props {
-    loanId: number;
-}
 
-export default observer(function CratePayoffForm({loanId}: Props) {
+export default observer(function CratePayoffForm() {
     const {
         accountStore: {getAccountsByCurrencyAsOptions, getAccountCurrencySymbol},
-        loanStore: {getLoanCurrencyId, createPayoff}} = useStore();
+        loanStore: {getLoanCurrencyId, createPayoff, selectedLoan: loan}} = useStore();
     
+    if (!loan) return <></>
+
     const validationSchema = Yup.object({
         accountId: Yup.string().required('Choose account'),
         amount: Yup.number()
@@ -28,8 +27,8 @@ export default observer(function CratePayoffForm({loanId}: Props) {
             .positive('The amount must be positive'),
         date: Yup.date()
             .required('Repayment date is required')
-            .min(dayjs().startOf('day').toDate(), 'Repayment date cannot be in the future'),
-            //dodać ze nie moze być starsze nic loan.loandate
+            .max(dayjs().add(1, 'day').startOf('day').toDate(), 'Repayment date cannot be in the future')
+            .min(dayjs(loan.loanDate).startOf('day').toDate(), 'Repayment date cannot be before loan date'),
         description: Yup.string().notRequired()
     });
 
@@ -40,7 +39,7 @@ export default observer(function CratePayoffForm({loanId}: Props) {
         description: ""
     }
 
-    const accountsOptions = getAccountsByCurrencyAsOptions(getLoanCurrencyId(loanId) as number);
+    const accountsOptions = getAccountsByCurrencyAsOptions(getLoanCurrencyId(loan.id) as number);
 
     const handleCreateLoanFormSubmit = (payoff: PayoffCreateValues, helpers: FormikHelpers<PayoffCreateValues>) => {
         const transformedValues: PayoffCreateValues = {
@@ -48,7 +47,7 @@ export default observer(function CratePayoffForm({loanId}: Props) {
             date: dayjs(payoff.date).toDate()
         }
         
-        createPayoff(loanId, transformedValues).then(() => {
+        createPayoff(loan.id, transformedValues).then(() => {
             helpers.resetForm();
         }).catch((err) => {
             helpers.setErrors({

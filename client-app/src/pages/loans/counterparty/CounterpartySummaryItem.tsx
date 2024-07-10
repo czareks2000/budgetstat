@@ -31,8 +31,6 @@ export default observer(function CounterpartySummaryItem({summary}: Props) {
 
     const remainingAmount = summary.fullAmount - summary.currentAmount;
 
-    
-
     const header = () => {
         if (summary.loanType === LoanType.Credit)
             return (

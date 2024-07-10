@@ -11,6 +11,8 @@ import { ArrowForward, Delete, Edit } from "@mui/icons-material";
 import { Counterparty } from "../../app/models/Counterparty";
 import { Currency } from "../../app/models/Currency";
 import NoDecorationLink from "../../components/common/NoDecorationLink";
+import DeleteLoanDialog from "./DeleteLoanDialog";
+import { useState } from "react";
 
 interface Props {
     loan: Loan;
@@ -18,11 +20,13 @@ interface Props {
     noButtons?: boolean;
 }
 
-export default observer(function LoanItem({loan, detailsAction, noButtons = false}: Props) {
+export default observer(function LoanItem({loan, detailsAction = true, noButtons = false}: Props) {
     const {
         currencyStore: {currencies},
         loanStore: {counterparties},
     } = useStore();
+
+    const [open, setOpen] = useState(false);
 
     const currency = currencies.find(c => c.id === loan.currencyId) as Currency;
 
@@ -30,10 +34,6 @@ export default observer(function LoanItem({loan, detailsAction, noButtons = fals
 
     const handleEditClick = () => {
         router.navigate(`/loans/${loan.id}/edit`);
-    }
-
-    const handleDeleteClick = () => {
-
     }
 
     const header = () => {
@@ -70,6 +70,12 @@ export default observer(function LoanItem({loan, detailsAction, noButtons = fals
     }
     
     return (
+        <>
+        <DeleteLoanDialog 
+            loan={loan} 
+            redirectAfterSubmit={!detailsAction}
+            open={open}
+            setOpen={setOpen} />
         <NoDecorationLink 
             to={`/loans/${loan.id}`} 
             disabled={!detailsAction}
@@ -114,7 +120,7 @@ export default observer(function LoanItem({loan, detailsAction, noButtons = fals
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 e.stopPropagation();
-                                                handleDeleteClick();
+                                                setOpen(true);
                                             }}>
                                             <Delete />
                                         </IconButton>                     
@@ -164,6 +170,6 @@ export default observer(function LoanItem({loan, detailsAction, noButtons = fals
                 </CardContent>
             </Card>
         }/>
-        
+        </>
     )
 })
