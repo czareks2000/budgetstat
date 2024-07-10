@@ -7,6 +7,7 @@ import EditLoanForm from '../../components/forms/Loan/EditLoanForm'
 import { useEffect } from 'react'
 import { useStore } from '../../app/stores/store'
 import LoanItem from './LoanItem'
+import FloatingGoBackButton from '../../components/common/FloatingGoBackButton'
 
 export default observer(function EditLoan() {  
     const {
@@ -24,11 +25,12 @@ export default observer(function EditLoan() {
         router.navigate(`/loans/${id}`);
     }
   
-    return (
+    return (<>
+    <FloatingGoBackButton onClick={handleRedirect}/>
     <ResponsiveContainer content={
         <Stack spacing={2}>
             <Divider>Loan details</Divider>
-            <LoanItem loan={loan} noButtons/>
+            <LoanItem key={loan.id} loan={loan} noButtons/>
             <Divider>Edit Loan</Divider>
             <Paper>
                 <Box p={2}>
@@ -40,5 +42,5 @@ export default observer(function EditLoan() {
             </Paper>
         </Stack>
     }/>
-  )
+  </>)
 })

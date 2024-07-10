@@ -23,6 +23,7 @@ export interface LoanCreateValues {
     accountId: number | string;
     fullAmount: number | null;
     counterpartyId: number| string;
+    loanDate: dayjs.Dayjs | Date;
     repaymentDate: dayjs.Dayjs | Date;
     description?: string;
 }

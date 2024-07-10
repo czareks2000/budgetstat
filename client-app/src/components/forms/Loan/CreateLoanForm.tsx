@@ -32,6 +32,9 @@ export default observer(function CrateLoanForm({counterpartyId, onSubmit, onCanc
             .required('Amount is required')
             .positive('The amount must be positive'),
         counterpartyId: Yup.string().required('Choose counterparty'),
+        loanDate: Yup.date()
+            .required('Repayment date is required')
+            .max(dayjs().add(1, 'days').startOf('day').toDate(), 'Loan date cannot be in the future'),
         repaymentDate: Yup.date()
             .required('Repayment date is required')
             .min(dayjs().startOf('day').toDate(), 'Repayment date cannot be in the past'),
@@ -43,6 +46,7 @@ export default observer(function CrateLoanForm({counterpartyId, onSubmit, onCanc
         accountId: "",
         fullAmount: null,
         counterpartyId: counterpartyId || "",
+        loanDate: dayjs(),
         repaymentDate: dayjs().add(7, 'days'),
         description: ""
     }
@@ -91,7 +95,13 @@ export default observer(function CrateLoanForm({counterpartyId, onSubmit, onCanc
                         <SelectInput
                             label="Counterparty" name={"counterpartyId"}
                             options={counterpartiesAsOptions} />
-                            
+
+                        {/* Loan Date */}
+                        <MyDatePicker 
+                            defaultValue={dayjs()}
+                            label="Loan Date" 
+                            name={"loanDate"}/>
+
                         {/* Repayment Date */}
                         <MyDatePicker 
                             defaultValue={dayjs().add(7, 'days')}

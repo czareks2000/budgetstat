@@ -19,6 +19,8 @@ namespace Application.Dto.Loan
         [GreaterThanZero(ErrorMessage = "Invalid counterparty id")]
         public int CounterpartyId { get; set; }
         [Required]
+        public DateTime LoanDate { get; set; }
+        [Required]
         public DateTime RepaymentDate { get; set; }
         public string Description { get; set; }
     }
