@@ -3,7 +3,7 @@ import ResponsiveContainer from "../../components/common/ResponsiveContainer"
 import { Box, Card, CardContent, Divider, Grid, IconButton, Paper, Stack, Typography } from "@mui/material"
 import { LineChart } from "@mui/x-charts"
 import { theme } from "../../app/layout/Theme";
-import { Add, Balance, Home, PendingActions, PlusOne, RequestQuote } from "@mui/icons-material";
+import { Add, Balance, Home, PendingActions } from "@mui/icons-material";
 
 export default observer(function NetWorth() {
     const data = [39000, 42100, 44000, 43000, 41200, 42000, 42137, 44000, 43700, 46500, 45000, 47000];
