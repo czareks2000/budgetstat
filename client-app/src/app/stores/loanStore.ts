@@ -132,6 +132,10 @@ export default class LoanStore {
             let remainingAmount = fullAmountAdjustment - currentAmountAdjustment;
 
             if (existingGroup) {
+                existingGroup.creditsCurrentAmount += currentAmountAdjustment > 0 ? currentAmountAdjustment : 0;
+                existingGroup.debtsCurrentAmount -= currentAmountAdjustment < 0 ? currentAmountAdjustment : 0;
+                existingGroup.creditsFullAmount += fullAmountAdjustment > 0 ? fullAmountAdjustment : 0;
+                existingGroup.debtsFullAmount -= fullAmountAdjustment < 0 ? fullAmountAdjustment : 0;
                 existingGroup.currentAmount += currentAmountAdjustment;
                 existingGroup.fullAmount += fullAmountAdjustment;
                 existingGroup.nearestRepaymentDate = 
@@ -143,6 +147,10 @@ export default class LoanStore {
                 groupedLoansMap.set(key, {
                     counterpartyId: loan.counterpartyId,
                     currencyId: loan.currencyId,
+                    creditsCurrentAmount: loan.loanType === LoanType.Credit ? loan.currentAmount : 0,
+                    debtsCurrentAmount:loan.loanType === LoanType.Debt ? loan.currentAmount : 0,
+                    creditsFullAmount: loan.loanType === LoanType.Credit ? loan.fullAmount: 0,
+                    debtsFullAmount: loan.loanType === LoanType.Debt ? loan.fullAmount : 0,
                     currentAmount: currentAmountAdjustment,
                     fullAmount: fullAmountAdjustment,
                     nearestRepaymentDate: loan.repaymentDate,
@@ -160,6 +168,10 @@ export default class LoanStore {
                 groupedLoansMap.set(key, {
                     counterpartyId: counterparty.id,
                     currencyId: defaultCurrencyId,
+                    creditsCurrentAmount: 0,
+                    debtsCurrentAmount: 0,
+                    creditsFullAmount: 0,
+                    debtsFullAmount: 0,
                     currentAmount: 0,
                     fullAmount: 0,
                     nearestRepaymentDate: null,
@@ -320,6 +332,23 @@ export default class LoanStore {
         try {
             var cp = await agent.Loans.createCounterparty(counterparty);
             runInAction(() => this.counterparties.push(cp))
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    deleteCounterparty = async (counterpartyId: number) => {
+        try {
+            await agent.Loans.deleteCounterparty(counterpartyId);
+            runInAction(() => {
+                this.counterparties = this.counterparties.filter(c => c.id !== counterpartyId);
+
+                Array.from(this.loansPaidOffRegistry.entries())
+                    .filter(([_, loan]) => loan.counterpartyId === counterpartyId)
+                    .forEach(([loanId, _]) => {
+                        this.loansPaidOffRegistry.delete(loanId);
+                    });
+            });
         } catch (error) {
             console.log(error);
         }

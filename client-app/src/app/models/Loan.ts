@@ -37,6 +37,10 @@ export interface LoanUpdateValues {
 export interface GroupedLoan {
     counterpartyId: number;
     currencyId: number;
+    creditsCurrentAmount: number;
+    debtsCurrentAmount: number;
+    creditsFullAmount: number;
+    debtsFullAmount: number;
     currentAmount: number;
     fullAmount: number;
     nearestRepaymentDate: Date | null;

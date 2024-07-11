@@ -30,7 +30,7 @@ export default observer(function CollectivePayoffForm({counterpartyId}: Props) {
         date: Yup.date()
             .required('Repayment date is required')
             .max(dayjs().add(1, 'day').startOf('day').toDate(), 'Repayment date cannot be in the future'),
-        loanType: Yup.number().required('Choose which type of loan you want to repay'),
+        loanType: Yup.number().required('Choose which type of loans you want to repay'),
     });
 
     const initialValues: CollectivePayoffValues = {
@@ -67,8 +67,8 @@ export default observer(function CollectivePayoffForm({counterpartyId}: Props) {
                     <Stack spacing={2}>
                         {/* LoanType */}
                         <SelectInput
-                            label="Loan Type" name={"loanType"}
-                            options={enumToOptions(LoanType)} />
+                            label="Which type of loans you want to repay" name={"loanType"}
+                            options={enumToOptions(LoanType, true)} />
                             
                         {/* Account */}
                         <SelectInput

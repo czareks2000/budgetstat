@@ -32,7 +32,7 @@ export default observer(function CounterpartyPaidoffLoans() {
                 {credits.length > 0 &&
                 <Divider>Credits history</Divider>}
                 {credits.map((loan) => 
-                    <LoanItem key={loan.id} loan={loan}/>
+                    <LoanItem key={loan.id} loan={loan} detailsAction/>
                 )}
                 {debts.length > 0 &&
                 <Divider>Debts history</Divider>}

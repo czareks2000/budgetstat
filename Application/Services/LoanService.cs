@@ -41,9 +41,13 @@ namespace Application.Services
         public async Task<Result<object>> DeleteCounterparty(int counterpartyId)
         {
             var counterparty = await _context.Counterparties
+                .Include(c => c.Loans)
                 .FirstOrDefaultAsync(c => c.Id == counterpartyId);
 
             if (counterparty == null) return null;
+
+            if (counterparty.Loans.Any(l => l.LoanStatus == LoanStatus.InProgress))
+                return Result<object>.Failure("Unable to delete a counterparty that has loans in progress");
 
             _context.Counterparties.Remove(counterparty);
 
@@ -316,6 +320,7 @@ namespace Application.Services
             // sprawdzenie czy istnieje
             var counterparty = await _context.Counterparties
                 .Include(c => c.Loans)
+                    .ThenInclude(l => l.Payoffs)
                 .FirstOrDefaultAsync(c => c.Id == counterpartyId);
 
             if (counterparty == null) return null;

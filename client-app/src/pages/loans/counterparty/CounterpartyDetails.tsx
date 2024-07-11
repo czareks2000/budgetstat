@@ -21,6 +21,9 @@ export default observer(function CounterpartyDetails() {
 
     const summaries = getCounterpartyGroupedLoans(Number(id));
 
+    if (summaries.length == 0)
+        router.navigate('/loans');
+
     const credits = getCounterpartyLoans(Number(id), LoanType.Credit)
         .sort((a,b) => a.repaymentDate.getTime() - b.repaymentDate.getTime());
     const debts = getCounterpartyLoans(Number(id), LoanType.Debt)

@@ -1,23 +1,29 @@
-import { Box, Card, CardContent, Grid, LinearProgress, Stack, Typography } from "@mui/material"
+import { Box, Card, CardContent, Grid, IconButton, LinearProgress, Stack, Typography } from "@mui/material"
 import { observer } from "mobx-react-lite"
 import { GroupedLoan } from "../../../app/models/Loan";
 import { useStore } from "../../../app/stores/store";
 import { convertToString } from "../../../app/utils/ConvertToString";
 import { formatAmount } from "../../../app/utils/FormatAmount";
-import { ArrowForward } from "@mui/icons-material";
+import { ArrowForward, Delete } from "@mui/icons-material";
 import { Counterparty } from "../../../app/models/Counterparty";
 import { Currency } from "../../../app/models/Currency";
 import { LoanType } from "../../../app/models/enums/LoanType";
+import { useState } from "react";
+import DeleteCounterpartyDialog from "../DeleteCounterpartyDialog";
+import NoDecorationLink from "../../../components/common/NoDecorationLink";
 
 interface Props {
     summary: GroupedLoan;
+    detailsAction?: boolean;
 }
 
-export default observer(function CounterpartySummaryItem({summary}: Props) {
+export default observer(function CounterpartySummaryItem({detailsAction, summary}: Props) {
     const {
         loanStore: {counterparties},
         currencyStore: {currencies}
     } = useStore();
+
+    const [open, setOpen] = useState(false);
 
     summary = summary.loanType === LoanType.Credit 
     ? 
@@ -54,53 +60,84 @@ export default observer(function CounterpartySummaryItem({summary}: Props) {
             );
     }
 
-    const percentagePaid = Number(((summary.currentAmount / summary.fullAmount) * 100).toFixed(0));
+    //const percentagePaid = Number(((summary.currentAmount / summary.fullAmount) * 100).toFixed(0));
 
     const progressColor = () => {
         return summary.loanType === LoanType.Credit ? 'success' : 'error';
     }
     
     return (
-    <Card>
-        <CardContent>
-            <Grid container justifyContent="flex-end" mb={2}>
-                <Grid item xs>
-                    <Stack direction={'row'}>
-                        <Typography variant="h5" gutterBottom>
-                            {header()} 
-                        </Typography>
-                    </Stack>
-                    <Stack>
-                        {summary.nearestRepaymentDate ? <>
-                            <Typography variant="body1">
-                                Paid: {formatAmount(summary.currentAmount)} / {formatAmount(summary.fullAmount)} {currency.symbol}
+    <NoDecorationLink
+        key={`${summary.counterpartyId}-${summary.currencyId}`}
+        to={`/loans/counterparty/${summary.counterpartyId}`}
+        disabled={!detailsAction}
+        content={
+            <Card>
+            <CardContent>
+                <Grid container justifyContent="flex-end">
+                    <Grid item xs>
+                        <Stack direction={'row'}>
+                            <Typography variant="h5" gutterBottom>
+                                {header()} 
                             </Typography>
-                            <Typography variant="body1">
-                                Remaining: {formatAmount(remainingAmount)} {currency.symbol}
+                        </Stack>
+                        <Stack>
+                            {summary.nearestRepaymentDate ? <>
+                                <Typography variant="body1">
+                                    Credits: {formatAmount(summary.creditsFullAmount - summary.creditsCurrentAmount)} {currency.symbol}
+                                </Typography>
+                                <Typography variant="body1">
+                                    Debts: {formatAmount(summary.debtsFullAmount - summary.debtsCurrentAmount)} {currency.symbol}
+                                </Typography>
+                                {/* <Typography variant="body1">
+                                    Remaining: {formatAmount(remainingAmount)} {currency.symbol}
+                                </Typography> */}
+                                <Typography variant="body1">
+                                    Nearest repayment: {convertToString(summary.nearestRepaymentDate!)}
+                                </Typography></>
+                            :<>
+                                <Typography variant="body1">
+                                    This counterparty has no current loans
+                                </Typography>
+                            </>}
+                        </Stack>
+                    </Grid>
+                    <Grid item xs={'auto'} >
+                        {summary.nearestRepaymentDate ?
+                        <>
+                            <Typography variant="h4" color={`${progressColor()}.main`} fontWeight={500}>
+                                {formatAmount(remainingAmount)} {currency.symbol}
                             </Typography>
-                            <Typography variant="body1">
-                                Nearest repayment: {convertToString(summary.nearestRepaymentDate!)}
-                            </Typography></>
-                        :<>
-                            <Typography variant="body1">
-                                This counterparty has no current loans
-                            </Typography>
+                        </>
+                        :
+                        <>
+                            <DeleteCounterpartyDialog 
+                                open={open}
+                                setOpen={setOpen}
+                                counterparty={counterparty} 
+                                redirectAfterSubmit={!detailsAction}/>
+                            <Box mr={-1}>           
+                                <IconButton 
+                                    aria-label="delete"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setOpen(true);
+                                    }}>
+                                    <Delete />
+                                </IconButton>                     
+                            </Box>
                         </>}
-                    </Stack>
+                    </Grid> 
                 </Grid>
-                <Grid item xs={'auto'} >
-                    <Typography variant="h4" color={`${progressColor()}.main`} fontWeight={500}>
-                        {formatAmount(remainingAmount)} {currency.symbol}
-                    </Typography>
-                </Grid>
-                
-            </Grid>
-            <LinearProgress 
-                variant="determinate" 
-                value={percentagePaid} 
-                sx={{height: 10}} 
-                color={progressColor()}/>
-        </CardContent>
-    </Card>
+                {/* <LinearProgress 
+                    variant="determinate" 
+                    value={percentagePaid} 
+                    sx={{height: 10}} 
+                    color={progressColor()}/> */}
+            </CardContent>
+        </Card>
+    }/>
+
     )
 })

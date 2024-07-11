@@ -20,7 +20,7 @@ interface Props {
     noButtons?: boolean;
 }
 
-export default observer(function LoanItem({loan, detailsAction = true, noButtons = false}: Props) {
+export default observer(function LoanItem({loan, detailsAction, noButtons = false}: Props) {
     const {
         currencyStore: {currencies},
         loanStore: {counterparties},
