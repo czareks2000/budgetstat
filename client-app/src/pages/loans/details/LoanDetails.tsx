@@ -36,7 +36,7 @@ export default observer(function LoanDetails() {
     const inProgress = loan.loanStatus === LoanStatus.InProgress;
 
     const handleGoBack = () => {
-        router.navigate(`/loans/counterparty/${loan.counterpartyId}`);
+        router.navigate(`/loans/counterparty/${loan.counterpartyId}?currencyId=${currency!.id}&showHistory=${!inProgress}`);
     }
 
     const handleDeletePayoff = (payoffId: number) => {

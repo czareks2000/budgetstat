@@ -15,22 +15,23 @@ import CounterpartyPaidoffLoans from "./CounterpartyPaidoffLoans";
 import CollectivePayoffForm from "../../../components/forms/Loan/CollectivePayoffForm";
 
 export default observer(function CounterpartyDetails() {
-    const {loanStore: {getCounterpartyGroupedLoans, getCounterpartyLoans}} = useStore();
+    const {
+        loanStore: {getCounterpartyGroupedLoans, getCounterpartyLoans}} = useStore();
 
     const {id} = useParams();
+
+    const summaries = getCounterpartyGroupedLoans(Number(id));
+
+    if (summaries.length == 0)
+        router.navigate('/loans');
 
     const [searchParams, setSearchParams] = useSearchParams();
     const [currencyId, setCurrencyId] = useState<string | null>(searchParams.get('currencyId'));
 
     const handleSetCurrencyIdParam = (id: number) => {
         setCurrencyId(id.toString());
-        setSearchParams({ currency: id.toString() });
+        setSearchParams({ currencyId: id.toString() });
     }
-
-    const summaries = getCounterpartyGroupedLoans(Number(id));
-
-    if (summaries.length == 0)
-        router.navigate('/loans');
 
     let credits = getCounterpartyLoans(Number(id), LoanType.Credit)
         .sort((a,b) => a.repaymentDate.getTime() - b.repaymentDate.getTime())
@@ -52,10 +53,15 @@ export default observer(function CounterpartyDetails() {
         setIsAcordionOpen(!isAcordionOpen);
     };
 
-    const [showHistory, setShowHistory] = useState(false);
+    const [showHistory, setShowHistory] = useState<boolean>(Boolean(searchParams.get('showHistory')));
 
     const handleShowHistoryToggle = () => {
-        setShowHistory(!showHistory);
+        const newShowHistory = !showHistory;
+        setShowHistory(newShowHistory);
+
+        const params = Object.fromEntries(searchParams.entries());
+        params.showHistory = String(newShowHistory);
+        setSearchParams(new URLSearchParams(params));
     };
 
     const handleAddButtonClick = () => {
