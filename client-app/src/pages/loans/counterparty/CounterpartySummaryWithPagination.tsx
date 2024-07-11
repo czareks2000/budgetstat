@@ -8,29 +8,29 @@ interface Props {
     onClick: () => void;
     buttonText: string;
     currencyId: string | null;
+    setSearchParams: (id: number) => void;
 }
 
-const CounterpartySummaryWithPagination = ({summaries, onClick, buttonText, currencyId}: Props) => {
+const CounterpartySummaryWithPagination = ({summaries, onClick, buttonText, currencyId, setSearchParams}: Props) => {
     const [currentPage, setCurrentPage] = useState(1);
 
-    // Użyj useEffect, aby ustawić currentPage na podstawie currencyId
     useEffect(() => {
         if (!currencyId)
             return;
 
         const index = summaries.findIndex(summary => summary.currencyId === Number(currencyId));
         if (index !== -1) {
-            setCurrentPage(index + 1); // +1 ponieważ currentPage jest 1-based
+            setCurrentPage(index + 1);
         }
     }, [currencyId, summaries]);
 
-    // Function to handle page change
     const handlePageChange = (_: React.ChangeEvent<unknown>, page: number) => {
         setCurrentPage(page);
+        const summary = summaries[page - 1];
+        setSearchParams(summary.currencyId);
     };
 
-    // Calculate the index of the current summary to display
-    const indexOfCurrentSummary = currentPage - 1; // Adjust for zero-based index
+    const indexOfCurrentSummary = currentPage - 1; 
 
     return (
     <>

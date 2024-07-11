@@ -19,18 +19,29 @@ export default observer(function CounterpartyDetails() {
 
     const {id} = useParams();
 
-    const [searchParams] = useSearchParams();
-    const currencyId = searchParams.get('currencyId');
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [currencyId, setCurrencyId] = useState<string | null>(searchParams.get('currencyId'));
+
+    const handleSetCurrencyIdParam = (id: number) => {
+        setCurrencyId(id.toString());
+        setSearchParams({ currency: id.toString() });
+    }
 
     const summaries = getCounterpartyGroupedLoans(Number(id));
 
     if (summaries.length == 0)
         router.navigate('/loans');
 
-    const credits = getCounterpartyLoans(Number(id), LoanType.Credit)
+    let credits = getCounterpartyLoans(Number(id), LoanType.Credit)
+        .sort((a,b) => a.repaymentDate.getTime() - b.repaymentDate.getTime())
+    let debts = getCounterpartyLoans(Number(id), LoanType.Debt)
         .sort((a,b) => a.repaymentDate.getTime() - b.repaymentDate.getTime());
-    const debts = getCounterpartyLoans(Number(id), LoanType.Debt)
-        .sort((a,b) => a.repaymentDate.getTime() - b.repaymentDate.getTime());
+
+    if (currencyId)
+    {
+        credits = credits.filter(c => c.currencyId === Number(currencyId));
+        debts = debts.filter(c => c.currencyId === Number(currencyId));
+    }
 
     const loansCount = credits.length + debts.length;
     const showPayoffForm = loansCount > 0;
@@ -63,7 +74,8 @@ export default observer(function CounterpartyDetails() {
             <Stack spacing={2}>
                 <Divider>Counterparty summary</Divider>
                 <CounterpartySummaryWithPagination summaries={summaries}
-                    currencyId={currencyId} 
+                    currencyId={currencyId}
+                    setSearchParams={handleSetCurrencyIdParam} 
                     onClick={handleShowHistoryToggle}
                     buttonText={showHistory ? "Current loans" : "Show history"}/>
 
