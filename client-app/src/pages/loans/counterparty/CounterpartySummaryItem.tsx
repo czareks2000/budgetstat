@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Grid, IconButton, LinearProgress, Stack, Typography } from "@mui/material"
+import { Box, Card, CardContent, Grid, IconButton, Stack, Typography } from "@mui/material"
 import { observer } from "mobx-react-lite"
 import { GroupedLoan } from "../../../app/models/Loan";
 import { useStore } from "../../../app/stores/store";
@@ -60,8 +60,6 @@ export default observer(function CounterpartySummaryItem({detailsAction, summary
             );
     }
 
-    //const percentagePaid = Number(((summary.currentAmount / summary.fullAmount) * 100).toFixed(0));
-
     const progressColor = () => {
         return summary.loanType === LoanType.Credit ? 'success' : 'error';
     }
@@ -89,9 +87,6 @@ export default observer(function CounterpartySummaryItem({detailsAction, summary
                                 <Typography variant="body1">
                                     Debts: {formatAmount(summary.debtsFullAmount - summary.debtsCurrentAmount)} {currency.symbol}
                                 </Typography>
-                                {/* <Typography variant="body1">
-                                    Remaining: {formatAmount(remainingAmount)} {currency.symbol}
-                                </Typography> */}
                                 <Typography variant="body1">
                                     Nearest repayment: {convertToString(summary.nearestRepaymentDate!)}
                                 </Typography></>
@@ -130,11 +125,6 @@ export default observer(function CounterpartySummaryItem({detailsAction, summary
                         </>}
                     </Grid> 
                 </Grid>
-                {/* <LinearProgress 
-                    variant="determinate" 
-                    value={percentagePaid} 
-                    sx={{height: 10}} 
-                    color={progressColor()}/> */}
             </CardContent>
         </Card>
     }/>
