@@ -99,7 +99,7 @@ export default observer(function CounterpartySummaryItem({detailsAction, summary
                     <Grid item xs={'auto'} >
                         {summary.nearestRepaymentDate ?
                         <>
-                            <Typography variant="h4" color={`${progressColor()}.main`} fontWeight={500}>
+                            <Typography variant="h5" color={`${progressColor()}.main`}>
                                 {formatAmount(remainingAmount)} {currency.symbol}
                             </Typography>
                         </>

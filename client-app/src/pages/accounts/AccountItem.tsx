@@ -47,7 +47,7 @@ export default observer(function AccountItem({account, openDeleteDialog}: Props)
                         </Typography>
                     </Grid>
                     <Grid item xs={'auto'} >
-                        <Typography variant="h4" color={'primary'}>
+                        <Typography variant="h5" color={'primary'}>
                             {formatAmount(account.balance)} {account.currency.symbol}
                         </Typography>
                     </Grid>
