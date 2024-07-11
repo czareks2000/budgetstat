@@ -5,7 +5,7 @@ import ResponsiveContainer from "../../../components/common/ResponsiveContainer"
 import { Accordion, AccordionDetails, AccordionSummary, Divider, Stack } from "@mui/material";
 import FloatingGoBackButton from "../../../components/common/FloatingGoBackButton";
 import { useStore } from "../../../app/stores/store";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { LoanType } from "../../../app/models/enums/LoanType";
 import LoanItem from "../LoanItem";
 import { useState } from "react";
@@ -18,6 +18,9 @@ export default observer(function CounterpartyDetails() {
     const {loanStore: {getCounterpartyGroupedLoans, getCounterpartyLoans}} = useStore();
 
     const {id} = useParams();
+
+    const [searchParams] = useSearchParams();
+    const currencyId = searchParams.get('currencyId');
 
     const summaries = getCounterpartyGroupedLoans(Number(id));
 
@@ -59,7 +62,8 @@ export default observer(function CounterpartyDetails() {
         <ResponsiveContainer content={
             <Stack spacing={2}>
                 <Divider>Counterparty summary</Divider>
-                <CounterpartySummaryWithPagination summaries={summaries} 
+                <CounterpartySummaryWithPagination summaries={summaries}
+                    currencyId={currencyId} 
                     onClick={handleShowHistoryToggle}
                     buttonText={showHistory ? "Current loans" : "Show history"}/>
 

@@ -67,7 +67,7 @@ export default observer(function CounterpartySummaryItem({detailsAction, summary
     return (
     <NoDecorationLink
         key={`${summary.counterpartyId}-${summary.currencyId}`}
-        to={`/loans/counterparty/${summary.counterpartyId}`}
+        to={`/loans/counterparty/${summary.counterpartyId}?currencyId=${currency.id}`}
         disabled={!detailsAction}
         content={
             <Card>
