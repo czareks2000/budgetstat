@@ -33,16 +33,17 @@ export default observer(function CounterpartyDetails() {
         setSearchParams({ currencyId: id.toString() });
     }
 
-    let credits = getCounterpartyLoans(Number(id), LoanType.Credit)
-        .sort((a,b) => a.repaymentDate.getTime() - b.repaymentDate.getTime())
-    let debts = getCounterpartyLoans(Number(id), LoanType.Debt)
-        .sort((a,b) => a.repaymentDate.getTime() - b.repaymentDate.getTime());
+    if (summaries.filter(s => s.currencyId === Number(currencyId)).length == 0)
+        handleSetCurrencyIdParam(summaries[0].currencyId);
 
-    if (currencyId)
-    {
-        credits = credits.filter(c => c.currencyId === Number(currencyId));
-        debts = debts.filter(c => c.currencyId === Number(currencyId));
-    }
+    const credits = getCounterpartyLoans(Number(id), LoanType.Credit)
+        .sort((a,b) => a.repaymentDate.getTime() - b.repaymentDate.getTime())
+        .filter(c => c.currencyId === Number(currencyId));
+    const debts = getCounterpartyLoans(Number(id), LoanType.Debt)
+        .sort((a,b) => a.repaymentDate.getTime() - b.repaymentDate.getTime())
+        .filter(c => c.currencyId === Number(currencyId));
+
+    const loans = [...credits, ...debts];
 
     const loansCount = credits.length + debts.length;
     const showPayoffForm = loansCount > 0;
@@ -53,7 +54,7 @@ export default observer(function CounterpartyDetails() {
         setIsAcordionOpen(!isAcordionOpen);
     };
 
-    const [showHistory, setShowHistory] = useState<boolean>(Boolean(searchParams.get('showHistory')));
+    const [showHistory, setShowHistory] = useState<boolean>(searchParams.get('showHistory') === 'true');
 
     const handleShowHistoryToggle = () => {
         const newShowHistory = !showHistory;
@@ -79,7 +80,8 @@ export default observer(function CounterpartyDetails() {
         <ResponsiveContainer content={
             <Stack spacing={2}>
                 <Divider>Counterparty summary</Divider>
-                <CounterpartySummaryWithPagination summaries={summaries}
+                <CounterpartySummaryWithPagination 
+                    summaries={summaries}
                     currencyId={currencyId}
                     setSearchParams={handleSetCurrencyIdParam} 
                     onClick={handleShowHistoryToggle}
@@ -97,7 +99,7 @@ export default observer(function CounterpartyDetails() {
                             {!isAcordionOpen ? 'Click to open' : 'Click to hide'}
                         </AccordionSummary>
                         <AccordionDetails>
-                            <CollectivePayoffForm counterpartyId={Number(id)} />      
+                            <CollectivePayoffForm loans={loans} counterpartyId={Number(id)} />      
                         </AccordionDetails>
                     </Accordion>
                 </>}

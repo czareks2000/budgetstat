@@ -15,7 +15,7 @@ import { PayoffCreateValues } from "../../../app/models/Payoff";
 
 export default observer(function CratePayoffForm() {
     const {
-        accountStore: {getAccountsByCurrencyAsOptions, getAccountCurrencySymbol},
+        accountStore: {getAccountsByCurrencyAsOptions, getAccountCurrency},
         loanStore: {getLoanCurrencyId, createPayoff, selectedLoan: loan}} = useStore();
     
     if (!loan) return <></>
@@ -74,7 +74,7 @@ export default observer(function CratePayoffForm() {
                         {/* Amount */}
                         <NumberInput label="Amount" name={"amount"}
                             adornment adornmentPosition="end" 
-                            adormentText={getAccountCurrencySymbol(values.accountId)} />
+                            adormentText={getAccountCurrency(values.accountId)?.symbol} />
                             
                         {/* Date */}
                         <MyDatePicker 

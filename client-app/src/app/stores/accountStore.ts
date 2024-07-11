@@ -69,8 +69,8 @@ export default class AccountStore {
         this.selectedAccount = undefined;
     }
 
-    getAccountCurrencySymbol = (accountId: number | string) => {
-        return this.getAccount(parseInt(accountId as string))?.currency.symbol;
+    getAccountCurrency = (accountId: number | string) => {
+        return this.getAccount(parseInt(accountId as string))?.currency;
     }
 
     loadAccounts = async () => {

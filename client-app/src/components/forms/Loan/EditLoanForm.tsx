@@ -19,7 +19,7 @@ interface Props {
 
 export default observer(function EditLoanForm({loan, onSubmit, onCancel}: Props) {
     const {
-        accountStore: {getAccountCurrencySymbol},
+        accountStore: {getAccountCurrency},
         loanStore: {updateLoan}} = useStore();
     
     const validationSchema = Yup.object({
@@ -66,7 +66,7 @@ export default observer(function EditLoanForm({loan, onSubmit, onCancel}: Props)
                         {/* Amount */}
                         <NumberInput label="Amount" name={"fullAmount"}
                             adornment adornmentPosition="end" 
-                            adormentText={getAccountCurrencySymbol(loan.accountId)} />
+                            adormentText={getAccountCurrency(loan.accountId)?.symbol} />
                             
                         {/* Repayment Date */}
                         <MyDatePicker 

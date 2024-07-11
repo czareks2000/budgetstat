@@ -11,15 +11,17 @@ import dayjs from "dayjs";
 import MyDatePicker from "../../formInputs/MyDatePicker";
 import { CollectivePayoffValues } from "../../../app/models/Payoff";
 import { LoanType } from "../../../app/models/enums/LoanType";
-import { enumToOptions } from "../../../app/models/Option";
+import { Loan } from "../../../app/models/Loan";
+import { Option } from "../../../app/models/Option";
 
 interface Props {
+    loans: Loan[];
     counterpartyId: number;
 }
 
-export default observer(function CollectivePayoffForm({counterpartyId}: Props) {
+export default observer(function CollectivePayoffForm({loans, counterpartyId}: Props) {
     const {
-        accountStore: {accountsAsOptions, getAccountCurrencySymbol},
+        accountStore: {getAccountsByCurrencyAsOptions, getAccountCurrency},
         loanStore: {collectivePayoff} }= useStore();
     
     const validationSchema = Yup.object({
@@ -55,6 +57,27 @@ export default observer(function CollectivePayoffForm({counterpartyId}: Props) {
             helpers.setSubmitting(false);
         });
     }
+
+    let seen = new Set();
+    const loanTypeOptions = loans
+    .map(loan => loan.loanType)
+    .map(type => ({
+        value: type,
+        text: `${LoanType[type]}s`
+    }))
+    .filter(item => {
+        const duplicate = seen.has(item.value);
+        seen.add(item.value);
+        return !duplicate;
+    });        
+    
+    const loanCurrencies = [...new Set(loans.map(l => l.currencyId))];
+
+    let accountOptions: Option[] = []
+
+    loanCurrencies.forEach((currencyId) => {
+        accountOptions = [...accountOptions, ...getAccountsByCurrencyAsOptions(currencyId)];
+    })
     
     return (
         <>
@@ -68,17 +91,17 @@ export default observer(function CollectivePayoffForm({counterpartyId}: Props) {
                         {/* LoanType */}
                         <SelectInput
                             label="Which type of loans you want to repay" name={"loanType"}
-                            options={enumToOptions(LoanType, true)} />
+                            options={loanTypeOptions} />
                             
                         {/* Account */}
                         <SelectInput
                             label="Account" name={"accountId"}
-                            options={accountsAsOptions} />
+                            options={accountOptions} />
 
                         {/* Amount */}
                         <NumberInput label="Amount" name={"amount"}
                             adornment adornmentPosition="end" 
-                            adormentText={getAccountCurrencySymbol(values.accountId)} />
+                            adormentText={getAccountCurrency(values.accountId)?.symbol} />
                             
                         {/* Date */}
                         <MyDatePicker 

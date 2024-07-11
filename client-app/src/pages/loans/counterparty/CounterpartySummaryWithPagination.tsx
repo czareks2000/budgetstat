@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { GroupedLoan } from '../../../app/models/Loan'
 import CounterpartySummaryItem from './CounterpartySummaryItem';
 import { Button, Grid, Pagination } from '@mui/material';
+import { observer } from 'mobx-react-lite';
 
 interface Props {
     summaries: GroupedLoan[];
@@ -11,7 +12,7 @@ interface Props {
     setSearchParams: (id: number) => void;
 }
 
-const CounterpartySummaryWithPagination = ({summaries, onClick, buttonText, currencyId, setSearchParams}: Props) => {
+export default observer(function CounterpartySummaryWithPagination({summaries, onClick, buttonText, currencyId, setSearchParams}: Props) {
     const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
@@ -35,8 +36,7 @@ const CounterpartySummaryWithPagination = ({summaries, onClick, buttonText, curr
     return (
     <>
         <CounterpartySummaryItem
-            key={`${summaries[indexOfCurrentSummary].counterpartyId}-${summaries[indexOfCurrentSummary].currencyId}`}
-            summary={summaries[indexOfCurrentSummary]}
+            summary={summaries[indexOfCurrentSummary < summaries.length ? indexOfCurrentSummary : summaries.length - 1]}
         />
         <Grid container justifyContent="flex-end">
             <Grid item xs>
@@ -55,6 +55,4 @@ const CounterpartySummaryWithPagination = ({summaries, onClick, buttonText, curr
         
     </>
   )
-}
-
-export default CounterpartySummaryWithPagination
+})

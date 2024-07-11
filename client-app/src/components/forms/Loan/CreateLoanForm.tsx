@@ -21,7 +21,7 @@ interface Props {
 
 export default observer(function CrateLoanForm({counterpartyId}: Props) {
     const {
-        accountStore: {accountsAsOptions, getAccountCurrencySymbol},
+        accountStore: {accountsAsOptions, getAccountCurrency},
         loanStore: {createLoan, counterpartiesAsOptions}} = useStore();
     
     const validationSchema = Yup.object({
@@ -64,7 +64,7 @@ export default observer(function CrateLoanForm({counterpartyId}: Props) {
         }
         
         createLoan(transformedValues).then(() => {
-            router.navigate(`/loans/counterparty/${loan.counterpartyId}`);
+            router.navigate(`/loans/counterparty/${loan.counterpartyId}?currencyId=${getAccountCurrency(loan.accountId)?.id}`);
         }).catch((err) => {
             helpers.setErrors({
                 fullAmount: err
@@ -72,8 +72,6 @@ export default observer(function CrateLoanForm({counterpartyId}: Props) {
             helpers.setSubmitting(false);
         });
     }
-
-    
     
     return (
         <>
@@ -97,7 +95,7 @@ export default observer(function CrateLoanForm({counterpartyId}: Props) {
                         {/* Amount */}
                         <NumberInput label="Amount" name={"fullAmount"}
                             adornment adornmentPosition="end" 
-                            adormentText={getAccountCurrencySymbol(values.accountId)} />
+                            adormentText={getAccountCurrency(values.accountId)?.symbol} />
 
                         {/* Counterparty */}
                         <SelectInput

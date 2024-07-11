@@ -20,7 +20,9 @@ export default observer(function Loans() {
             <Stack spacing={2}>
                 <Divider>Loans summary</Divider>
                 {groupedLoansByCounterpartyAndCurrency.map((summary) => 
-                    <CounterpartySummaryItem summary={summary} detailsAction/>
+                    <CounterpartySummaryItem 
+                    key={`${summary.counterpartyId}-${summary.currencyId}`} 
+                    summary={summary} detailsAction/>
                 )}
             </Stack>
         }/>
