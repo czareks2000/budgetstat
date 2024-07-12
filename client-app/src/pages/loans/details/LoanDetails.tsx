@@ -11,6 +11,7 @@ import PayoffList from "./PayoffList";
 import { useEffect, useState } from "react";
 import { ExpandMore } from "@mui/icons-material";
 import { LoanStatus } from "../../../app/models/enums/LoanStatus";
+import FloatingAddButton from "../../../components/common/FloatingAddButton";
 
 export default observer(function LoanDetails() {
     const {
@@ -41,11 +42,16 @@ export default observer(function LoanDetails() {
 
     const handleDeletePayoff = (payoffId: number) => {
         deletePayoff(payoffId);
-    }    
+    }
+
+    const handleAddButtonClick = () => {
+        router.navigate(`/loans/create?counterpartyId=${loan.counterpartyId}`);
+    }
     
     return (
         <>
-        <FloatingGoBackButton onClick={handleGoBack}/>
+        <FloatingGoBackButton onClick={handleGoBack} position={1}/>
+        <FloatingAddButton onClick={handleAddButtonClick} position={0}/>
         <ResponsiveContainer content={
             <Stack spacing={2}>
 

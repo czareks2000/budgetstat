@@ -13,16 +13,18 @@ interface Props {
 }
 
 export default observer(function CounterpartySummaryWithPagination({summaries, onClick, buttonText, currencyId, setSearchParams}: Props) {
-    const [currentPage, setCurrentPage] = useState(1);
+    const calculatePageNumber = () => {
+        return summaries.findIndex(summary => summary.currencyId === Number(currencyId)) + 1;
+    }
+    
+    const [currentPage, setCurrentPage] = useState(calculatePageNumber());
 
     useEffect(() => {
         if (!currencyId)
             return;
 
-        const index = summaries.findIndex(summary => summary.currencyId === Number(currencyId));
-        if (index !== -1) {
-            setCurrentPage(index + 1);
-        }
+        setCurrentPage(calculatePageNumber());
+        
     }, [currencyId, summaries]);
 
     const handlePageChange = (_: React.ChangeEvent<unknown>, page: number) => {
