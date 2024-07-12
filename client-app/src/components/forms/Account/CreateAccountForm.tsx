@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import TextInput from "../../formInputs/TextInput";
 import { LoadingButton } from "@mui/lab";
 import { AccountFormValues } from "../../../app/models/Account";
-import { Button, Stack } from "@mui/material";
+import { Button, Grid, Stack } from "@mui/material";
 import SelectInput from "../../formInputs/SelectInput";
 import { useStore } from "../../../app/stores/store";
 import NumberInput from "../../formInputs/NumberInput";
@@ -45,10 +45,21 @@ export default observer(function CreateAccountForm({onSubmit, onCancel}: Props) 
                 <Stack spacing={2}>
                     {/* Name */}
                     <TextInput label="Name" name="name"/>
-                    {/* Balance */}
-                    <NumberInput label="Balance" name="balance"/>
-                    {/* CurrencyId */}
-                    <SelectInput label="Currency" name="currencyId" options={currenciesAsOptions}/>
+
+                    <Stack direction={"row"} display="flex" spacing={2}>
+                        <Grid item xs>
+                            {/* Balance */}
+                            <NumberInput label="Balance" name="balance" fullWidth/>
+
+                        </Grid>
+                        <Grid item xs={'auto'}>
+                            {/* CurrencyId */}
+                            <SelectInput label="Currency" name="currencyId" 
+                                options={currenciesAsOptions}
+                                minWidth={120}/>
+                        </Grid>
+                    </Stack>
+
                     {/* Description */}
                     <TextInput label="Description" name="description"/>
                    

@@ -106,24 +106,24 @@ namespace Persistence
             var icons = new List<Icon>
             {
                 // expenses
-                new() { Name = "home.png" },//0
-                new() { Name = "food.png" },//1
-                new() { Name = "recreation.png" },//2
-                new() { Name = "transportation.png" },//3
-                new() { Name = "travels.png" },//4
-                new() { Name = "health.png" },//5
-                new() { Name = "investment.png" },//6
-                new() { Name = "financial.png" },//7
-                new() { Name = "shopping.png" },//8
-                new() { Name = "kids.png" }, //9 
+                new() { Name = "home" },//0
+                new() { Name = "food" },//1
+                new() { Name = "recreation" },//2
+                new() { Name = "transportation" },//3
+                new() { Name = "travels" },//4
+                new() { Name = "health" },//5
+                new() { Name = "investment" },//6
+                new() { Name = "financial" },//7
+                new() { Name = "shopping" },//8
+                new() { Name = "kids" }, //9 
                 // incomes
-                new() { Name = "earnings.png" },//10 
+                new() { Name = "earnings" },//10 
                 // assets
-                new() { Name = "property.png" },//11
-                new() { Name = "movable_property.png" },//12
+                new() { Name = "property" },//11
+                new() { Name = "movable_property" },//12
                 // common
-                new() { Name = "investment.png" },//13 
-                new() { Name = "other.png" },//14
+                new() { Name = "investment" },//13 
+                new() { Name = "other" },//14
             };
 
             context.Icons.AddRange(icons);

@@ -1,6 +1,7 @@
 export interface Option {
     value: string | number;
     text: string;
+    iconId?: number;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

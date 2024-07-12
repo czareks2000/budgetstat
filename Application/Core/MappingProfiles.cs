@@ -40,19 +40,19 @@ namespace Application.Core
                     .MapFrom(src => src.Category.Id))
                 .ForMember(dest => dest.Name, opt => opt
                     .MapFrom(src => src.Category.Name))
-                .ForMember(dest => dest.Icon, opt => opt
-                    .MapFrom(src => src.Category.Icon.Name))
+                .ForMember(dest => dest.IconId, opt => opt
+                    .MapFrom(src => src.Category.Icon.Id))
                 .ForMember(dest => dest.Type, opt => opt
                     .MapFrom(src => src.Category.Type));
 
             CreateMap<CategoryCreateDto, Category>();
             CreateMap<CategoryUpdateDto, Category>();
             CreateMap<Category, CategoryDto>()
-                .ForMember(dest => dest.Icon, opt => opt
-                    .MapFrom(src => src.Icon.Name));
+                .ForMember(dest => dest.IconId, opt => opt
+                    .MapFrom(src => src.Icon.Id));
             CreateMap<Category, MainCategoryDto>()
-                .ForMember(dest => dest.Icon, opt => opt
-                    .MapFrom(src => src.Icon.Name));
+                .ForMember(dest => dest.IconId, opt => opt
+                    .MapFrom(src => src.Icon.Id));
 
             CreateMap<TransactionCreateDto, Transaction>();
             CreateMap<TransactionUpdateDto, Transaction>();

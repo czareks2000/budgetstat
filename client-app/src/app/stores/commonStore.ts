@@ -42,12 +42,19 @@ export default class CommonStore {
     loadAppData = async (currencyId: number) => {
         try {
             await store.accountStore.loadAccounts();
+            
             await store.budgetStore.loadBudgets();
+
             await store.currencyStore.loadCurrencies();
             store.currencyStore.setDefaultCurrency(currencyId);
+            
             await store.categoryStore.loadCategories();
+
             await store.loanStore.loadLoans(LoanStatus.InProgress);
             await store.loanStore.loadCounterparties();
+
+            await store.assetStore.loadAssetCategories();
+            await store.assetStore.loadAssets();
         } catch (error) {
             console.log(error);
         } finally {

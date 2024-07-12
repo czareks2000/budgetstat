@@ -8,6 +8,7 @@ interface Props {
     adornment?: boolean;
     adornmentPosition?: 'start' | 'end';
     adormentText?: string;
+    fullWidth?: boolean;
 }
 
 export default function NumberInput(props: Props) {
@@ -24,6 +25,7 @@ export default function NumberInput(props: Props) {
     return (
         <>
             <TextField
+                fullWidth={props.fullWidth}
                 id={field.name}
                 {...field} 
                 name={props.name}

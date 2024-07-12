@@ -3,7 +3,7 @@ import { TransactionType } from "./enums/TransactionType";
 export interface MainCategory {
     id: number;
     name: string;
-    icon: string;
+    iconId: number,
     type: TransactionType;
     subCategories: Category[]
 }
@@ -11,14 +11,14 @@ export interface MainCategory {
 export interface Category {
     id: number;
     name: string;
-    icon: string;
+    iconId: number,
     type: TransactionType;
 }
 
 export interface CategoryOption {
     id: number,
     name: string,
-    icon: string,
+    iconId: number,
     type: TransactionType,
     mainCategoryName: string,
     mainCategoryId: number

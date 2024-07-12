@@ -1,10 +1,11 @@
 import { observer } from "mobx-react-lite"
 import ResponsiveContainer from "../../components/common/ResponsiveContainer"
-import { Box, Divider, Grid, Paper, Stack } from "@mui/material"
+import { Divider, Grid, Stack } from "@mui/material"
 import LoansCard from "./cards/LoansCard";
 import AssetsCard from "./cards/AssetsCard";
 import NetWorthCard from "./cards/NetWorthCard";
 import NetWorthOverTimeLineChart from "./charts/NetWorthOverTimeLineChart";
+import AssetList from "./list/AssetList";
 
 export default observer(function NetWorth() {
     
@@ -27,11 +28,7 @@ export default observer(function NetWorth() {
                 </Stack>
                 <NetWorthOverTimeLineChart />
                 <Divider>Assets</Divider>
-                <Paper>
-                    <Box p={2} height={400}>
-
-                    </Box>
-                </Paper>
+                <AssetList />
             </Stack>
         }/>
     </>

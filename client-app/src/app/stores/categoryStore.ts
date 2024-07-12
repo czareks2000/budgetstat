@@ -29,7 +29,7 @@ export default class CategoryStore {
                         expenseSubCategories.push({
                             id: subCategory.id,
                             name: subCategory.name,
-                            icon: subCategory.icon,
+                            iconId: subCategory.iconId,
                             type: subCategory.type,
                             mainCategoryName: mainCategory.name,
                             mainCategoryId: mainCategory.id
@@ -52,7 +52,7 @@ export default class CategoryStore {
                 categoryOptions.push({
                     id: mainCategory.id,
                     name: mainCategory.name,
-                    icon: mainCategory.icon,
+                    iconId: mainCategory.iconId,
                     type: mainCategory.type,
                     mainCategoryName: mainCategory.name,
                     mainCategoryId: mainCategory.id
@@ -65,7 +65,7 @@ export default class CategoryStore {
                         categoryOptions.push({
                             id: subCategory.id,
                             name: subCategory.name,
-                            icon: subCategory.icon,
+                            iconId: subCategory.iconId,
                             type: subCategory.type,
                             mainCategoryName: mainCategory.name,
                             mainCategoryId: mainCategory.id

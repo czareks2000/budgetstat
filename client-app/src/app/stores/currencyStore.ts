@@ -30,6 +30,10 @@ export default class CurrencyStore {
         } 
     }
 
+    getCurrencySymbol = (currencyId: number) => {
+        return this.currencies.find(c => c.id === currencyId)?.symbol as string;
+    }
+
     setDefaultCurrency = (currencyId: number) => {
         if (this.currenciesLoaded)
             this.defaultCurrency = this.currencies.find(c => c.id === currencyId);
