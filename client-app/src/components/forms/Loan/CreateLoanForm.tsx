@@ -17,9 +17,10 @@ import { router } from "../../../app/router/Routes";
 
 interface Props {
     counterpartyId?: string | null;
+    redirectToNetWorthOnCancel?: boolean;
 }
 
-export default observer(function CrateLoanForm({counterpartyId}: Props) {
+export default observer(function CrateLoanForm({counterpartyId, redirectToNetWorthOnCancel = false}: Props) {
     const {
         accountStore: {accountsAsOptions, getAccountCurrency},
         loanStore: {createLoan, counterpartiesAsOptions}} = useStore();
@@ -53,6 +54,8 @@ export default observer(function CrateLoanForm({counterpartyId}: Props) {
     const onCancel = () => {
         if (counterpartyId)
             router.navigate(`/loans/counterparty/${counterpartyId}`);
+        else if (redirectToNetWorthOnCancel)
+            router.navigate(`/net-worth`);
         else
             router.navigate(`/loans`);
     }

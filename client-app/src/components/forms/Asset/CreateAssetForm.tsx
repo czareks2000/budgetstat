@@ -1,35 +1,43 @@
-import { Form, Formik, FormikHelpers } from "formik";
+import { Form, Formik } from "formik";
 import { observer } from "mobx-react-lite"
 import * as Yup from "yup";
 import TextInput from "../../formInputs/TextInput";
 import { LoadingButton } from "@mui/lab";
-import { AccountFormValues } from "../../../app/models/Account";
 import { Button, Stack } from "@mui/material";
 import SelectInput from "../../formInputs/SelectInput";
 import { useStore } from "../../../app/stores/store";
 import NumberInput from "../../formInputs/NumberInput";
+import { AssetCreateUpdateValues } from "../../../app/models/Asset";
+import { router } from "../../../app/router/Routes";
 
 interface Props {
-    onSubmit: (account: AccountFormValues, formikHelpers: FormikHelpers<AccountFormValues>) => void;
-    onCancel: () => void;
+    onGoBack: () => void;
 }
 
-export default observer(function CreateAccountForm({onSubmit, onCancel}: Props) {
+export default observer(function CreateAssetForm({onGoBack}: Props) {
     const {currencyStore: {currenciesAsOptions}} = useStore();
 
     const validationSchema = Yup.object({
+        assetCategoryId: Yup.string().required('Category is required'),
         name: Yup.string().required('Name is required'),
-        balance: Yup.number().required('Balance is required')
-                        .min(0, 'Balance must be greater than or equal to 0'),
+        description: Yup.string().notRequired(),
+        assetValue: Yup.number().required('Asset value is required')
+                        .min(0, 'Asset value must be greater than or equal to 0'),
         currencyId: Yup.string().required('Currency is required'),
-        description: Yup.string().notRequired()
     });
 
-    const initialValues: AccountFormValues = {
+    const initialValues: AssetCreateUpdateValues = {
+        assetCategoryId: "",
         name: "",
-        balance: null,
-        currencyId: "",
-        description: ""
+        description: "",
+        assetValue: null,
+        currencyId: ""
+    }
+
+    const handleOnSubmit = (asset: AssetCreateUpdateValues) => {
+        console.log(asset);
+
+        onGoBack();
     }
     
     return (
@@ -37,18 +45,23 @@ export default observer(function CreateAccountForm({onSubmit, onCancel}: Props) 
         <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
-            onSubmit={(values, formikHelpers) => onSubmit(values, formikHelpers)}
+            onSubmit={handleOnSubmit}
         >
         {({ isValid, dirty, isSubmitting }) => {
         return(
             <Form>
                 <Stack spacing={2}>
+                    {/* Category */}
+                    <TextInput label="Category" name="assetCategoryId"/>
+
                     {/* Name */}
                     <TextInput label="Name" name="name"/>
-                    {/* Balance */}
-                    <NumberInput label="Balance" name="balance"/>
+
+                    {/* Asset value */}
+                    <NumberInput label="AssetValue" name="assetValue"/>
                     {/* CurrencyId */}
                     <SelectInput label="Currency" name="currencyId" options={currenciesAsOptions}/>
+
                     {/* Description */}
                     <TextInput label="Description" name="description"/>
                    
@@ -58,7 +71,7 @@ export default observer(function CreateAccountForm({onSubmit, onCancel}: Props) 
                             color="error"
                             variant="contained"
                             fullWidth
-                            onClick={onCancel}>
+                            onClick={onGoBack}>
                             Cancel
                         </Button>
                         <LoadingButton 

@@ -19,9 +19,12 @@ import EditBudget from "../../pages/budgets/EditBudget";
 import CreateAccount from "../../pages/accounts/CreateAccount";
 import EditAccount from "../../pages/accounts/EditAccount";
 import CreateLoan from "../../pages/loans/CreateLoan";
-import CounterpartyDetails from "../../pages/loans/counterparty/CounterpartyDetails";
-import LoanDetails from "../../pages/loans/details/LoanDetails";
+import CounterpartyDetails from "../../pages/loans/CounterpartyDetails";
+import LoanDetails from "../../pages/loans/LoanDetails";
 import EditLoan from "../../pages/loans/EditLoan";
+import CreateAsset from "../../pages/networth/CreateAsset";
+import EditAsset from "../../pages/networth/EditAsset";
+import AssetDetails from "../../pages/networth/AssetDetails";
 
 export const routes: RouteObject[] = [
     {
@@ -50,6 +53,9 @@ export const routes: RouteObject[] = [
                 {path: 'loans/:id', element: <LoanDetails />},
                 
                 {path: 'net-worth', element: <NetWorth />},
+                {path: 'assets/create', element: <CreateAsset />},
+                {path: 'assets/:id/edit', element: <EditAsset />},
+                {path: 'assets/:id', element: <AssetDetails />},
 
                 {path: 'import-export', element: <ImportExport />},
                 {path: 'preferences', element: <Preferences />},

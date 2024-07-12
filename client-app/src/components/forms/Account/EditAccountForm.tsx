@@ -15,7 +15,7 @@ interface Props {
 export default observer(function EditAccountForm({initialValues, onSubmit, onCancel}: Props) {
     const validationSchema = Yup.object({
         name: Yup.string().required('Name is required'),
-        desription: Yup.string().notRequired()
+        description: Yup.string().notRequired()
     });
     
     return (

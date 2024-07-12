@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom'
 import EditLoanForm from '../../components/forms/Loan/EditLoanForm'
 import { useEffect } from 'react'
 import { useStore } from '../../app/stores/store'
-import LoanItem from './LoanItem'
+import LoanItem from './common/LoanItem'
 import FloatingGoBackButton from '../../components/common/FloatingGoBackButton'
 
 export default observer(function EditLoan() {  

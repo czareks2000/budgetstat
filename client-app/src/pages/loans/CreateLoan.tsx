@@ -8,6 +8,7 @@ import { useSearchParams } from 'react-router-dom'
 export default observer(function CreateLoan() {  
     const [searchParams] = useSearchParams();
     const id = searchParams.get('counterpartyId');
+    const fromLocation = searchParams.get('fromLocation');
   
     return (
     <ResponsiveContainer content={
@@ -16,7 +17,8 @@ export default observer(function CreateLoan() {
             <Paper>
                 <Box p={2}>
                     <CreateLoanForm 
-                        counterpartyId={id}/>
+                        counterpartyId={id}
+                        redirectToNetWorthOnCancel={fromLocation === 'net-worth'}/>
                 </Box>
             </Paper>
             <Divider>Create Counterparty</Divider>

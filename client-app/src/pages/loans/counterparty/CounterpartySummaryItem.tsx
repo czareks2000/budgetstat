@@ -9,7 +9,7 @@ import { Counterparty } from "../../../app/models/Counterparty";
 import { Currency } from "../../../app/models/Currency";
 import { LoanType } from "../../../app/models/enums/LoanType";
 import { useState } from "react";
-import DeleteCounterpartyDialog from "../DeleteCounterpartyDialog";
+import DeleteCounterpartyDialog from "../dialogs/DeleteCounterpartyDialog";
 import NoDecorationLink from "../../../components/common/NoDecorationLink";
 
 interface Props {

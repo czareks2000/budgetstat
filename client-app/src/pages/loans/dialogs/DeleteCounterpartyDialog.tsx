@@ -1,32 +1,31 @@
 import { observer } from "mobx-react-lite"
-import { useStore } from "../../app/stores/store";
+import { useStore } from "../../../app/stores/store";
 import { useState } from "react";
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
-import { Loan } from "../../app/models/Loan";
-import { router } from "../../app/router/Routes";
-import { LoanStatus } from "../../app/models/enums/LoanStatus";
+import { router } from "../../../app/router/Routes";
+import { Counterparty } from "../../../app/models/Counterparty";
 
 interface Props {
-    loan: Loan;
+    counterparty: Counterparty;
     redirectAfterSubmit: boolean;
     open: boolean;
     setOpen: (state: boolean) => void;
 }
 
-export default observer(function DeleteLoanDialog({loan, redirectAfterSubmit, open, setOpen}: Props) {
-    const {loanStore: {deleteLoan}} = useStore();
+export default observer(function DeleteCounterpartyDialog({counterparty, redirectAfterSubmit, open, setOpen}: Props) {
+    const {loanStore: {deleteCounterparty}} = useStore();
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleDelete = () => {
         setIsSubmitting(true);
-        deleteLoan(loan.id)
+        deleteCounterparty(counterparty.id)
             .then(() => {
                 setIsSubmitting(false);
                 setOpen(false);
                 if (redirectAfterSubmit)
-                    router.navigate(`/loans/counterparty/${loan.counterpartyId}`);
+                    router.navigate(`/loans`);
             });
     }
 
@@ -41,19 +40,15 @@ export default observer(function DeleteLoanDialog({loan, redirectAfterSubmit, op
                 onClose={() => setOpen(false)}
                 aria-labelledby='dialog-title'
                 aria-describedby='dialog-description'>
-                <DialogTitle id='dialog-title'>Confirm Loan Deletion</DialogTitle>
+                <DialogTitle id='dialog-title'>Confirm Counterparty Deletion</DialogTitle>
                 <DialogContent>
                     <Box id='dialog-description'>
                         <Typography variant="body1" mb={2}>
-                            Are you sure you want to delete this loan?
+                            Are you sure you want to delete this counterparty ({counterparty.name})?
                             </Typography>
                         <Typography variant="body1" mb={2}>
-                            Repayment history will be deleted.
-                        </Typography>
-                        {loan.loanStatus === LoanStatus.InProgress &&
-                        <Typography variant="body1">
-                            The account balances will be restored.
-                        </Typography>}  
+                            Loans and repayment histories will be deleted.
+                        </Typography>  
                     </Box>
                 </DialogContent>
                 <DialogActions>

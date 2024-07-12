@@ -14,9 +14,9 @@ export interface AssetCategory {
 }
 
 export interface AssetCreateUpdateValues {
-    assetCategoryId: number;
+    assetCategoryId: number | string;
     name: string;
     description?: string;
-    assetValue: number;
-    currencyId: number;
+    assetValue: number | null;
+    currencyId: number | string;
 }

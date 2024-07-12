@@ -4,7 +4,7 @@ import { useStore } from "../../../app/stores/store"
 import { useParams } from "react-router-dom"
 import { LoanType } from "../../../app/models/enums/LoanType"
 import { LoanStatus } from "../../../app/models/enums/LoanStatus"
-import LoanItem from "../LoanItem"
+import LoanItem from "../common/LoanItem"
 import { useEffect } from "react"
 
 export default observer(function CounterpartyPaidoffLoans() {

@@ -1,17 +1,17 @@
 import { Box, Card, CardContent, Divider, Grid, IconButton, LinearProgress, Stack, Typography } from "@mui/material"
 import { observer } from "mobx-react-lite"
-import { router } from "../../app/router/Routes";
-import { Loan } from "../../app/models/Loan";
-import { useStore } from "../../app/stores/store";
-import { formatAmount } from "../../app/utils/FormatAmount";
-import { convertToString } from "../../app/utils/ConvertToString";
-import { LoanStatus } from "../../app/models/enums/LoanStatus";
-import { LoanType } from "../../app/models/enums/LoanType";
+import { router } from "../../../app/router/Routes";
+import { Loan } from "../../../app/models/Loan";
+import { useStore } from "../../../app/stores/store";
+import { formatAmount } from "../../../app/utils/FormatAmount";
+import { convertToString } from "../../../app/utils/ConvertToString";
+import { LoanStatus } from "../../../app/models/enums/LoanStatus";
+import { LoanType } from "../../../app/models/enums/LoanType";
 import { ArrowForward, Delete, Edit } from "@mui/icons-material";
-import { Counterparty } from "../../app/models/Counterparty";
-import { Currency } from "../../app/models/Currency";
-import NoDecorationLink from "../../components/common/NoDecorationLink";
-import DeleteLoanDialog from "./DeleteLoanDialog";
+import { Counterparty } from "../../../app/models/Counterparty";
+import { Currency } from "../../../app/models/Currency";
+import NoDecorationLink from "../../../components/common/NoDecorationLink";
+import DeleteLoanDialog from "../dialogs/DeleteLoanDialog";
 import { useState } from "react";
 
 interface Props {

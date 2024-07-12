@@ -1,18 +1,18 @@
 import { observer } from "mobx-react-lite"
-import FloatingAddButton from "../../../components/common/FloatingAddButton"
-import { router } from "../../../app/router/Routes";
-import ResponsiveContainer from "../../../components/common/ResponsiveContainer";
+import FloatingAddButton from "../../components/common/FloatingAddButton"
+import { router } from "../../app/router/Routes";
+import ResponsiveContainer from "../../components/common/ResponsiveContainer";
 import { Accordion, AccordionDetails, AccordionSummary, Divider, Stack } from "@mui/material";
-import FloatingGoBackButton from "../../../components/common/FloatingGoBackButton";
-import { useStore } from "../../../app/stores/store";
+import FloatingGoBackButton from "../../components/common/FloatingGoBackButton";
+import { useStore } from "../../app/stores/store";
 import { useParams, useSearchParams } from "react-router-dom";
-import { LoanType } from "../../../app/models/enums/LoanType";
-import LoanItem from "../LoanItem";
+import { LoanType } from "../../app/models/enums/LoanType";
+import LoanItem from "./common/LoanItem";
 import { useState } from "react";
 import { ExpandMore } from "@mui/icons-material";
-import CounterpartySummaryWithPagination from "./CounterpartySummaryWithPagination";
-import CounterpartyPaidoffLoans from "./CounterpartyPaidoffLoans";
-import CollectivePayoffForm from "../../../components/forms/Loan/CollectivePayoffForm";
+import CounterpartySummaryWithPagination from "./counterparty/CounterpartySummaryWithPagination";
+import CounterpartyPaidoffLoans from "./counterparty/CounterpartyPaidoffLoans";
+import CollectivePayoffForm from "../../components/forms/Loan/CollectivePayoffForm";
 
 export default observer(function CounterpartyDetails() {
     const {
