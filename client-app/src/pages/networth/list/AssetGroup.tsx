@@ -60,7 +60,7 @@ export default observer(function AssetGroup({index, expanded, handleToggle, cate
                 {assets.map((asset) => 
                 <Fragment key={asset.id}>
                     {category.id === asset.assetCategoryId &&
-                        <AssetItem key={asset.id} asset={asset} openDeleteDialog={handleOpenDeleteDialog}/>
+                        <AssetItem asset={asset} openDeleteDialog={handleOpenDeleteDialog}/>
                     }
                 </Fragment>                 
                 )}

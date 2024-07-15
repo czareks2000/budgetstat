@@ -10,16 +10,16 @@ import { BudgetPeriod } from "../../app/models/enums/BudgetPeriod";
 
 export default observer(function CreateBudget() {
     const {budgetStore: {createBudget}} = useStore();
-  
+
+    const handleGoBack = () => {
+        router.navigate('/budgets');
+    }
+
     function handleCreate(budget: BudgetDto, formikHelpers: FormikHelpers<BudgetFormValues>): void {
         createBudget(budget).then(() => {
             formikHelpers.resetForm();
-            router.navigate('/budgets');
+            handleGoBack();
         });
-    }
-
-    const handleCancel = () => {
-        router.navigate('/budgets');
     }
 
     const initialValues: BudgetFormValues = {
@@ -38,7 +38,7 @@ export default observer(function CreateBudget() {
                     <BudgetForm 
                         initialValues={initialValues} 
                         onSubmit={handleCreate} 
-                        onCancel={handleCancel}
+                        onCancel={handleGoBack}
                         submitText="Create"/>
                 </Box>
             </Paper>

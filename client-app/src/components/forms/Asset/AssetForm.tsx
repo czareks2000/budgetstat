@@ -1,4 +1,4 @@
-import { Form, Formik } from "formik";
+import { Form, Formik, FormikHelpers } from "formik";
 import { observer } from "mobx-react-lite"
 import * as Yup from "yup";
 import TextInput from "../../formInputs/TextInput";
@@ -10,13 +10,16 @@ import NumberInput from "../../formInputs/NumberInput";
 import { AssetCreateUpdateValues } from "../../../app/models/Asset";
 
 interface Props {
+    initialValues: AssetCreateUpdateValues;
+    onSubmit: (budget: AssetCreateUpdateValues, formikHelpers: FormikHelpers<AssetCreateUpdateValues>) => void;
     onGoBack: () => void;
+    submitText: string;
 }
 
-export default observer(function CreateAssetForm({onGoBack}: Props) {
+export default observer(function AssetForm({initialValues, onSubmit, onGoBack, submitText}: Props) {
     const {
         currencyStore: {currenciesAsOptions},
-        assetStore: {assetCategoriesAsOptions, createAsset}
+        assetStore: {assetCategoriesAsOptions}
     } = useStore();
 
     const validationSchema = Yup.object({
@@ -27,28 +30,13 @@ export default observer(function CreateAssetForm({onGoBack}: Props) {
                         .min(0, 'Asset value must be greater than or equal to 0'),
         currencyId: Yup.string().required('Currency is required'),
     });
-
-    const initialValues: AssetCreateUpdateValues = {
-        assetCategoryId: "",
-        name: "",
-        description: "",
-        assetValue: null,
-        currencyId: ""
-    }
-
-    const handleOnSubmit = (asset: AssetCreateUpdateValues) => {
-        createAsset(asset)
-            .then(() => {
-                onGoBack();
-            });
-    }
     
     return (
       <>
         <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
-            onSubmit={handleOnSubmit}
+            onSubmit={(values, formikHelpers) => onSubmit(values, formikHelpers)}
         >
         {({ isValid, dirty, isSubmitting }) => {
         return(
@@ -93,7 +81,7 @@ export default observer(function CreateAssetForm({onGoBack}: Props) {
                             type="submit" 
                             disabled={!(dirty && isValid) || isSubmitting}
                             loading={isSubmitting}>
-                            Create
+                            {submitText}
                         </LoadingButton>
                     </Stack>
                 </Stack>

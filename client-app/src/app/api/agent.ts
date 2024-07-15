@@ -199,7 +199,7 @@ const Assets = {
     delete: (assetId: number) => 
         requests.del<void>(`/assets/${assetId}`),
     update: (assetId: number, asset: AssetCreateUpdateValues) =>
-        requests.post<Asset>(`/assets/${assetId}`, asset),
+        requests.put<Asset>(`/assets/${assetId}`, asset),
 }
 
 const Settings = {
