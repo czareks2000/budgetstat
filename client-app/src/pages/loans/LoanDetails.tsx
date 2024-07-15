@@ -69,6 +69,7 @@ export default observer(function LoanDetails() {
                         >
                             {!isOpen ? 'Click to open' : 'Click to hide'}
                         </AccordionSummary>
+                        <Divider sx={{mb: 1}}/>
                         <AccordionDetails>
                             <CreatePayoffForm />      
                         </AccordionDetails>

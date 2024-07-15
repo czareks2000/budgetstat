@@ -98,6 +98,7 @@ export default observer(function CounterpartyDetails() {
                         >
                             {!isAcordionOpen ? 'Click to open' : 'Click to hide'}
                         </AccordionSummary>
+                        <Divider sx={{mb: 1}}/>
                         <AccordionDetails>
                             <CollectivePayoffForm loans={loans} counterpartyId={Number(id)} />      
                         </AccordionDetails>

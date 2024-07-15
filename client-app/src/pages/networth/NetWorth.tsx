@@ -1,15 +1,15 @@
 import { observer } from "mobx-react-lite"
 import ResponsiveContainer from "../../components/common/ResponsiveContainer"
-import { Divider, Grid, Stack } from "@mui/material"
+import { Box, Divider, Grid, Paper, Stack } from "@mui/material"
 import LoansCard from "./cards/LoansCard";
 import AssetsCard from "./cards/AssetsCard";
 import NetWorthCard from "./cards/NetWorthCard";
 import NetWorthOverTimeLineChart from "./charts/NetWorthOverTimeLineChart";
 import AssetList from "./list/AssetList";
+import AssetsValuesGroupedByCategoriesChart from "./charts/AssetsValuesGroupedByCategoriesChart";
 
 export default observer(function NetWorth() {
     
-
     return (
     <>
         <ResponsiveContainer content={
@@ -28,7 +28,25 @@ export default observer(function NetWorth() {
                 </Stack>
                 <NetWorthOverTimeLineChart />
                 <Divider>Assets</Divider>
-                <AssetList />
+                <Grid container direction={{xs: 'column', sm: 'row'}} gap={2}>
+                    <Grid item xs>
+                        <AssetList />
+                    </Grid>
+                    <Paper sx={{ display: { xs: 'none', sm: 'block' }, height: 240}}>         
+                        <Grid item xs={'auto'} container justifyContent="center">
+                            <Box>
+                                <AssetsValuesGroupedByCategoriesChart />
+                            </Box>                      
+                        </Grid>
+                    </Paper>
+                    <Paper sx={{ display: { xs: 'block', sm: 'none' }}}>         
+                        <Grid item xs={'auto'} container justifyContent="center">
+                            <Box >
+                                <AssetsValuesGroupedByCategoriesChart showLegend/>
+                            </Box>                       
+                        </Grid>
+                    </Paper>
+                </Grid>
             </Stack>
         }/>
     </>

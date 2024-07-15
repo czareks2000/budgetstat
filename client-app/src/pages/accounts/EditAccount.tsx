@@ -4,11 +4,14 @@ import { AccountFormValues } from "../../app/models/Account";
 import { useStore } from "../../app/stores/store";
 import EditAccountForm from "../../components/forms/Account/EditAccountForm";
 import { router } from "../../app/router/Routes";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import ResponsiveContainer from "../../components/common/ResponsiveContainer";
 
 export default observer(function EditAccount() {
+    const [searchParams] = useSearchParams();
+    const redirect = searchParams.get('redirect');
+    
     const {
         accountStore: {
             updateAccount, selectedAccount, selectAccount, deselectAccount
@@ -17,12 +20,12 @@ export default observer(function EditAccount() {
     
     function handleUpdate(updatedAccount: AccountFormValues): void {
         updateAccount(selectedAccount!.id, updatedAccount)
-            .then(() => router.navigate('/accounts'));
+            .then(() => router.navigate(redirect === 'assets' ? '/net-worth' : '/accounts'));
     }
 
     const handleCancel = () => {
         deselectAccount();
-        router.navigate('/accounts');
+        router.navigate(redirect === 'assets' ? '/net-worth' : '/accounts');
     }
 
     const {id} = useParams();

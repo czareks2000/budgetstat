@@ -1,19 +1,18 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box } from '@mui/material'
-import IconComponent from '../../../components/common/CategoryIcon'
 import { observer } from 'mobx-react-lite'
 import { useStore } from '../../../app/stores/store'
-import { formatAmount } from '../../../app/utils/FormatAmount'
-import { ExpandMore } from '@mui/icons-material'
+
 import { useState } from 'react'
+
+import AccountGroup from './AccountGroup'
+import AssetGroup from './AssetGroup'
 
 export default observer(function AssetList()  {
     const { 
-        assetStore: {assets, getAssetCategoryIconId, assetCategories},
-        currencyStore: {getCurrencySymbol}
+        assetStore: {assetCategories},
     } = useStore();
 
     // Tablica stanów, gdzie każdy element odpowiada stanowi otwarcia dla danego Accordionu
-    const [expanded, setExpanded] = useState(new Array(assetCategories.length).fill(false));
+    const [expanded, setExpanded] = useState(new Array(assetCategories.length + 1).fill(false));
 
     const handleToggle = (index: number) => {
         const newExpanded = [...expanded];
@@ -22,34 +21,19 @@ export default observer(function AssetList()  {
     };
 
     return (
-        <Box>
+        <>
+            <AccountGroup 
+                index={0} 
+                expanded={expanded[0]} 
+                handleToggle={handleToggle}/>
             {assetCategories.map((category, index) =>
-                <Accordion 
-                    key={category.id}
-                    expanded={expanded[index]}
-                    onChange={() => handleToggle(index)}>
-                    <AccordionSummary
-                    expandIcon={<ExpandMore />}
-                    aria-controls={`${category.name}-assets`}
-                    id={`${category.name}-assets`}
-                    >
-                        <Box  display={'flex'}>
-                            <IconComponent iconId={getAssetCategoryIconId(category.id)} fontSize="small" sx={{mr: 1}}/>
-                            <>{category.name}</>
-                        </Box>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                    {assets.map((asset) => 
-                    <>
-                        {category.id === asset.assetCategoryId &&
-                        <Box key={asset.id}>
-                            <Box>{asset.name} {formatAmount(asset.assetValue)} {getCurrencySymbol(asset.currencyId)}</Box>
-                        </Box>}
-                    </>
-                    )}      
-                    </AccordionDetails>
-                </Accordion>
+                <AssetGroup 
+                    key={category.id} 
+                    index={index + 1} 
+                    expanded={expanded[index + 1]} 
+                    handleToggle={handleToggle} 
+                    category={category}/>
             )}
-        </Box>
+        </>
     )
 })
