@@ -42,6 +42,14 @@ export default class AssetStore {
         return this.assetCategories.find(ac => ac.id === assetCategoryId)?.iconId as number;
     }
 
+    selectAsset = (assetId: number) => {
+        this.selectedAsset = this.assetRegistry.get(assetId);
+    }
+    
+    deselectAccount = () => {
+        this.selectedAsset = undefined;
+    }
+
     loadAssetCategories = async () => {
         try {
             const categories = await agent.Assets.getAssetCategories();
@@ -71,6 +79,28 @@ export default class AssetStore {
             const newAsset = await agent.Assets.create(asset);
             runInAction(() => {
                 this.setAsset(newAsset);
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    updateAsset = async (assetId: number, asset: AssetCreateUpdateValues) => {
+        try {
+            const updatedAsset = await agent.Assets.update(assetId, asset);
+            runInAction(() => {
+                this.setAsset(updatedAsset);
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    deleteAsset = async (assetId: number) => {
+        try {
+            await agent.Assets.delete(assetId);
+            runInAction(() => {
+                this.assetRegistry.delete(assetId);
             })
         } catch (error) {
             console.log(error);
