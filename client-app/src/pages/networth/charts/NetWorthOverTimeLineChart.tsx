@@ -1,8 +1,13 @@
 import { Box, Paper } from '@mui/material'
 import { LineChart } from '@mui/x-charts'
 import { theme } from '../../../app/layout/Theme';
+import { formatAmount } from '../../../app/utils/FormatAmount';
+import { useStore } from '../../../app/stores/store';
+import { observer } from 'mobx-react-lite';
 
-const NetWorthOverTimeLineChart = () => {
+export default observer(function NetWorthOverTimeLineChart() {
+    const {currencyStore: {defaultCurrency}} = useStore();
+    
     const data = [39000, 42100, 44000, 43000, 41200, 42000, 42137, 44000, 43700, 46500, 45000, 47000];
     const xLabels = [
     '08/2023',
@@ -24,13 +29,14 @@ const NetWorthOverTimeLineChart = () => {
         <Box pl={3} pb={2} height={400}>
         <LineChart
             series={[
-                { data: data, color: theme.palette.primary.main},
+                { 
+                    data: data, 
+                    color: theme.palette.primary.main, 
+                    valueFormatter: (value) => `${formatAmount(value!)} ${defaultCurrency?.symbol}`},
             ]}
             xAxis={[{ scaleType: 'point', data: xLabels }]}
         />
         </Box>
     </Paper>
   )
-}
-
-export default NetWorthOverTimeLineChart
+})

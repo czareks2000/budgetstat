@@ -1,13 +1,16 @@
-import { Box } from '@mui/material'
+
 import { PieChart } from '@mui/x-charts'
 import { formatAmount } from '../../../app/utils/FormatAmount'
 import { observer } from 'mobx-react-lite';
+import { useStore } from '../../../app/stores/store';
+import { Box } from '@mui/material';
 
 interface Props {
     showLegend?: boolean;
 }
 
 export default observer(function AssetsValuesGroupedByCategoriesChart({showLegend = false}: Props) {
+    const {currencyStore: {defaultCurrency}} = useStore();
   
     const data = [
         { id: 0, value: 47010, label: "Accounts", },
@@ -45,7 +48,7 @@ export default observer(function AssetsValuesGroupedByCategoriesChart({showLegen
                     cornerRadius: 5,
                     startAngle: 0,
                     endAngle: 360,
-                    valueFormatter: (value) => `${formatAmount(value.value)} zł`
+                    valueFormatter: (value) => `${formatAmount(value.value)} ${defaultCurrency?.symbol}`
                 }
             ]}
             height={240}
