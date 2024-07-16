@@ -145,6 +145,9 @@ export default observer(function Transactions() {
                             slotProps={{
                                 toolbar: {
                                   showQuickFilter: true,
+                                  printOptions: { 
+                                    disableToolbarButton: true 
+                                  },
                                   sx: {
                                     px: 2,
                                     pt: 2,
