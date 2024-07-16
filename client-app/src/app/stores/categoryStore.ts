@@ -16,15 +16,29 @@ export default class CategoryStore {
         this.categoriesLoaded = false;
     }
 
-    get expenseSubCategories() {
+    get expenseCategories() {
+        return this.mainCategories
+            .filter(category => category.type === TransactionType.Expense);
+    }
+
+    get expenseCategoriesAsOptions() {
         const expenseSubCategories: CategoryOption[] = [];
         
         // Iterate over main categories
         this.mainCategories
             .filter(category => category.type === TransactionType.Expense)
             .forEach(mainCategory => {
+                
+                expenseSubCategories.push({
+                    id: mainCategory.id,
+                    name: mainCategory.name,
+                    iconId: mainCategory.iconId,
+                    type: mainCategory.type,
+                    mainCategoryName: mainCategory.name,
+                    mainCategoryId: mainCategory.id
+                });
+
                 mainCategory.subCategories
-                    .filter(subCategory => subCategory.type === TransactionType.Expense)
                     .forEach(subCategory => {
                         expenseSubCategories.push({
                             id: subCategory.id,
@@ -36,6 +50,8 @@ export default class CategoryStore {
                         });
                 });
         });
+
+
 
         return expenseSubCategories;
     }

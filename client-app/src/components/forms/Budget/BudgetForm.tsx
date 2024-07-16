@@ -23,7 +23,7 @@ interface Props {
 
 export default observer(function BudgetForm({initialValues, onSubmit, onCancel, submitText, currencySymbol}: Props) {
     const {
-        categoryStore: {expenseSubCategories}} = useStore();
+        categoryStore: {expenseCategoriesAsOptions}} = useStore();
 
     const validationSchema = Yup.object({
         name: Yup.string().required('Name is required'),
@@ -61,7 +61,7 @@ export default observer(function BudgetForm({initialValues, onSubmit, onCancel, 
                         options={enumToOptions(BudgetPeriod)} />
 
                     {/* Categories */}
-                    <CategoryGroupedInput label="Categories" name={"categories"} options={expenseSubCategories} />
+                    <CategoryGroupedInput label="Categories" name={"categories"} options={expenseCategoriesAsOptions} />
 
                     {/* Amount */}
                     <NumberInput label="Amount" name="amount" 

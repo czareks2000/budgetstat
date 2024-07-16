@@ -26,6 +26,7 @@ export default function CategoryGroupedInput(props: Props) {
                 disableCloseOnSelect
                 onChange={handleChange}
                 options={props.options}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
                 groupBy={(option) => option.mainCategoryName}
                 getOptionLabel={(option) => option.name}
                 renderInput={(params) => 
