@@ -51,6 +51,8 @@ export default class CurrencyStore {
             await agent.Settings.setDefaultCurrency(currencyId);
             runInAction(() => {
                 this.setDefaultCurrency(currencyId);
+                store.budgetStore.clearStore();
+                store.budgetStore.loadBudgets();
                 // to podmienić na oddzielny endpoint do aktualizowania sumy sald kont
                 store.accountStore.clearStore();
                 store.accountStore.loadAccounts();

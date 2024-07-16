@@ -18,12 +18,12 @@ interface Props {
     onSubmit: (budget: BudgetDto, formikHelpers: FormikHelpers<BudgetFormValues>) => void;
     onCancel: () => void;
     submitText: string;
+    currencySymbol: string;
 }
 
-export default observer(function BudgetForm({initialValues, onSubmit, onCancel, submitText}: Props) {
+export default observer(function BudgetForm({initialValues, onSubmit, onCancel, submitText, currencySymbol}: Props) {
     const {
-        categoryStore: {expenseSubCategories},
-        currencyStore: {defaultCurrency}} = useStore();
+        categoryStore: {expenseSubCategories}} = useStore();
 
     const validationSchema = Yup.object({
         name: Yup.string().required('Name is required'),
@@ -65,7 +65,7 @@ export default observer(function BudgetForm({initialValues, onSubmit, onCancel, 
 
                     {/* Amount */}
                     <NumberInput label="Amount" name="amount" 
-                        adornment adornmentPosition="end" adormentText={defaultCurrency?.symbol}/>
+                        adornment adornmentPosition="end" adormentText={currencySymbol}/>
 
                     {/* Buttons */}
                     <Stack direction={'row'} spacing={2}>

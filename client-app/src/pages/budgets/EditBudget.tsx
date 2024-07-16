@@ -46,6 +46,7 @@ export default observer(function EditBudget() {
                 <Paper>
                     <Box p={2}>
                         <BudgetForm 
+                            currencySymbol={selectedBudget.currency.symbol}
                             initialValues={initialValues} 
                             onSubmit={handleUpdate} 
                             onCancel={handleCancel}

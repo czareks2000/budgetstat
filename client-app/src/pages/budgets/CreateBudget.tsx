@@ -9,7 +9,10 @@ import ResponsiveContainer from "../../components/common/ResponsiveContainer";
 import { BudgetPeriod } from "../../app/models/enums/BudgetPeriod";
 
 export default observer(function CreateBudget() {
-    const {budgetStore: {createBudget}} = useStore();
+    const {
+        budgetStore: {createBudget},
+        currencyStore: {defaultCurrency}
+    } = useStore();
 
     const handleGoBack = () => {
         router.navigate('/budgets');
@@ -35,7 +38,8 @@ export default observer(function CreateBudget() {
             <Divider>Create Budget</Divider>
             <Paper>
                 <Box p={2}>
-                    <BudgetForm 
+                    <BudgetForm
+                        currencySymbol={defaultCurrency!.symbol}
                         initialValues={initialValues} 
                         onSubmit={handleCreate} 
                         onCancel={handleGoBack}

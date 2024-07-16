@@ -81,6 +81,20 @@ export default observer(function BudgetItem({budget, openDeleteDialog}: Props) {
         return `${dd}/${mm}/${yyyy}`;
     }
 
+    const isInDefaultCurrency = budget.currency.id === defaultCurrency?.id;
+
+    const budgetEndAmount = `${formatAmount(budget.convertedAmount)} ${defaultCurrency?.symbol} ${!isInDefaultCurrency ? `(${formatAmount(budget.amount)} ${budget.currency.symbol})` : ''}`;
+
+    const calculateSpaces = (targetLength: number, currentLength: number) => {
+        const spaceCount = targetLength - currentLength;
+        return '\u00A0'.repeat(spaceCount); // '\u00A0' is a non-breaking space character
+    };
+    
+    const budgetStartAmount = `0 ${defaultCurrency?.symbol}`;
+    const spacesNeeded = calculateSpaces(budgetEndAmount.length, budgetStartAmount.length);
+    
+    const formatedBudgetStartAmount = `${budgetStartAmount}${spacesNeeded}`;
+
     const handleDeleteButtonClick = () => {
         selectBudget(budget.id);
         openDeleteDialog();
@@ -150,7 +164,7 @@ export default observer(function BudgetItem({budget, openDeleteDialog}: Props) {
                         <Grid container justifyContent="space-between">
                             <Grid item>
                                 <Typography variant="body1">
-                                    0 {defaultCurrency?.symbol}
+                                    {formatedBudgetStartAmount}
                                 </Typography>
                             </Grid>
                             <Grid item>
@@ -160,7 +174,7 @@ export default observer(function BudgetItem({budget, openDeleteDialog}: Props) {
                             </Grid>
                             <Grid item>
                                 <Typography variant="body1">
-                                    {formatAmount(budget.convertedAmount)} {defaultCurrency?.symbol}
+                                    {budgetEndAmount}
                                 </Typography>
                             </Grid>
                         </Grid>
