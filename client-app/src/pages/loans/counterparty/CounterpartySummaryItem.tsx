@@ -75,7 +75,7 @@ export default observer(function CounterpartySummaryItem({detailsAction, summary
                     <Grid item xs>
                         <Stack direction={'row'}>
                             <Typography variant="h5" gutterBottom>
-                                {header()} 
+                                {summary.nearestRepaymentDate ? header() : counterparty.name} 
                             </Typography>
                         </Stack>
                         <Stack>
