@@ -7,6 +7,7 @@ import { useStore } from '../../../app/stores/store'
 import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
 import DeleteAccountDialog from '../../accounts/DeleteAccountDialog'
+import { AccountStatus } from '../../../app/models/enums/AccountStatus'
 
 interface Props {
     index: number;
@@ -51,7 +52,8 @@ export default observer(function AccountGroup({index, expanded, handleToggle}: P
             <Divider/>
             <AccordionDetails>
                 <List disablePadding>
-                    {accounts.map((account) => 
+                    {accounts.filter(a => a.status === AccountStatus.Visible)
+                    .map((account) => 
                         <AccountItem key={account.id} 
                             account={account}
                             openDeleteDialog={handleOpenDeleteDialog} />     

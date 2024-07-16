@@ -7,9 +7,12 @@ interface Props {
 }
 
 const AccountsList = ({accounts, openDeleteDialog}: Props) => {
+    
+    const sortedAccounts = accounts.sort((a,b) => b.status - a.status);
+
     return (
         <>
-        {accounts.map(account => 
+        {sortedAccounts.map(account => 
             <AccountItem 
                 key={account.id} 
                 account={account} 
