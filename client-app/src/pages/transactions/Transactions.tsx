@@ -62,7 +62,9 @@ export default observer(function Transactions() {
         {
           field: 'amount',
           headerName: 'Amount',
-          type: 'number',
+          //type: 'number',
+          align: 'right',
+          headerAlign: 'right',
           minWidth: 100,
           flex: 1,
           editable: false,
@@ -134,6 +136,7 @@ export default observer(function Transactions() {
                             rows={rows}
                             columns={columns}
                             autoHeight
+                            disableRowSelectionOnClick
                             autosizeOnMount
                             autosizeOptions={{
                                 includeHeaders: false,
