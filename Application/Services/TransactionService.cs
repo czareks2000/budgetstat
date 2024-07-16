@@ -19,7 +19,7 @@ namespace Application.Services
         private readonly IUtilities _utilities = utilities;
         private readonly IMapper _mapper = mapper;
 
-        public async Task<Result<TransactionDto>> Create(int accountId, TransactionCreateDto newTransaction)
+        public async Task<Result<int>> Create(int accountId, TransactionCreateDto newTransaction)
         {   
             // sprawdzenie czy konto istnieje
             var account = await _context.Accounts
@@ -37,7 +37,7 @@ namespace Application.Services
                 .FirstOrDefault(category => category.Id == newTransaction.CategoryId);
 
             if (category == null || category.IsMain) 
-                return Result<TransactionDto>.Failure("Invalid category. It does not exist or is the main category");
+                return Result<int>.Failure("Invalid category. It does not exist or is the main category");
 
             // utworzenie transakcji
             var transaction = _mapper.Map<Transaction>(newTransaction);
@@ -56,24 +56,22 @@ namespace Application.Services
             if (!transaction.Planned)
             {
                 if (account.AccountBalances.Count == 0)
-                    return Result<TransactionDto>.Failure("The account has no balance");
+                    return Result<int>.Failure("The account has no balance");
 
                 var isExpense = category.Type == TransactionType.Expense;
 
                 var newTransactionDate = newTransaction.Date.Date;
 
                 if (!_utilities.UpdateAccountBalances(account.Id, newTransactionDate, isExpense, newTransaction.Amount))
-                    return Result<TransactionDto>.Failure($"Insufficient funds in the account. Change the date or amount.");
+                    return Result<int>.Failure($"Insufficient funds in the account. Change the date or amount.");
             }
 
             // zapisanie zmian w bazie
             if (await _context.SaveChangesAsync() == 0)
-                return Result<TransactionDto>.Failure("Failed to create transaction");
+                return Result<int>.Failure("Failed to create transaction");
 
-            // utworzenie obiektu DTO
-            var transactionDto = _mapper.Map<TransactionDto>(transaction);
 
-            return Result<TransactionDto>.Success(transactionDto);
+            return Result<int>.Success(transaction.Id);
         }
 
         public async Task<Result<object>> Delete(int transactionId)
@@ -105,7 +103,7 @@ namespace Application.Services
             return Result<object>.Success(null);
         }
 
-        public async Task<Result<TransactionDto>> Update(int transactionId, TransactionUpdateDto updatedTransaction)
+        public async Task<Result<object>> Update(int transactionId, TransactionUpdateDto updatedTransaction)
         {
             // sprawdzenie czy transakcja istnieje
             var transaction = await _context.Transactions
@@ -121,20 +119,20 @@ namespace Application.Services
                 .FirstOrDefaultAsync(c => c.Id == updatedTransaction.CategoryId);
 
             if (newCategory == null || newCategory.IsMain)
-                return Result<TransactionDto>.Failure("Invalid category. It does not exist or is the main category");   
+                return Result<object>.Failure("Invalid category. It does not exist or is the main category");   
 
             // walidacja konta
             var newAccount = await _context.Accounts
                 .FirstOrDefaultAsync(a => a.Id == updatedTransaction.AccountId && a.UserId == user.Id);
 
             if (newAccount == null)
-                return Result<TransactionDto>.Failure("Invalid account. It does not exist or does not belong to the user.");
+                return Result<object>.Failure("Invalid account. It does not exist or does not belong to the user.");
 
             // aktualizacja salda nowego konta
             var isExpense = newCategory.Type == TransactionType.Expense;
 
             if (!_utilities.UpdateAccountBalances(newAccount.Id, transaction.Date, isExpense, updatedTransaction.Amount))
-                return Result<TransactionDto>.Failure("Insufficient funds in the account. Change the date or amount.");
+                return Result<object>.Failure("Insufficient funds in the account. Change the date or amount.");
 
             // aktualizacja salda starego konta
             if (transaction.Account != null)
@@ -153,12 +151,9 @@ namespace Application.Services
 
             // zapisanie zmian w bazie
             if (await _context.SaveChangesAsync() == 0)
-                return Result<TransactionDto>.Failure("Failed to update transaction");
+                return Result<object>.Failure("Failed to update transaction");
 
-            // utworzenie obiektu DTO
-            var transactionDto = _mapper.Map<TransactionDto>(transaction);
-
-            return Result<TransactionDto>.Success(transactionDto);
+            return Result<object>.Success(null);
         }
 
         public async Task<Result<List<TransactionDto>>> CreatePlannedTransactions(int accountId, PlannedTransactionDto plannedTransaction)

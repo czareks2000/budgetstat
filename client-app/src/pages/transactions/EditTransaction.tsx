@@ -7,7 +7,7 @@ export default observer(function EditTransaction() {
         <>
             <ResponsiveContainer content={
                 <Stack spacing={2}>
-                    <Divider>EditTransaction</Divider>
+                    <Divider>Edit Transaction</Divider>
                 </Stack>
             } />
         </>

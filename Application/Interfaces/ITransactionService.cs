@@ -7,13 +7,13 @@ namespace Application.Interfaces
     public interface ITransactionService
     {
         // wprowadzenie transakcji
-        Task<Result<TransactionDto>> Create(int accountId, TransactionCreateDto newTransaction);
+        Task<Result<int>> Create(int accountId, TransactionCreateDto newTransaction);
         // zaplanowanie transakcji
         Task<Result<List<TransactionDto>>> CreatePlannedTransactions(int accountId, PlannedTransactionDto plannedTransaction);
         // potwierdzenie zaplanowanej transakcji 
         Task<Result<object>> ConfirmTransaction(int transactionId);
         // edycja transakcji 
-        Task<Result<TransactionDto>> Update(int transactionId, TransactionUpdateDto updatedTransaction);
+        Task<Result<object>> Update(int transactionId, TransactionUpdateDto updatedTransaction);
         // zmiana pola considered
         Task<Result<bool>> ToggleConsideredFlag(int transactionId);
         // usunięcie transakcji

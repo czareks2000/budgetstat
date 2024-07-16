@@ -176,7 +176,7 @@ namespace Persistence
                     SubCategories = new List<Category>()
                     {
                         new() { Icon = icons[2], Name = "Books", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[2], Name = "Cinemas, theaters, concerts", Type = TransactionType.Expense, User = users[0] }, //[2][1]
+                        new() { Icon = icons[2], Name = "Events", Type = TransactionType.Expense, User = users[0] }, //[2][1]
                         new() { Icon = icons[2], Name = "Cafe, bars", Type = TransactionType.Expense, User = users[0] },
                         new() { Icon = icons[2], Name = "Sport, hobby", Type = TransactionType.Expense, User = users[0] },
                         new() { Icon = icons[2], Name = "Subscriptions", Type = TransactionType.Expense, User = users[0] },

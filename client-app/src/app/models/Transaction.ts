@@ -1,4 +1,5 @@
 import { Period } from "./enums/Period";
+import { TransactionType } from "./enums/TransactionType";
 
 export interface Transaction {
     id: number;
@@ -10,6 +11,25 @@ export interface Transaction {
     considered: boolean;
     planned: boolean;
     currencyId: number;
+}
+
+export interface TransactionRowItem {
+    id: number;
+    account: string | null;
+    category: CategoryItem;
+    amount: AmountItem;
+    date: Date;
+}
+
+export interface CategoryItem {
+    name: string;
+    iconId: number;
+}
+
+export interface AmountItem {
+    value: number;
+    type: TransactionType;
+    currencySymbol: string;
 }
 
 export interface TransactionCreateValues {
