@@ -9,13 +9,13 @@ namespace Infrastructure.Currency
 
         private static CurrencyRates _currencyRates = new CurrencyRates();
 
-        private static string[] fallbackUrls = new[]
-        {
+        private static readonly string[] fallbackUrls =
+        [
             $"https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/{apiVersion}/currencies/usd.min.json",
             $"https://latest.currency-api.pages.dev/{apiVersion}/currencies/usd.min.json",
             $"https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/{apiVersion}/currencies/usd.json",
             $"https://latest.currency-api.pages.dev/{apiVersion}/currencies/usd.json"
-        };
+        ];
 
         public async Task<decimal> Convert(string inputCurrencyCode, string outputCurrencyCode, decimal value)
         {
