@@ -7,6 +7,7 @@ import { useStore } from "../../app/stores/store";
 
 import { router } from "../../app/router/Routes";
 import { formatAmount } from "../../app/utils/FormatAmount";
+import NoDecorationLink from "../../components/common/NoDecorationLink";
 
 interface Props {
     account: Account;
@@ -35,6 +36,9 @@ export default observer(function AccountItem({account, openDeleteDialog}: Props)
     }
 
     return (
+    <NoDecorationLink 
+        to={`/accounts/${account.id}/transactions`}
+        content={
         <Card key={account.id} >
             <CardContent>
                 <Grid container justifyContent="flex-end">
@@ -64,7 +68,11 @@ export default observer(function AccountItem({account, openDeleteDialog}: Props)
                             leaveDelay={200}>
                         <Switch 
                             checked={isVisible()} 
-                            onClick={handleSwitchButtonClick}/>
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleSwitchButtonClick();
+                            }}/>
                     </Tooltip>
                     <Box>
                         <Tooltip 
@@ -75,7 +83,11 @@ export default observer(function AccountItem({account, openDeleteDialog}: Props)
                             leaveDelay={200}>
                             <IconButton 
                                 aria-label="edit"
-                                onClick={handleEditButtonClick}>
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    handleEditButtonClick();
+                                }}>
                                 <Edit />
                             </IconButton>
                         </Tooltip>
@@ -87,7 +99,11 @@ export default observer(function AccountItem({account, openDeleteDialog}: Props)
                             leaveDelay={200}>
                             <IconButton 
                                 aria-label="delete"
-                                onClick={handleDeleteButtonClick}>
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    handleDeleteButtonClick();
+                                }}>
                                 <Delete />
                             </IconButton>
                         </Tooltip>
@@ -95,5 +111,6 @@ export default observer(function AccountItem({account, openDeleteDialog}: Props)
                 </Grid>
             </CardActions>
         </Card>
+    }/>
     )
 })
