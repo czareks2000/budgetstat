@@ -1,5 +1,4 @@
 ﻿using Application.Interfaces;
-using Domain;
 using System.Text.Json;
 
 namespace Infrastructure.Currency
@@ -8,15 +7,15 @@ namespace Infrastructure.Currency
     {
         private static string apiVersion = "v1";
 
-        private string[] fallbackUrls = new[]
+        private static CurrencyRates _currencyRates = new CurrencyRates();
+
+        private static string[] fallbackUrls = new[]
         {
             $"https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/{apiVersion}/currencies/usd.min.json",
             $"https://latest.currency-api.pages.dev/{apiVersion}/currencies/usd.min.json",
             $"https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/{apiVersion}/currencies/usd.json",
             $"https://latest.currency-api.pages.dev/{apiVersion}/currencies/usd.json"
         };
-
-        private CurrencyRates _currencyRates = new CurrencyRates();
 
         public async Task<decimal> Convert(string inputCurrencyCode, string outputCurrencyCode, decimal value)
         {
@@ -42,7 +41,7 @@ namespace Infrastructure.Currency
             return toRate / fromRate;
         }
 
-        private string CreateUrl(string fallbackUrl, string date = "latest")
+        private static string CreateUrl(string fallbackUrl, string date = "latest")
         {
             return fallbackUrl.Replace("latest", date);
         }
@@ -83,7 +82,7 @@ namespace Infrastructure.Currency
             return new CurrencyRates(FormatDate(date));
         }
 
-        private decimal ConvertAmount(string inputCurrencyCode, string outputCurrencyCode, decimal value)
+        private static decimal ConvertAmount(string inputCurrencyCode, string outputCurrencyCode, decimal value)
         {
             decimal fromRate = _currencyRates.Usd[inputCurrencyCode.ToLower()];
             decimal toRate = _currencyRates.Usd[outputCurrencyCode.ToLower()];
