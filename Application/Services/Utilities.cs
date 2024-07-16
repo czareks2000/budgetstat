@@ -23,21 +23,29 @@ namespace Application.Services
         }
 
         // zwraca kwotę w defaultowej walucie użytkownika
-        public decimal ConvertToDefaultCurrency(User user, string inputCurrencyCode, decimal value)
+        public async Task<decimal> ConvertToDefaultCurrency(User user, string inputCurrencyCode, decimal value)
         {
             if (user.DefaultCurrency.Code != inputCurrencyCode)
-                return _currencyService.Convert(user.DefaultCurrency.Code, inputCurrencyCode, value);
+                return await _currencyService.Convert(inputCurrencyCode, user.DefaultCurrency.Code, value);
             else
                 return value;
         }
 
         // zwraca kwotę w podanej walucie
-        public decimal Convert(string inputCurrencyCode, string outputCurrencyCode, decimal value)
+        public async Task<decimal> Convert(string inputCurrencyCode, string outputCurrencyCode, decimal value)
         {
             if (inputCurrencyCode != outputCurrencyCode)
-                return _currencyService.Convert(inputCurrencyCode, outputCurrencyCode, value);
+                return await _currencyService.Convert(inputCurrencyCode, outputCurrencyCode, value);
             else
                 return value;
+        }
+
+        public async Task<decimal> GetCurrentRate(string inputCurrencyCode, string outputCurrencyCode)
+        {
+            if (inputCurrencyCode != outputCurrencyCode)
+                return await _currencyService.CurrentRate(inputCurrencyCode, outputCurrencyCode);
+            else
+                return 1;
         }
 
         public bool CheckIfCurrencyExists(int currencyId)

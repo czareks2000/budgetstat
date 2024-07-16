@@ -14,7 +14,7 @@ namespace Application.Interfaces
         Task<Result<object>> DeleteAsset(int assetId);
         // edycja zasobu
         Task<Result<AssetDto>> UpdateAsset(int assetId, AssetCreateUpdateDto updatedAsset);
-        // przegląd zasobów (wartości assetów powinny być przeliczone do defaultowej waluty)
+        // przegląd zasobów (wartości assetów w ich orginalnych walutach)
         Task<Result<List<AssetDto>>> GetAssets();
     }
 }

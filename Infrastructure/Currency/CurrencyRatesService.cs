@@ -1,22 +1,96 @@
 ﻿using Application.Interfaces;
+using Domain;
+using System.Text.Json;
 
 namespace Infrastructure.Currency
 {
     public class CurrencyRatesService : ICurrencyRatesService
     {
-        public decimal Convert(string inputCurrencyCode, string outputCurrencyCode, decimal value)
+        private static string apiVersion = "v1";
+
+        private string[] fallbackUrls = new[]
         {
-            return value + 10;
+            $"https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/{apiVersion}/currencies/usd.min.json",
+            $"https://latest.currency-api.pages.dev/{apiVersion}/currencies/usd.min.json",
+            $"https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/{apiVersion}/currencies/usd.json",
+            $"https://latest.currency-api.pages.dev/{apiVersion}/currencies/usd.json"
+        };
+
+        private CurrencyRates _currencyRates = new CurrencyRates();
+
+        public async Task<decimal> Convert(string inputCurrencyCode, string outputCurrencyCode, decimal value)
+        {
+            _currencyRates = await GetCurrencyRates(DateTime.UtcNow);
+
+            return ConvertAmount(inputCurrencyCode, outputCurrencyCode, value);
         }
 
-        public decimal Convert(string inputCurrencyCode, string outputCurrencyCode, decimal value, DateTime date)
+        public async Task<decimal> Convert(string inputCurrencyCode, string outputCurrencyCode, decimal value, DateTime date)
         {
-            return value + 10;
+            _currencyRates = await GetCurrencyRates(date);
+
+            return ConvertAmount(inputCurrencyCode, outputCurrencyCode, value);
         }
 
-        public decimal CurrentRate(string inputCurrencyCode, string outputCurrencyCode)
+        public async Task<decimal> CurrentRate(string inputCurrencyCode, string outputCurrencyCode)
         {
-            return 1;
+            _currencyRates = await GetCurrencyRates(DateTime.UtcNow);
+            
+            decimal fromRate = _currencyRates.Usd[inputCurrencyCode.ToLower()];
+            decimal toRate = _currencyRates.Usd[outputCurrencyCode.ToLower()];
+
+            return toRate / fromRate;
+        }
+
+        private string CreateUrl(string fallbackUrl, string date = "latest")
+        {
+            return fallbackUrl.Replace("latest", date);
+        }
+
+        private string FormatDate(DateTime date)
+        {
+            return date.ToString("yyyy-MM-dd");
+        }
+
+        private async Task<CurrencyRates> GetCurrencyRates(DateTime date)
+        {
+            string formattedDate = FormatDate(date);
+
+            string url = "";
+
+            HttpClient client = new HttpClient();
+
+            foreach (var fallbackUrl in fallbackUrls)
+            {
+                if (date.Date == DateTime.UtcNow.Date)
+                    url = fallbackUrl;
+                else
+                    url = CreateUrl(fallbackUrl, formattedDate);
+
+                try
+                {
+                    var response = await client.GetAsync(url);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var json = await response.Content.ReadAsStringAsync();
+                        return JsonSerializer.Deserialize<CurrencyRates>(json);
+                    }
+                }
+                catch (Exception) { }
+            }
+
+            return new CurrencyRates(FormatDate(date));
+        }
+
+        private decimal ConvertAmount(string inputCurrencyCode, string outputCurrencyCode, decimal value)
+        {
+            decimal fromRate = _currencyRates.Usd[inputCurrencyCode.ToLower()];
+            decimal toRate = _currencyRates.Usd[outputCurrencyCode.ToLower()];
+
+            decimal convertedAmount = value * (toRate / fromRate);
+
+            return Math.Round(convertedAmount, 2);
         }
     }
 }

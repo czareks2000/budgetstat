@@ -7,6 +7,7 @@ using Domain;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using System.Security.Principal;
 
 namespace Application.Services
 {
@@ -18,6 +19,8 @@ namespace Application.Services
         private readonly DataContext _context = context;
         private readonly IUtilities _utilities = utilities;
         private readonly IMapper _mapper = mapper;
+
+        Dictionary<string, decimal> _rates = new Dictionary<string, decimal>();
 
         public async Task<Result<BudgetDto>> Create(BudgetCreateDto newBudget)
         {
@@ -85,7 +88,7 @@ namespace Application.Services
             var result = new List<BudgetDto>();
 
             foreach (var budget in budgetsDto)
-                result.Add(await CalculateAmounts(user, budget));
+                result.Add(await CalculateAmounts(user, budget));                
                 
             return Result<List<BudgetDto>>.Success(budgetsDto);
         }
@@ -163,8 +166,19 @@ namespace Application.Services
 
         private async Task<BudgetDto> CalculateAmounts(User user, BudgetDto budget)
         {
-            budget.ConvertedAmount = _utilities
-                    .ConvertToDefaultCurrency(user, budget.Currency.Code, budget.Amount);
+            decimal currentRate;
+
+            var key = $"{budget.Currency.Code}{user.DefaultCurrency.Code}";
+
+            if (_rates.TryGetValue(key, out decimal value))
+                currentRate = value;
+            else
+            {
+                currentRate = await _utilities.GetCurrentRate(budget.Currency.Code, user.DefaultCurrency.Code);
+                _rates.Add(key, currentRate);
+            }
+
+            budget.ConvertedAmount = budget.Amount * currentRate;
 
             var categoryIds = budget.Categories.Select(c => c.Id).ToList();
 
@@ -316,6 +330,7 @@ namespace Application.Services
 
             // pobranie Transactions typu expense z danego okresu danego użytkownika o danych kategoriach
             var transactions = await _context.Transactions
+                .Include(t => t.Currency)
                 .Where(t => t.Considered)
                 .Where(t => !t.Planned)
                 .Where(t => t.Account.UserId == user.Id)
@@ -326,9 +341,22 @@ namespace Application.Services
 
             // obliczenie current amount an podstawie wartości transakcji, uwzględniając konwersje waluty
             decimal currentAmount = 0;
+            decimal currentRate;
 
-            foreach (var t in transactions )
-                currentAmount += _utilities.ConvertToDefaultCurrency(user, t.Currency.Code, t.Amount);
+            foreach (var t in transactions)
+            {
+                var key = $"{t.Currency.Code}{user.DefaultCurrency.Code}";
+
+                if (_rates.TryGetValue(key, out decimal value))
+                    currentRate = value;
+                else
+                {
+                    currentRate = await _utilities.GetCurrentRate(t.Currency.Code, user.DefaultCurrency.Code);
+                    _rates.Add(key, currentRate);
+                }
+
+                currentAmount += t.Amount * currentRate;
+            }
 
             return currentAmount;
         }

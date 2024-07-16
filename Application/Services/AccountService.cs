@@ -33,7 +33,7 @@ namespace Application.Services
             if (accountDto == null) return null;
 
             // przeliczenie salda do defaultowej waluty użytkownika
-            accountDto.ConvertedBalance = _utilities
+            accountDto.ConvertedBalance = await _utilities
                 .ConvertToDefaultCurrency(user, accountDto.Currency.Code, accountDto.Balance);
 
             return Result<AccountDto>.Success(accountDto);
@@ -52,9 +52,23 @@ namespace Application.Services
                 .ToListAsync();
 
             // przeliczenie salda do defaultowej waluty użytkownika
+            Dictionary<string, decimal> _rates = new Dictionary<string, decimal>();
+            decimal currentRate;
+
             foreach (var account in accountsDto)
-                account.ConvertedBalance = _utilities
-                    .ConvertToDefaultCurrency(user, account.Currency.Code, account.Balance);
+            {
+                var key = $"{account.Currency.Code}{user.DefaultCurrency.Code}";
+                
+                if (_rates.ContainsKey(key))
+                    currentRate = _rates[key];
+                else
+                {
+                    currentRate = await _utilities.GetCurrentRate(account.Currency.Code, user.DefaultCurrency.Code);
+                    _rates.Add(key, currentRate);
+                }
+                    
+                account.ConvertedBalance = account.Balance * currentRate;
+            }
 
             return Result<List<AccountDto>>.Success(accountsDto);
         }
@@ -87,7 +101,7 @@ namespace Application.Services
             var accountDto = _mapper.Map<AccountDto>(account);
 
             // przeliczenie salda do defaultowej waluty użytkownika
-            accountDto.ConvertedBalance = _utilities
+            accountDto.ConvertedBalance = await _utilities
                 .ConvertToDefaultCurrency(user, accountDto.Currency.Code, accountDto.Balance);
 
             return Result<AccountDto>.Success(accountDto);
@@ -116,7 +130,7 @@ namespace Application.Services
             var accountDto = _mapper.Map<AccountDto>(account);
 
             // przeliczenie salda do defaultowej waluty użytkownika
-            accountDto.ConvertedBalance = _utilities
+            accountDto.ConvertedBalance = await _utilities
                 .ConvertToDefaultCurrency(await _utilities.GetCurrentUserAsync(), accountDto.Currency.Code, accountDto.Balance);
 
             return Result<AccountDto>.Success(accountDto);
