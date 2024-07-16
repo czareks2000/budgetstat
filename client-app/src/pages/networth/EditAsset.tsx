@@ -6,11 +6,18 @@ import { observer } from "mobx-react-lite"
 import AssetForm from "../../components/forms/Asset/AssetForm"
 import { FormikHelpers } from "formik"
 import { useStore } from "../../app/stores/store"
+import { useParams } from "react-router-dom"
+import { useEffect } from "react"
 
 export default observer(function EditAsset() {
-  const {assetStore: {updateAsset, selectedAsset}} = useStore();
+  const {assetStore: {updateAsset, selectedAsset, selectAsset}} = useStore();
 
-  if (!selectedAsset) return <></>
+  const {id} = useParams();
+    useEffect(() => {
+        if (id) selectAsset(parseInt(id));
+    }, [id, selectAsset])
+
+    if (!selectedAsset) return <></>
 
   const handleGoBack = () => {
     router.navigate('/net-worth');
