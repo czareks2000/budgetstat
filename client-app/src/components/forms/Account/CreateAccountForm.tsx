@@ -15,7 +15,7 @@ interface Props {
 }
 
 export default observer(function CreateAccountForm({onSubmit, onCancel}: Props) {
-    const {currencyStore: {currenciesAsOptions}} = useStore();
+    const {currencyStore: {currenciesAsOptions, defaultCurrency}} = useStore();
 
     const validationSchema = Yup.object({
         name: Yup.string().required('Name is required'),
@@ -28,7 +28,7 @@ export default observer(function CreateAccountForm({onSubmit, onCancel}: Props) 
     const initialValues: AccountFormValues = {
         name: "",
         balance: null,
-        currencyId: "",
+        currencyId: defaultCurrency?.id || "",
         description: ""
     }
     

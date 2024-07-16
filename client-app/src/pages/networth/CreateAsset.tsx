@@ -8,7 +8,10 @@ import { FormikHelpers } from "formik"
 import { useStore } from "../../app/stores/store"
 
 export default observer(function CreateAsset() {
-  const {assetStore: {createAsset}} = useStore();
+  const {
+    assetStore: {createAsset},
+    currencyStore: {defaultCurrency}
+  } = useStore();
 
   const handleGoBack = () => {
     router.navigate('/net-worth');
@@ -27,7 +30,7 @@ export default observer(function CreateAsset() {
     name: "",
     description: "",
     assetValue: null,
-    currencyId: ""
+    currencyId: defaultCurrency?.id || ""
 }
   
   return (
