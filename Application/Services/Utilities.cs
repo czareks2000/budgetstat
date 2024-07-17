@@ -14,6 +14,7 @@ namespace Application.Services
         private readonly ICurrencyRatesService _currencyService = currencyService;
         private readonly IUserAccessor _userAccessor = userAccessor;
 
+        // w przyszłości zamienić dictionary na wpisy w bazie danych
         Dictionary<string, decimal> _rates = new Dictionary<string, decimal>();
 
         // zwraca użytkownika, który wywołał funkcje
