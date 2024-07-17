@@ -57,6 +57,8 @@ export default class CommonStore {
             await store.assetStore.loadAssets();
 
             await store.transactionStore.loadTransactions();
+
+            await store.statsStore.loadNetWorthStats();
         } catch (error) {
             console.log(error);
         } finally {
@@ -72,6 +74,7 @@ export default class CommonStore {
             store.categoryStore.clearStore();
             store.loanStore.clearStore();
             store.transactionStore.clearStore();
+            store.statsStore.clearStore();
         } catch (error) {
             console.log(error);
         }

@@ -15,6 +15,7 @@ import { CollectivePayoffValues, PayoffCreateValues } from "../models/Payoff";
 import { LoanStatus } from "../models/enums/LoanStatus";
 import { Icon } from "../models/Icon";
 import { Asset, AssetCategory, AssetCreateUpdateValues } from "../models/Asset";
+import { NetWorthStats } from "../models/Stats";
 
 const sleep = (delay: number) => {
     return new Promise((resolve) => {
@@ -226,6 +227,11 @@ const Settings = {
         requests.patch<Currency>(`/settings?defaultCurrency=${currencyId}`, {})
 }
 
+const Stats = {
+    netWorthStats: () =>
+        requests.get<NetWorthStats>('/stats/networthstats'),
+}
+
 const agent = {
     Auth,
     Accounts,
@@ -236,7 +242,8 @@ const agent = {
     Loans,
     Icons,
     Assets,
-    Settings
+    Settings,
+    Stats
 }
 
 export default agent;

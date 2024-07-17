@@ -1,8 +1,16 @@
 import { Add, Home } from '@mui/icons-material'
 import { Box, Card, CardContent, IconButton, Typography } from '@mui/material'
 import { router } from '../../../app/router/Routes'
+import { observer } from 'mobx-react-lite'
+import { useStore } from '../../../app/stores/store'
+import { formatAmount } from '../../../app/utils/FormatAmount'
 
-const AssetsCard = () => {
+export default observer(function AssetsCard()  {
+    const {
+        currencyStore: {defaultCurrency},
+        statsStore: {assetsValue},
+        accountStore: {totalBalance}
+    } = useStore();
 
     const handleAddButtonClick = () => {
         router.navigate('/assets/create');
@@ -31,10 +39,8 @@ const AssetsCard = () => {
                         </IconButton> 
                     </Box>
                 </Box>
-                <Typography variant="h5">300 000 zł</Typography>
+                <Typography variant="h5">{formatAmount(assetsValue + totalBalance)} {defaultCurrency?.symbol}</Typography>
             </CardContent>
         </Card>
     )
-}
-
-export default AssetsCard
+})
