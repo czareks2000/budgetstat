@@ -5,8 +5,8 @@ export enum TransactionType {
 }
 
 export enum TransactionTypeFilter {
+    All = 4,
     Income = 1,
     Expense = 2,
-    All = 3,
-    Transfer = 4
+    Transfer = 3
 }

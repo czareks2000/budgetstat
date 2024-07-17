@@ -71,6 +71,7 @@ export default class CommonStore {
             store.budgetStore.clearStore();
             store.categoryStore.clearStore();
             store.loanStore.clearStore();
+            store.transactionStore.clearStore();
         } catch (error) {
             console.log(error);
         }

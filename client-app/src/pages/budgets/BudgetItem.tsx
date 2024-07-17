@@ -53,7 +53,7 @@ export default observer(function BudgetItem({budget, openDeleteDialog}: Props) {
         const mm = String(start.getMonth() + 1).padStart(2, '0'); // January is 0
         const yyyy = start.getFullYear();
 
-        return `${dd}/${mm}/${yyyy}`;
+        return `${dd}.${mm}.${yyyy}`;
     }
 
     const endDate = () => {
@@ -78,7 +78,7 @@ export default observer(function BudgetItem({budget, openDeleteDialog}: Props) {
         const mm = String(end.getMonth() + 1).padStart(2, '0'); // January is 0
         const yyyy = end.getFullYear();
 
-        return `${dd}/${mm}/${yyyy}`;
+        return `${dd}.${mm}.${yyyy}`;
     }
 
     const isInDefaultCurrency = budget.currency.id === defaultCurrency?.id;

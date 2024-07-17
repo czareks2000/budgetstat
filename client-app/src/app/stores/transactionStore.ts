@@ -35,6 +35,11 @@ export default class TransactionStore {
         this.transactionRegistry.set(transaction.id, transaction);
     }
 
+    setTransactionParams = (params: TransactionParams) =>
+    {
+        this.transactionParams = params;
+    }
+
     loadTransactions = async () => {
         this.transactionsLoaded = false;
         this.transactionRegistry.clear();
@@ -49,9 +54,9 @@ export default class TransactionStore {
         } catch (error) {
             console.log(error);
         } finally {
-            runInAction(() => 
-                this.transactionsLoaded = true
-            )
+            runInAction(() => {
+                this.transactionsLoaded = true;
+            })
         }
     }
 }
