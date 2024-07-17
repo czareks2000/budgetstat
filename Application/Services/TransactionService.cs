@@ -457,6 +457,12 @@ namespace Application.Services
                 transactions.AddRange(transfers);
             }
 
+            transactions = [.. transactions.OrderByDescending(t => t.Date.Date)];
+
+            int index = 1;
+            foreach (var transaction in transactions)
+                transaction.Id = index++;
+
             return Result<List<TransactionListItem>>.Success(transactions);
         }
     }

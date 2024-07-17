@@ -55,6 +55,8 @@ export default class CommonStore {
 
             await store.assetStore.loadAssetCategories();
             await store.assetStore.loadAssets();
+
+            await store.transactionStore.loadTransactions();
         } catch (error) {
             console.log(error);
         } finally {

@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { Period } from "./enums/Period";
 import { TransactionType } from "./enums/TransactionType";
 
@@ -13,8 +14,17 @@ export interface Transaction {
     currencyId: number;
 }
 
+export interface TransactionParams {
+    startDate: Date | dayjs.Dayjs;
+    endDate: Date | dayjs.Dayjs;
+    types: TransactionType[];
+    accountIds: number[];
+    categoryIds: number[];
+}
+
 export interface TransactionRowItem {
     id: number;
+    transactionId: number;
     account: string | null;
     category: CategoryItem;
     amount: AmountItem;

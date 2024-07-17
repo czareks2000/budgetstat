@@ -4,7 +4,7 @@ import { store } from "../stores/store";
 import { ChangePasswordFormValues, User, UserFormValues } from "../models/User";
 import { Account, AccountFormValues } from "../models/Account";
 import { AccountStatus } from "../models/enums/AccountStatus";
-import { PlannedTransactionCreateValues, Transaction, TransactionCreateValues, TransactionUpdateValues } from "../models/Transaction";
+import { PlannedTransactionCreateValues, Transaction, TransactionCreateValues, TransactionParams, TransactionRowItem, TransactionUpdateValues } from "../models/Transaction";
 import { Budget, BudgetDto } from "../models/Budget";
 import { Currency } from "../models/Currency";
 import { CategoryCreateValues, CategoryUpdateValues, MainCategory } from "../models/Category";
@@ -127,7 +127,26 @@ const Transactions = {
     updateTransfer: (transferId: number, transfer: TransferCreateUpdateValues) =>
         requests.put<Transfer>(`/transfers/${transferId}`, transfer),
     confirmTransaction: (transactionId: number) => 
-        requests.patch<void>(`/transactions/${transactionId}/confirm`, {})
+        requests.patch<void>(`/transactions/${transactionId}/confirm`, {}),
+    list: (params: TransactionParams) => {
+
+        let urlParams = `?StartDate=${params.startDate.toISOString()}&EndDate=${params.endDate.toISOString()}`;
+
+        if (params.types.length > 0)
+            params.types.map(type => `&Types=${type}`)
+                .forEach(type => urlParams.concat(type));
+
+        if (params.accountIds.length > 0)
+            params.types.map(id => `&AccountIds=${id}`)
+                .forEach(account => urlParams.concat(account));
+
+        if (params.categoryIds.length > 0)
+            params.types.map(id => `&CategoryIds=${id}`)
+                .forEach(category => urlParams.concat(category));
+
+        return requests.get<TransactionRowItem[]>(`/transactions${urlParams}`);
+    }
+        
 }
 
 const Budgets = {

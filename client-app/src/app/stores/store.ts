@@ -7,6 +7,7 @@ import BudgetStore from "./budgetStore";
 import CategoryStore from "./categoryStore";
 import LoanStore from "./loanStore";
 import AssetStore from "./assetStore";
+import TransactionStore from "./transactionStore";
 
 interface Store {
     commonStore: CommonStore;
@@ -17,6 +18,7 @@ interface Store {
     categoryStore: CategoryStore;
     loanStore: LoanStore;
     assetStore: AssetStore;
+    transactionStore: TransactionStore;
 }
 
 export const store: Store = {
@@ -28,6 +30,7 @@ export const store: Store = {
     categoryStore: new CategoryStore(),
     loanStore: new LoanStore(),
     assetStore: new AssetStore(),
+    transactionStore: new TransactionStore()
 }
 
 export const StoreContext = createContext(store);

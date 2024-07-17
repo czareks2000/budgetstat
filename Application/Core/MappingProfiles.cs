@@ -62,6 +62,8 @@ namespace Application.Core
 
             // transaction list item
             CreateMap<Transaction, TransactionListItem>()
+                .ForMember(dest => dest.TransactionId, opt => opt
+                    .MapFrom(src => src.Id))
                 .ForMember(dest => dest.Account, opt => opt
                     .MapFrom(src => src.Account.Name))
                 .ForMember(dest => dest.Amount, opt => opt
@@ -77,6 +79,8 @@ namespace Application.Core
 
             // skonfigurowaæ
             CreateMap<Transfer, TransactionListItem>()
+                .ForMember(dest => dest.TransactionId, opt => opt
+                    .MapFrom(src => src.Id))
                 .ForMember(dest => dest.Account, opt => opt
                     .MapFrom(src => src.ToAccount.Name))
                 .ForMember(dest => dest.Category, opt => opt
