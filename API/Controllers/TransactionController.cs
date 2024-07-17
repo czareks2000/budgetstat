@@ -72,5 +72,11 @@ namespace API.Controllers
         {
             return HandleResult(await _transactionService.Update(transferId, updatedTransfer));
         }
+
+        [HttpGet("transactions")] //api/transactions?
+        public async Task<IActionResult> UpdateTransfer([FromQuery] TransactionParams param)
+        {
+            return HandleResult(await _transactionService.GetTransactions(param));
+        }
     }
 }

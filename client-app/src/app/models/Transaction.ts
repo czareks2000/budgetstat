@@ -19,6 +19,7 @@ export interface TransactionRowItem {
     category: CategoryItem;
     amount: AmountItem;
     date: Date;
+    description: string;
 }
 
 export interface CategoryItem {

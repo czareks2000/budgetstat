@@ -124,6 +124,8 @@ namespace Persistence
                 // common
                 new() { Name = "investment" },//13 
                 new() { Name = "other" },//14
+                // transfer
+                new() { Name = "transfer" },//15
             };
 
             context.Icons.AddRange(icons);

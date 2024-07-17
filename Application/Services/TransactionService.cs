@@ -7,6 +7,8 @@ using Domain.Enums;
 using Domain;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using System.Linq;
+using AutoMapper.QueryableExtensions;
 
 namespace Application.Services
 {
@@ -374,6 +376,88 @@ namespace Application.Services
             var transferDto = _mapper.Map<TransferDto>(transfer);
 
             return Result<TransferDto>.Success(transferDto);
+        }
+
+        public Task<Result<TransactionDto>> Get(int transactionId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<Result<List<TransactionListItem>>> GetTransactions(TransactionParams transactionParams)
+        {
+            var user = await _utilities.GetCurrentUserAsync();
+
+            // daty
+            if (transactionParams.StartDate > transactionParams.EndDate)
+                return Result<List<TransactionListItem>>.Failure("End date cannot be before start date.");
+
+            // konta
+            var accountIds = await _context.Accounts
+                .Where(a => transactionParams.AccountIds.Contains(a.Id))
+                .Where(a => a.UserId == user.Id)
+                .Select(a => a.Id)
+                .ToListAsync();
+
+            // kategorie
+            var categoryIds = await _context.Categories
+                .Where(c => transactionParams.CategoryIds.Contains(c.Id))
+                .Where(c => c.UserId == user.Id)
+                .Select(c => c.Id)
+                .ToListAsync();
+
+            List<TransactionListItem> transactions = new List<TransactionListItem>();
+
+            // transakcje
+            var transactionsQuery = _context.Transactions
+                     .Where(t => t.Account.UserId == user.Id)
+                     .Where(t => t.Date.Date >= transactionParams.StartDate.Date)
+                     .Where(t => t.Date.Date <= transactionParams.EndDate.Date);
+
+            if (transactionParams.Types.Count != 0)
+                transactionsQuery = transactionsQuery
+                     .Where(t => transactionParams.Types.Contains(t.Category.Type));
+
+            if (accountIds.Count != 0)
+                transactionsQuery = transactionsQuery
+                    .Where(t => accountIds.Contains((int)t.AccountId));
+
+            if (categoryIds.Count != 0)
+                transactionsQuery = transactionsQuery
+                    .Where(t => categoryIds.Contains(t.CategoryId));
+
+            transactions = await transactionsQuery
+                .Include(t => t.Currency)
+                .Include(t => t.Category)
+                .Include(t => t.Account)
+                .ProjectTo<TransactionListItem>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            // transfery 
+            if (categoryIds.Count == 0 &&
+                (transactionParams.Types.Contains(TransactionType.Transfer) || 
+                 transactionParams.Types.Count == 0))
+            {
+                var transfersQuery = _context.Transfers
+                    .Where(t => t.ToAccount.UserId == user.Id)
+                    
+                    .Where(t => t.Date.Date >= transactionParams.StartDate.Date)
+                    .Where(t => t.Date.Date <= transactionParams.EndDate.Date);
+
+                if (accountIds.Count != 0)
+                    transfersQuery = transfersQuery
+                        .Where(t => accountIds.Contains(t.ToAccountId));
+
+                var transfers = await transfersQuery
+                    .Include(t => t.FromAccount)
+                    .Include(t => t.ToAccount)
+                        .ThenInclude(a => a.Currency)
+                    .ProjectTo<TransactionListItem>(_mapper.ConfigurationProvider)
+                    .ToListAsync();
+
+                transactions.AddRange(transfers);
+            }
+
+            return Result<List<TransactionListItem>>.Success(transactions);
         }
     }
 }

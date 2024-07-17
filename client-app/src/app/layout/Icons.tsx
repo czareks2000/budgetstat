@@ -2,7 +2,7 @@ import {
     AccountBalance, ChildFriendly, Commute, 
     DirectionsBike, DirectionsCar, Flight, 
     Help, Home, MapsHomeWork, MedicalServices, 
-    Paid, Restaurant, ShoppingCart, ShowChart } from '@mui/icons-material'
+    Paid, Restaurant, ShoppingCart, ShowChart, SwapHoriz } from '@mui/icons-material'
 import { SvgIconProps } from '@mui/material';
 
 interface IconItem {
@@ -40,5 +40,7 @@ export const Icons = new Map<number, IconItem>([
     [14, { 
         icon: (props) => <ShowChart {...props} />, name: "investment" }],
     [15, { 
-        icon: (props) => <Help {...props} />, name: "other" }]
+        icon: (props) => <Help {...props} />, name: "other" }],
+    [16, { 
+        icon: (props) => <SwapHoriz {...props} />, name: "transfer" }]
 ]);

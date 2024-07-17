@@ -8,7 +8,7 @@ namespace Application.Interfaces
     {
         // wprowadzenie transakcji
         Task<Result<int>> Create(int accountId, TransactionCreateDto newTransaction);
-        // zaplanowanie transakcji
+        // zaplanowanie transakcji (zmienić zwracany typ?? zeby po zwróceniu można było wyświetlać dobrze na transactions/planned
         Task<Result<List<TransactionDto>>> CreatePlannedTransactions(int accountId, PlannedTransactionDto plannedTransaction);
         // potwierdzenie zaplanowanej transakcji 
         Task<Result<object>> ConfirmTransaction(int transactionId);
@@ -26,7 +26,10 @@ namespace Application.Interfaces
         // edycja transferu
         Task<Result<TransferDto>> Update(int transferId, TransferCreateUpdateDto updatedTransfer);
 
+        // szczególy transakcji (potrzebne do edycji)
+        Task<Result<TransactionDto>> Get(int transactionId);
         // przegląd transakcji
+        Task<Result<List<TransactionListItem>>> GetTransactions(TransactionParams transactionParams);
 
         // przegląd transferów
 

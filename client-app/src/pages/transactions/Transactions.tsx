@@ -107,11 +107,11 @@ export default observer(function Transactions() {
       }
       
       const rows: TransactionRowItem[] = [
-        { id: 1, account: 'Bank', category: {name:'Food', iconId: 2}, amount: { value: 100, type: TransactionType.Expense, currencySymbol: "zł"}, date: dayjs().toDate() },
-        { id: 2, account: 'Bank', category: {name:'Events', iconId: 3}, amount: { value: 100, type: TransactionType.Expense, currencySymbol: "zł"}, date: dayjs().toDate() },
-        { id: 3, account: 'Cash', category: {name:'Food', iconId: 2}, amount: { value: 400, type: TransactionType.Expense, currencySymbol: "zł"}, date: dayjs().toDate() },
-        { id: 4, account: 'Bank', category: {name:'Salary', iconId: 11}, amount: { value: 2000, type: TransactionType.Income, currencySymbol: "zł"}, date: dayjs().toDate() },
-        { id: 5, account: null, category: {name:'Other (Transportation)', iconId: 4}, amount: { value: 500, type: TransactionType.Expense, currencySymbol: "zł"}, date: dayjs().toDate() },
+        { id: 1, account: 'Bank', category: {name:'Food', iconId: 2}, amount: { value: 100, type: TransactionType.Expense, currencySymbol: "zł"}, date: dayjs().toDate(), description: "" },
+        { id: 2, account: 'Bank', category: {name:'Events', iconId: 3}, amount: { value: 100, type: TransactionType.Expense, currencySymbol: "zł"}, date: dayjs().toDate(), description: "" },
+        { id: 3, account: 'Cash', category: {name:'Food', iconId: 2}, amount: { value: 400, type: TransactionType.Expense, currencySymbol: "zł"}, date: dayjs().toDate(), description: "" },
+        { id: 4, account: 'Bank', category: {name:'Salary', iconId: 11}, amount: { value: 2000, type: TransactionType.Income, currencySymbol: "zł"}, date: dayjs().toDate(), description: "" },
+        { id: 5, account: null, category: {name:'Other (Transportation)', iconId: 4}, amount: { value: 500, type: TransactionType.Expense, currencySymbol: "zł"}, date: dayjs().toDate(), description: "" },
       ];
 
     return ( 

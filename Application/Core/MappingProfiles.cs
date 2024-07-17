@@ -10,6 +10,7 @@ using Application.Dto.Transaction;
 using Application.Dto.Transfer;
 using AutoMapper;
 using Domain;
+using Domain.Enums;
 
 namespace Application.Core
 {
@@ -58,6 +59,39 @@ namespace Application.Core
             CreateMap<TransactionUpdateDto, Transaction>();
             CreateMap<PlannedTransactionDto, Transaction>();
             CreateMap<Transaction, TransactionDto>();
+
+            // transaction list item
+            CreateMap<Transaction, TransactionListItem>()
+                .ForMember(dest => dest.Account, opt => opt
+                    .MapFrom(src => src.Account.Name))
+                .ForMember(dest => dest.Amount, opt => opt
+                   .MapFrom(src => src));
+            CreateMap<Transaction, AmountItem>()
+               .ForMember(dest => dest.Value, opt => opt
+                   .MapFrom(src => src.Amount))
+                .ForMember(dest => dest.Type, opt => opt
+                    .MapFrom(src => src.Category.Type))
+                .ForMember(dest => dest.CurrencySymbol, opt => opt
+                    .MapFrom(src => src.Currency.Symbol));
+            CreateMap<Category, CategoryItem>();
+
+            // skonfigurowaæ
+            CreateMap<Transfer, TransactionListItem>()
+                .ForMember(dest => dest.Account, opt => opt
+                    .MapFrom(src => src.ToAccount.Name))
+                .ForMember(dest => dest.Category, opt => opt
+                    .MapFrom(src => new CategoryItem { Name = "Transfer", IconId = 16}))
+                .ForMember(dest => dest.Amount, opt => opt
+                   .MapFrom(src => src))
+                .ForMember(dest => dest.Description, opt => opt
+                   .MapFrom(src => $"Transfer from {src.FromAccount.Name} account"));
+            CreateMap<Transfer, AmountItem>()
+                .ForMember(dest => dest.Value, opt => opt
+                   .MapFrom(src => src.ToAmount))
+                .ForMember(dest => dest.Type, opt => opt
+                    .MapFrom(src => TransactionType.Transfer))
+                .ForMember(dest => dest.CurrencySymbol, opt => opt
+                    .MapFrom(src => src.ToAccount.Currency.Symbol));
 
             CreateMap<TransferCreateUpdateDto, Transfer>();
             CreateMap<Transfer, TransferDto>();
