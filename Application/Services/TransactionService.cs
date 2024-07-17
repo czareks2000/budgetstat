@@ -1,6 +1,5 @@
 ﻿using Application.Core;
 using Application.Dto.Transaction;
-using Application.Dto.Transfer;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Enums;
@@ -9,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Persistence;
 using System.Linq;
 using AutoMapper.QueryableExtensions;
+using Application.Dto.Transaction.Transfer;
 
 namespace Application.Services
 {

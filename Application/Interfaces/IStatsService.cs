@@ -1,4 +1,7 @@
-﻿namespace Application.Interfaces
+﻿using Application.Core;
+using Application.Dto.Stats;
+
+namespace Application.Interfaces
 {
     // wszystkie kwoty są w domyślnej walucie
     public interface IStatsService
@@ -18,5 +21,6 @@
         // historia wartości netto
 
         // aktualna suma wartości aktywów/pasywów
+        Task<Result<NetWorthStats>> GetNetWorthStats();
     }
 }

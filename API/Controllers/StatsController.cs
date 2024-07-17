@@ -1,11 +1,19 @@
 ﻿using Application.Interfaces;
+using Application.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     public class StatsController(
-        ISettingsService statsService) : BaseApiController
+        IStatsService statsService) : BaseApiController
     {
-        private readonly ISettingsService _statsService = statsService;
+        private readonly IStatsService _statsService = statsService;
 
+        [HttpGet("stats/networthstats")] //api/stats/networthstats
+        public async Task<IActionResult> GetNetWorthStats()
+        {
+            return HandleResult(await _statsService.GetNetWorthStats());
+        }
     }
 }

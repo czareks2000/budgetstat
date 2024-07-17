@@ -1,6 +1,6 @@
 ﻿using Application.Core;
 using Application.Dto.Transaction;
-using Application.Dto.Transfer;
+using Application.Dto.Transaction.Transfer;
 
 namespace Application.Interfaces
 {

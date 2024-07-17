@@ -1,4 +1,4 @@
-﻿namespace Application.Dto.Transfer
+﻿namespace Application.Dto.Transaction.Transfer
 {
     public class TransferDto
     {

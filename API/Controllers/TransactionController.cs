@@ -1,5 +1,5 @@
 ﻿using Application.Dto.Transaction;
-using Application.Dto.Transfer;
+using Application.Dto.Transaction.Transfer;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

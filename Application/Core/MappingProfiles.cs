@@ -7,7 +7,7 @@ using Application.Dto.Currency;
 using Application.Dto.Icon;
 using Application.Dto.Loan;
 using Application.Dto.Transaction;
-using Application.Dto.Transfer;
+using Application.Dto.Transaction.Transfer;
 using AutoMapper;
 using Domain;
 using Domain.Enums;

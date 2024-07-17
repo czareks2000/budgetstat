@@ -1,7 +1,7 @@
 ﻿using Application.Core.CustomDataAnnotations;
 using System.ComponentModel.DataAnnotations;
 
-namespace Application.Dto.Transfer
+namespace Application.Dto.Transaction.Transfer
 {
     public class TransferCreateUpdateDto
     {
