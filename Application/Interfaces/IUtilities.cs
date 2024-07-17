@@ -6,7 +6,6 @@ namespace Application.Interfaces
     public interface IUtilities
     {
         Task<User> GetCurrentUserAsync();
-        Task<decimal> ConvertToDefaultCurrency(User user, string inputCurrencyCode, decimal value);
         Task<decimal> Convert(string inputCurrencyCode, string outputCurrencyCode, decimal value);
         Task<decimal> GetCurrentRate(string inputCurrencyCode, string outputCurrencyCode);
         bool CheckIfCurrencyExists(int currencyId);

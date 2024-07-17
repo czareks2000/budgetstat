@@ -20,8 +20,6 @@ namespace Application.Services
         private readonly IUtilities _utilities = utilities;
         private readonly IMapper _mapper = mapper;
 
-        Dictionary<string, decimal> _rates = new Dictionary<string, decimal>();
-
         public async Task<Result<BudgetDto>> Create(BudgetCreateDto newBudget)
         {
             var user = await _utilities.GetCurrentUserAsync();
@@ -166,19 +164,7 @@ namespace Application.Services
 
         private async Task<BudgetDto> CalculateAmounts(User user, BudgetDto budget)
         {
-            decimal currentRate;
-
-            var key = $"{budget.Currency.Code}{user.DefaultCurrency.Code}";
-
-            if (_rates.TryGetValue(key, out decimal value))
-                currentRate = value;
-            else
-            {
-                currentRate = await _utilities.GetCurrentRate(budget.Currency.Code, user.DefaultCurrency.Code);
-                _rates.Add(key, currentRate);
-            }
-
-            budget.ConvertedAmount = budget.Amount * currentRate;
+            budget.ConvertedAmount = await _utilities.Convert(budget.Currency.Code, user.DefaultCurrency.Code, budget.Amount);
 
             var categoryIds = budget.Categories.Select(c => c.Id).ToList();
 
@@ -341,22 +327,9 @@ namespace Application.Services
 
             // obliczenie current amount an podstawie wartości transakcji, uwzględniając konwersje waluty
             decimal currentAmount = 0;
-            decimal currentRate;
 
             foreach (var t in transactions)
-            {
-                var key = $"{t.Currency.Code}{user.DefaultCurrency.Code}";
-
-                if (_rates.TryGetValue(key, out decimal value))
-                    currentRate = value;
-                else
-                {
-                    currentRate = await _utilities.GetCurrentRate(t.Currency.Code, user.DefaultCurrency.Code);
-                    _rates.Add(key, currentRate);
-                }
-
-                currentAmount += t.Amount * currentRate;
-            }
+                currentAmount += await _utilities.Convert(t.Currency.Code, user.DefaultCurrency.Code, t.Amount);
 
             return currentAmount;
         }

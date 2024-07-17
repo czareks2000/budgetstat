@@ -14,6 +14,8 @@ namespace Application.Services
         private readonly ICurrencyRatesService _currencyService = currencyService;
         private readonly IUserAccessor _userAccessor = userAccessor;
 
+        Dictionary<string, decimal> _rates = new Dictionary<string, decimal>();
+
         // zwraca użytkownika, który wywołał funkcje
         public async Task<User> GetCurrentUserAsync()
         {
@@ -22,22 +24,25 @@ namespace Application.Services
                 .FirstOrDefaultAsync(u => u.Email == _userAccessor.GetUserEmail());
         }
 
-        // zwraca kwotę w defaultowej walucie użytkownika
-        public async Task<decimal> ConvertToDefaultCurrency(User user, string inputCurrencyCode, decimal value)
-        {
-            if (user.DefaultCurrency.Code != inputCurrencyCode)
-                return await _currencyService.Convert(inputCurrencyCode, user.DefaultCurrency.Code, value);
-            else
-                return value;
-        }
-
         // zwraca kwotę w podanej walucie
         public async Task<decimal> Convert(string inputCurrencyCode, string outputCurrencyCode, decimal value)
         {
-            if (inputCurrencyCode != outputCurrencyCode)
-                return await _currencyService.Convert(inputCurrencyCode, outputCurrencyCode, value);
-            else
+            if (outputCurrencyCode == inputCurrencyCode)
                 return value;
+
+            decimal currentRate;
+
+            var key = $"{inputCurrencyCode}{outputCurrencyCode}";
+
+            if (_rates.TryGetValue(key, out decimal rate))
+                currentRate = rate;
+            else
+            {
+                currentRate = await _currencyService.CurrentRate(inputCurrencyCode, outputCurrencyCode);
+                _rates.Add(key, currentRate);
+            }
+
+            return value * currentRate;
         }
 
         public async Task<decimal> GetCurrentRate(string inputCurrencyCode, string outputCurrencyCode)
