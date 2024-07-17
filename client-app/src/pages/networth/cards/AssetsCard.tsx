@@ -39,7 +39,9 @@ export default observer(function AssetsCard()  {
                         </IconButton> 
                     </Box>
                 </Box>
-                <Typography variant="h5">{formatAmount(assetsValue + totalBalance)} {defaultCurrency?.symbol}</Typography>
+                <Typography variant="h5">
+                    {formatAmount(assetsValue + totalBalance)} {defaultCurrency?.symbol}
+                </Typography>
             </CardContent>
         </Card>
     )

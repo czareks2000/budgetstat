@@ -20,7 +20,8 @@ interface Props {
 export default observer(function AssetGroup({index, expanded, handleToggle, category}: Props) {
     const { 
         assetStore: {assets, getAssetCategoryIconId, selectedAsset},
-        currencyStore: {defaultCurrency}
+        currencyStore: {defaultCurrency},
+        statsStore: {getAssetsValues}
     } = useStore();
 
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -48,9 +49,7 @@ export default observer(function AssetGroup({index, expanded, handleToggle, cate
                         <Typography>{category.name}</Typography>
                     </Box>
                     <Typography sx={{mr: 2}} fontWeight={700}>
-                        {formatAmount(assets
-                            .filter(asset => asset.assetCategoryId === category.id)
-                            .reduce((total, asset) => total + asset.assetValue, 0))} {defaultCurrency?.symbol}
+                        {formatAmount(getAssetsValues(category.id))} {defaultCurrency?.symbol}
                     </Typography>
                 </Box>
             </AccordionSummary>

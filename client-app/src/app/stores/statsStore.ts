@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { NetWorthStats } from "../models/Stats";
+import { NetWorthStats, PieChartDataItem } from "../models/Stats";
 import agent from "../api/agent";
+import { store } from "./store";
 
 export default class StatsStore {
     netWorthStats: NetWorthStats | undefined = undefined;
@@ -16,14 +17,56 @@ export default class StatsStore {
     get assetsValue() {
         var value = 0;
 
-        console.log(this.netWorthStats);
-
         if (this.netWorthStats)
             this.netWorthStats.assetsValues.forEach(item => {
                 value += item.value;
             });
 
         return value;
+    }
+
+    get loansValue() {
+        if (!this.netWorthStats)
+            return 0;
+
+        return this.netWorthStats.loansValue;
+    }
+
+    getAssetsValues = (categoryId: number) => {
+        if (!this.netWorthStats)
+            return 0
+
+        var value = 0;
+
+        this.netWorthStats.assetsValues
+            .forEach(item => {
+                if(item.assetCategoryId === categoryId)
+                value += item.value;
+            });
+
+        return value;
+    }
+
+    get assetPieChartData() {
+        let data: PieChartDataItem[] = [];
+
+        let index = 1;
+
+        data.push({
+            id: index++,
+            value: store.accountStore.totalBalance,
+            label: "Accounts"
+        })
+
+        store.assetStore.assetCategories.forEach((category) => {
+            data.push({
+                id: index++,
+                value: this.getAssetsValues(category.id),
+                label: category.name
+            })
+        })
+
+        return data;
     }
 
     loadNetWorthStats = async () => {

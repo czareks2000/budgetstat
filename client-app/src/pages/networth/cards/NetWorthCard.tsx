@@ -1,7 +1,18 @@
 import { Balance } from '@mui/icons-material'
 import { Box, Card, CardContent, Typography } from '@mui/material'
+import { observer } from 'mobx-react-lite'
+import { useStore } from '../../../app/stores/store';
+import { formatAmount } from '../../../app/utils/FormatAmount';
 
-const NetWorthCard = () => {
+export default observer(function NetWorthCard() {
+  const {
+      currencyStore: {defaultCurrency},
+      statsStore: {loansValue, assetsValue},
+      accountStore: {totalBalance}
+  } = useStore();
+
+  const netWorth = assetsValue + totalBalance + loansValue;
+
   return (
     <Card>
         <CardContent>
@@ -11,10 +22,10 @@ const NetWorthCard = () => {
                     Net worth
                 </Typography>
             </Box>
-            <Typography variant="h5" color={'primary'}>297 000 zł</Typography>
+            <Typography variant="h5" color={'primary'}>
+              {formatAmount(netWorth)} {defaultCurrency?.symbol}
+            </Typography>
         </CardContent>
     </Card>
   )
-}
-
-export default NetWorthCard
+})

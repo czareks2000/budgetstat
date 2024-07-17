@@ -10,16 +10,11 @@ interface Props {
 }
 
 export default observer(function AssetsValuesGroupedByCategoriesChart({showLegend = false}: Props) {
-    const {currencyStore: {defaultCurrency}} = useStore();
-  
-    const data = [
-        { id: 0, value: 47010, label: "Accounts", },
-        { id: 1, value: 22000, label: "Investments" },
-        { id: 2, value: 500000, label: "Property" },
-        { id: 3, value: 35000, label: "Movable property"},
-        { id: 4, value: 0, label: "Other"},
-      ];
-    
+    const {
+        currencyStore: {defaultCurrency},
+        statsStore: {assetPieChartData}
+    } = useStore();
+      
     return (
     <Box p={showLegend ? 2 : 0}>
         <PieChart
@@ -41,7 +36,7 @@ export default observer(function AssetsValuesGroupedByCategoriesChart({showLegen
             }}
             series={[
                 {
-                    data: data,
+                    data: assetPieChartData,
                     innerRadius: 30,
                     outerRadius: 100,
                     paddingAngle: 5,

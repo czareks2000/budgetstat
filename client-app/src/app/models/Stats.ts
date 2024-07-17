@@ -5,3 +5,9 @@ export interface NetWorthStats {
         value: number;
     }[]
 }
+
+export interface PieChartDataItem {
+    id: number;
+    value: number;
+    label: string;
+}
