@@ -1,5 +1,4 @@
 import { observer } from "mobx-react-lite";
-import { LoanCreateValues } from "../../../app/models/Loan";
 import { Stack } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { Form, Formik, FormikHelpers } from "formik";
@@ -11,36 +10,34 @@ import SelectInput from "../../formInputs/SelectInput";
 import dayjs from "dayjs";
 import MyDatePicker from "../../formInputs/MyDatePicker";
 import { TransactionTypeFilter } from "../../../app/models/enums/TransactionType";
-import CategoryGroupedInput from "../../formInputs/CategoryGroupedInput";
-import { TransactionParams } from "../../../app/models/Transaction";
+import { TransactionParamsFormValues } from "../../../app/models/Transaction";
+import MultipleSelectWithChceckBoxes from "../../formInputs/MultipleSelectWithChceckBoxes";
 
 export default observer(function FilterTransactionsForm() {
     const {
-        accountStore: {accountsAsOptions},
-        categoryStore: {expenseCategoriesAsOptions},
-        transactionStore: {loadTransactions, transactionParams } } = useStore()
+        accountStore: {accountsNamesAsOptions},
+        categoryStore: {},
+        transactionStore: {setTransactionParams, transactionParamsFormValues } } = useStore()
     
     const validationSchema = Yup.object({
         
     });
 
-    const handleFilterTransactionsFormSubmit = (params: TransactionParams, helpers: FormikHelpers<TransactionParams>) => {
-        const transformedValues: TransactionParams = {
-            ...params,
-            startDate: dayjs(params.startDate).toDate(),
-            endDate: dayjs(params.endDate).toDate(),
-        }
-        
-        loadTransactions();
+    const handleFilterTransactionsFormSubmit = (
+        params: TransactionParamsFormValues, 
+        helpers: FormikHelpers<TransactionParamsFormValues>
+    ) => {
 
-        helpers.setSubmitting(false);
+        setTransactionParams(params).then(() => {
+            helpers.setSubmitting(false);
+            helpers.resetForm({values: {...params}});
+        })
     }
-    
 
     return (
         <>
             <Formik
-                initialValues={transactionParams}
+                initialValues={transactionParamsFormValues}
                 validationSchema={validationSchema}
                 onSubmit={handleFilterTransactionsFormSubmit}>
             {({ isValid, dirty, isSubmitting }) => (
@@ -60,16 +57,17 @@ export default observer(function FilterTransactionsForm() {
 
                         {/* Transaction Types */}
                         <SelectInput
-                            label="Transaction Types" name={"types"}
+                            label="Transaction Type" name={"type"}
                             options={enumToOptions(TransactionTypeFilter)} />
 
-                        {/* Account */}
-                        <SelectInput
+                        {/* Accounts */}
+                        <MultipleSelectWithChceckBoxes 
                             label="Accounts" name={"accountIds"}
-                            options={accountsAsOptions} />
+                            placeholder="All"
+                            options={accountsNamesAsOptions}/>
 
                         {/* Categories */}
-                        <CategoryGroupedInput label="Categories" name={"categories"} options={expenseCategoriesAsOptions} />
+                        {/* <CategoryGroupedInput label="Categories" name={"categories"} options={expenseCategoriesAsOptions} /> */}
 
                         {/* Button */}
                         <LoadingButton

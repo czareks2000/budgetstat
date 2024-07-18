@@ -1,8 +1,10 @@
-import { makeAutoObservable, runInAction } from "mobx";
-import { TransactionParams, TransactionRowItem } from "../models/Transaction";
+import { makeAutoObservable, reaction, runInAction } from "mobx";
+import { TransactionParams, TransactionParamsFormValues, TransactionRowItem } from "../models/Transaction";
 import agent from "../api/agent";
 import { convertToDate } from "../utils/ConvertToDate";
 import dayjs from "dayjs";
+import { TransactionType, TransactionTypeFilter } from "../models/enums/TransactionType";
+import { store } from "./store";
 
 
 export default class TransactionStore {
@@ -19,11 +21,30 @@ export default class TransactionStore {
 
     constructor() {
         makeAutoObservable(this);
+
+        reaction(
+            () => this.transactionParams, 
+            () => {
+                this.loadTransactions();
+            }
+        )
     }
 
     clearStore = () => {
         this.transactionRegistry.clear();
         this.transactionsLoaded = false;
+    }
+
+    get transactionParamsFormValues() {
+        const formValue: TransactionParamsFormValues = {
+            startDate: dayjs(this.transactionParams.startDate),
+            endDate: dayjs(this.transactionParams.endDate),
+            type: TransactionTypeFilter.All,
+            accountIds: store.accountStore
+                .convertAccountIdsToOptions(this.transactionParams.accountIds),
+            categoryIds: [], // convert
+        }
+        return formValue;
     }
 
     get transactions() {
@@ -35,9 +56,42 @@ export default class TransactionStore {
         this.transactionRegistry.set(transaction.id, transaction);
     }
 
-    setTransactionParams = (params: TransactionParams) =>
-    {
-        this.transactionParams = params;
+    resetTransactionParams = () => {
+        this.transactionParams = {
+            startDate: dayjs().add(-30, 'days'),
+            endDate: dayjs(),
+            types: [],
+            accountIds: [],
+            categoryIds: []
+        }
+    }
+
+    setTransactionParams = async (params: TransactionParamsFormValues) =>
+    {   
+        const transactionPrams: TransactionParams = {
+            startDate: dayjs(params.startDate).toDate(),
+            endDate: dayjs(params.endDate).toDate(),
+            types: this.convertTransactionTypeFilter(params.type),
+            accountIds: params.accountIds.map(option => Number(option.value)),
+            categoryIds: params.categoryIds.map(option => Number(option.value)),
+        }
+
+        this.transactionParams = transactionPrams;
+    }
+
+    private convertTransactionTypeFilter = (filter: TransactionTypeFilter): TransactionType[] => {
+        switch (filter) {
+            case TransactionTypeFilter.All:
+                return [];
+            case TransactionTypeFilter.Income:
+                return [TransactionType.Income];
+            case TransactionTypeFilter.Expense:
+                return [TransactionType.Expense]; 
+            case TransactionTypeFilter.Transfer:
+                return [TransactionType.Transfer];       
+            default:
+                return [];
+        }
     }
 
     loadTransactions = async () => {
@@ -46,7 +100,6 @@ export default class TransactionStore {
         try {
             const transactions = await agent.Transactions.list(this.transactionParams);
             runInAction(() => {
-                
                 transactions.forEach(transaction => {
                     this.setTransaction(transaction);
                 })

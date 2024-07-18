@@ -17,7 +17,7 @@ export default observer(function Transactions() {
             <Grid item xs lg xl/>
             <Grid item xs={12} xl={8} container spacing={2}>
                 <Grid item xs={12} sm={'auto'} md={12} lg={'auto'}>
-                    <Stack spacing={2} maxWidth={{xs: 1000, sm: 250, md: 1000, lg: 250}}>
+                    <Stack spacing={2} minWidth={300} maxWidth={{xs: 1000, sm: 300, md: 1000, lg: 300}}>
                         <Divider>Filters</Divider>
                         {/* tutaj 2 wersje komponentu dla 12 i dla auto */}
                         <TransactionsFilters />

@@ -4,6 +4,7 @@ import agent from "../api/agent";
 import { AccountStatus } from "../models/enums/AccountStatus";
 import { Option } from "../models/Option";
 import { convertToDate } from "../utils/ConvertToDate";
+import { store } from "./store";
 
 export default class AccountStore {
     accountsRegistry = new Map<number, Account>();
@@ -28,6 +29,22 @@ export default class AccountStore {
             value: account.id,
             text: `${account.name} (${account.currency.code})`
         }));
+    }
+
+    get accountsNamesAsOptions(): Option[] {
+        return this.accounts.map(account =>({
+            value: account.id,
+            text: `${account.name}`
+        }));
+    }
+
+    convertAccountIdsToOptions = (accountIds: number[]): Option[] => {
+        return this.accounts
+            .filter(account => accountIds.includes(account.id))
+            .map(account => ({
+                value: account.id,
+                text: `${account.name}`
+            }));
     }
 
     getAccountsByCurrencyAsOptions = (currencyId: number): Option[] => {
@@ -123,6 +140,7 @@ export default class AccountStore {
         
             runInAction(() => {
                 this.setAccount(updatedAccount);
+                store.transactionStore.resetTransactionParams();
             });    
         } catch (error) {
             console.log(error);

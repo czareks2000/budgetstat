@@ -133,17 +133,23 @@ const Transactions = {
 
         let urlParams = `?StartDate=${params.startDate.toISOString()}&EndDate=${params.endDate.toISOString()}`;
 
-        if (params.types.length > 0)
-            params.types.map(type => `&Types=${type}`)
-                .forEach(type => urlParams.concat(type));
+        if (params.types.length > 0) {
+            params.types.forEach(type => {
+                urlParams += `&Types=${type}`;
+            });
+        }
 
-        if (params.accountIds.length > 0)
-            params.types.map(id => `&AccountIds=${id}`)
-                .forEach(account => urlParams.concat(account));
-
-        if (params.categoryIds.length > 0)
-            params.types.map(id => `&CategoryIds=${id}`)
-                .forEach(category => urlParams.concat(category));
+        if (params.accountIds.length > 0) {
+            params.accountIds.forEach(id => {
+                urlParams += `&AccountIds=${id}`;
+            });
+        }
+    
+        if (params.categoryIds.length > 0) {
+            params.categoryIds.forEach(id => {
+                urlParams += `&CategoryIds=${id}`;
+            });
+        }
 
         return requests.get<TransactionRowItem[]>(`/transactions${urlParams}`);
     }

@@ -122,6 +122,7 @@ export default observer(function TransactionsDataGrid() {
     <Paper>
         <Box>
             <DataGrid 
+                key={Number(dayjs())}
                 sx={{
                     display: 'grid',
                     gridTemplateRows: 'auto 1f auto',
