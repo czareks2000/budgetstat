@@ -234,7 +234,7 @@ export default class LoanStore {
             const newLoan = await agent.Loans.createLoan(loan);
             runInAction(() => {
                 this.setLoan(newLoan);
-                store.accountStore.loadAccount(newLoan.accountId);
+                this.updateDataInOtherStores([newLoan.accountId]);
             })
         } catch (error) {
             console.log(error);
@@ -248,7 +248,7 @@ export default class LoanStore {
             runInAction(() => {
                 updatedLoans.forEach(loan => {
                     this.setLoan(loan);
-                    store.accountStore.loadAccount(loan.accountId);
+                    this.updateDataInOtherStores([Number(payoff.accountId)]);
                 });
             })
         } catch (error) {
@@ -262,7 +262,7 @@ export default class LoanStore {
             const updatedLoan = await agent.Loans.updateLoan(loanId, loan);
             runInAction(() => {
                 this.setLoan(updatedLoan);
-                store.accountStore.loadAccount(updatedLoan.accountId);
+                this.updateDataInOtherStores([updatedLoan.accountId]);
             })
         } catch (error) {
             console.log(error);
@@ -274,7 +274,15 @@ export default class LoanStore {
         try {
             await agent.Loans.deleteLoan(loanId);
             runInAction(() => {
+                const loan = this.getLoanById(loanId);
+
+                let accountsToUpdate: number[] = [loan!.accountId]
+                loan?.payoffs.forEach(p => 
+                    accountsToUpdate.push(p.accountId)
+                );
+
                 this.removeLoan(loanId);
+                this.updateDataInOtherStores(accountsToUpdate);
             })
         } catch (error) {
             console.log(error);
@@ -286,8 +294,8 @@ export default class LoanStore {
             const updatedLoan = await agent.Loans.createPayoff(loanId, payoff);
             runInAction(() => {
                 this.setLoan(updatedLoan);
-                store.accountStore.loadAccount(updatedLoan.accountId);
                 this.selectedLoan = updatedLoan;
+                this.updateDataInOtherStores([Number(payoff.accountId)]);
             })
         } catch (error) {
             console.log(error);
@@ -299,8 +307,11 @@ export default class LoanStore {
         try {
             const updatedLoan = await agent.Loans.deletePayoff(payoffId);
             runInAction(() => {
+                const loan = this.getLoanById(updatedLoan.id);
+                const accountToUpdate = Number(loan?.payoffs.find(p => p.id === payoffId)?.accountId);
+                this.updateDataInOtherStores([accountToUpdate]);
+
                 this.setLoan(updatedLoan);
-                store.accountStore.loadAccount(updatedLoan.accountId);
                 this.selectedLoan = updatedLoan;
             });
         } catch (error) {
@@ -352,5 +363,12 @@ export default class LoanStore {
         } catch (error) {
             console.log(error);
         }
+    }
+
+    private updateDataInOtherStores = (accountIds: number[]) => {
+        accountIds.forEach(id => 
+            store.accountStore.loadAccount(id))
+        
+        store.statsStore.updateNetWorthStats(true, false);
     }
 }

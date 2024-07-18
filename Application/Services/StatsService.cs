@@ -21,12 +21,29 @@ namespace Application.Services
         private readonly IUtilities _utilities = utilities;
         private readonly IMapper _mapper = mapper;
 
-        public async Task<Result<NetWorthStats>> GetNetWorthStats()
+        public async Task<Result<NetWorthStats>> GetNetWorthStats(bool loans = true, bool assets = true)
         {
             var user = await _utilities.GetCurrentUserAsync();
 
+            var netWorthStats = new NetWorthStats
+            {
+                LoansValue = 0,
+                AssetsValues = []
+            };
+
+            if (loans)
+                netWorthStats.LoansValue = await GetLoansValue(user);
+            
+            if (assets)
+                netWorthStats.AssetsValues = await AssetsValues(user);
+
+            return Result<NetWorthStats>.Success(netWorthStats);
+        }
+
+        private async Task<decimal> GetLoansValue(User user)
+        {
             // loans value
-            var loans = await _context.Loans
+            var loanList = await _context.Loans
                 .Include(l => l.Currency)
                 .Where(l => l.UserId == user.Id)
                 .Where(l => l.LoanStatus == LoanStatus.InProgress)
@@ -34,7 +51,7 @@ namespace Application.Services
 
             decimal loansValue = 0;
 
-            foreach (var loan in loans)
+            foreach (var loan in loanList)
             {
                 var missingAmount = loan.FullAmount - loan.CurrentAmount;
 
@@ -47,15 +64,20 @@ namespace Application.Services
                     loansValue -= convertedMissingAmount;
             }
 
+            return loansValue;
+        }
+
+        private async Task<List<AssetsCategoryValue>> AssetsValues(User user)
+        {
             // assets values by categories
-            var assets = await _context.Assets
+            var assetList = await _context.Assets
                 .Where(a => a.UserId == user.Id)
                 .ProjectTo<AssetDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
 
             Dictionary<int, decimal> valuesGroupedByCategory = [];
 
-            foreach (var asset in assets)
+            foreach (var asset in assetList)
             {
                 var assetCurrency = await _context.Currencies
                     .FirstAsync(c => c.Id == asset.CurrencyId);
@@ -80,15 +102,8 @@ namespace Application.Services
                     Value = kvp.Value
                 })
                 .ToList();
-
-            // create result object
-            var netWorthStats = new NetWorthStats
-            {
-                LoansValue = loansValue,
-                AssetsValues = assetsCategoryValues
-            };
-
-            return Result<NetWorthStats>.Success(netWorthStats);
+            
+            return assetsCategoryValues;
         }
     }
 }

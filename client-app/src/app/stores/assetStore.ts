@@ -2,6 +2,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 import { Asset, AssetCategory, AssetCreateUpdateValues } from "../models/Asset";
 import agent from "../api/agent";
 import { Option } from "../models/Option";
+import { store } from "./store";
 
 export default class AssetStore {
     assetRegistry = new Map<number, Asset>();
@@ -79,6 +80,7 @@ export default class AssetStore {
             const newAsset = await agent.Assets.create(asset);
             runInAction(() => {
                 this.setAsset(newAsset);
+                store.statsStore.updateNetWorthStats(false, true);
             })
         } catch (error) {
             console.log(error);
@@ -90,6 +92,7 @@ export default class AssetStore {
             const updatedAsset = await agent.Assets.update(assetId, asset);
             runInAction(() => {
                 this.setAsset(updatedAsset);
+                store.statsStore.updateNetWorthStats(false, true);
             })
         } catch (error) {
             console.log(error);
@@ -101,6 +104,7 @@ export default class AssetStore {
             await agent.Assets.delete(assetId);
             runInAction(() => {
                 this.assetRegistry.delete(assetId);
+                store.statsStore.updateNetWorthStats(false, true);
             })
         } catch (error) {
             console.log(error);

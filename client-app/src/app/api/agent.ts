@@ -228,8 +228,8 @@ const Settings = {
 }
 
 const Stats = {
-    netWorthStats: () =>
-        requests.get<NetWorthStats>('/stats/networthstats'),
+    netWorthStats: (loans: boolean = true, assets: boolean = true) =>
+        requests.get<NetWorthStats>(`/stats/networthstats?loans=${loans}&assets=${assets}`),
 }
 
 const agent = {

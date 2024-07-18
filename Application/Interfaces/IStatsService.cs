@@ -21,6 +21,6 @@ namespace Application.Interfaces
         // historia wartości netto
 
         // aktualna suma wartości aktywów/pasywów
-        Task<Result<NetWorthStats>> GetNetWorthStats();
+        Task<Result<NetWorthStats>> GetNetWorthStats(bool loans = true, bool assets = true);
     }
 }

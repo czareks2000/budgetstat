@@ -51,11 +51,15 @@ export default class CurrencyStore {
             await agent.Settings.setDefaultCurrency(currencyId);
             runInAction(() => {
                 this.setDefaultCurrency(currencyId);
+                // budgets
                 store.budgetStore.clearStore();
                 store.budgetStore.loadBudgets();
-                // to podmienić na oddzielny endpoint do aktualizowania sumy sald kont
+                // accounts
                 store.accountStore.clearStore();
                 store.accountStore.loadAccounts();
+                // networth
+                store.statsStore.clearStore();
+                store.statsStore.loadNetWorthStats();
             });
         } catch (error) {
             console.log(error);

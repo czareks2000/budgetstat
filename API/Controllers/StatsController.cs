@@ -11,9 +11,9 @@ namespace API.Controllers
         private readonly IStatsService _statsService = statsService;
 
         [HttpGet("stats/networthstats")] //api/stats/networthstats
-        public async Task<IActionResult> GetNetWorthStats()
+        public async Task<IActionResult> GetNetWorthStats([FromQuery] bool loans = true, bool assets = true)
         {
-            return HandleResult(await _statsService.GetNetWorthStats());
+            return HandleResult(await _statsService.GetNetWorthStats(loans, assets));
         }
     }
 }

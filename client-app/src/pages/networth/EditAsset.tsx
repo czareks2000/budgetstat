@@ -34,7 +34,7 @@ export default observer(function EditAsset() {
   const initialValues: AssetCreateUpdateValues = {
     assetCategoryId: selectedAsset.assetCategoryId,
     name: selectedAsset.name,
-    description: selectedAsset.description,
+    description: selectedAsset.description || "",
     assetValue: selectedAsset.assetValue,
     currencyId: selectedAsset.currencyId
   }

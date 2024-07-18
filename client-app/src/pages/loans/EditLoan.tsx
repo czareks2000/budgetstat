@@ -35,6 +35,7 @@ export default observer(function EditLoan() {
             <Paper>
                 <Box p={2}>
                     <EditLoanForm
+                        key={loan.id}
                         loan={loan}
                         onSubmit={handleRedirect} 
                         onCancel={handleRedirect}/>

@@ -78,4 +78,29 @@ export default class StatsStore {
         }
     }
 
+    updateNetWorthStats = async (loans: boolean = true, assets: boolean = true) => {
+        try {
+            var response = await agent.Stats.netWorthStats(loans, assets);
+
+            runInAction(() => {
+                if (loans)
+                    this.setLoansValue(response.loansValue);
+                if (assets)
+                    this.setAssetsValues(response.assetsValues);
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    private setLoansValue = (value: number) => {
+        if (this.netWorthStats)
+            this.netWorthStats.loansValue = value;
+    }
+
+    private setAssetsValues  = (value: { assetCategoryId: number; value: number; }[]) => {
+        if (this.netWorthStats)
+            this.netWorthStats.assetsValues = value;
+    }
+
 }
