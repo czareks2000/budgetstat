@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import { Period } from "./enums/Period";
 import { TransactionType, TransactionTypeFilter } from "./enums/TransactionType";
 import { Option } from "./Option";
+import { CategoryOption } from "./Category";
 
 export interface Transaction {
     id: number;
@@ -28,7 +29,8 @@ export interface TransactionParamsFormValues {
     endDate: Date | dayjs.Dayjs;
     type: TransactionTypeFilter;
     accountIds: Option[];
-    categoryIds: Option[];
+    incomeCategoryIds: CategoryOption[];
+    expenseCategoryIds: CategoryOption[];
 }
 
 export interface TransactionRowItem {

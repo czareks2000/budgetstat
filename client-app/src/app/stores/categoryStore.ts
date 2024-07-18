@@ -21,12 +21,12 @@ export default class CategoryStore {
             .filter(category => category.type === TransactionType.Expense);
     }
 
-    get expenseCategoriesAsOptions() {
+    getCategoriesAsOptions = (type: TransactionType) => {
         const expenseSubCategories: CategoryOption[] = [];
         
         // Iterate over main categories
         this.mainCategories
-            .filter(category => category.type === TransactionType.Expense)
+            .filter(category => category.type === type)
             .forEach(mainCategory => {
                 
                 expenseSubCategories.push({

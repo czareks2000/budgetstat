@@ -1,4 +1,4 @@
-import { Box, Paper } from '@mui/material'
+import { Box, Button, ButtonGroup, Grid, Paper, Stack, Typography } from '@mui/material'
 import { LineChart } from '@mui/x-charts'
 import { theme } from '../../../app/layout/Theme';
 import { formatAmount } from '../../../app/utils/FormatAmount';
@@ -26,16 +26,36 @@ export default observer(function NetWorthOverTimeLineChart() {
     
     return (
     <Paper>
-        <Box pl={3} pb={2} height={400}>
-        <LineChart
-            series={[
-                { 
-                    data: data, 
-                    color: theme.palette.primary.main, 
-                    valueFormatter: (value) => `${formatAmount(value!)} ${defaultCurrency?.symbol}`},
-            ]}
-            xAxis={[{ scaleType: 'point', data: xLabels }]}
-        />
+        <Box px={2} pt={2} mb={-2}
+            display={'flex'} 
+            justifyContent={'space-between'}
+            alignItems={'center'}>
+            <ButtonGroup variant="outlined">
+                <Button>Ytd</Button>
+                <Button>1M</Button>
+                <Button variant='contained'>1Y</Button>
+                <Button>5Y</Button>
+                <Button>Max</Button>
+            </ButtonGroup>
+            <Typography
+                pr={1}
+                variant='body1'
+                display={{xs: 'none', sm: 'block'}}
+                >
+                01.01.2024 - 18.07.2024
+            </Typography>
+        </Box>
+        <Box pl={3} mr={-1} height={300}>
+            <LineChart
+                grid={{ horizontal: true }}
+                series={[
+                    { 
+                        data: data, 
+                        color: theme.palette.primary.main, 
+                        valueFormatter: (value) => `${formatAmount(value!)} ${defaultCurrency?.symbol}`},
+                ]}
+                xAxis={[{ scaleType: 'point', data: xLabels }]}
+            />
         </Box>
     </Paper>
   )

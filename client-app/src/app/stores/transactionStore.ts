@@ -42,7 +42,8 @@ export default class TransactionStore {
             type: TransactionTypeFilter.All,
             accountIds: store.accountStore
                 .convertAccountIdsToOptions(this.transactionParams.accountIds),
-            categoryIds: [], // convert
+            incomeCategoryIds: [], // convert
+            expenseCategoryIds: [], // convert 
         }
         return formValue;
     }
@@ -73,8 +74,23 @@ export default class TransactionStore {
             endDate: dayjs(params.endDate).toDate(),
             types: this.convertTransactionTypeFilter(params.type),
             accountIds: params.accountIds.map(option => Number(option.value)),
-            categoryIds: params.categoryIds.map(option => Number(option.value)),
+            categoryIds: [],
         }
+
+        let categoryIds: number[] = []; 
+        
+        if (params.type === TransactionTypeFilter.All ||
+            params.type === TransactionTypeFilter.Income) {
+            categoryIds = params.incomeCategoryIds.map(option => Number(option.id));
+        }
+
+        if (params.type === TransactionTypeFilter.All ||
+            params.type === TransactionTypeFilter.Expense) {
+            categoryIds = categoryIds
+                .concat(params.expenseCategoryIds.map(option => Number(option.id)));
+        }
+
+        transactionPrams.categoryIds = categoryIds;
 
         this.transactionParams = transactionPrams;
     }

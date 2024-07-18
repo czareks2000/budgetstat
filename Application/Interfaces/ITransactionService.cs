@@ -31,8 +31,6 @@ namespace Application.Interfaces
         // przegląd transakcji
         Task<Result<List<TransactionListItem>>> GetTransactions(TransactionParams transactionParams);
 
-        // przegląd transferów
-
         // wyświetlenie kalendarza transakcji
     }
 }

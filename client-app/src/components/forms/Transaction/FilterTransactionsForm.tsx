@@ -9,14 +9,15 @@ import SelectInput from "../../formInputs/SelectInput";
 
 import dayjs from "dayjs";
 import MyDatePicker from "../../formInputs/MyDatePicker";
-import { TransactionTypeFilter } from "../../../app/models/enums/TransactionType";
+import { TransactionType, TransactionTypeFilter } from "../../../app/models/enums/TransactionType";
 import { TransactionParamsFormValues } from "../../../app/models/Transaction";
 import MultipleSelectWithChceckBoxes from "../../formInputs/MultipleSelectWithChceckBoxes";
+import CategoryGroupedInput from "../../formInputs/CategoryGroupedInput";
 
 export default observer(function FilterTransactionsForm() {
     const {
         accountStore: {accountsNamesAsOptions},
-        categoryStore: {},
+        categoryStore: {getCategoriesAsOptions},
         transactionStore: {setTransactionParams, transactionParamsFormValues } } = useStore()
     
     const validationSchema = Yup.object({
@@ -40,7 +41,7 @@ export default observer(function FilterTransactionsForm() {
                 initialValues={transactionParamsFormValues}
                 validationSchema={validationSchema}
                 onSubmit={handleFilterTransactionsFormSubmit}>
-            {({ isValid, dirty, isSubmitting }) => (
+            {({ isValid, dirty, isSubmitting, values }) => (
                 <Form>
                     <Stack spacing={2}>
                         {/* Start Date */}
@@ -66,8 +67,21 @@ export default observer(function FilterTransactionsForm() {
                             placeholder="All"
                             options={accountsNamesAsOptions}/>
 
-                        {/* Categories */}
-                        {/* <CategoryGroupedInput label="Categories" name={"categories"} options={expenseCategoriesAsOptions} /> */}
+                        {/* Expense Categories */}
+                        {(values.type === TransactionTypeFilter.All || 
+                        values.type === TransactionTypeFilter.Expense) &&
+                        <CategoryGroupedInput label="Expense Categories" name={"expenseCategoryIds"}
+                            placeholder="All" shrinkLabel
+                            options={getCategoriesAsOptions(TransactionType.Expense)} />
+                        }
+
+                        {/* Income Categories */}
+                        {(values.type === TransactionTypeFilter.All || 
+                        values.type === TransactionTypeFilter.Income) &&
+                        <CategoryGroupedInput label="Income Categories" name={"incomeCategoryIds"}
+                            placeholder="All" shrinkLabel
+                            options={getCategoriesAsOptions(TransactionType.Income)} />
+                        }
 
                         {/* Button */}
                         <LoadingButton
