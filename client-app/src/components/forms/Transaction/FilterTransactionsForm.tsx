@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
-import { Stack } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
-import { Form, Formik, FormikHelpers } from "formik";
+import { Form, Formik, FormikHelpers, FormikState } from "formik";
 import * as Yup from "yup";
 import { useStore } from "../../../app/stores/store";
 import { enumToOptions } from "../../../app/models/Option";
@@ -18,10 +18,21 @@ export default observer(function FilterTransactionsForm() {
     const {
         accountStore: {accountsNamesAsOptions},
         categoryStore: {getCategoriesAsOptions},
-        transactionStore: {setTransactionParams, transactionParamsFormValues } } = useStore()
+        transactionStore: {setTransactionParams, transactionParamsFormValues, resetTransactionParams, filterHasInitialValues } } = useStore()
     
     const validationSchema = Yup.object({
-        
+        startDate: Yup.date()
+            .required('Start date is required')
+            .test('start-before-end', 'Start date cannot be after end date', function(value) {
+                const { endDate } = this.parent;
+                return !endDate || value <= endDate;
+            }),
+        endDate: Yup.date()
+            .required('End date is required')
+            .test('end-after-start', 'End date cannot be before start date', function(value) {
+                const { startDate } = this.parent;
+                return !startDate || value >= startDate;
+            })
     });
 
     const handleFilterTransactionsFormSubmit = (
@@ -35,13 +46,21 @@ export default observer(function FilterTransactionsForm() {
         })
     }
 
+    const handleReset = (resetForm: (nextState?: Partial<FormikState<TransactionParamsFormValues>>) => void) => {
+        if(!filterHasInitialValues)
+            resetTransactionParams();
+
+        resetForm();
+    }
+
     return (
         <>
             <Formik
+                key={Number(filterHasInitialValues)}
                 initialValues={transactionParamsFormValues}
                 validationSchema={validationSchema}
                 onSubmit={handleFilterTransactionsFormSubmit}>
-            {({ isValid, dirty, isSubmitting, values }) => (
+            {({ isValid, dirty, isSubmitting, values, resetForm }) => (
                 <Form>
                     <Stack spacing={2}>
                         {/* Start Date */}
@@ -84,15 +103,26 @@ export default observer(function FilterTransactionsForm() {
                         }
 
                         {/* Button */}
-                        <LoadingButton
-                            color="primary"
-                            variant="contained"
-                            type="submit"
-                            fullWidth
-                            disabled={!(dirty && isValid) || isSubmitting}
-                            loading={isSubmitting}>
-                            Filter
-                        </LoadingButton>
+                        <Stack spacing={2}>
+                            {((filterHasInitialValues || dirty ) && isValid )&& 
+                            <LoadingButton
+                                color="primary"
+                                variant="contained"
+                                type="submit"
+                                fullWidth
+                                disabled={!(dirty && isValid) || isSubmitting}
+                                loading={isSubmitting}>
+                                Filter
+                            </LoadingButton>}
+                            {((!filterHasInitialValues && !dirty && !isSubmitting) || !isValid) && 
+                            <Button
+                                color="info"
+                                variant="contained"
+                                fullWidth
+                                onClick={() => handleReset(resetForm)}>
+                                Reset filter
+                            </Button>}
+                        </Stack>
                     </Stack>
                 </Form>
             )}

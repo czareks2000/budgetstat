@@ -18,6 +18,7 @@ export default class TransactionStore {
         accountIds: [],
         categoryIds: []
     }
+    filterHasInitialValues = true;
 
     constructor() {
         makeAutoObservable(this);
@@ -39,11 +40,17 @@ export default class TransactionStore {
         const formValue: TransactionParamsFormValues = {
             startDate: dayjs(this.transactionParams.startDate),
             endDate: dayjs(this.transactionParams.endDate),
-            type: TransactionTypeFilter.All,
+            type: this.convertToTransactionTypeFilter(this.transactionParams.types),
             accountIds: store.accountStore
                 .convertAccountIdsToOptions(this.transactionParams.accountIds),
-            incomeCategoryIds: [], // convert
-            expenseCategoryIds: [], // convert 
+            incomeCategoryIds: store.categoryStore
+                .convertToCategoryOptions(store.categoryStore
+                    .getCategoriesByIds(this.transactionParams.categoryIds))
+                        .filter(option => option.type === TransactionType.Income),
+            expenseCategoryIds: store.categoryStore
+                .convertToCategoryOptions(store.categoryStore
+                    .getCategoriesByIds(this.transactionParams.categoryIds))
+                        .filter(option => option.type === TransactionType.Expense)
         }
         return formValue;
     }
@@ -65,6 +72,7 @@ export default class TransactionStore {
             accountIds: [],
             categoryIds: []
         }
+        this.filterHasInitialValues = true;
     }
 
     setTransactionParams = async (params: TransactionParamsFormValues) =>
@@ -72,7 +80,7 @@ export default class TransactionStore {
         const transactionPrams: TransactionParams = {
             startDate: dayjs(params.startDate).toDate(),
             endDate: dayjs(params.endDate).toDate(),
-            types: this.convertTransactionTypeFilter(params.type),
+            types: this.convertToTransactionType(params.type),
             accountIds: params.accountIds.map(option => Number(option.value)),
             categoryIds: [],
         }
@@ -93,9 +101,10 @@ export default class TransactionStore {
         transactionPrams.categoryIds = categoryIds;
 
         this.transactionParams = transactionPrams;
+        this.filterHasInitialValues = false;
     }
 
-    private convertTransactionTypeFilter = (filter: TransactionTypeFilter): TransactionType[] => {
+    private convertToTransactionType = (filter: TransactionTypeFilter): TransactionType[] => {
         switch (filter) {
             case TransactionTypeFilter.All:
                 return [];
@@ -107,6 +116,22 @@ export default class TransactionStore {
                 return [TransactionType.Transfer];       
             default:
                 return [];
+        }
+    }
+
+    private convertToTransactionTypeFilter = (filter: TransactionType[]): TransactionTypeFilter => {
+        if (filter.length == 0)
+            return TransactionTypeFilter.All;
+
+        switch (filter[0]) {
+            case TransactionType.Income:
+                return TransactionTypeFilter.Income;
+            case TransactionType.Expense:
+                return TransactionTypeFilter.Expense; 
+            case TransactionType.Transfer:
+                return TransactionTypeFilter.Transfer;       
+            default:
+                return TransactionTypeFilter.All;
         }
     }
 

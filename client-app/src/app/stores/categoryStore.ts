@@ -56,6 +56,24 @@ export default class CategoryStore {
         return expenseSubCategories;
     }
 
+    getCategoriesByIds = (categoryIds: number[]): Category[] => {
+        let matchedCategories: Category[] = [];
+        
+        this.mainCategories.forEach(mainCategory => {
+            if (categoryIds.includes(mainCategory.id)) {
+                matchedCategories.push(mainCategory);
+            }
+
+            mainCategory.subCategories.forEach(subCategory => {
+                if (categoryIds.includes(subCategory.id)) {
+                    matchedCategories.push(subCategory);
+                }
+            });
+        });
+        
+        return matchedCategories;
+    }
+
     convertToCategoryOptions = (categories: Category[]): CategoryOption[] => {
         const categoryOptions: CategoryOption[] = [];
     
