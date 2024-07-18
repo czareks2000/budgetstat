@@ -48,7 +48,7 @@ export default observer(function FilterTransactionsForm() {
 
     const handleReset = (resetForm: (nextState?: Partial<FormikState<TransactionParamsFormValues>>) => void) => {
         if(!filterHasInitialValues)
-            resetTransactionParams();
+            resetTransactionParams();            
 
         resetForm();
     }

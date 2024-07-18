@@ -11,13 +11,15 @@ export default class TransactionStore {
     transactionRegistry = new Map<number, TransactionRowItem>();
     transactionsLoaded = false;
 
-    transactionParams: TransactionParams = {
-        startDate: dayjs().add(-30, 'days'),
-        endDate: dayjs(),
+    private initialParams: TransactionParams = {
+        startDate: dayjs().add(-30, 'days').toDate(),
+        endDate: dayjs().toDate(),
         types: [],
         accountIds: [],
         categoryIds: []
-    }
+    };
+
+    transactionParams: TransactionParams = this.initialParams;
     filterHasInitialValues = true;
 
     constructor() {
@@ -65,13 +67,7 @@ export default class TransactionStore {
     }
 
     resetTransactionParams = () => {
-        this.transactionParams = {
-            startDate: dayjs().add(-30, 'days'),
-            endDate: dayjs(),
-            types: [],
-            accountIds: [],
-            categoryIds: []
-        }
+        this.transactionParams = this.initialParams;
         this.filterHasInitialValues = true;
     }
 
@@ -101,7 +97,8 @@ export default class TransactionStore {
         transactionPrams.categoryIds = categoryIds;
 
         this.transactionParams = transactionPrams;
-        this.filterHasInitialValues = false;
+
+        this.filterHasInitialValues = JSON.stringify(transactionPrams) === JSON.stringify(this.initialParams);
     }
 
     private convertToTransactionType = (filter: TransactionTypeFilter): TransactionType[] => {
