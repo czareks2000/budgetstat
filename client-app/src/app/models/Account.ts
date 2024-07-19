@@ -10,6 +10,7 @@ export interface Account {
     description: string;
     status: AccountStatus;
     currency: Currency;
+    canBeDeleted: boolean;
 }
 
 export interface AccountFormValues {

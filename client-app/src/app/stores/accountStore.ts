@@ -174,6 +174,7 @@ export default class AccountStore {
 
     private updateDataInOtherStores = () => {
         store.statsStore.loadNetWorthValueOverTime();
+        store.transactionStore.loadTransactions();
     }
 
 }

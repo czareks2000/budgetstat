@@ -75,38 +75,34 @@ export default observer(function AccountItem({account, openDeleteDialog}: Props)
                             }}/>
                     </Tooltip>
                     <Box>
+                        <IconButton 
+                            aria-label="edit"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleEditButtonClick();
+                            }}>
+                            <Edit />
+                        </IconButton>
                         <Tooltip 
-                            title='Edit'
-                            placement="left"
-                            arrow
-                            enterDelay={500}
-                            leaveDelay={200}>
+                            title={account.canBeDeleted ? '' : 
+                                'The account has loans in progress.'}
+                            placement="top"
+                            arrow>
+                            <span>
                             <IconButton 
-                                aria-label="edit"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    handleEditButtonClick();
-                                }}>
-                                <Edit />
-                            </IconButton>
-                        </Tooltip>
-                        <Tooltip 
-                            title='Delete'
-                            placement="right"
-                            arrow
-                            enterDelay={500}
-                            leaveDelay={200}>
-                            <IconButton 
+                                disabled={!account.canBeDeleted}
                                 aria-label="delete"
                                 onClick={(e) => {
                                     e.preventDefault();
                                     e.stopPropagation();
                                     handleDeleteButtonClick();
                                 }}>
-                                <Delete />
+                                    <Delete />
                             </IconButton>
+                            </span>
                         </Tooltip>
+                     
                     </Box>
                 </Grid>
             </CardActions>

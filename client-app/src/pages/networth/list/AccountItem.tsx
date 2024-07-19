@@ -1,5 +1,5 @@
 import { Delete, Edit } from '@mui/icons-material'
-import { Box, IconButton, ListItem, ListItemText } from '@mui/material'
+import { Box, IconButton, ListItem, ListItemText, Tooltip } from '@mui/material'
 import { formatAmount } from '../../../app/utils/FormatAmount'
 import { observer } from 'mobx-react-lite'
 import { Account } from '../../../app/models/Account';
@@ -34,11 +34,20 @@ export default observer(function AccountItem({account, openDeleteDialog}: Props)
                 onClick={handleEditButtonClick}>
                 <Edit/>
             </IconButton>
-            <IconButton 
-                edge={"end"} aria-label="delete" 
-                onClick={handleDeleteButtonClick}>
-                <Delete/>
-            </IconButton>
+            <Tooltip 
+                title={account.canBeDeleted ? '' : 
+                    'The account has loans in progress.'}
+                placement="top"
+                arrow>
+                <span>
+                <IconButton 
+                    disabled={!account.canBeDeleted}
+                    edge={"end"} aria-label="delete" 
+                    onClick={handleDeleteButtonClick}>
+                    <Delete/>
+                </IconButton>
+                </span>
+            </Tooltip>
         </Box>
         }>
         <ListItemText 

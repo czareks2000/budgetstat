@@ -24,7 +24,9 @@ namespace Application.Core
                 .ForMember(dest => dest.Balance, opt => opt
                     .MapFrom(src => src.AccountBalances
                         .Where(ab => ab.Date.Date <= DateTime.UtcNow.Date)
-                        .OrderByDescending(ab => ab.Date).FirstOrDefault().Balance));
+                        .OrderByDescending(ab => ab.Date).FirstOrDefault().Balance))
+                .ForMember(dest => dest.CanBeDeleted, opt => opt
+                    .MapFrom(src => !src.Loans.Where(l => l.LoanStatus == LoanStatus.InProgress).Any()));
 
             CreateMap<Currency, CurrencyDto>();
 

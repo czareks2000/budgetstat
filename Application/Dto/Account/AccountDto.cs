@@ -12,6 +12,7 @@ namespace Application.Dto.Account
         public DateTime CreatedAt { get; set; }
         public string Description { get; set; }
         public AccountStatus Status { get; set; }
+        public bool CanBeDeleted { get; set; }
 
         public CurrencyDto Currency { get; set; }
     }

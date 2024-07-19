@@ -27,6 +27,7 @@ namespace Application.Services
                 .Where(a => a.User == user)
                 .Include(a => a.Currency)
                 .Include(a => a.AccountBalances)
+                .Include(l => l.Loans)
                 .ProjectTo<AccountDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(a => a.Id == accountId);
 
@@ -39,6 +40,7 @@ namespace Application.Services
             return Result<AccountDto>.Success(accountDto);
         }
 
+
         // funkcja zwraca liste wszytkich kont użytkownika 
         public async Task<Result<List<AccountDto>>> GetAll()
         {
@@ -48,6 +50,7 @@ namespace Application.Services
                 .Where(a => a.User == user)
                 .Include(a => a.Currency)
                 .Include(a => a.AccountBalances)
+                .Include(l => l.Loans)
                 .ProjectTo<AccountDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
 
