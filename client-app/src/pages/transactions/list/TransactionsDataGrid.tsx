@@ -131,12 +131,16 @@ export default observer(function TransactionsDataGrid() {
                 loading={!transactionsLoaded}
                 rows={transactions}
                 initialState={{
+                    pagination: {
+                        paginationModel: { pageSize: 10, page: 0 },
+                      },
                     columns: {
                       columnVisibilityModel: {
                         description: false, 
                       },
                     },
                   }}
+                pageSizeOptions={[10, 25, 50, 100]}
                 columns={columns}
                 autoHeight
                 disableRowSelectionOnClick

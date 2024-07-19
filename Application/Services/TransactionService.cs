@@ -405,6 +405,15 @@ namespace Application.Services
                 .Select(c => c.Id)
                 .ToListAsync();
 
+            var subCategoriesOfMainCategories = await _context.Categories
+                .Where(c => !c.IsMain)
+                .Where(c => categoryIds.Contains((int)c.MainCategoryId))
+                .Where(c => c.UserId == user.Id)
+                .Select(c => c.Id)
+                .ToListAsync();
+
+            categoryIds.AddRange(subCategoriesOfMainCategories);
+
             List<TransactionListItem> transactions = new List<TransactionListItem>();
 
             // transakcje
