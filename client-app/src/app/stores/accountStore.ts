@@ -115,6 +115,7 @@ export default class AccountStore {
         
             runInAction(() => {
                 this.setAccount(createdAccount);
+                this.updateDataInOtherStores();
             });    
         } catch (error) {
             console.log(error);
@@ -128,6 +129,7 @@ export default class AccountStore {
             runInAction(() => {
                 this.accountsRegistry.delete(accountId);
                 this.deselectAccount();
+                this.updateDataInOtherStores();
             });    
         } catch (error) {
             console.log(error);
@@ -141,6 +143,7 @@ export default class AccountStore {
             runInAction(() => {
                 this.setAccount(updatedAccount);
                 store.transactionStore.resetTransactionParams();
+                this.updateDataInOtherStores();
             });    
         } catch (error) {
             console.log(error);
@@ -155,7 +158,10 @@ export default class AccountStore {
             if (account)
                 account.status = newStatus;
 
-            await agent.Accounts.changeStatus(accountId, newStatus);  
+            await agent.Accounts.changeStatus(accountId, newStatus);
+            runInAction(() => {
+                this.updateDataInOtherStores();
+            })  
         } catch (error) {
             console.log(error);
         } 
@@ -164,6 +170,10 @@ export default class AccountStore {
     private newStatus(currentStatus: AccountStatus)
     {
         return currentStatus === AccountStatus.Visible ? AccountStatus.Hidden : AccountStatus.Visible;
+    }
+
+    private updateDataInOtherStores = () => {
+        store.statsStore.loadNetWorthValueOverTime();
     }
 
 }

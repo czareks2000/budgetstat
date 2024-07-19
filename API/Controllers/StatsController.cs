@@ -1,7 +1,5 @@
 ﻿using Application.Dto.Stats;
 using Application.Interfaces;
-using Application.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers

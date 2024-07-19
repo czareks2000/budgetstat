@@ -41,6 +41,12 @@ export default class CommonStore {
 
     loadAppData = async (currencyId: number) => {
         try {
+            // można wyświetlić intefejs bez tych danch załadowanych
+            store.transactionStore.loadTransactions();
+            store.statsStore.loadNetWorthValueOverTime();
+
+            // nie można wyświetlić intefejsu bez tych danch załadowanych
+            // (w przyszłości dostosować intefejs zeby nie trzeba było czekać)
             await store.accountStore.loadAccounts();
             
             await store.budgetStore.loadBudgets();
@@ -55,8 +61,6 @@ export default class CommonStore {
 
             await store.assetStore.loadAssetCategories();
             await store.assetStore.loadAssets();
-
-            await store.transactionStore.loadTransactions();
 
             await store.statsStore.loadNetWorthStats();
         } catch (error) {

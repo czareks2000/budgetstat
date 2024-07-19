@@ -1,17 +1,33 @@
-import { makeAutoObservable, runInAction } from "mobx";
-import { NetWorthStats, PieChartDataItem } from "../models/Stats";
+import { makeAutoObservable, reaction, runInAction } from "mobx";
+import { NetWorthStats, NetWorthValueOverTime, PieChartDataItem } from "../models/Stats";
 import agent from "../api/agent";
 import { store } from "./store";
+import { ChartPeriod } from "../models/enums/ChartPeriod";
+import dayjs from "dayjs";
 
 export default class StatsStore {
     netWorthStats: NetWorthStats | undefined = undefined;
 
+    netWorthValueOverTime: NetWorthValueOverTime | undefined = undefined;
+    chartPeriod: ChartPeriod = ChartPeriod.Year;
+    loadedNetWorthValueOverTime = false;
+
     constructor() {
         makeAutoObservable(this);
+
+        reaction(
+            () => this.chartPeriod, 
+            () => {
+                this.loadNetWorthValueOverTime();
+            }
+        )
     }
 
     clearStore = () => {
         this.netWorthStats = undefined;
+        this.netWorthValueOverTime = undefined;
+        this.chartPeriod = ChartPeriod.Year;
+        this.loadedNetWorthValueOverTime = false;
     }
 
     get assetsValue() {
@@ -30,6 +46,10 @@ export default class StatsStore {
             return 0;
 
         return this.netWorthStats.loansValue;
+    }
+
+    setChartPeriod = (period: ChartPeriod) => {
+        this.chartPeriod = period;
     }
 
     getAssetsValues = (categoryId: number) => {
@@ -71,8 +91,23 @@ export default class StatsStore {
 
     loadNetWorthStats = async () => {
         try {
-            var response = await agent.Stats.netWorthStats();
+            const response = await agent.Stats.netWorthStats();
             runInAction(() => this.netWorthStats = response)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    loadNetWorthValueOverTime = async () => {
+        this.loadedNetWorthValueOverTime = false;
+        try {
+            const response = await agent.Stats.netWorthValueOverTime(this.chartPeriod);
+            runInAction(() => {
+                response.startDate = dayjs(response.startDate).toDate(); 
+                response.endDate = dayjs(response.endDate).toDate(); 
+                this.netWorthValueOverTime = response;
+                this.loadedNetWorthValueOverTime = true;
+            })
         } catch (error) {
             console.log(error);
         }

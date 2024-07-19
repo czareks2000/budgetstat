@@ -60,6 +60,7 @@ export default class CurrencyStore {
                 // networth
                 store.statsStore.clearStore();
                 store.statsStore.loadNetWorthStats();
+                store.statsStore.loadNetWorthValueOverTime();
             });
         } catch (error) {
             console.log(error);

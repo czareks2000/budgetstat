@@ -15,7 +15,8 @@ import { CollectivePayoffValues, PayoffCreateValues } from "../models/Payoff";
 import { LoanStatus } from "../models/enums/LoanStatus";
 import { Icon } from "../models/Icon";
 import { Asset, AssetCategory, AssetCreateUpdateValues } from "../models/Asset";
-import { NetWorthStats } from "../models/Stats";
+import { NetWorthStats, NetWorthValueOverTime } from "../models/Stats";
+import { ChartPeriod } from "../models/enums/ChartPeriod";
 
 const sleep = (delay: number) => {
     return new Promise((resolve) => {
@@ -236,6 +237,8 @@ const Settings = {
 const Stats = {
     netWorthStats: (loans: boolean = true, assets: boolean = true) =>
         requests.get<NetWorthStats>(`/stats/networthstats?loans=${loans}&assets=${assets}`),
+    netWorthValueOverTime: (period: ChartPeriod) =>
+        requests.get<NetWorthValueOverTime>(`/stats/networthovertime/${period}`),
 }
 
 const agent = {

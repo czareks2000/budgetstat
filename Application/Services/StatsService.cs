@@ -9,6 +9,7 @@ using Domain;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Application.Services
 {
@@ -175,7 +176,7 @@ namespace Application.Services
                     .Include(l => l.Currency)
                     .Include(l => l.Payoffs)
                     .Where(l => l.UserId == user.Id)
-                    .Where(l => l.LoanDate.Date <= date.Date)
+                    .Where(l => l.LoanDate.Date <= date)
                     .ToListAsync();
 
                 foreach (var loan in loans)
@@ -249,7 +250,8 @@ namespace Application.Services
                 case ChartPeriod.YTD:
                     while (currentDate <= timeWindow.EndDate)
                     {
-                        dates.Add(new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month)));
+                        var date = new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month));
+                        dates.Add(DateTime.SpecifyKind(date, DateTimeKind.Utc));
                         currentDate = currentDate.AddMonths(1);
                     }
                     break;
@@ -265,7 +267,8 @@ namespace Application.Services
                 case ChartPeriod.Year:
                     for (int i = 0; i < 12; i++)
                     {
-                        dates.Add(new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month)));
+                        var date = new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month));
+                        dates.Add(DateTime.SpecifyKind(date, DateTimeKind.Utc));
                         currentDate = currentDate.AddMonths(1);
                     }
                     break;
@@ -273,8 +276,9 @@ namespace Application.Services
                 case ChartPeriod.FiveYears:
                     for (int i = 0; i < 12; i++)
                     {
-                        dates.Add(new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month)));
-                        currentDate = currentDate.AddMonths(5);
+                        var date = new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month));
+                        dates.Add(DateTime.SpecifyKind(date, DateTimeKind.Utc));
+                        currentDate = currentDate.AddMonths(5); 
                     }
                     break;
 
