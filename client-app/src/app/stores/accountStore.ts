@@ -173,6 +173,7 @@ export default class AccountStore {
     }
 
     private updateDataInOtherStores = () => {
+        store.loanStore.clearPaidOffLoansRegistry();
         store.statsStore.loadNetWorthValueOverTime();
         store.transactionStore.loadTransactions();
     }

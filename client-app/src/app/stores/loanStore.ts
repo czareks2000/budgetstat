@@ -32,14 +32,18 @@ export default class LoanStore {
         this.loansInProgressRegistry.clear();
         this.loansInProgressLoaded = false;
 
-        this.loansPaidOffRegistry.clear();
-        this.loansPaidOffLoaded = false;
-        this.counterpartyLoansLoaded= [];
+        this.clearPaidOffLoansRegistry();
 
         this.selectedLoan = undefined;
 
         this.counterparties = [];
         this.counterpartiesLoaded = false;
+    }
+
+    clearPaidOffLoansRegistry = () => {
+        this.loansPaidOffRegistry.clear();
+        this.loansPaidOffLoaded = false;
+        this.counterpartyLoansLoaded= [];
     }
 
     selectLoan = async (loanId: number) => {
