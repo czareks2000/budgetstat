@@ -6,9 +6,11 @@ import { Delete, Edit } from "@mui/icons-material"
 import CategoryIcon from "../../../components/common/CategoryIcon"
 import { formatAmount } from "../../../app/utils/FormatAmount"
 import { TransactionType } from "../../../app/models/enums/TransactionType"
-import { AmountItem, CategoryItem, TransactionRowItem } from "../../../app/models/Transaction"
+import { AmountItem, CategoryItem, TransactionRowItem, TransactionToDelete } from "../../../app/models/Transaction"
 import { useStore } from "../../../app/stores/store"
 import dayjs from "dayjs";
+import { useState } from "react";
+import DeleteTransactionDialog from "../dialogs/DeleteTransactionDialog";
 
 export default observer(function TransactionsDataGrid() {
     const {transactionStore: {transactions, transactionsLoaded}} = useStore();
@@ -17,8 +19,22 @@ export default observer(function TransactionsDataGrid() {
         router.navigate(`/transactions/${transactionId}/edit`);
     }
 
-    const handleDeleteButtonClick = (transactionId: number) => {
-        console.log(transactionId);
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+
+    const [transactionToDelete, setTransactionToDelete] = useState<TransactionToDelete | undefined>(undefined);
+
+    const handleDeleteButtonClick = (transaction: TransactionRowItem) => {
+        console.log();
+        setTransactionToDelete({
+            index: transaction.id, 
+            transactionId: transaction.transactionId, 
+            type: transaction.amount.type,
+            category: transaction.category.name,
+            amount: transaction.amount.value,
+            currencySymbol: transaction.amount.currencySymbol,
+            accountId: transaction.accountId
+        })
+        setOpenDeleteDialog(true);
     }
 
     const columns: GridColDef<TransactionRowItem[][number]>[] = [
@@ -39,7 +55,7 @@ export default observer(function TransactionsDataGrid() {
             },
         },
         {
-            field: 'account',
+            field: 'accountName',
             headerName: 'Account',
             minWidth: 120,
             flex: 1,
@@ -96,16 +112,18 @@ export default observer(function TransactionsDataGrid() {
             type: 'actions',
             width: 100,
             getActions: (params) => {
+                const transaction = params.row;
                 return [
                     <GridActionsCellItem
                         icon={<Edit />}
                         label="Edit"
-                        disabled={params.row.account === null}
-                        onClick={() => handleEditButtonClick(Number(params.row.transactionId))} />,
+                        disabled={params.row.accountName === null}
+                        onClick={() => handleEditButtonClick(Number(transaction.transactionId))} />,
                     <GridActionsCellItem
                         icon={<Delete />}
                         label="Delete"
-                        onClick={() => handleDeleteButtonClick(params.row.transactionId)}/>,
+                        onClick={() => 
+                            handleDeleteButtonClick(transaction)}/>,
                 ]
             },
           },
@@ -118,58 +136,63 @@ export default observer(function TransactionsDataGrid() {
             return 'success.main'
     }
       
-    return ( 
-    <Paper>
-        <Box>
-            <DataGrid 
-                key={Number(dayjs())}
-                sx={{
-                    display: 'grid',
-                    gridTemplateRows: 'auto 1f auto',
-                    '--DataGrid-overlayHeight': '300px'
-                }}
-                loading={!transactionsLoaded}
-                rows={transactions}
-                initialState={{
-                    pagination: {
-                        paginationModel: { pageSize: 10, page: 0 },
-                      },
-                    columns: {
-                      columnVisibilityModel: {
-                        description: false, 
-                      },
-                    },
-                  }}
-                pageSizeOptions={[10, 25, 50, 100]}
-                columns={columns}
-                autoHeight
-                disableRowSelectionOnClick
-                autosizeOnMount
-                autosizeOptions={{
-                    includeHeaders: false,
-                    includeOutliers: true,
-                    expand: true,
-                }}
-                disableDensitySelector
-                disableColumnFilter
-                slots={{ toolbar: GridToolbar }}
-                slotProps={{
-                    toolbar: {
-                      showQuickFilter: true,
-                      printOptions: { 
-                        disableToolbarButton: true 
-                      },
-                      sx: {
-                        px: 2,
-                        pt: 2,
-                        '& .MuiButton-root': {
-                            color: 'black',
-                            },
-                      }
-                    },
-                  }}
-            />
-        </Box>
-    </Paper>
+    return (
+    <>  
+        <DeleteTransactionDialog 
+            open={openDeleteDialog} setOpen={setOpenDeleteDialog}
+            transaction={transactionToDelete} />
+        <Paper>
+            <Box>
+                <DataGrid 
+                    key={Number(dayjs())}
+                    sx={{
+                        display: 'grid',
+                        gridTemplateRows: 'auto 1f auto',
+                        '--DataGrid-overlayHeight': '300px'
+                    }}
+                    loading={!transactionsLoaded}
+                    rows={transactions}
+                    initialState={{
+                        pagination: {
+                            paginationModel: { pageSize: 10, page: 0 },
+                        },
+                        columns: {
+                        columnVisibilityModel: {
+                            description: false, 
+                        },
+                        },
+                    }}
+                    pageSizeOptions={[10, 25, 50, 100]}
+                    columns={columns}
+                    autoHeight
+                    disableRowSelectionOnClick
+                    autosizeOnMount
+                    autosizeOptions={{
+                        includeHeaders: false,
+                        includeOutliers: true,
+                        expand: true,
+                    }}
+                    disableDensitySelector
+                    disableColumnFilter
+                    slots={{ toolbar: GridToolbar }}
+                    slotProps={{
+                        toolbar: {
+                        showQuickFilter: true,
+                        printOptions: { 
+                            disableToolbarButton: true 
+                        },
+                        sx: {
+                            px: 2,
+                            pt: 2,
+                            '& .MuiButton-root': {
+                                color: 'black',
+                                },
+                        }
+                        },
+                    }}
+                />
+            </Box>
+        </Paper>
+    </> 
     )
 })

@@ -150,4 +150,27 @@ export default class TransactionStore {
             })
         }
     }
+
+    deleteTransaction = async (index: number, transactionId: number, type: TransactionType, accountId: number | null) => {
+        try {
+            this.transactionRegistry.delete(index);
+
+            if (type === TransactionType.Transfer)
+                await agent.Transactions.deleteTransfer(transactionId);
+            else
+                await agent.Transactions.deleteTransaction(transactionId);
+
+            runInAction(() => {
+                if(accountId)
+                    this.updateDataInOtherStores(accountId);
+            })
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    private updateDataInOtherStores = (accountId: number) => {
+        store.accountStore.loadAccount(accountId);
+    }
 }

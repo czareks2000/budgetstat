@@ -6,7 +6,8 @@ namespace Application.Dto.Transaction
     {
         public int Id { get; set; }
         public int TransactionId { get; set; }
-        public string Account { get; set; }
+        public string AccountName { get; set; }
+        public int AccountId { get; set; }
         public CategoryItem Category { get; set; }
         public AmountItem Amount { get; set; }
         public DateTime Date { get; set; }

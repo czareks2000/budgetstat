@@ -81,6 +81,7 @@ namespace Application.Services
                     Currency = _context.Currencies.Find(newAccount.CurrencyId)
                 }
             };
+            account.Loans = new List<Loan>();
 
             await _context.Accounts.AddAsync(account);
 
@@ -102,6 +103,7 @@ namespace Application.Services
             var account = _context.Accounts
                 .Include(a => a.Currency)
                 .Include(a => a.AccountBalances)
+                .Include(a => a.Loans)
                 .FirstOrDefault(c => c.Id == accountId);
 
             if (account == null) return null;

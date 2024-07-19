@@ -66,8 +66,10 @@ namespace Application.Core
             CreateMap<Transaction, TransactionListItem>()
                 .ForMember(dest => dest.TransactionId, opt => opt
                     .MapFrom(src => src.Id))
-                .ForMember(dest => dest.Account, opt => opt
+                .ForMember(dest => dest.AccountName, opt => opt
                     .MapFrom(src => src.Account.Name))
+                .ForMember(dest => dest.AccountId, opt => opt
+                    .MapFrom(src => src.Account.Id))
                 .ForMember(dest => dest.Amount, opt => opt
                    .MapFrom(src => src));
             CreateMap<Transaction, AmountItem>()
@@ -83,8 +85,10 @@ namespace Application.Core
             CreateMap<Transfer, TransactionListItem>()
                 .ForMember(dest => dest.TransactionId, opt => opt
                     .MapFrom(src => src.Id))
-                .ForMember(dest => dest.Account, opt => opt
+                .ForMember(dest => dest.AccountName, opt => opt
                     .MapFrom(src => src.ToAccount.Name))
+                .ForMember(dest => dest.AccountId, opt => opt
+                    .MapFrom(src => src.ToAccount.Id))
                 .ForMember(dest => dest.Category, opt => opt
                     .MapFrom(src => new CategoryItem { Name = "Transfer", IconId = 16}))
                 .ForMember(dest => dest.Amount, opt => opt

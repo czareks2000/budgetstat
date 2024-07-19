@@ -36,7 +36,8 @@ export interface TransactionParamsFormValues {
 export interface TransactionRowItem {
     id: number;
     transactionId: number;
-    account: string | null;
+    accountName: string | null;
+    accountId: number | null;
     category: CategoryItem;
     amount: AmountItem;
     date: Date;
@@ -68,6 +69,16 @@ export interface TransactionUpdateValues {
     accountId: number; 
     date: Date;
     description?: string;
+}
+
+export interface TransactionToDelete {
+    index: number,
+    transactionId: number,
+    type: TransactionType,
+    category: string,
+    amount: number;
+    currencySymbol: string;
+    accountId: number | null;
 }
 
 export interface PlannedTransactionCreateValues {
