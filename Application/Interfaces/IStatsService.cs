@@ -19,6 +19,7 @@ namespace Application.Interfaces
         // prognoza salda kont
 
         // historia wartości netto
+        Task<Result<NetWorthValueOverTime>> GetNetWorthValueOverTime(ChartPeriod period);
 
         // aktualna suma wartości aktywów/pasywów
         Task<Result<NetWorthStats>> GetNetWorthStats(bool loans = true, bool assets = true);

@@ -11,10 +11,10 @@ namespace Infrastructure.Currency
 
         private static readonly string[] fallbackUrls =
         [
-            $"https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/{apiVersion}/currencies/usd.min.json",
             $"https://latest.currency-api.pages.dev/{apiVersion}/currencies/usd.min.json",
+            $"https://latest.currency-api.pages.dev/{apiVersion}/currencies/usd.json",
+            $"https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/{apiVersion}/currencies/usd.min.json",
             $"https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/{apiVersion}/currencies/usd.json",
-            $"https://latest.currency-api.pages.dev/{apiVersion}/currencies/usd.json"
         ];
 
         public async Task<decimal> Convert(string inputCurrencyCode, string outputCurrencyCode, decimal value)
@@ -35,6 +35,16 @@ namespace Infrastructure.Currency
         {
             _currencyRates = await GetCurrencyRates(DateTime.UtcNow);
             
+            decimal fromRate = _currencyRates.Usd[inputCurrencyCode.ToLower()];
+            decimal toRate = _currencyRates.Usd[outputCurrencyCode.ToLower()];
+
+            return toRate / fromRate;
+        }
+
+        public async Task<decimal> HistoricRate(string inputCurrencyCode, string outputCurrencyCode, DateTime date)
+        {
+            _currencyRates = await GetCurrencyRates(date);
+
             decimal fromRate = _currencyRates.Usd[inputCurrencyCode.ToLower()];
             decimal toRate = _currencyRates.Usd[outputCurrencyCode.ToLower()];
 

@@ -105,5 +105,209 @@ namespace Application.Services
             
             return assetsCategoryValues;
         }
+
+        public async Task<Result<NetWorthValueOverTime>> GetNetWorthValueOverTime(ChartPeriod period)
+        {   
+            var user = await _utilities.GetCurrentUserAsync();
+
+            // filter assets by dates
+            var assets = await _context.Assets
+                .Include(a => a.AssetValues)
+                    .ThenInclude(av => av.Currency)
+                .Where(a => a.UserId == user.Id)
+                .ToListAsync();
+
+            // create result object
+            NetWorthValueOverTime chartObject = new()
+            {
+                Period = period,
+                Data = [],
+                Labels = [],
+            };
+
+            // calculate start and end dates
+            var timeWindow = CalculateTimeWindow(period, assets);
+
+            chartObject.StartDate = timeWindow.StartDate;
+            chartObject.EndDate = timeWindow.EndDate;
+
+            // calculate date labels
+            var dates = CalculateDates(period, timeWindow);
+
+            // calculate data
+            var accounts = await _context.Accounts
+                .Include(a => a.AccountBalances)
+                    .ThenInclude(ab => ab.Currency)
+                .Where(a => a.UserId == user.Id)
+                .Where(a => a.Status == AccountStatus.Visible)
+                .ToListAsync();
+
+            foreach (var date in dates) 
+            {
+                decimal value = 0;
+
+                // asset value
+                foreach (var asset in assets)
+                {
+                    var assetValue = asset.AssetValues
+                        .Where(av => av.Date.Date <= date.Date)
+                        .OrderByDescending(ab => ab.Date)
+                        .FirstOrDefault();
+
+                    if (assetValue == null) continue;
+
+                    value += await _utilities.Convert(assetValue.Currency.Code, user.DefaultCurrency.Code, assetValue.Value, date);
+                }
+                // accounts value
+                foreach (var account in accounts)
+                {
+                    var accountBalance = account.AccountBalances
+                        .Where(ab => ab.Date.Date <= date.Date)
+                        .OrderByDescending(ab => ab.Date)
+                        .FirstOrDefault();
+
+                    if (accountBalance == null) continue;
+
+                    value += await _utilities.Convert(accountBalance.Currency.Code, user.DefaultCurrency.Code, accountBalance.Balance, date);
+                }
+                // loans value
+                var loans = await _context.Loans
+                    .Include(l => l.Currency)
+                    .Include(l => l.Payoffs)
+                    .Where(l => l.UserId == user.Id)
+                    .Where(l => l.LoanDate.Date <= date.Date)
+                    .ToListAsync();
+
+                foreach (var loan in loans)
+                {
+                    var currentAmount = loan.Payoffs
+                        .Where(p => p.Date.Date <= date.Date)
+                        .Sum(p => p.Amount);
+
+                    var missingAmount = loan.FullAmount - currentAmount;
+
+                    var convertedMissingAmount = await _utilities
+                    .Convert(loan.Currency.Code, user.DefaultCurrency.Code, missingAmount);
+
+                    if (loan.LoanType == LoanType.Credit)
+                        value += convertedMissingAmount;
+                    else if (loan.LoanType == LoanType.Debt)
+                        value -= convertedMissingAmount;
+                }
+
+                chartObject.Data.Add(value);
+                chartObject.Labels.Add(FormatDateTime(date, period));
+            }
+
+            // return data
+            return Result<NetWorthValueOverTime>.Success(chartObject);
+        }
+
+        private static TimeWindow CalculateTimeWindow(ChartPeriod period, List<Asset> assets)
+        {
+            DateTime now = DateTime.UtcNow;
+
+            DateTime startDate = period switch
+            {
+                ChartPeriod.YTD => new DateTime(now.Year, 1, 1),
+                ChartPeriod.Month => now.AddDays(-30),
+                ChartPeriod.Year => now.AddDays(-365),
+                ChartPeriod.FiveYears => now.AddYears(-5),
+                ChartPeriod.Max => FindEarliestDate(assets),
+                _ => throw new ArgumentOutOfRangeException(nameof(period), period, null),
+            };
+
+            return new TimeWindow
+            {
+                StartDate = startDate,
+                EndDate = now
+            };
+        }
+
+        private static DateTime FindEarliestDate(List<Asset> assets)
+        {
+            if (assets == null || assets.Count == 0)
+            {
+                throw new ArgumentException("The assets list cannot be null or empty.");
+            }
+
+            DateTime earliestDate = assets
+                .Where(asset => asset.AssetValues != null && asset.AssetValues.Count > 0)
+                .SelectMany(asset => asset.AssetValues)
+                .Min(av => av.Date);
+
+            return earliestDate;
+        }
+
+        private static List<DateTime> CalculateDates(ChartPeriod period, TimeWindow timeWindow)
+        {
+            List<DateTime> dates = new List<DateTime>();
+            DateTime currentDate = timeWindow.StartDate;
+
+            switch (period)
+            {
+                case ChartPeriod.YTD:
+                    while (currentDate <= timeWindow.EndDate)
+                    {
+                        dates.Add(new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month)));
+                        currentDate = currentDate.AddMonths(1);
+                    }
+                    break;
+
+                case ChartPeriod.Month:
+                    for (int i = 0; i < 10; i++)
+                    {
+                        dates.Add(currentDate);
+                        currentDate = currentDate.AddDays(3);
+                    }
+                    break;
+
+                case ChartPeriod.Year:
+                    for (int i = 0; i < 12; i++)
+                    {
+                        dates.Add(new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month)));
+                        currentDate = currentDate.AddMonths(1);
+                    }
+                    break;
+
+                case ChartPeriod.FiveYears:
+                    for (int i = 0; i < 12; i++)
+                    {
+                        dates.Add(new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month)));
+                        currentDate = currentDate.AddMonths(5);
+                    }
+                    break;
+
+                case ChartPeriod.Max:
+                    int totalDays = (timeWindow.EndDate - timeWindow.StartDate).Days;
+                    int interval = totalDays / 11; // 12 dates mean 11 intervals
+                    for (int i = 0; i < 12; i++)
+                    {
+                        dates.Add(currentDate);
+                        currentDate = currentDate.AddDays(interval);
+                    }
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(period), period, null);
+            }
+
+            if (dates.Last() != timeWindow.EndDate)
+            {
+                dates[^1] = timeWindow.EndDate;
+            }
+
+            return dates;
+        }
+
+        private static string FormatDateTime(DateTime dateTime, ChartPeriod period)
+        {
+            return period switch
+            {
+                ChartPeriod.Month => dateTime.ToString("dd/MM/yyyy"),
+                ChartPeriod.YTD or ChartPeriod.Year or ChartPeriod.FiveYears or ChartPeriod.Max => dateTime.ToString("MM/yyyy"),
+                _ => throw new ArgumentOutOfRangeException(nameof(period), period, null),
+            };
+        }
     }
 }

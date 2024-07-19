@@ -17,6 +17,8 @@ namespace Application.Services
         // w przyszłości zamienić dictionary na wpisy w bazie danych
         Dictionary<string, decimal> _rates = new Dictionary<string, decimal>();
 
+        Dictionary<string, Dictionary<string, decimal>> _historicRates = new Dictionary<string, Dictionary<string, decimal>>();
+
         // zwraca użytkownika, który wywołał funkcje
         public async Task<User> GetCurrentUserAsync()
         {
@@ -44,6 +46,44 @@ namespace Application.Services
             }
 
             return value * currentRate;
+        }
+
+        // zwraca kwotę w podanej walucie (historyczny kurs
+        public async Task<decimal> Convert(string inputCurrencyCode, string outputCurrencyCode, decimal value, DateTime date)
+        {
+            if (outputCurrencyCode == inputCurrencyCode)
+                return value;
+
+            decimal currencyRate;
+
+            var key = date.Date.ToString();
+            var currencyPairkey = $"{inputCurrencyCode}{outputCurrencyCode}";
+
+            if (_historicRates.TryGetValue(key, out Dictionary<string, decimal> rates))
+            {
+                if (rates.TryGetValue(currencyPairkey, out decimal rate))
+                    currencyRate = rate;
+                else
+                {
+                    currencyRate = await _currencyService.HistoricRate(inputCurrencyCode, outputCurrencyCode, date);
+                    rates.Add(currencyPairkey, currencyRate);
+                }
+            }
+            else
+            {
+                currencyRate = await _currencyService.HistoricRate(inputCurrencyCode, outputCurrencyCode, date);
+
+                _historicRates.Add(key, 
+                    new Dictionary<string, decimal>{
+                        { 
+                            currencyPairkey, 
+                            currencyRate 
+                        } 
+                    }
+                );
+            }            
+
+            return value * currencyRate;
         }
 
         public async Task<decimal> GetCurrentRate(string inputCurrencyCode, string outputCurrencyCode)
