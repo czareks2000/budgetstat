@@ -35,6 +35,8 @@ namespace Persistence
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Transfer> Transfers { get; set; }
 
+        public DbSet<ExchangeRate> ExchangeRates { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -62,6 +64,11 @@ namespace Persistence
                 .HasOne(t => t.ToAccount)
                 .WithMany(a => a.Destinations)
                 .HasForeignKey(t => t.ToAccountId);
+
+            builder.Entity<Transaction>()
+                .HasOne(t => t.User)
+                .WithMany(u => u.Transactions)
+                .HasForeignKey(t => t.UserId);
 
             // Zapobieganie kaskadowemu usuwaniu
             builder.Entity<Account>()

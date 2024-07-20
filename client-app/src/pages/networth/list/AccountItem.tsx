@@ -36,7 +36,7 @@ export default observer(function AccountItem({account, openDeleteDialog}: Props)
             </IconButton>
             <Tooltip 
                 title={account.canBeDeleted ? '' : 
-                    'The account has loans in progress.'}
+                    'This account has loans in progress.'}
                 placement="top"
                 arrow>
                 <span>

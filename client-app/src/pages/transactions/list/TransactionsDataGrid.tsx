@@ -117,7 +117,7 @@ export default observer(function TransactionsDataGrid() {
                     <GridActionsCellItem
                         icon={<Edit />}
                         label="Edit"
-                        disabled={params.row.accountName === null}
+                        disabled={params.row.accountId === null}
                         onClick={() => handleEditButtonClick(Number(transaction.transactionId))} />,
                     <GridActionsCellItem
                         icon={<Delete />}
@@ -135,7 +135,7 @@ export default observer(function TransactionsDataGrid() {
         else if (type === TransactionType.Income)
             return 'success.main'
     }
-      
+
     return (
     <>  
         <DeleteTransactionDialog 

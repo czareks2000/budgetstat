@@ -1,6 +1,5 @@
 ﻿using Application.Core;
 using Application.Dto.Asset;
-using Application.Dto.Loan;
 using Application.Dto.Stats;
 using Application.Interfaces;
 using AutoMapper;
@@ -9,7 +8,6 @@ using Domain;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Application.Services
 {

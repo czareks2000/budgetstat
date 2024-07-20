@@ -11,7 +11,9 @@
         public bool Considered { get; set; } = true;
         public bool Planned { get; set; } = false;
         public int CurrencyId { get; set; }
+        public string UserId { get; set; }
 
+        public virtual User User { get; set; }
         public virtual Account Account { get; set; }
         public virtual Category Category { get; set; }
         public virtual Currency Currency { get; set; }

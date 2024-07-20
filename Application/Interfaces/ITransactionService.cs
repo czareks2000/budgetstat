@@ -22,7 +22,7 @@ namespace Application.Interfaces
         // wprowadzanie transferu
         Task<Result<TransferDto>> Create(TransferCreateUpdateDto newTransfer);
         // usunięcie transferu
-        Task<Result<object>> DeleteTransfer(int transferId);
+        Task<Result<int>> DeleteTransfer(int transferId);
         // edycja transferu
         Task<Result<TransferDto>> Update(int transferId, TransferCreateUpdateDto updatedTransfer);
 

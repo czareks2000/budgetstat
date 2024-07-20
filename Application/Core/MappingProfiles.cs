@@ -67,7 +67,7 @@ namespace Application.Core
                 .ForMember(dest => dest.TransactionId, opt => opt
                     .MapFrom(src => src.Id))
                 .ForMember(dest => dest.AccountName, opt => opt
-                    .MapFrom(src => src.Account.Name))
+                    .MapFrom(src => src.Account != null ? src.Account.Name : ""))
                 .ForMember(dest => dest.AccountId, opt => opt
                     .MapFrom(src => src.Account.Id))
                 .ForMember(dest => dest.Amount, opt => opt

@@ -292,6 +292,31 @@ namespace Persistence.Migrations
                     b.ToTable("Currencies");
                 });
 
+            modelBuilder.Entity("Domain.ExchangeRate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("InputCurrencyCode")
+                        .HasColumnType("text");
+
+                    b.Property<string>("OutputCurrencyCode")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Rate")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ExchangeRates");
+                });
+
             modelBuilder.Entity("Domain.Icon", b =>
                 {
                     b.Property<int>("Id")
@@ -437,6 +462,9 @@ namespace Persistence.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
@@ -444,6 +472,8 @@ namespace Persistence.Migrations
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("CurrencyId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Transactions");
                 });
@@ -908,11 +938,17 @@ namespace Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Domain.User", "User")
+                        .WithMany("Transactions")
+                        .HasForeignKey("UserId");
+
                     b.Navigation("Account");
 
                     b.Navigation("Category");
 
                     b.Navigation("Currency");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Transfer", b =>
@@ -1072,6 +1108,8 @@ namespace Persistence.Migrations
                     b.Navigation("Counterparties");
 
                     b.Navigation("Loans");
+
+                    b.Navigation("Transactions");
                 });
 #pragma warning restore 612, 618
         }

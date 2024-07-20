@@ -47,8 +47,7 @@ namespace Infrastructure.Security
                 var transactionId = GetRouteValue("transactionId");
                 ownerId = _dataContext.Transactions
                     .Where(t => t.Id == transactionId)
-                    .Include(t => t.Account)
-                    .Select(t => t.Account.UserId)
+                    .Select(t => t.UserId)
                     .FirstOrDefault();
             }
             else if (RouteContainsKey("transferId"))

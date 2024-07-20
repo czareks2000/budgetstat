@@ -47,6 +47,7 @@ namespace Application.Services
             transaction.Account = account;
             transaction.Currency = account.Currency;
             transaction.Category = category;
+            transaction.User = user;
 
             var currentDate = DateTime.UtcNow;
             if (transaction.Date.Date > currentDate.Date)
@@ -304,7 +305,7 @@ namespace Application.Services
             return Result<TransferDto>.Success(transferDto);
         }
 
-        public async Task<Result<object>> DeleteTransfer(int transferId)
+        public async Task<Result<int>> DeleteTransfer(int transferId)
         {
             // sprawdzenie czy transfer istnieje
             var transfer = await _context.Transfers
@@ -321,9 +322,9 @@ namespace Application.Services
 
             // zapisanie zmian w bazie
             if (await _context.SaveChangesAsync() == 0)
-                return Result<object>.Failure("Failed to delete transfer");
+                return Result<int>.Failure("Failed to delete transfer");
 
-            return Result<object>.Success(null);
+            return Result<int>.Success(transfer.FromAccountId);
         }
 
         public async Task<Result<TransferDto>> Update(int transferId, TransferCreateUpdateDto updatedTransfer)
@@ -417,10 +418,12 @@ namespace Application.Services
             List<TransactionListItem> transactions = new List<TransactionListItem>();
 
             // transakcje
-            var transactionsQuery = _context.Transactions
-                     .Where(t => t.Account.UserId == user.Id)
-                     .Where(t => t.Date.Date >= transactionParams.StartDate.Date)
-                     .Where(t => t.Date.Date <= transactionParams.EndDate.Date);
+            var transactionsQuery = _context.Users
+                     .Where(u => u.Id == user.Id)
+                     .Include(u => u.Transactions)
+                     .SelectMany(u => u.Transactions)
+                     .Where(u => u.Date.Date >= transactionParams.StartDate.Date)
+                     .Where(u => u.Date.Date <= transactionParams.EndDate.Date);
 
             if (transactionParams.Types.Count != 0)
                 transactionsQuery = transactionsQuery

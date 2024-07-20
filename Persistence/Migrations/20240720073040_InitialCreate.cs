@@ -42,6 +42,22 @@ namespace Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ExchangeRates",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    InputCurrencyCode = table.Column<string>(type: "text", nullable: true),
+                    OutputCurrencyCode = table.Column<string>(type: "text", nullable: true),
+                    Rate = table.Column<decimal>(type: "numeric", nullable: false),
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExchangeRates", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Icons",
                 columns: table => new
                 {
@@ -443,7 +459,8 @@ namespace Persistence.Migrations
                     Description = table.Column<string>(type: "text", nullable: true),
                     Considered = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
                     Planned = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
-                    CurrencyId = table.Column<int>(type: "integer", nullable: false)
+                    CurrencyId = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -452,6 +469,11 @@ namespace Persistence.Migrations
                         name: "FK_Transactions_Accounts_AccountId",
                         column: x => x.AccountId,
                         principalTable: "Accounts",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Transactions_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Transactions_Categories_CategoryId",
@@ -749,6 +771,11 @@ namespace Persistence.Migrations
                 column: "CurrencyId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Transactions_UserId",
+                table: "Transactions",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Transfers_FromAccountId",
                 table: "Transfers",
                 column: "FromAccountId");
@@ -785,6 +812,9 @@ namespace Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "BudgetCategories");
+
+            migrationBuilder.DropTable(
+                name: "ExchangeRates");
 
             migrationBuilder.DropTable(
                 name: "Payoffs");

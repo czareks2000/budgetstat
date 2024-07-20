@@ -398,7 +398,8 @@ namespace Persistence
                     Planned = false,
                     Account = accounts[0],
                     Category = expenseCategories[1].SubCategories.ToList()[0],
-                    Currency = currencies[2]
+                    Currency = currencies[2],
+                    User = users[0],
                 },
                 new Transaction
                 {
@@ -409,7 +410,8 @@ namespace Persistence
                     Planned = false,
                     Account = accounts[0],
                     Category = expenseCategories[3].SubCategories.ToList()[3],
-                    Currency = currencies[2]
+                    Currency = currencies[2],
+                    User = users[0],
                 },
 
                 // Transactions for accounts[1]
@@ -422,7 +424,8 @@ namespace Persistence
                     Planned = false,
                     Account = accounts[1],
                     Category = expenseCategories[1].SubCategories.ToList()[1],
-                    Currency = currencies[2]
+                    Currency = currencies[2],
+                    User = users[0],
                 },
                 new Transaction
                 {
@@ -433,7 +436,8 @@ namespace Persistence
                     Planned = false,
                     Account = accounts[1],
                     Category = expenseCategories[2].SubCategories.ToList()[1],
-                    Currency = currencies[2]
+                    Currency = currencies[2],
+                    User = users[0],
                 }
             };
 

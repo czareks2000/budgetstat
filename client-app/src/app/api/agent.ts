@@ -123,7 +123,7 @@ const Transactions = {
     deleteTransaction: (transactionId: number) => 
         requests.del<void>(`/transactions/${transactionId}`),
     deleteTransfer: (transferId: number) =>
-        requests.del<void>(`/transfers/${transferId}`),
+        requests.del<number>(`/transfers/${transferId}`),
     updateTransaction: (transactionId: number, transaction:TransactionUpdateValues) => 
         requests.put<Transaction>(`/transactions/${transactionId}`, transaction),
     updateTransfer: (transferId: number, transfer: TransferCreateUpdateValues) =>
