@@ -17,20 +17,6 @@ namespace Infrastructure.Currency
             $"https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/{apiVersion}/currencies/usd.json",
         ];
 
-        public async Task<decimal> Convert(string inputCurrencyCode, string outputCurrencyCode, decimal value)
-        {
-            _currencyRates = await GetCurrencyRates(DateTime.UtcNow);
-
-            return ConvertAmount(inputCurrencyCode, outputCurrencyCode, value);
-        }
-
-        public async Task<decimal> Convert(string inputCurrencyCode, string outputCurrencyCode, decimal value, DateTime date)
-        {
-            _currencyRates = await GetCurrencyRates(date);
-
-            return ConvertAmount(inputCurrencyCode, outputCurrencyCode, value);
-        }
-
         public async Task<decimal> CurrentRate(string inputCurrencyCode, string outputCurrencyCode)
         {
             _currencyRates = await GetCurrencyRates(DateTime.UtcNow);
@@ -56,12 +42,12 @@ namespace Infrastructure.Currency
             return fallbackUrl.Replace("latest", date);
         }
 
-        private string FormatDate(DateTime date)
+        private static string FormatDate(DateTime date)
         {
             return date.ToString("yyyy-MM-dd");
         }
 
-        private async Task<CurrencyRates> GetCurrencyRates(DateTime date)
+        private static async Task<CurrencyRates> GetCurrencyRates(DateTime date)
         {
             string formattedDate = FormatDate(date);
 
@@ -90,16 +76,6 @@ namespace Infrastructure.Currency
             }
 
             return new CurrencyRates(FormatDate(date));
-        }
-
-        private static decimal ConvertAmount(string inputCurrencyCode, string outputCurrencyCode, decimal value)
-        {
-            decimal fromRate = _currencyRates.Usd[inputCurrencyCode.ToLower()];
-            decimal toRate = _currencyRates.Usd[outputCurrencyCode.ToLower()];
-
-            decimal convertedAmount = value * (toRate / fromRate);
-
-            return Math.Round(convertedAmount, 2);
         }
     }
 }
