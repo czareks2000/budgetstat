@@ -10,10 +10,16 @@ namespace API.Controllers
     {
         private readonly IBudgetService _budgetService = budgetService;
 
-        [HttpGet("budgets")] //api/budgets
+        [HttpGet("budgets/all")] //api/budgets/all
         public async Task<IActionResult> GetBudgets()
         {
             return HandleResult(await _budgetService.GetAll());
+        }
+
+        [HttpGet("budgets")] //api/budgets
+        public async Task<IActionResult> GetBudgets([FromQuery]int categoryId)
+        {
+            return HandleResult(await _budgetService.GetBudgets(categoryId));
         }
 
         [Authorize(Policy = "IsOwner")]

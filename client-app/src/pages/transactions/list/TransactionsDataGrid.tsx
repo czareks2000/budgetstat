@@ -30,9 +30,10 @@ export default observer(function TransactionsDataGrid() {
             transactionId: transaction.transactionId, 
             type: transaction.amount.type,
             category: transaction.category.name,
+            categoryId: transaction.category.id,
             amount: transaction.amount.value,
             currencySymbol: transaction.amount.currencySymbol,
-            accountId: transaction.accountId
+            toAccountId: transaction.accountId
         })
         setOpenDeleteDialog(true);
     }

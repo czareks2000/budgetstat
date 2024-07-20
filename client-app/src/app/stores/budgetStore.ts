@@ -41,10 +41,16 @@ export default class BudgetStore {
     }
 
     refreshBudgets = async (categoryId: number) => {
-        // pobiera z bazy budżety, który dotyczy danej kategorii
-
-        // sprawdzić lokalnie który budżet dotyczy danej kategorii
-        // nastepnie pobrać z bazy budget o danym id
+        try {
+            const budgets = await agent.Budgets.list(categoryId);
+            runInAction(() => {
+                budgets.forEach((budget) => {
+                    this.setBudget(budget);
+                })
+            })
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     selectBudget = (budgetId: number) => {
@@ -57,7 +63,7 @@ export default class BudgetStore {
 
     loadBudgets = async () => {
         try {
-            const budgets = await agent.Budgets.list();
+            const budgets = await agent.Budgets.getAll();
             budgets.forEach(budget => this.setBudget(budget));
             runInAction(() => this.budgetsLoaded = true)      
         } catch (error) {

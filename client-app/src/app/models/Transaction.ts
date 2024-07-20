@@ -45,6 +45,7 @@ export interface TransactionRowItem {
 }
 
 export interface CategoryItem {
+    id: number;
     name: string;
     iconId: number;
 }
@@ -76,9 +77,10 @@ export interface TransactionToDelete {
     transactionId: number,
     type: TransactionType,
     category: string,
+    categoryId: number;
     amount: number;
     currencySymbol: string;
-    accountId: number | null;
+    toAccountId: number | null;
 }
 
 export interface PlannedTransactionCreateValues {

@@ -91,6 +91,28 @@ namespace Application.Services
             return Result<List<BudgetDto>>.Success(budgetsDto);
         }
 
+        public async Task<Result<List<BudgetDto>>> GetBudgets(int categoryId)
+        {
+            var user = await _utilities.GetCurrentUserAsync();
+
+            var budgetsDto = await _context.Budgets
+                .Include(b => b.Currency)
+                .Include(b => b.Categories)
+                    .ThenInclude(c => c.Category)
+                        .ThenInclude(c => c.Icon)
+                .Where(b => b.User == user)
+                .Where(b => b.Categories.Select(b => b.CategoryId).Contains(categoryId))
+                .ProjectTo<BudgetDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            var result = new List<BudgetDto>();
+
+            foreach (var budget in budgetsDto)
+                result.Add(await CalculateAmounts(user, budget));
+
+            return Result<List<BudgetDto>>.Success(budgetsDto);
+        }
+
         public async Task<Result<BudgetDto>> Get(int budgetId)
         {
             var user = await _utilities.GetCurrentUserAsync();

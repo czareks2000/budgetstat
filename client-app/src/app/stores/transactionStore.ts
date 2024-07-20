@@ -1,5 +1,5 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
-import { TransactionParams, TransactionParamsFormValues, TransactionRowItem } from "../models/Transaction";
+import { TransactionParams, TransactionParamsFormValues, TransactionRowItem, TransactionToDelete } from "../models/Transaction";
 import agent from "../api/agent";
 import { convertToDate } from "../utils/ConvertToDate";
 import dayjs from "dayjs";
@@ -151,22 +151,22 @@ export default class TransactionStore {
         }
     }
 
-    deleteTransaction = async (index: number, transactionId: number, type: TransactionType, toAccountId: number | null) => {
+    deleteTransaction = async (transaction: TransactionToDelete) => {
         try {
-            this.transactionRegistry.delete(index);
+            this.transactionRegistry.delete(transaction.index);
 
             let fromAccountId: number | null = null;
 
-            if (type === TransactionType.Transfer)
-                fromAccountId = await agent.Transactions.deleteTransfer(transactionId);
+            if (transaction.type === TransactionType.Transfer)
+                fromAccountId = await agent.Transactions.deleteTransfer(transaction.transactionId);
             else
-                await agent.Transactions.deleteTransaction(transactionId);
+                await agent.Transactions.deleteTransaction(transaction.transactionId);
 
             runInAction(() => {
-                if(toAccountId)
-                    this.updateDataInOtherStores(toAccountId);
+                this.updateDataInOtherStores(transaction.toAccountId, transaction.categoryId);
+
                 if(fromAccountId)
-                    this.updateDataInOtherStores(fromAccountId);
+                    this.updateDataInOtherStores(fromAccountId, null);
             })
 
         } catch (error) {
@@ -174,7 +174,10 @@ export default class TransactionStore {
         }
     }
 
-    private updateDataInOtherStores = (accountId: number) => {
-        store.accountStore.loadAccount(accountId);
+    private updateDataInOtherStores = (accountId: number | null, categoryId: number | null) => {
+        if (accountId)
+            store.accountStore.loadAccount(accountId);
+        if (categoryId)
+            store.budgetStore.refreshBudgets(categoryId);
     }
 }

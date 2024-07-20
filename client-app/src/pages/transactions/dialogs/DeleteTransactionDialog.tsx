@@ -21,8 +21,7 @@ export default observer(function DeleteTransactionDialog({open, setOpen, transac
 
     const handleDelete = () => {
         setIsSubmitting(true);
-        const {index, transactionId, type, accountId} = transaction;
-        deleteTransaction(index, transactionId, type, accountId)
+        deleteTransaction(transaction)
             .then(() => {
                 setIsSubmitting(false);
                 setOpen(false);
