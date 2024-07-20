@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace Infrastructure.Currency
 {
-    public class CurrencyRatesService : ICurrencyRatesService
+    public class FreeCurrencyRatesService : ICurrencyRatesService
     {
         private static string apiVersion = "v1";
 

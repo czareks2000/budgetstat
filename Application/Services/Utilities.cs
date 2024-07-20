@@ -14,11 +14,6 @@ namespace Application.Services
         private readonly ICurrencyRatesService _currencyService = currencyService;
         private readonly IUserAccessor _userAccessor = userAccessor;
 
-        // w przyszłości zamienić dictionary na wpisy w bazie danych
-        Dictionary<string, decimal> _rates = new Dictionary<string, decimal>();
-
-        Dictionary<string, Dictionary<string, decimal>> _historicRates = new Dictionary<string, Dictionary<string, decimal>>();
-
         // zwraca użytkownika, który wywołał funkcje
         public async Task<User> GetCurrentUserAsync()
         {
@@ -33,65 +28,89 @@ namespace Application.Services
             if (outputCurrencyCode == inputCurrencyCode)
                 return value;
 
-            decimal currentRate;
+            decimal? currentRate = GetRateFromDatabase(inputCurrencyCode, outputCurrencyCode, DateTime.UtcNow);
 
-            var key = $"{inputCurrencyCode}{outputCurrencyCode}";
+            if (currentRate.HasValue)
+                return value * currentRate.Value;
 
-            if (_rates.TryGetValue(key, out decimal rate))
-                currentRate = rate;
-            else
-            {
-                currentRate = await _currencyService.CurrentRate(inputCurrencyCode, outputCurrencyCode);
-                _rates.Add(key, currentRate);
-            }
+            // get current rate and save to database
+            currentRate = await _currencyService.CurrentRate(inputCurrencyCode, outputCurrencyCode);
+            await SaveRateToDatabase(inputCurrencyCode, outputCurrencyCode, DateTime.UtcNow, currentRate.Value);
 
-            return value * currentRate;
+            return value * currentRate.Value;
         }
 
-        // zwraca kwotę w podanej walucie (historyczny kurs
+        // zwraca kwotę w podanej walucie (historyczny kurs)
         public async Task<decimal> Convert(string inputCurrencyCode, string outputCurrencyCode, decimal value, DateTime date)
         {
             if (outputCurrencyCode == inputCurrencyCode)
                 return value;
 
-            decimal currencyRate;
+            decimal? historicRate = GetRateFromDatabase(inputCurrencyCode, outputCurrencyCode, date);
 
-            var key = date.Date.ToString();
-            var currencyPairkey = $"{inputCurrencyCode}{outputCurrencyCode}";
+            if (historicRate.HasValue)
+                return value * historicRate.Value;
 
-            if (_historicRates.TryGetValue(key, out Dictionary<string, decimal> rates))
-            {
-                if (rates.TryGetValue(currencyPairkey, out decimal rate))
-                    currencyRate = rate;
-                else
-                {
-                    currencyRate = await _currencyService.HistoricRate(inputCurrencyCode, outputCurrencyCode, date);
-                    rates.Add(currencyPairkey, currencyRate);
-                }
-            }
-            else
-            {
-                currencyRate = await _currencyService.HistoricRate(inputCurrencyCode, outputCurrencyCode, date);
+            // get historic rate and save to database
+            historicRate = await _currencyService.HistoricRate(inputCurrencyCode, outputCurrencyCode, date);
+            await SaveRateToDatabase(inputCurrencyCode, outputCurrencyCode, date, historicRate.Value);
 
-                _historicRates.Add(key, 
-                    new Dictionary<string, decimal>{
-                        { 
-                            currencyPairkey, 
-                            currencyRate 
-                        } 
-                    }
-                );
-            }            
-
-            return value * currencyRate;
+            return value * historicRate.Value;
         }
 
+        // zwraca aktualny kurs
         public async Task<decimal> GetCurrentRate(string inputCurrencyCode, string outputCurrencyCode)
         {
-            if (inputCurrencyCode != outputCurrencyCode)
-                return await _currencyService.CurrentRate(inputCurrencyCode, outputCurrencyCode);
-            else
+            if (inputCurrencyCode == outputCurrencyCode)
                 return 1;
+
+            decimal? currentRate = GetRateFromDatabase(inputCurrencyCode, outputCurrencyCode, DateTime.UtcNow);
+
+            if (currentRate.HasValue)
+                return currentRate.Value;
+
+            // get current rate and save to database
+            currentRate = await _currencyService.CurrentRate(inputCurrencyCode, outputCurrencyCode);
+            await SaveRateToDatabase(inputCurrencyCode, outputCurrencyCode, DateTime.UtcNow, currentRate.Value);
+
+            return currentRate.Value;
+        }
+
+        private async Task<bool> SaveRateToDatabase(string inputCurrencyCode, string outputCurrencyCode, DateTime date, decimal rate)
+        {
+            try
+            {
+                var exchangeRate = new ExchangeRate
+                {
+                    InputCurrencyCode = inputCurrencyCode.ToLower(),
+                    OutputCurrencyCode = outputCurrencyCode.ToLower(),
+                    Rate = rate,
+                    Date = date.Date
+                };
+
+                _context.ExchangeRates.Add(exchangeRate);
+                return await _context.SaveChangesAsync() > 0;
+            }
+            catch (DbUpdateException ex)
+            {
+                // Check if the exception is due to the unique constraint violation
+                if (ex.InnerException != null && ex.InnerException.Message.Contains("unique"))
+                {
+                    return false;
+                }
+                throw;
+            }
+        }
+
+        private decimal? GetRateFromDatabase(string inputCurrencyCode, string outputCurrencyCode, DateTime date)
+        {
+            var exchangeRate = _context.ExchangeRates
+                .Where(er => er.InputCurrencyCode.ToLower() == inputCurrencyCode.ToLower())
+                .Where(er => er.OutputCurrencyCode.ToLower() == outputCurrencyCode.ToLower())
+                .Where(er => er.Date.Date == date.Date)
+                .FirstOrDefault();
+
+            return exchangeRate?.Rate;
         }
 
         public bool CheckIfCurrencyExists(int currencyId)

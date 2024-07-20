@@ -1,9 +1,6 @@
 ﻿using Domain;
-using Domain.Enums;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
-
 
 namespace Persistence
 {
@@ -94,6 +91,11 @@ namespace Persistence
             builder.Entity<Loan>()
                .Property(l => l.CurrentAmount)
                .HasDefaultValue(0);
+
+            // Unique constraint for ExchangeRate
+            builder.Entity<ExchangeRate>()
+                .HasIndex(er => new { er.InputCurrencyCode, er.OutputCurrencyCode, er.Date })
+                .IsUnique();
         }
     }
 }
