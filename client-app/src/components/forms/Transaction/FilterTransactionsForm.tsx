@@ -29,10 +29,7 @@ export default observer(function FilterTransactionsForm() {
             }),
         endDate: Yup.date()
             .required('End date is required')
-            .test('end-after-start', 'End date cannot be before start date', function(value) {
-                const { startDate } = this.parent;
-                return !startDate || value >= startDate;
-            })
+            .max(dayjs().add(1, 'day').startOf('day').toDate(), 'End date cannot be in the future')
     });
 
     const handleFilterTransactionsFormSubmit = (
