@@ -38,8 +38,7 @@ export default observer(function DeleteAccountDialog({open, setOpen}: Props) {
                 <DialogTitle id='dialog-title'>Confirm Account Deletion</DialogTitle>
                 <DialogContent>
                     <Box id='dialog-description'>
-                        <Typography variant="body1" mb={2}>Are you sure you want to delete the "{selectedAccount?.name}"?</Typography> 
-                        <Typography variant="body1" mb={2}>Loan history associated with this account will be deleted.</Typography> 
+                        <Typography variant="body1" mb={2}>Are you sure you want to delete the "{selectedAccount?.name}"?</Typography>
                         <Typography variant="body1">If you check the box below, all related transactions will be also deleted.</Typography> 
                     </Box>
                     <Box ml={2} mt={2}>
