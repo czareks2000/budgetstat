@@ -108,9 +108,23 @@ namespace Application.Services
                 .Where(er => er.InputCurrencyCode.ToLower() == inputCurrencyCode.ToLower())
                 .Where(er => er.OutputCurrencyCode.ToLower() == outputCurrencyCode.ToLower())
                 .Where(er => er.Date.Date == date.Date)
+                .Select(er => (decimal?)er.Rate)
                 .FirstOrDefault();
 
-            return exchangeRate?.Rate;
+            if (exchangeRate == null) 
+            {
+                exchangeRate = _context.ExchangeRates
+                    .Where(er => er.InputCurrencyCode.ToLower() == outputCurrencyCode.ToLower())
+                    .Where(er => er.OutputCurrencyCode.ToLower() == inputCurrencyCode.ToLower())
+                    .Where(er => er.Date.Date == date.Date)
+                    .Select(er => (decimal?)er.Rate)
+                    .FirstOrDefault();
+
+                if (exchangeRate != null)
+                    exchangeRate = 1 / exchangeRate;
+            }
+
+            return exchangeRate;
         }
 
         public bool CheckIfCurrencyExists(int currencyId)
