@@ -1,13 +1,13 @@
-import { Box, Divider, Grid, Paper, Stack } from "@mui/material"
+import { Divider, Grid, Stack } from "@mui/material"
 import { observer } from "mobx-react-lite"
 import FloatingAddButton from "../../components/common/FloatingAddButton"
 import { router } from "../../app/router/Routes"
 import TransactionsDataGrid from "./list/TransactionsDataGrid"
 import TransactionsFilters from "./list/TransactionsFilters"
 
-export default observer(function Transactions() {    
+export default observer(function Transactions() {   
     const handleAddButtonClick = () => {
-        router.navigate('/transactions/create');
+        router.navigate(`/transactions/create`);
     }
       
     return ( 

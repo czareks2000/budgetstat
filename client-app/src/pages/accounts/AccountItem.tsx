@@ -36,77 +36,73 @@ export default observer(function AccountItem({account, openDeleteDialog}: Props)
     }
 
     return (
-    <NoDecorationLink 
-        to={`/accounts/${account.id}/transactions`}
-        content={
-        <Card key={account.id} >
-            <CardContent>
-                <Grid container justifyContent="flex-end">
-                    <Grid item xs>
-                        <Typography variant="h5">
-                            {account.name} {isVisible() ? '' : '(hidden)'}
-                        </Typography>
-                        <Typography variant="subtitle1" color="textSecondary">
-                            {account.description}
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={'auto'} >
-                        <Typography variant="h5" color={'primary'}>
-                            {formatAmount(account.balance)} {account.currency.symbol}
-                        </Typography>
-                    </Grid>
+    <Card key={account.id} >
+        <CardContent>
+            <Grid container justifyContent="flex-end">
+                <Grid item xs>
+                    <Typography variant="h5">
+                        {account.name} {isVisible() ? '' : '(hidden)'}
+                    </Typography>
+                    <Typography variant="subtitle1" color="textSecondary">
+                        {account.description}
+                    </Typography>
                 </Grid>
-            </CardContent>
-            <Divider/>
-            <CardActions >
-                <Grid container justifyContent="space-between">
+                <Grid item xs={'auto'} >
+                    <Typography variant="h5" color={'primary'}>
+                        {formatAmount(account.balance)} {account.currency.symbol}
+                    </Typography>
+                </Grid>
+            </Grid>
+        </CardContent>
+        <Divider/>
+        <CardActions >
+            <Grid container justifyContent="space-between">
+                <Tooltip 
+                        title={isVisible() ? "Hide" : "Make Visible"}
+                        placement="right"
+                        arrow
+                        enterDelay={500}
+                        leaveDelay={200}>
+                    <Switch 
+                        checked={isVisible()} 
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleSwitchButtonClick();
+                        }}/>
+                </Tooltip>
+                <Box>
+                    <IconButton 
+                        aria-label="edit"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleEditButtonClick();
+                        }}>
+                        <Edit />
+                    </IconButton>
                     <Tooltip 
-                            title={isVisible() ? "Hide" : "Make Visible"}
-                            placement="right"
-                            arrow
-                            enterDelay={500}
-                            leaveDelay={200}>
-                        <Switch 
-                            checked={isVisible()} 
-                            onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handleSwitchButtonClick();
-                            }}/>
-                    </Tooltip>
-                    <Box>
+                        title={account.canBeDeleted ? '' : 
+                            'The account has loans in progress.'}
+                        placement="top"
+                        arrow>
+                        <span>
                         <IconButton 
-                            aria-label="edit"
+                            disabled={!account.canBeDeleted}
+                            aria-label="delete"
                             onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                handleEditButtonClick();
+                                handleDeleteButtonClick();
                             }}>
-                            <Edit />
+                                <Delete />
                         </IconButton>
-                        <Tooltip 
-                            title={account.canBeDeleted ? '' : 
-                                'The account has loans in progress.'}
-                            placement="top"
-                            arrow>
-                            <span>
-                            <IconButton 
-                                disabled={!account.canBeDeleted}
-                                aria-label="delete"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    handleDeleteButtonClick();
-                                }}>
-                                    <Delete />
-                            </IconButton>
-                            </span>
-                        </Tooltip>
-                     
-                    </Box>
-                </Grid>
-            </CardActions>
-        </Card>
-    }/>
+                        </span>
+                    </Tooltip>
+                    
+                </Box>
+            </Grid>
+        </CardActions>
+    </Card>
     )
 })
