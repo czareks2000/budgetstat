@@ -56,6 +56,12 @@ export interface AmountItem {
     currencySymbol: string;
 }
 
+export interface TransactionFormValues {
+    type: TransactionType;
+    categoryId: number | string;
+    accountId: number| string;
+}
+
 export interface TransactionCreateValues {
     amount: number;
     categoryId: number;

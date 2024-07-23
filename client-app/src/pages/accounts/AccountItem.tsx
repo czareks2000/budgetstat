@@ -7,7 +7,6 @@ import { useStore } from "../../app/stores/store";
 
 import { router } from "../../app/router/Routes";
 import { formatAmount } from "../../app/utils/FormatAmount";
-import NoDecorationLink from "../../components/common/NoDecorationLink";
 
 interface Props {
     account: Account;

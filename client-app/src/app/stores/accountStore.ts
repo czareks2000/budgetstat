@@ -5,6 +5,7 @@ import { AccountStatus } from "../models/enums/AccountStatus";
 import { Option } from "../models/Option";
 import { convertToDate } from "../utils/ConvertToDate";
 import { store } from "./store";
+import { formatAmount } from "../utils/FormatAmount";
 
 export default class AccountStore {
     accountsRegistry = new Map<number, Account>();
@@ -27,7 +28,7 @@ export default class AccountStore {
     get accountsAsOptions(): Option[] {
         return this.accounts.map(account =>({
             value: account.id,
-            text: `${account.name} (${account.currency.code})`
+            text: `${account.name} (${formatAmount(account.balance)} ${account.currency.symbol})`
         }));
     }
 
@@ -52,7 +53,7 @@ export default class AccountStore {
             .filter(a => a.currency.id === currencyId)
             .map(account => ({
                 value: account.id,
-                text: `${account.name} (${account.currency.code})`
+                text: `${account.name} (${formatAmount(account.balance)} ${account.currency.symbol})`
             }));
     }
 
