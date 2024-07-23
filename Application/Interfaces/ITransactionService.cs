@@ -1,6 +1,7 @@
 ﻿using Application.Core;
 using Application.Dto.Transaction;
 using Application.Dto.Transaction.Transfer;
+using Domain.Enums;
 
 namespace Application.Interfaces
 {
@@ -27,7 +28,7 @@ namespace Application.Interfaces
         Task<Result<TransferDto>> Update(int transferId, TransferCreateUpdateDto updatedTransfer);
 
         // szczególy transakcji (potrzebne do edycji)
-        Task<Result<TransactionDto>> Get(int transactionId);
+        Task<Result<TransactionFormValues>> Get(int transactionId, TransactionType type);
         // przegląd transakcji
         Task<Result<List<TransactionListItem>>> GetTransactions(TransactionParams transactionParams);
 

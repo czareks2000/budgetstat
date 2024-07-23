@@ -15,8 +15,8 @@ import DeleteTransactionDialog from "../dialogs/DeleteTransactionDialog";
 export default observer(function TransactionsDataGrid() {
     const {transactionStore: {transactions, transactionsLoaded, showDescriptionColumn, setShowDescriptionColumn}} = useStore();
     
-    const handleEditButtonClick = (transactionId: number) => {
-        router.navigate(`/transactions/${transactionId}/edit`);
+    const handleEditButtonClick = (transactionId: number, type: TransactionType) => {
+        router.navigate(`/transactions/${type}/${transactionId}/edit`);
     }
 
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -119,7 +119,7 @@ export default observer(function TransactionsDataGrid() {
                         icon={<Edit />}
                         label="Edit"
                         disabled={params.row.accountId === null}
-                        onClick={() => handleEditButtonClick(Number(transaction.transactionId))} />,
+                        onClick={() => handleEditButtonClick(Number(transaction.transactionId), transaction.amount.type)} />,
                     <GridActionsCellItem
                         icon={<Delete />}
                         label="Delete"

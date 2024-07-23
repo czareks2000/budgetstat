@@ -4,7 +4,7 @@ import { store } from "../stores/store";
 import { ChangePasswordFormValues, User, UserFormValues } from "../models/User";
 import { Account, AccountFormValues } from "../models/Account";
 import { AccountStatus } from "../models/enums/AccountStatus";
-import { PlannedTransactionCreateValues, Transaction, TransactionCreateValues, TransactionParams, TransactionRowItem, TransactionUpdateValues } from "../models/Transaction";
+import { PlannedTransactionCreateValues, Transaction, TransactionCreateValues, TransactionFormValues, TransactionParams, TransactionRowItem, TransactionUpdateValues } from "../models/Transaction";
 import { Budget, BudgetDto } from "../models/Budget";
 import { Currency } from "../models/Currency";
 import { CategoryCreateValues, CategoryUpdateValues, MainCategory } from "../models/Category";
@@ -17,6 +17,7 @@ import { Icon } from "../models/Icon";
 import { Asset, AssetCategory, AssetCreateUpdateValues } from "../models/Asset";
 import { NetWorthStats, NetWorthValueOverTime } from "../models/Stats";
 import { ChartPeriod } from "../models/enums/ChartPeriod";
+import { TransactionType } from "../models/enums/TransactionType";
 
 const sleep = (delay: number) => {
     return new Promise((resolve) => {
@@ -153,7 +154,9 @@ const Transactions = {
         }
 
         return requests.get<TransactionRowItem[]>(`/transactions${urlParams}`);
-    }
+    },
+    getTransactionFormValues: (transactionId: number, type: TransactionType) => 
+        requests.get<TransactionFormValues>(`/transactions/${transactionId}?type=${type}`)
         
 }
 

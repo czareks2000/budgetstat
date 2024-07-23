@@ -103,6 +103,10 @@ export default class AccountStore {
         return this.getAccount(parseInt(accountId as string))?.currency;
     }
 
+    isTheSameCurrency = (firstAccountId: number | string, secondAccountId: number | string) => {
+        return this.getAccountCurrency(firstAccountId)?.id === this.getAccountCurrency(secondAccountId)?.id
+    }
+
     loadAccounts = async () => {
         try {
             const accounts = await agent.Accounts.list();

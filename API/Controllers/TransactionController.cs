@@ -1,6 +1,7 @@
 ﻿using Application.Dto.Transaction;
 using Application.Dto.Transaction.Transfer;
 using Application.Interfaces;
+using Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -74,9 +75,15 @@ namespace API.Controllers
         }
 
         [HttpGet("transactions")] //api/transactions?
-        public async Task<IActionResult> UpdateTransfer([FromQuery] TransactionParams param)
+        public async Task<IActionResult> GetTransactions([FromQuery] TransactionParams param)
         {
             return HandleResult(await _transactionService.GetTransactions(param));
+        }
+
+        [HttpGet("transactions/{transactionId}/")] //api/transactions
+        public async Task<IActionResult> GetTransactionFormValues(int transactionId, [FromQuery] TransactionType type)
+        {
+            return HandleResult(await _transactionService.Get(transactionId, type));
         }
     }
 }

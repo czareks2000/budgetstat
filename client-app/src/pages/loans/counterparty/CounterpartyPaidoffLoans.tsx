@@ -1,11 +1,12 @@
 import { observer } from "mobx-react-lite"
-import { Box, CircularProgress, Divider } from "@mui/material"
+import { Divider } from "@mui/material"
 import { useStore } from "../../../app/stores/store"
 import { useParams } from "react-router-dom"
 import { LoanType } from "../../../app/models/enums/LoanType"
 import { LoanStatus } from "../../../app/models/enums/LoanStatus"
 import LoanItem from "../common/LoanItem"
 import { useEffect } from "react"
+import LoadingWithLabel from "../../../components/common/LoadingWithLabel"
 
 export default observer(function CounterpartyPaidoffLoans() {
     const {loanStore: {getCounterpartyLoans, loadLoans, loansPaidOffLoaded, counterpartyLoansLoaded}} = useStore()
@@ -42,10 +43,7 @@ export default observer(function CounterpartyPaidoffLoans() {
             </>
             :
             <>
-                <Divider>Loading...</Divider>
-                <Box display={'flex'} justifyContent={'center'}>
-                    <CircularProgress />
-                </Box>
+                <LoadingWithLabel />
             </>
             }
         </>

@@ -17,5 +17,7 @@ namespace Application.Dto.Transaction
         [Required]
         public DateTime Date { get; set; }
         public string Description { get; set; }
+        [Required]
+        public bool Considered { get; set; }
     }
 }

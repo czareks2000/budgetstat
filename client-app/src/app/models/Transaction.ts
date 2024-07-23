@@ -85,6 +85,7 @@ export interface TransactionUpdateValues {
     accountId: number; 
     date: Date;
     description?: string;
+    considered: boolean;
 }
 
 export interface TransactionToDelete {

@@ -18,19 +18,17 @@ import CategoryGroupedInput from "../../formInputs/CategoryGroupedInput";
 import { useEffect } from "react";
 
 interface Props {
-    accountId?: string | null;
+    initialValues: TransactionFormValues;
+    onSubmit: (values: TransactionFormValues, helpers: FormikHelpers<TransactionFormValues>) => void;
+    submitText: string;
+    editMode?: boolean;
 }
 
-export default observer(function CreateTransactionForm({accountId}: Props) {
+export default observer(function TransactionForm({initialValues, onSubmit, submitText, editMode}: Props) {
     const {
-        accountStore: {accountsAsOptions, getAccountCurrency},
+        accountStore: {accountsAsOptions, getAccountCurrency, isTheSameCurrency},
         currencyStore: {getCurrentExchangeRate, currentExchangeRate},
-        categoryStore: {getCategoriesAsOptions},
-        transactionStore: {createTransaction}} = useStore();
-    
-    const isTheSameCurrency = (firstAccountId: number | string, secondAccountId: number | string) => {
-        return getAccountCurrency(firstAccountId)?.id === getAccountCurrency(secondAccountId)?.id
-    }
+        categoryStore: {getCategoriesAsOptions}} = useStore();
 
     const validationSchema = Yup.object({
         type: Yup.string().required('Transaction type is required'),
@@ -40,19 +38,26 @@ export default observer(function CreateTransactionForm({accountId}: Props) {
         }),
         fromAccountId: Yup.string().nullable().when('type', {
             is: (val: TransactionType) => val == TransactionType.Transfer,
-            then: schema => schema.required('From Account is required')
+            then: schema => schema.required('Account is required').test(
+                'toAccountId',
+                'The source account must be different from the target account',
+                function(value) {
+                    const { toAccountId } = this.parent;
+                    return value != toAccountId;
+                }
+            )
         }),
         toAccountId: Yup.string().nullable().when('type', {
             is: (val: TransactionType) => val == TransactionType.Transfer,
-            then: schema => schema.required('To Account is required')
-        }).test(
-            'toAccountId',
-            'The target account must be different from the source account',
-            function(value) {
-                const { fromAccountId } = this.parent;
-                return value !== fromAccountId;
-            }
-        ),
+            then: schema => schema.required('Account is required').test(
+                'toAccountId',
+                'The target account must be different from the source account',
+                function(value) {
+                    const { fromAccountId } = this.parent;
+                    return value != fromAccountId;
+                }
+            )
+        }),
         incomeCategoryId: Yup.mixed().nullable().when('type', {
             is: (val: TransactionType) => val == TransactionType.Income,
             then: schema => schema.required('Category is required').nonNullable('Category is required')
@@ -82,25 +87,9 @@ export default observer(function CreateTransactionForm({accountId}: Props) {
         considered: Yup.boolean()
     });
 
-    const initialValues: TransactionFormValues = {
-        type: TransactionType.Expense,
-        accountId: accountId || "",
-        fromAccountId: "",
-        toAccountId: "",
-        incomeCategoryId: null,
-        expenseCategoryId: null,
-        amount: null,
-        fromAmount: null,
-        toAmount: null,
-        date: dayjs(),
-        description: "",
-        considered: true
-    }
-
     const onCancel = () => {
         router.navigate('/transactions');
     }
-
 
     const handleSubmit = (values: TransactionFormValues, helpers: FormikHelpers<TransactionFormValues>) => {
         let transformedValues: TransactionFormValues | null = null;
@@ -113,20 +102,7 @@ export default observer(function CreateTransactionForm({accountId}: Props) {
                 toAmount: values.fromAmount
             }
         }
-
-        createTransaction(transformedValues || values).then(() => {
-            router.navigate('/transactions');
-        }).catch((err) => {
-            if (values.type === TransactionType.Transfer)
-                helpers.setErrors({
-                    fromAmount: err
-                });
-            else
-                helpers.setErrors({
-                    amount: err
-                });
-            helpers.setSubmitting(false);
-        });
+        onSubmit(transformedValues || values, helpers);
     }
 
     return (
@@ -161,9 +137,10 @@ export default observer(function CreateTransactionForm({accountId}: Props) {
                         <Stack spacing={2}>
 
                             {/* Transaction Type */}
+                            {!editMode &&
                             <SelectInput
                                 label="Transaction Type" name={"type"}
-                                options={enumToOptions(TransactionType)} />
+                                options={enumToOptions(TransactionType)} />}
 
                             {/* Account */}
                             {(values.type !== TransactionType.Transfer) &&
@@ -231,7 +208,8 @@ export default observer(function CreateTransactionForm({accountId}: Props) {
                                 name={"date"}/>
 
                             {/* Description */}
-                            <TextInput label="Description" name="description" />
+                            {values.type !== TransactionType.Transfer &&
+                            <TextInput label="Description" name="description" />}
                             
                             {/* Considered */}
                             {values.type !== TransactionType.Transfer && <>
@@ -259,13 +237,13 @@ export default observer(function CreateTransactionForm({accountId}: Props) {
                                     Cancel
                                 </Button>
                                 <LoadingButton
-                                    color="success"
+                                    color={submitText === "Create"? "success" :"primary"}
                                     variant="contained"
                                     type="submit"
                                     fullWidth
                                     disabled={!(dirty && isValid) || isSubmitting}
                                     loading={isSubmitting}>
-                                    Create
+                                    {submitText}
                                 </LoadingButton>
                             </Stack>
                         </Stack>

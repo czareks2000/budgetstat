@@ -81,7 +81,6 @@ namespace Application.Core
                     .MapFrom(src => src.Currency.Symbol));
             CreateMap<Category, CategoryItem>();
 
-            // skonfigurowaæ
             CreateMap<Transfer, TransactionListItem>()
                 .ForMember(dest => dest.TransactionId, opt => opt
                     .MapFrom(src => src.Id))
@@ -105,6 +104,18 @@ namespace Application.Core
 
             CreateMap<TransferCreateUpdateDto, Transfer>();
             CreateMap<Transfer, TransferDto>();
+
+            
+            CreateMap<Transaction, TransactionFormValues>()
+                .ForMember(dest => dest.Description, opt => opt
+                   .MapFrom(src => src.Description ?? ""));
+            CreateMap<Transfer, TransactionFormValues>()
+                .ForMember(dest => dest.Description, opt => opt
+                   .MapFrom(src => ""));
+            //skonfigurowaæ MainCategoryName
+            CreateMap<Category, CategoryOption>()
+                .ForMember(dest => dest.MainCategoryName, opt => opt
+                   .MapFrom(src => src.MainCategory.Name));
 
             CreateMap<CounterpartyCreateDto, Counterparty>();
             CreateMap<Counterparty, CounterpartyDto>();

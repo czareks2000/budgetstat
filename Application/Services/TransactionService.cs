@@ -110,6 +110,7 @@ namespace Application.Services
         {
             // sprawdzenie czy transakcja istnieje
             var transaction = await _context.Transactions
+                .Include(t => t.Category)
                 .Include(t => t.Account)
                 .FirstOrDefaultAsync(t => t.Id == transactionId);
 
@@ -379,9 +380,46 @@ namespace Application.Services
             return Result<TransferDto>.Success(transferDto);
         }
 
-        public Task<Result<TransactionDto>> Get(int transactionId)
+        public async Task<Result<TransactionFormValues>> Get(int transactionId, TransactionType type)
         {
-            throw new NotImplementedException();
+            TransactionFormValues transactionFormValues = new TransactionFormValues 
+            { 
+                Type = type
+            };
+
+            if (type == TransactionType.Transfer)
+            {
+                var transfer = await _context.Transfers
+                    .Where(t => t.Id == transactionId)
+                    .FirstOrDefaultAsync();
+
+                if (transfer == null) return null;
+
+                _mapper.Map(transfer, transactionFormValues);
+
+                return Result<TransactionFormValues>.Success(transactionFormValues);
+            }
+
+            var transaction = await _context.Transactions
+                .Include(t => t.Category)
+                    .ThenInclude(t => t.MainCategory)
+                .Where(t => t.Id == transactionId)
+                .FirstOrDefaultAsync();
+
+            if (transaction == null) return null;
+
+            //dodać sprawdzenie czy przypisane konto
+
+            _mapper.Map(transaction, transactionFormValues);
+
+            if (transaction.Category.Type == TransactionType.Expense)
+                transactionFormValues.ExpenseCategoryId = _mapper
+                    .Map<CategoryOption>(transaction.Category);
+            else
+                transactionFormValues.IncomeCategoryId = _mapper
+                    .Map<CategoryOption>(transaction.Category);
+
+            return Result<TransactionFormValues>.Success(transactionFormValues);
         }
 
         public async Task<Result<List<TransactionListItem>>> GetTransactions(TransactionParams transactionParams)
@@ -469,7 +507,7 @@ namespace Application.Services
                 transactions.AddRange(transfers);
             }
 
-            transactions = [.. transactions.OrderByDescending(t => t.Date.Date)];
+            transactions = [.. transactions.OrderByDescending(t => t.Date)];
 
             int index = 1;
             foreach (var transaction in transactions)

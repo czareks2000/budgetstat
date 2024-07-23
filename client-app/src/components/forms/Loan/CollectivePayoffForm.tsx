@@ -35,13 +35,6 @@ export default observer(function CollectivePayoffForm({loans, counterpartyId}: P
         loanType: Yup.number().required('Choose which type of loans you want to repay'),
     });
 
-    const initialValues: CollectivePayoffValues = {
-        amount: null,
-        accountId: "",
-        date: dayjs(),
-        loanType: LoanType.Credit
-    }
-
     const handleCreateLoanFormSubmit = (payoff: CollectivePayoffValues, helpers: FormikHelpers<CollectivePayoffValues>) => {
         const transformedValues: CollectivePayoffValues = {
             ...payoff,
@@ -78,6 +71,13 @@ export default observer(function CollectivePayoffForm({loans, counterpartyId}: P
     loanCurrencies.forEach((currencyId) => {
         accountOptions = [...accountOptions, ...getAccountsByCurrencyAsOptions(currencyId)];
     })
+
+    const initialValues: CollectivePayoffValues = {
+        amount: null,
+        accountId: "",
+        date: dayjs(),
+        loanType: loanTypeOptions[0].value
+    }
     
     return (
         <>

@@ -81,7 +81,7 @@ export default observer(function BudgetForm({initialValues, onSubmit, onCancel, 
                             Cancel
                         </Button>
                         <LoadingButton 
-                            color="primary" 
+                            color={submitText === "Create"? "success" :"primary"}
                             variant="contained" 
                             type="submit" 
                             fullWidth

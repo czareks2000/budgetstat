@@ -8,6 +8,7 @@ namespace Application.Dto.Transaction
         [Required]
         [GreaterThanZero(ErrorMessage = "The amount must be positive")]
         public decimal Amount { get; set; }
+        [Required]
         [GreaterThanZero(ErrorMessage = "Invalid category id")]
         public int CategoryId { get; set; }
         [Required]
