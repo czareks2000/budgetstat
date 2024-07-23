@@ -175,6 +175,8 @@ const Budgets = {
 const Currencies = {
     list: () => 
         requests.get<Currency[]>('/currencies'),
+    currentExchangeRate: (inputCurrencyCode: string, outputCurrencyCode: string) =>
+        requests.get<number>(`/exchangerate/${inputCurrencyCode}/${outputCurrencyCode}`)
 }
 
 const Categories = {

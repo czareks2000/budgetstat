@@ -1,5 +1,6 @@
 import { InputAdornment, TextField } from "@mui/material";
 import { useField } from "formik";
+import { observer } from "mobx-react-lite";
 
 interface Props {
     name: string;
@@ -9,9 +10,10 @@ interface Props {
     adornmentPosition?: 'start' | 'end';
     adormentText?: string;
     fullWidth?: boolean;
+    helperText?: string;
 }
 
-export default function NumberInput(props: Props) {
+export default observer(function NumberInput(props: Props) {
     const [field, meta] = useField(props.name);
 
     const InputProps = props.adornment ? 
@@ -34,7 +36,7 @@ export default function NumberInput(props: Props) {
                 type="number"
                 value={field.value === null ? '' : field.value}
                 error={meta.touched && Boolean(meta.error)}
-                helperText={meta.touched && meta.error}
+                helperText={meta.touched && meta.error || props.helperText}
                 InputProps={InputProps}
                 autoComplete='off'
                 onWheel={(e) => (e.target as HTMLElement).blur()}
@@ -42,4 +44,4 @@ export default function NumberInput(props: Props) {
         </>
         
     )
-}
+})

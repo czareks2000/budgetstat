@@ -6,5 +6,6 @@ namespace Application.Interfaces
     public interface ICurrencyService
     {
         Task<Result<List<CurrencyDto>>> GetAll();
+        Task<Result<decimal>> GetCurrentExchangeRate(string inputCurrencyCode, string outputCurrencyCode);
     }
 }

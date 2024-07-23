@@ -9,6 +9,8 @@ export default class CurrencyStore {
     defaultCurrency: Currency | undefined = undefined;
     currenciesLoaded = false;
 
+    currentExchangeRate: number = 0;
+
     constructor() {
         makeAutoObservable(this);
     }
@@ -62,6 +64,17 @@ export default class CurrencyStore {
                 store.statsStore.loadNetWorthStats();
                 store.statsStore.loadNetWorthValueOverTime();
             });
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    getCurrentExchangeRate = async (inputCurrencyCode: string, outputCurrencyCode: string) => {
+        try {
+            const currentExchangeRate = await agent.Currencies.currentExchangeRate(inputCurrencyCode, outputCurrencyCode);
+            runInAction(() => {
+                this.currentExchangeRate = currentExchangeRate;
+            })
         } catch (error) {
             console.log(error);
         }

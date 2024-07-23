@@ -15,6 +15,7 @@ import { router } from "../../../app/router/Routes";
 import { TransactionFormValues } from "../../../app/models/Transaction";
 import { TransactionType } from "../../../app/models/enums/TransactionType";
 import CategoryGroupedInput from "../../formInputs/CategoryGroupedInput";
+import { useEffect } from "react";
 
 interface Props {
     accountId?: string | null;
@@ -23,6 +24,7 @@ interface Props {
 export default observer(function CreateTransactionForm({accountId}: Props) {
     const {
         accountStore: {accountsAsOptions, getAccountCurrency},
+        currencyStore: {getCurrentExchangeRate, currentExchangeRate},
         categoryStore: {getCategoriesAsOptions},
         transactionStore: {createTransaction}} = useStore();
     
@@ -43,7 +45,14 @@ export default observer(function CreateTransactionForm({accountId}: Props) {
         toAccountId: Yup.string().nullable().when('type', {
             is: (val: TransactionType) => val == TransactionType.Transfer,
             then: schema => schema.required('To Account is required')
-        }),
+        }).test(
+            'toAccountId',
+            'The target account must be different from the source account',
+            function(value) {
+                const { fromAccountId } = this.parent;
+                return value !== fromAccountId;
+            }
+        ),
         incomeCategoryId: Yup.mixed().nullable().when('type', {
             is: (val: TransactionType) => val == TransactionType.Income,
             then: schema => schema.required('Category is required').nonNullable('Category is required')
@@ -126,7 +135,28 @@ export default observer(function CreateTransactionForm({accountId}: Props) {
                 initialValues={initialValues}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit}>
-                {({ isValid, dirty, isSubmitting, values, handleChange }) => (
+                {({ isValid, dirty, isSubmitting, values, handleChange, setFieldValue }) => {
+                    useEffect(() => {
+                        if (values.type === TransactionType.Transfer && 
+                            !isTheSameCurrency(values.fromAccountId, values.toAccountId) && 
+                            values.toAccountId !== '' && values.fromAccountId !== '')
+                        {
+                            getCurrentExchangeRate(
+                                getAccountCurrency(values.fromAccountId)!.code, 
+                                getAccountCurrency(values.toAccountId)!.code
+                            );
+                        }
+                    },[values.type, values.toAccountId, values.fromAccountId, getCurrentExchangeRate, currentExchangeRate]);
+
+                    useEffect(() => {
+                        if (values.type === TransactionType.Transfer &&
+                            !isTheSameCurrency(values.fromAccountId, values.toAccountId) &&
+                            values.fromAmount && currentExchangeRate) {
+                            setFieldValue('toAmount', (values.fromAmount * currentExchangeRate).toFixed(2));
+                        }
+                    }, [values.fromAmount, values.fromAccountId, values.toAccountId, currentExchangeRate, setFieldValue]);
+
+                    return (
                     <Form>
                         <Stack spacing={2}>
 
@@ -177,7 +207,7 @@ export default observer(function CreateTransactionForm({accountId}: Props) {
                                     label={
                                         (!isTheSameCurrency(values.fromAccountId, values.toAccountId)&& 
                                         values.toAccountId !== '' && values.fromAccountId !== '') ? 
-                                        "Amount in source currency" : "Amount"
+                                        `Amount in ${getAccountCurrency(values.fromAccountId)!.code}` : "Amount"
                                     } 
                                     name={"fromAmount"}
                                     adornment adornmentPosition="end" 
@@ -185,9 +215,12 @@ export default observer(function CreateTransactionForm({accountId}: Props) {
                                 {/* To Amount */}
                                 {(!isTheSameCurrency(values.fromAccountId, values.toAccountId) && 
                                     values.toAccountId !== '' && values.fromAccountId !== '') &&
-                                <NumberInput label="Amount in target currency" name={"toAmount"}
-                                    adornment adornmentPosition="end" 
-                                    adormentText={getAccountCurrency(values.toAccountId)?.symbol} />
+                                <NumberInput label={`Amount in ${getAccountCurrency(values.toAccountId)!.code}`} name={"toAmount"}
+                                    adornment adornmentPosition="end"
+                                    helperText={`1 ${getAccountCurrency(values.fromAccountId)?.code} ≈ 
+                                    ${currentExchangeRate} 
+                                    ${getAccountCurrency(values.toAccountId)?.code}`}
+                                    adormentText={getAccountCurrency(values.toAccountId)?.symbol}/>
                                 }
                             </>}
 
@@ -201,6 +234,7 @@ export default observer(function CreateTransactionForm({accountId}: Props) {
                             <TextInput label="Description" name="description" />
                             
                             {/* Considered */}
+                            {values.type !== TransactionType.Transfer && <>
                             <Divider/>
                             <FormControlLabel 
                                 label="Include in analysis"
@@ -213,7 +247,7 @@ export default observer(function CreateTransactionForm({accountId}: Props) {
                                     onChange={handleChange}
                                     />}
                             />
-                            <Divider/>
+                            <Divider/></>}
 
                             {/* Buttons */}
                             <Stack direction={'row'} spacing={2}>
@@ -235,7 +269,7 @@ export default observer(function CreateTransactionForm({accountId}: Props) {
                                 </LoadingButton>
                             </Stack>
                         </Stack>
-                    </Form>)
+                    </Form>)}
                 }
             </Formik>
         </>

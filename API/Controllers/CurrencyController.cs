@@ -13,5 +13,11 @@ namespace API.Controllers
         {
             return HandleResult(await _currencyService.GetAll());
         }
+
+        [HttpGet("exchangerate/{inputCurrencyCode}/{outputCurrencyCode}")] //api/exchangerate/{inputCurrencyCode}/{outputCurrencyCode}
+        public async Task<IActionResult> GetExchangeRate(string inputCurrencyCode, string outputCurrencyCode)
+        {
+            return HandleResult(await _currencyService.GetCurrentExchangeRate(inputCurrencyCode, outputCurrencyCode));
+        }
     }
 }
