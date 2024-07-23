@@ -1,6 +1,6 @@
 import { 
     AccountBalance, ChildFriendly, Commute, 
-    DirectionsBike, DirectionsCar, Flight, 
+    DirectionsCar, Flight, 
     Help, Home, MapsHomeWork, MedicalServices, 
     Paid, Restaurant, SelfImprovement, ShoppingCart, ShowChart, SwapHoriz } from '@mui/icons-material'
 import { SvgIconProps } from '@mui/material';

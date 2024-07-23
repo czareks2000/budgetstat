@@ -1,7 +1,7 @@
 import { Box, Paper, Typography } from "@mui/material"
 import { observer } from "mobx-react-lite"
 import { router } from "../../../app/router/Routes"
-import { DataGrid, GridActionsCellItem, GridColDef, GridToolbar } from '@mui/x-data-grid';
+import { DataGrid, GridActionsCellItem, GridColDef, GridColumnVisibilityModel, GridToolbar } from '@mui/x-data-grid';
 import { Delete, Edit } from "@mui/icons-material"
 import CategoryIcon from "../../../components/common/CategoryIcon"
 import { formatAmount } from "../../../app/utils/FormatAmount"
@@ -13,7 +13,7 @@ import { useState } from "react";
 import DeleteTransactionDialog from "../dialogs/DeleteTransactionDialog";
 
 export default observer(function TransactionsDataGrid() {
-    const {transactionStore: {transactions, transactionsLoaded}} = useStore();
+    const {transactionStore: {transactions, transactionsLoaded, showDescriptionColumn, setShowDescriptionColumn}} = useStore();
     
     const handleEditButtonClick = (transactionId: number) => {
         router.navigate(`/transactions/${transactionId}/edit`);
@@ -137,6 +137,12 @@ export default observer(function TransactionsDataGrid() {
             return 'success.main'
     }
 
+    const handleColumnVisibilityModelChange = (newModel: GridColumnVisibilityModel) => {
+        if (newModel.description !== showDescriptionColumn) {
+            setShowDescriptionColumn(newModel.description);
+        }
+    }
+
     return (
     <>  
         <DeleteTransactionDialog 
@@ -159,7 +165,7 @@ export default observer(function TransactionsDataGrid() {
                         },
                         columns: {
                         columnVisibilityModel: {
-                            description: false, 
+                            description: showDescriptionColumn, 
                         },
                         },
                     }}
@@ -175,6 +181,7 @@ export default observer(function TransactionsDataGrid() {
                     }}
                     disableDensitySelector
                     disableColumnFilter
+                    onColumnVisibilityModelChange={handleColumnVisibilityModelChange}
                     slots={{ toolbar: GridToolbar }}
                     slotProps={{
                         toolbar: {

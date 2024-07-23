@@ -24,6 +24,8 @@ export default class TransactionStore {
     transactionParams: TransactionParams = this.initialParams;
     filterHasInitialValues = true;
 
+    showDescriptionColumn: boolean = localStorage.getItem('showDecriptionColumn') === 'true';
+
     constructor() {
         makeAutoObservable(this);
 
@@ -33,6 +35,17 @@ export default class TransactionStore {
                 this.loadTransactions();
             }
         )
+
+        reaction(
+            () => this.showDescriptionColumn,
+            () => {
+                localStorage.setItem('showDecriptionColumn', this.showDescriptionColumn ? 'true' : 'false')
+            }
+        )
+    }
+
+    setShowDescriptionColumn = (state: boolean) => {
+        this.showDescriptionColumn = state;
     }
 
     clearStore = () => {

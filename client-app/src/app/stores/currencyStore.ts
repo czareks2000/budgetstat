@@ -9,7 +9,7 @@ export default class CurrencyStore {
     defaultCurrency: Currency | undefined = undefined;
     currenciesLoaded = false;
 
-    currentExchangeRate: number = 0;
+    currentExchangeRate: number = 0; // used in transfer create/update forms
 
     constructor() {
         makeAutoObservable(this);
