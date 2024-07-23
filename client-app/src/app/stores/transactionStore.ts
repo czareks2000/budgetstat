@@ -1,10 +1,12 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
-import { TransactionParams, TransactionParamsFormValues, TransactionRowItem, TransactionToDelete } from "../models/Transaction";
+import { TransactionCreateValues, TransactionFormValues, TransactionParams, TransactionParamsFormValues, TransactionRowItem, TransactionToDelete } from "../models/Transaction";
 import agent from "../api/agent";
 import { convertToDate } from "../utils/ConvertToDate";
 import dayjs from "dayjs";
 import { TransactionType, TransactionTypeFilter } from "../models/enums/TransactionType";
 import { store } from "./store";
+import { AxiosError } from "axios";
+import { TransferCreateUpdateValues } from "../models/Transfer";
 
 
 export default class TransactionStore {
@@ -149,6 +151,60 @@ export default class TransactionStore {
                 this.transactionsLoaded = true;
             })
         }
+    }
+
+    createTransaction = async (transactionFormValues: TransactionFormValues) => {
+        try {
+            if (transactionFormValues.type === TransactionType.Transfer)
+                await this.submitTransfer(transactionFormValues);
+            else
+                await this.submitTransaction(transactionFormValues);
+
+            runInAction(() => {
+                this.resetTransactionParams();
+            })
+            
+        } catch (error) {
+            console.log(error);
+            throw (error as AxiosError).response!.data;
+        }
+    }
+
+    private submitTransfer = async (transactionFormValues: TransactionFormValues) => {
+        const newTransfer: TransferCreateUpdateValues = {
+            fromAmount: transactionFormValues.fromAmount!,
+            toAmount: transactionFormValues.toAmount!,
+            fromAccountId: Number(transactionFormValues.fromAccountId),
+            toAccountId: Number(transactionFormValues.toAccountId),
+            date: dayjs(transactionFormValues.date).toDate()
+        }
+        await agent.Transactions.createTransfer(newTransfer);
+
+        runInAction(() => {
+            this.updateDataInOtherStores(newTransfer.fromAccountId, null);
+            this.updateDataInOtherStores(newTransfer.toAccountId, null);
+        })
+    }
+
+    private submitTransaction = async (transactionFormValues: TransactionFormValues) => {
+        const newTransaction: TransactionCreateValues = {
+            amount: transactionFormValues.amount!,
+            categoryId: transactionFormValues.type === TransactionType.Expense 
+                ? 
+                transactionFormValues.expenseCategoryId!.id 
+                : 
+                transactionFormValues.incomeCategoryId!.id,
+            date: dayjs(transactionFormValues.date).toDate(),
+            considered: transactionFormValues.considered
+        }
+
+        const accountId = Number(transactionFormValues.accountId);
+
+        await agent.Transactions.createTransaction(accountId, newTransaction);
+
+        runInAction(() => {
+            this.updateDataInOtherStores(accountId, newTransaction.categoryId);
+        })
     }
 
     deleteTransaction = async (transaction: TransactionToDelete) => {

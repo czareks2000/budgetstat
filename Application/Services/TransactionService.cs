@@ -66,7 +66,7 @@ namespace Application.Services
                 var newTransactionDate = newTransaction.Date.Date;
 
                 if (!_utilities.UpdateAccountBalances(account.Id, newTransactionDate, isExpense, newTransaction.Amount))
-                    return Result<int>.Failure($"Insufficient funds in the account. Change the date or amount.");
+                    return Result<int>.Failure($"Insufficient funds in the {account.Name} account.");
             }
 
             // zapisanie zmian w bazie
@@ -291,7 +291,7 @@ namespace Application.Services
 
             // aktualizacja sald kont
             if (!_utilities.UpdateAccountBalances(fromAccount.Id, transfer.Date, true, transfer.FromAmount))
-                return Result<TransferDto>.Failure("Insufficient funds in the FromAccount. Change the date or amount.");
+                return Result<TransferDto>.Failure($"Insufficient funds in the {fromAccount.Name} account.");
 
             _utilities.UpdateAccountBalances(toAccount.Id, transfer.Date, false, transfer.ToAmount);
 

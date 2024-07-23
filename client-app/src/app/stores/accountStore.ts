@@ -39,6 +39,18 @@ export default class AccountStore {
         }));
     }
 
+    validateParam = (accountId: string | null) => {
+        if (!accountId)
+            return null;
+
+        const account = this.accountsRegistry.get(Number(accountId));
+
+        if (account)
+            return account.id.toString();
+
+        return null;
+    }
+
     convertAccountIdsToOptions = (accountIds: number[]): Option[] => {
         return this.accounts
             .filter(account => accountIds.includes(account.id))

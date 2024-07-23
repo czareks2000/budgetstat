@@ -21,7 +21,7 @@ export default class CategoryStore {
             .filter(category => category.type === TransactionType.Expense);
     }
 
-    getCategoriesAsOptions = (type: TransactionType) => {
+    getCategoriesAsOptions = (type: TransactionType, includeMainCategories: boolean = false) => {
         const expenseSubCategories: CategoryOption[] = [];
         
         // Iterate over main categories
@@ -29,15 +29,18 @@ export default class CategoryStore {
             .filter(category => category.type === type)
             .forEach(mainCategory => {
                 
-                expenseSubCategories.push({
-                    id: mainCategory.id,
-                    name: mainCategory.name,
-                    iconId: mainCategory.iconId,
-                    type: mainCategory.type,
-                    mainCategoryName: mainCategory.name,
-                    mainCategoryId: mainCategory.id
-                });
-
+                if (includeMainCategories)
+                {
+                    expenseSubCategories.push({
+                        id: mainCategory.id,
+                        name: mainCategory.name,
+                        iconId: mainCategory.iconId,
+                        type: mainCategory.type,
+                        mainCategoryName: mainCategory.name,
+                        mainCategoryId: mainCategory.id
+                    });
+                }
+                
                 mainCategory.subCategories
                     .forEach(subCategory => {
                         expenseSubCategories.push({

@@ -8,6 +8,7 @@ interface Props {
     label?: string;
     options: CategoryOption[];
     shrinkLabel?: boolean;
+    multiple?: boolean;
 }
 
 export default function CategoryGroupedInput(props: Props) {
@@ -18,15 +19,15 @@ export default function CategoryGroupedInput(props: Props) {
         setFieldValue(field.name, value);
     };
 
-    const {shrinkLabel, ...restProps } = props;
+    const {shrinkLabel, multiple, ...restProps } = props;
 
     return (
         <>
             <Autocomplete
                 id={field.name}
                 {...field}
-                multiple
-                disableCloseOnSelect
+                multiple={multiple}
+                disableCloseOnSelect={multiple}
                 onChange={handleChange}
                 options={restProps.options}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -38,7 +39,7 @@ export default function CategoryGroupedInput(props: Props) {
                     {...params}
                     value={field.value}
                     InputLabelProps={{ shrink: shrinkLabel }} 
-                    placeholder={field.value.length > 0 ? "" : restProps.placeholder}
+                    placeholder={multiple ? field.value.length > 0 ? "" : restProps.placeholder : ""}
                     error={meta.touched && Boolean(meta.error)}
                     helperText={meta.touched && meta.error}
                     autoComplete='off'/>}

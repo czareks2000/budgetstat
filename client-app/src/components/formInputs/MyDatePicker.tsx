@@ -18,6 +18,7 @@ export default function MyDatePicker(props: Props) {
                 value={field.value || props.defaultValue}
                 onChange={(date) => helpers.setValue(date, true)}
                 format={"DD/MM/YYYY"}
+                
                 slotProps={{
                     textField: {
                         error: Boolean(meta.error),

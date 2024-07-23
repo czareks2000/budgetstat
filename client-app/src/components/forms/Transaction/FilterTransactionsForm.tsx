@@ -87,16 +87,16 @@ export default observer(function FilterTransactionsForm() {
                         {(values.type === TransactionTypeFilter.All || 
                         values.type === TransactionTypeFilter.Expense) &&
                         <CategoryGroupedInput label="Expense Categories" name={"expenseCategoryIds"}
-                            placeholder="All" shrinkLabel
-                            options={getCategoriesAsOptions(TransactionType.Expense)} />
+                            placeholder="All" shrinkLabel multiple
+                            options={getCategoriesAsOptions(TransactionType.Expense, true)} />
                         }
 
                         {/* Income Categories */}
                         {(values.type === TransactionTypeFilter.All || 
                         values.type === TransactionTypeFilter.Income) &&
                         <CategoryGroupedInput label="Income Categories" name={"incomeCategoryIds"}
-                            placeholder="All" shrinkLabel
-                            options={getCategoriesAsOptions(TransactionType.Income)} />
+                            placeholder="All" shrinkLabel multiple
+                            options={getCategoriesAsOptions(TransactionType.Income, true)} />
                         }
 
                         {/* Button */}

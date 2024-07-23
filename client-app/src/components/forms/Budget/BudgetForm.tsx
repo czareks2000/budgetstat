@@ -62,7 +62,10 @@ export default observer(function BudgetForm({initialValues, onSubmit, onCancel, 
                         options={enumToOptions(BudgetPeriod)} />
 
                     {/* Categories */}
-                    <CategoryGroupedInput label="Categories" name={"categories"} options={getCategoriesAsOptions(TransactionType.Expense)} />
+                    <CategoryGroupedInput 
+                        label="Categories" name={"categories"} 
+                        multiple
+                        options={getCategoriesAsOptions(TransactionType.Expense, true)} />
 
                     {/* Amount */}
                     <NumberInput label="Amount" name="amount" 

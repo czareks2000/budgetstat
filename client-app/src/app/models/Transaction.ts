@@ -58,8 +58,17 @@ export interface AmountItem {
 
 export interface TransactionFormValues {
     type: TransactionType;
-    categoryId: number | string;
     accountId: number| string;
+    fromAccountId: number| string;
+    toAccountId: number| string;
+    incomeCategoryId: CategoryOption | null;
+    expenseCategoryId: CategoryOption | null;
+    amount: number | null;
+    fromAmount: number | null;
+    toAmount: number | null;
+    date: dayjs.Dayjs | Date;
+    description: string;
+    considered: boolean;
 }
 
 export interface TransactionCreateValues {
