@@ -377,9 +377,37 @@ export default class TransactionStore {
         }
     }
 
+    removePlannedTransaction = (accountId: number) => {
+        const transactionId = Array.from(this.plannedTransactionRegistry.values())
+            .find(t => t.accountId === accountId)?.id;
+        if (transactionId)
+            this.plannedTransactionRegistry.delete(transactionId);
+    }
+
+    confirmTransaction = async (transactionId: number) => {
+        try {
+            await agent.Transactions.confirmTransaction(transactionId);
+            runInAction(() => {
+                const transaction = this.plannedTransactionRegistry.get(transactionId);
+                if (transaction)
+                {
+                    this.updateDataInOtherStores(transaction.accountId, transaction.category.id);
+                    this.resetTransactionParams();
+                    this.plannedTransactionRegistry.delete(transactionId);
+                }
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     private updateDataInOtherStores = (accountId: number | null, categoryId: number | null) => {
         if (accountId)
+        {
             store.accountStore.loadAccount(accountId);
+            store.statsStore.loadNetWorthValueOverTime();
+        }
+            
         if (categoryId)
             store.budgetStore.refreshBudgets(categoryId);
     }

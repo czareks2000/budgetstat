@@ -17,7 +17,7 @@ export default observer(function PlannedTransactionListItem({transaction, showCo
     const {
         accountStore: {getAccountName},
         currencyStore: {getCurrencySymbol},
-        transactionStore: {deletePlannedTransaction}
+        transactionStore: {deletePlannedTransaction, confirmTransaction}
     } = useStore();
         
     const handleDeleteButtonClick = () => {
@@ -25,7 +25,7 @@ export default observer(function PlannedTransactionListItem({transaction, showCo
     }
 
     const handleConfirmButtonClick = () => {
-
+        confirmTransaction(transaction.id);
     }
 
     const fontColor = transaction.category.type === TransactionType.Income ? 'success.main' : 'error.main';

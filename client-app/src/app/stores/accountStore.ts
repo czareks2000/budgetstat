@@ -151,6 +151,7 @@ export default class AccountStore {
                 this.accountsRegistry.delete(accountId);
                 this.deselectAccount();
                 this.updateDataInOtherStores();
+                store.transactionStore.removePlannedTransaction(accountId);
             });    
         } catch (error) {
             console.log(error);
