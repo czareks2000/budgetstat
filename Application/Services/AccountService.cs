@@ -150,6 +150,7 @@ namespace Application.Services
             var account = await _context.Accounts
                 .Include(a => a.Transactions)
                 .Include(a => a.Loans)
+                .Include(a => a.Payoffs)
                 .FirstOrDefaultAsync(c => c.Id == accountId);
 
             if (account == null) return null;

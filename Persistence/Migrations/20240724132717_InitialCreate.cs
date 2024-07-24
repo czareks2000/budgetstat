@@ -570,7 +570,7 @@ namespace Persistence.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     LoanId = table.Column<int>(type: "integer", nullable: false),
                     Amount = table.Column<decimal>(type: "numeric", nullable: false),
-                    AccountId = table.Column<int>(type: "integer", nullable: false),
+                    AccountId = table.Column<int>(type: "integer", nullable: true),
                     Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
                     CurrencyId = table.Column<int>(type: "integer", nullable: false)
@@ -582,8 +582,7 @@ namespace Persistence.Migrations
                         name: "FK_Payoffs_Accounts_AccountId",
                         column: x => x.AccountId,
                         principalTable: "Accounts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Payoffs_Currencies_CurrencyId",
                         column: x => x.CurrencyId,
@@ -719,6 +718,12 @@ namespace Persistence.Migrations
                 name: "IX_Counterparties_UserId",
                 table: "Counterparties",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExchangeRates_InputCurrencyCode_OutputCurrencyCode_Date",
+                table: "ExchangeRates",
+                columns: new[] { "InputCurrencyCode", "OutputCurrencyCode", "Date" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Loans_AccountId",

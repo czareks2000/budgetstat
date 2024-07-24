@@ -12,8 +12,8 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240720201026_AddUniqueConstraintToExchangeRate")]
-    partial class AddUniqueConstraintToExchangeRate
+    [Migration("20240724132717_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -403,7 +403,7 @@ namespace Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AccountId")
+                    b.Property<int?>("AccountId")
                         .HasColumnType("integer");
 
                     b.Property<decimal>("Amount")
@@ -903,9 +903,7 @@ namespace Persistence.Migrations
                 {
                     b.HasOne("Domain.Account", "Account")
                         .WithMany("Payoffs")
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AccountId");
 
                     b.HasOne("Domain.Currency", "Currency")
                         .WithMany()

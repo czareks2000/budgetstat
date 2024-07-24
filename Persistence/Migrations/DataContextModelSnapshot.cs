@@ -400,7 +400,7 @@ namespace Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AccountId")
+                    b.Property<int?>("AccountId")
                         .HasColumnType("integer");
 
                     b.Property<decimal>("Amount")
@@ -900,9 +900,7 @@ namespace Persistence.Migrations
                 {
                     b.HasOne("Domain.Account", "Account")
                         .WithMany("Payoffs")
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AccountId");
 
                     b.HasOne("Domain.Currency", "Currency")
                         .WithMany()

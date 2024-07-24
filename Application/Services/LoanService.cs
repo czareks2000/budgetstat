@@ -439,10 +439,13 @@ namespace Application.Services
             if (payoff == null) return null;
 
             // aktualiazaja salda
-            var wasExpense = payoff.Loan.LoanType == LoanType.Debt;
-            _utilities.RestoreAccountBalances(
-                payoff.AccountId, wasExpense, payoff.Amount, payoff.Date
-            );
+            if (payoff.AccountId.HasValue)
+            {
+                var wasExpense = payoff.Loan.LoanType == LoanType.Debt;
+                _utilities.RestoreAccountBalances(
+                    payoff.AccountId.Value, wasExpense, payoff.Amount, payoff.Date
+                );
+            }
 
             // aktualizacja loan
             var loan = payoff.Loan;
