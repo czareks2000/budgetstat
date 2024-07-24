@@ -426,6 +426,7 @@ export default class TransactionStore {
             })
         } catch (error) {
             console.log(error);
+            throw (error as AxiosError).response!.data;
         }
     }
 

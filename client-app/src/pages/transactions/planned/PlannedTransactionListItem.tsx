@@ -1,12 +1,13 @@
-import { Box, IconButton, ListItem, ListItemText } from '@mui/material'
+import { Alert, Box, IconButton, ListItem, ListItemText, Snackbar } from '@mui/material'
 import CategoryIcon from '../../../components/common/CategoryIcon'
 import { formatAmount } from '../../../app/utils/FormatAmount'
 import { observer } from 'mobx-react-lite'
-import { Check, Clear } from '@mui/icons-material'
+import { Check, Clear, Close } from '@mui/icons-material'
 import { convertToString } from '../../../app/utils/ConvertToString'
 import { PlannedTransaction } from '../../../app/models/Transaction'
 import { useStore } from '../../../app/stores/store'
 import { TransactionType } from '../../../app/models/enums/TransactionType'
+import { useState } from 'react'
 
 interface Props {
     transaction: PlannedTransaction;
@@ -20,17 +21,45 @@ export default observer(function PlannedTransactionListItem({transaction, showCo
         transactionStore: {deletePlannedTransaction, confirmTransaction}
     } = useStore();
         
+    const [open, setOpen] = useState(false);
+    const [message, setMessage] = useState("");
+
+    const handleClose = (_: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway')
+          return;
+    
+        setOpen(false);
+    };
+
     const handleDeleteButtonClick = () => {
         deletePlannedTransaction(transaction.id);
     }
 
     const handleConfirmButtonClick = () => {
-        confirmTransaction(transaction.id);
+        confirmTransaction(transaction.id)
+        .catch((err) => {
+            setMessage(err);
+            setOpen(true);
+        });
     }
 
     const fontColor = transaction.category.type === TransactionType.Income ? 'success.main' : 'error.main';
 
-    return (
+    return (<>
+        <Snackbar
+            open={open}
+            autoHideDuration={6000}
+            onClose={handleClose}
+            message={message}>
+            <Alert
+                onClose={handleClose}
+                severity="error"
+                variant="filled"
+                sx={{ width: '100%' }}
+            >
+                {message}
+            </Alert>
+        </Snackbar>
         <ListItem 
             secondaryAction={
             <Box display={"flex"} alignItems={"center"} p={1}>
@@ -73,6 +102,7 @@ export default observer(function PlannedTransactionListItem({transaction, showCo
                 </>}
                 secondary={<i>{getAccountName(transaction.accountId)} - {transaction.description || "(no description)"}</i>}/>
             </Box>
-        </ListItem>  
+        </ListItem>
+    </>
     )
 })

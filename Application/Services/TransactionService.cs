@@ -244,7 +244,7 @@ namespace Application.Services
             var accountId = transaction.Account.Id;
 
             if (!_utilities.UpdateAccountBalances(accountId, transaction.Date, isExpense, transaction.Amount))
-                return Result<object>.Failure("Insufficient funds in the account. Change the date or amount.");
+                return Result<object>.Failure($"Insufficient funds in the {transaction.Account.Name} account.");
 
             // zapisanie zmian w bazie
             if (await _context.SaveChangesAsync() == 0)
