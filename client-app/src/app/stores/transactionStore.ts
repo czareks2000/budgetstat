@@ -368,6 +368,15 @@ export default class TransactionStore {
         }
     }
 
+    deletePlannedTransaction = async (transactionId: number) => {
+        try {
+            this.plannedTransactionRegistry.delete(transactionId);
+            await agent.Transactions.deleteTransaction(transactionId);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     private updateDataInOtherStores = (accountId: number | null, categoryId: number | null) => {
         if (accountId)
             store.accountStore.loadAccount(accountId);

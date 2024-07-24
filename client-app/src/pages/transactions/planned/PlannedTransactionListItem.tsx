@@ -2,7 +2,7 @@ import { Box, IconButton, ListItem, ListItemText } from '@mui/material'
 import CategoryIcon from '../../../components/common/CategoryIcon'
 import { formatAmount } from '../../../app/utils/FormatAmount'
 import { observer } from 'mobx-react-lite'
-import { Check, Delete } from '@mui/icons-material'
+import { Check, Clear } from '@mui/icons-material'
 import { convertToString } from '../../../app/utils/ConvertToString'
 import { PlannedTransaction } from '../../../app/models/Transaction'
 import { useStore } from '../../../app/stores/store'
@@ -17,10 +17,11 @@ export default observer(function PlannedTransactionListItem({transaction, showCo
     const {
         accountStore: {getAccountName},
         currencyStore: {getCurrencySymbol},
+        transactionStore: {deletePlannedTransaction}
     } = useStore();
         
     const handleDeleteButtonClick = () => {
-
+        deletePlannedTransaction(transaction.id);
     }
 
     const handleConfirmButtonClick = () => {
@@ -46,7 +47,7 @@ export default observer(function PlannedTransactionListItem({transaction, showCo
                 <IconButton 
                     edge={"end"} aria-label="delete" 
                     onClick={handleDeleteButtonClick}>
-                    <Delete/>
+                    <Clear/>
                 </IconButton>
             </Box>
             }>
