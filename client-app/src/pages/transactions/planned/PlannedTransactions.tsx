@@ -40,13 +40,14 @@ export default observer(function PlannedTransactions() {
                             )}
                         </List>
                     </Paper></>}
-                    {plannedTransactions.length > 0 ?
+                    {plannedTransactions.length > 0 ? <>
                     <Divider>Planned Transactions</Divider>
+                    <PlannedTransactionListWithPagination 
+                        transactions={plannedTransactions} /></>
                     :
                     <Divider>You have no planned transactions</Divider>
                     }   
-                    <PlannedTransactionListWithPagination 
-                        transactions={plannedTransactions} />
+                    
                 </Stack>
             } />
         </>
