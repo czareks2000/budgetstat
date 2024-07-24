@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { Period } from "./enums/Period";
 import { TransactionType, TransactionTypeFilter } from "./enums/TransactionType";
 import { Option } from "./Option";
-import { CategoryOption } from "./Category";
+import { Category, CategoryOption } from "./Category";
 
 export interface Transaction {
     id: number;
@@ -97,6 +97,18 @@ export interface TransactionToDelete {
     amount: number;
     currencySymbol: string;
     toAccountId: number | null;
+}
+
+export interface PlannedTransaction {
+    id: number;
+    amount: number;
+    category: Category;
+    accountId: number;
+    date: Date; 
+    description: string;
+    considered: boolean;
+    planned: boolean;
+    currencyId: number;
 }
 
 export interface PlannedTransactionCreateValues {

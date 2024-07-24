@@ -10,7 +10,7 @@ namespace Application.Interfaces
         // wprowadzenie transakcji
         Task<Result<int>> Create(int accountId, TransactionCreateDto newTransaction);
         // zaplanowanie transakcji (zmienić zwracany typ?? zeby po zwróceniu można było wyświetlać dobrze na transactions/planned
-        Task<Result<List<TransactionDto>>> CreatePlannedTransactions(int accountId, PlannedTransactionDto plannedTransaction);
+        Task<Result<List<PlannedTransactionDto>>> CreatePlannedTransactions(int accountId, PlannedTransactionCreateDto plannedTransaction);
         // potwierdzenie zaplanowanej transakcji 
         Task<Result<object>> ConfirmTransaction(int transactionId);
         // edycja transakcji 
@@ -31,6 +31,8 @@ namespace Application.Interfaces
         Task<Result<TransactionFormValues>> Get(int transactionId, TransactionType type);
         // przegląd transakcji
         Task<Result<List<TransactionListItem>>> GetTransactions(TransactionParams transactionParams);
+        // przegląd zaplanowanych transakcji
+        Task<Result<List<PlannedTransactionDto>>> GetPlannedTransactions();
 
         // wyświetlenie kalendarza transakcji
     }

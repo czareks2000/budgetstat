@@ -157,9 +157,9 @@ namespace Application.Services
             if (account.Loans.Where(l => l.LoanStatus == LoanStatus.InProgress).Any())
                 return Result<object>.Failure("The account cannot be deleted. Loans with InProgress status are assigned to it.");
 
-            if (deleteRelatedTransactions)
+            foreach (var transaction in account.Transactions)
             {
-                foreach (var transaction in account.Transactions)
+                if (deleteRelatedTransactions || transaction.Planned)
                     _context.Transactions.Remove(transaction);
             }
 

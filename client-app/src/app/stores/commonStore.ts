@@ -47,6 +47,8 @@ export default class CommonStore {
 
             // nie można wyświetlić intefejsu bez tych danch załadowanych
             // (w przyszłości dostosować intefejs zeby nie trzeba było czekać)
+            await store.transactionStore.loadPlannedTransactions();
+
             await store.accountStore.loadAccounts();
             
             await store.budgetStore.loadBudgets();

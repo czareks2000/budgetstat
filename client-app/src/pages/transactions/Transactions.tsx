@@ -4,15 +4,23 @@ import FloatingAddButton from "../../components/common/FloatingAddButton"
 import { router } from "../../app/router/Routes"
 import TransactionsDataGrid from "./list/TransactionsDataGrid"
 import TransactionsFilters from "./list/TransactionsFilters"
+import FloatingShowPlannedTransactionButton from "../../components/common/FloatingShowPlannedTransactionButton"
 
 export default observer(function Transactions() {   
     const handleAddButtonClick = () => {
         router.navigate(`/transactions/create`);
     }
+
+    const handleShowPlannedTransactions = () => {
+        router.navigate('/transactions/planned');
+    }
       
     return ( 
     <>
-        <FloatingAddButton onClick={handleAddButtonClick}/>
+        <FloatingShowPlannedTransactionButton 
+            onClick={handleShowPlannedTransactions} position={1}/>
+        <FloatingAddButton 
+            onClick={handleAddButtonClick} position={0}/>
         <Grid container>
             <Grid item xs lg xl/>
             <Grid item xs={12} xl={8} container spacing={2}>

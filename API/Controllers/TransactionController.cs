@@ -21,7 +21,7 @@ namespace API.Controllers
 
         [Authorize(Policy = "IsOwner")]
         [HttpPost("account/{accountId}/transactions/planned")] //api/account/{accountId}/transactions/planned
-        public async Task<IActionResult> CreatePlannedTransaction(int accountId, PlannedTransactionDto plannedTransaction)
+        public async Task<IActionResult> CreatePlannedTransaction(int accountId, PlannedTransactionCreateDto plannedTransaction)
         {
             return HandleResult(await _transactionService.CreatePlannedTransactions(accountId, plannedTransaction));
         }
@@ -84,6 +84,12 @@ namespace API.Controllers
         public async Task<IActionResult> GetTransactionFormValues(int transactionId, [FromQuery] TransactionType type)
         {
             return HandleResult(await _transactionService.Get(transactionId, type));
+        }
+
+        [HttpGet("transactions/planned")] //api/transactions
+        public async Task<IActionResult> GetPlannedTransactions()
+        {
+            return HandleResult(await _transactionService.GetPlannedTransactions());
         }
     }
 }

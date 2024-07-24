@@ -59,8 +59,9 @@ namespace Application.Core
 
             CreateMap<TransactionCreateDto, Transaction>();
             CreateMap<TransactionUpdateDto, Transaction>();
-            CreateMap<PlannedTransactionDto, Transaction>();
+            CreateMap<PlannedTransactionCreateDto, Transaction>();
             CreateMap<Transaction, TransactionDto>();
+            CreateMap<Transaction, PlannedTransactionDto>();
 
             // transaction list item
             CreateMap<Transaction, TransactionListItem>()

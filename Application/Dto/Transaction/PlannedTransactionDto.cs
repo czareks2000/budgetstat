@@ -1,28 +1,17 @@
-﻿using Application.Core.CustomDataAnnotations;
-using System.ComponentModel.DataAnnotations;
+﻿using Application.Dto.Category;
 
 namespace Application.Dto.Transaction
 {
     public class PlannedTransactionDto
     {
-        [Required]
-        [GreaterThanZero(ErrorMessage = "The amount must be positive")]
+        public int Id { get; set; }
         public decimal Amount { get; set; }
-        [GreaterThanZero(ErrorMessage = "Invalid category id")]
-        public int CategoryId { get; set; }
-        [Required]
-        public DateTime StartDate { get; set; }
+        public CategoryDto Category { get; set; }
+        public int? AccountId { get; set; }
+        public DateTime Date { get; set; }
         public string Description { get; set; }
-        [Required]
         public bool Considered { get; set; }
-        [Required]
-        [GreaterOrEqualToZero(ErrorMessage = "RepeatsEvery cannot be negative")]
-        public decimal RepeatsEvery { get; set; }
-        [Required]
-        [EnumDataType(typeof(Period), ErrorMessage = "Period is empty or invalid")]
-        public Period Period { get; set; }
-        [Required]
-        [GreaterOrEqualToZero(ErrorMessage = "NumberOfTimes cannot be negative")]
-        public decimal NumberOfTimes { get; set; }
+        public bool Planned { get; set; }
+        public int CurrencyId { get; set; }
     }
 }

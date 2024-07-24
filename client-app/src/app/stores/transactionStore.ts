@@ -1,5 +1,5 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
-import { TransactionCreateValues, TransactionFormValues, TransactionParams, TransactionParamsFormValues, TransactionRowItem, TransactionToDelete, TransactionUpdateValues } from "../models/Transaction";
+import { PlannedTransaction, TransactionCreateValues, TransactionFormValues, TransactionParams, TransactionParamsFormValues, TransactionRowItem, TransactionToDelete, TransactionUpdateValues } from "../models/Transaction";
 import agent from "../api/agent";
 import { convertToDate } from "../utils/ConvertToDate";
 import dayjs from "dayjs";
@@ -12,6 +12,9 @@ import { TransferCreateUpdateValues } from "../models/Transfer";
 export default class TransactionStore {
     transactionRegistry = new Map<number, TransactionRowItem>();
     transactionsLoaded = false;
+
+    plannedTransactionRegistry = new Map<number, PlannedTransaction>();
+    plannedTransactionsLoaded = true;
 
     transactionFormValues: TransactionFormValues | undefined = undefined;
     loadingFormValues = false;
@@ -55,6 +58,8 @@ export default class TransactionStore {
         this.transactionRegistry.clear();
         this.transactionsLoaded = false;
         this.transactionFormValues = undefined;
+        this.plannedTransactionRegistry.clear();
+        this.plannedTransactionsLoaded = false;
     }
 
     get transactionParamsFormValues() {
@@ -80,9 +85,28 @@ export default class TransactionStore {
         return Array.from(this.transactionRegistry.values());
     }
 
+    get plannedTransactions() {
+        const today = dayjs().startOf('day');
+        return Array.from(this.plannedTransactionRegistry.values())
+            .filter(t => dayjs(t.date).startOf('day').isAfter(today))
+            .sort((a,b) => a.date.getTime() - b.date.getTime());
+    }
+
+    get plannedTransactionsToConfirm() {
+        const today = dayjs().startOf('day');
+        return Array.from(this.plannedTransactionRegistry.values())
+            .filter(t => !dayjs(t.date).startOf('day').isAfter(today))
+            .sort((a,b) => a.date.getTime() - b.date.getTime());
+    }
+
     private setTransaction = (transaction: TransactionRowItem) => {
         transaction.date = convertToDate(transaction.date);
         this.transactionRegistry.set(transaction.id, transaction);
+    }
+
+    private setPlannedTransaction = (transaction: PlannedTransaction) => {
+        transaction.date = convertToDate(transaction.date);
+        this.plannedTransactionRegistry.set(transaction.id, transaction);
     }
 
     resetTransactionParams = () => {
@@ -186,6 +210,21 @@ export default class TransactionStore {
                 
                 this.transactionFormValues = values;
                 this.loadingFormValues = false;
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    loadPlannedTransactions = async () => {
+        this.plannedTransactionsLoaded = false;
+        try {
+            const transactions = await agent.Transactions.getPlannedTransactions();
+            runInAction(() => {
+                transactions.forEach(transaction => {
+                    this.setPlannedTransaction(transaction);
+                });
+                this.plannedTransactionsLoaded = true;
             })
         } catch (error) {
             console.log(error);

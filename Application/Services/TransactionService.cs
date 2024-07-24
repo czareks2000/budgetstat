@@ -160,7 +160,7 @@ namespace Application.Services
             return Result<object>.Success(null);
         }
 
-        public async Task<Result<List<TransactionDto>>> CreatePlannedTransactions(int accountId, PlannedTransactionDto plannedTransaction)
+        public async Task<Result<List<PlannedTransactionDto>>> CreatePlannedTransactions(int accountId, PlannedTransactionCreateDto plannedTransaction)
         {
             // sprawdzenie czy konto istnieje
             var account = await _context.Accounts
@@ -176,7 +176,7 @@ namespace Application.Services
                 .FirstOrDefault(category => category.Id == plannedTransaction.CategoryId);
 
             if (category == null || category.IsMain)
-                return Result<List<TransactionDto>>.Failure("Invalid category. It does not exist or is the main category");
+                return Result<List<PlannedTransactionDto>>.Failure("Invalid category. It does not exist or is the main category");
 
             // utworzenie transakcji w pętli przypisując im odpowiednie daty
             List<Transaction> transactions = new List<Transaction>();
@@ -190,6 +190,7 @@ namespace Application.Services
                 transactions[i].Category = category;
                 transactions[i].Planned = true;
                 transactions[i].Date = currentDate;
+                transactions[i].User = user;
 
                 _context.Transactions.Add(transactions[i]);
 
@@ -206,12 +207,12 @@ namespace Application.Services
 
             // zapisanie zmian w bazie
             if (await _context.SaveChangesAsync() == 0)
-                return Result<List<TransactionDto>>.Failure("Failed to create transactions");
+                return Result<List<PlannedTransactionDto>>.Failure("Failed to create transactions");
 
             // utworzenie obiektu DTO
-            var transactionsDto = _mapper.Map<List<TransactionDto>>(transactions);
+            var transactionsDto = _mapper.Map<List<PlannedTransactionDto>>(transactions);
 
-            return Result<List<TransactionDto>>.Success(transactionsDto);
+            return Result<List<PlannedTransactionDto>>.Success(transactionsDto);
         }
 
         public async Task<Result<object>> ConfirmTransaction(int transactionId)
@@ -460,8 +461,9 @@ namespace Application.Services
                      .Where(u => u.Id == user.Id)
                      .Include(u => u.Transactions)
                      .SelectMany(u => u.Transactions)
-                     .Where(u => u.Date.Date >= transactionParams.StartDate.Date)
-                     .Where(u => u.Date.Date <= transactionParams.EndDate.Date);
+                     .Where(t => !t.Planned)
+                     .Where(t => t.Date.Date >= transactionParams.StartDate.Date)
+                     .Where(t => t.Date.Date <= transactionParams.EndDate.Date);
 
             if (transactionParams.Types.Count != 0)
                 transactionsQuery = transactionsQuery
@@ -514,6 +516,20 @@ namespace Application.Services
                 transaction.Id = index++;
 
             return Result<List<TransactionListItem>>.Success(transactions);
+        }
+
+        public async Task<Result<List<PlannedTransactionDto>>> GetPlannedTransactions()
+        {
+            var user = await _utilities.GetCurrentUserAsync();
+
+            var transactions = await _context.Transactions
+                .Include(t => t.Category)
+                .Where(t => t.UserId == user.Id)
+                .Where(t => t.Planned)
+                .ProjectTo<PlannedTransactionDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            return Result<List<PlannedTransactionDto>>.Success(transactions);
         }
     }
 }

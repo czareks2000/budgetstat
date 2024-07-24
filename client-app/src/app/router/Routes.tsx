@@ -25,9 +25,10 @@ import EditLoan from "../../pages/loans/EditLoan";
 import CreateAsset from "../../pages/networth/CreateAsset";
 import EditAsset from "../../pages/networth/EditAsset";
 import AssetDetails from "../../pages/networth/AssetDetails";
-import PlannedTransactions from "../../pages/transactions/PlannedTransactions";
+import PlannedTransactions from "../../pages/transactions/planned/PlannedTransactions";
 import CreateTransaction from "../../pages/transactions/CreateTransaction";
 import EditTransaction from "../../pages/transactions/EditTransaction";
+import CreatePlannedTransactions from "../../pages/transactions/planned/CreatePlannedTransactions";
 
 export const routes: RouteObject[] = [
     {
@@ -45,6 +46,7 @@ export const routes: RouteObject[] = [
                 
                 {path: 'transactions', element: <Transactions />},
                 {path: 'transactions/planned', element: <PlannedTransactions />},
+                {path: 'transactions/planned/create', element: <CreatePlannedTransactions />},
                 {path: 'transactions/create', element: <CreateTransaction />},
                 {path: 'transactions/:type/:id/edit', element: <EditTransaction />},
 

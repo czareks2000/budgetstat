@@ -4,7 +4,7 @@ import { store } from "../stores/store";
 import { ChangePasswordFormValues, User, UserFormValues } from "../models/User";
 import { Account, AccountFormValues } from "../models/Account";
 import { AccountStatus } from "../models/enums/AccountStatus";
-import { PlannedTransactionCreateValues, Transaction, TransactionCreateValues, TransactionFormValues, TransactionParams, TransactionRowItem, TransactionUpdateValues } from "../models/Transaction";
+import { PlannedTransaction, PlannedTransactionCreateValues, Transaction, TransactionCreateValues, TransactionFormValues, TransactionParams, TransactionRowItem, TransactionUpdateValues } from "../models/Transaction";
 import { Budget, BudgetDto } from "../models/Budget";
 import { Currency } from "../models/Currency";
 import { CategoryCreateValues, CategoryUpdateValues, MainCategory } from "../models/Category";
@@ -114,9 +114,9 @@ const Accounts = {
 
 const Transactions = {
     createTransaction: (accountId: number, transaction: TransactionCreateValues) => 
-        requests.post<Transaction>(`/account/${accountId}/transactions`, transaction),
+        requests.post<number>(`/account/${accountId}/transactions`, transaction),
     createPlanned: (accountId: number, transaction: PlannedTransactionCreateValues) => 
-        requests.post<Transaction[]>(`/account/${accountId}/transactions/planned`, transaction),
+        requests.post<PlannedTransaction[]>(`/account/${accountId}/transactions/planned`, transaction),
     createTransfer: (transfer: TransferCreateUpdateValues) =>
         requests.post<Transfer>("/transfers", transfer),
     toggleConsidered: (transactionId: number) => 
@@ -156,7 +156,9 @@ const Transactions = {
         return requests.get<TransactionRowItem[]>(`/transactions${urlParams}`);
     },
     getTransactionFormValues: (transactionId: number, type: TransactionType) => 
-        requests.get<TransactionFormValues>(`/transactions/${transactionId}?type=${type}`)
+        requests.get<TransactionFormValues>(`/transactions/${transactionId}?type=${type}`),
+    getPlannedTransactions: () =>
+        requests.get<PlannedTransaction[]>('transactions/planned'),
         
 }
 
