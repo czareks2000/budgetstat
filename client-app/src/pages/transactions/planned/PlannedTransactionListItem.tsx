@@ -2,7 +2,7 @@ import { Alert, Box, IconButton, ListItem, ListItemText, Snackbar } from '@mui/m
 import CategoryIcon from '../../../components/common/CategoryIcon'
 import { formatAmount } from '../../../app/utils/FormatAmount'
 import { observer } from 'mobx-react-lite'
-import { Check, Clear, Close } from '@mui/icons-material'
+import { Check, Clear } from '@mui/icons-material'
 import { convertToString } from '../../../app/utils/ConvertToString'
 import { PlannedTransaction } from '../../../app/models/Transaction'
 import { useStore } from '../../../app/stores/store'
