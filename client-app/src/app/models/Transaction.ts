@@ -111,6 +111,20 @@ export interface PlannedTransaction {
     currencyId: number;
 }
 
+export interface PlannedTransactionFormValues {
+    type: TransactionType;
+    accountId: number | string;
+    amount: number | null;
+    expenseCategoryId: CategoryOption | null;
+    incomeCategoryId: CategoryOption | null;
+    startDate: dayjs.Dayjs | Date;
+    description: string;
+    considered: boolean;
+    repeatsEvery: number | null; 
+    period: Period; 
+    numberOfTimes: number | null;
+}
+
 export interface PlannedTransactionCreateValues {
     amount: number;
     categoryId: number; 

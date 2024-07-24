@@ -172,6 +172,7 @@ namespace Application.Services
             // sprawdzenie czy kategoria istnieje i czy nie jest głowną kategorią
             var user = await _utilities.GetCurrentUserAsync();
             var category = _context.Categories
+                .Include(c => c.Icon)
                 .Where(c => c.UserId == user.Id)
                 .FirstOrDefault(category => category.Id == plannedTransaction.CategoryId);
 

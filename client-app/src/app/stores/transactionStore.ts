@@ -1,5 +1,5 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
-import { PlannedTransaction, TransactionCreateValues, TransactionFormValues, TransactionParams, TransactionParamsFormValues, TransactionRowItem, TransactionToDelete, TransactionUpdateValues } from "../models/Transaction";
+import { PlannedTransaction, PlannedTransactionCreateValues, PlannedTransactionFormValues, TransactionCreateValues, TransactionFormValues, TransactionParams, TransactionParamsFormValues, TransactionRowItem, TransactionToDelete, TransactionUpdateValues } from "../models/Transaction";
 import agent from "../api/agent";
 import { convertToDate } from "../utils/ConvertToDate";
 import dayjs from "dayjs";
@@ -382,6 +382,34 @@ export default class TransactionStore {
             .find(t => t.accountId === accountId)?.id;
         if (transactionId)
             this.plannedTransactionRegistry.delete(transactionId);
+    }
+
+    createPlannedTransactions = async (formValues: PlannedTransactionFormValues) => {
+        try {
+            const values: PlannedTransactionCreateValues = {
+                amount: formValues.amount!,
+                categoryId: formValues.type === TransactionType.Expense 
+                    ? 
+                    formValues.expenseCategoryId!.id 
+                    : 
+                    formValues.incomeCategoryId!.id,
+                startDate: dayjs(formValues.startDate).toDate(),
+                considered: formValues.considered,
+                repeatsEvery: formValues.repeatsEvery!,
+                period: formValues.period,
+                numberOfTimes: formValues.numberOfTimes!,
+                description: formValues.description
+            }
+            const transactions = await agent.Transactions.createPlanned(Number(formValues.accountId), values);
+
+            runInAction(() => {
+                transactions.forEach(transaction => {
+                    this.setPlannedTransaction(transaction);
+                });
+            });
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     confirmTransaction = async (transactionId: number) => {
