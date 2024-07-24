@@ -8,7 +8,7 @@ import { useStore } from "../../app/stores/store";
 import { useParams, useSearchParams } from "react-router-dom";
 import { LoanType } from "../../app/models/enums/LoanType";
 import LoanItem from "./common/LoanItem";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ExpandMore } from "@mui/icons-material";
 import CounterpartySummaryWithPagination from "./counterparty/CounterpartySummaryWithPagination";
 import CounterpartyPaidoffLoans from "./counterparty/CounterpartyPaidoffLoans";
@@ -20,21 +20,27 @@ export default observer(function CounterpartyDetails() {
 
     const {id} = useParams();
 
-    const summaries = getCounterpartyGroupedLoans(Number(id));
-
-    if (summaries.length == 0)
-        router.navigate('/loans');
-
     const [searchParams, setSearchParams] = useSearchParams();
     const [currencyId, setCurrencyId] = useState<string | null>(searchParams.get('currencyId'));
+
+    const summaries = getCounterpartyGroupedLoans(Number(id));
+
+    useEffect(() => {
+        if (summaries.length === 0) {
+            router.navigate('/loans');
+        }
+    }, [summaries]);
+
+    useEffect(() => {
+        if (summaries.filter(s => s.currencyId === Number(currencyId)).length === 0 && summaries.length > 0) {
+            handleSetCurrencyIdParam(summaries[0].currencyId);
+        }
+    }, [summaries, currencyId]);
 
     const handleSetCurrencyIdParam = (id: number) => {
         setCurrencyId(id.toString());
         setSearchParams({ currencyId: id.toString() });
     }
-
-    if (summaries.filter(s => s.currencyId === Number(currencyId)).length == 0)
-        handleSetCurrencyIdParam(summaries[0].currencyId);
 
     const credits = getCounterpartyLoans(Number(id), LoanType.Credit)
         .sort((a,b) => a.repaymentDate.getTime() - b.repaymentDate.getTime())
