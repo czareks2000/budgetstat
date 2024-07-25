@@ -20,5 +20,11 @@ namespace API.Controllers
         {
             return HandleResult(await _statsService.GetNetWorthValueOverTime(period));
         }
+
+        [HttpGet("stats/currentmonthincome")] //api/stats/currentmonthincome
+        public async Task<IActionResult> GetCurrentMonthIncome()
+        {
+            return HandleResult(await _statsService.GetCurrentMonthIncome());
+        }
     }
 }

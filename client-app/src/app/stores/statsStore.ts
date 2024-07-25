@@ -12,6 +12,8 @@ export default class StatsStore {
     chartPeriod: ChartPeriod = ChartPeriod.Year;
     loadedNetWorthValueOverTime = false;
 
+    currentMonthIncome: number = 0;
+
     constructor() {
         makeAutoObservable(this);
 
@@ -87,6 +89,17 @@ export default class StatsStore {
         })
 
         return data;
+    }
+
+    loadCurrentMonthIncome = async () => {
+        try {
+            const value = await agent.Stats.currentMothIncome();
+            runInAction(() => {
+                this.currentMonthIncome = value;
+            })
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     loadNetWorthStats = async () => {

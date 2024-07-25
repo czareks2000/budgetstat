@@ -248,6 +248,8 @@ const Stats = {
         requests.get<NetWorthStats>(`/stats/networthstats?loans=${loans}&assets=${assets}`),
     netWorthValueOverTime: (period: ChartPeriod) =>
         requests.get<NetWorthValueOverTime>(`/stats/networthovertime/${period}`),
+    currentMothIncome: () =>
+        requests.get<number>('/stats/currentmonthincome'),
 }
 
 const agent = {

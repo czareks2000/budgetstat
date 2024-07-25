@@ -311,5 +311,39 @@ namespace Application.Services
                 _ => throw new ArgumentOutOfRangeException(nameof(period), period, null),
             };
         }
+
+        public async Task<Result<decimal>> GetCurrentMonthIncome()
+        {
+            var user = await _utilities.GetCurrentUserAsync();
+
+            //obliczyć na podstawie przychodów i wydatków w tym miesiącu
+            var transactions = await _context.Transactions
+                .Include(t => t.Category)
+                .Include(t => t.Currency)
+                .Where(t => t.UserId == user.Id)
+                .Where(t => !t.Planned)
+                .Where(t => t.Considered)
+                .Where(t => t.Date.Year == DateTime.UtcNow.Year)
+                .Where(t => t.Date.Month == DateTime.UtcNow.Month)
+                .ToListAsync();
+
+            decimal balance = 0;
+
+            foreach (var transaction in transactions)
+            {
+                var category = transaction.Category;
+                var currency = transaction.Currency;
+
+                var convertedAmount = await _utilities
+                    .Convert(currency.Code, user.DefaultCurrency.Code, transaction.Amount);
+
+                if (category.Type == TransactionType.Income)
+                    balance += convertedAmount;
+                else if (category.Type == TransactionType.Expense)
+                    balance -= convertedAmount;
+            }
+
+            return Result<decimal>.Success(balance);
+        }
     }
 }

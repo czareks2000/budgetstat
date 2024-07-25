@@ -262,8 +262,7 @@ export default class TransactionStore {
         await agent.Transactions.createTransfer(newTransfer);
 
         runInAction(() => {
-            this.updateDataInOtherStores(newTransfer.fromAccountId, null);
-            this.updateDataInOtherStores(newTransfer.toAccountId, null);
+            this.updateDataInOtherStores([newTransfer.fromAccountId, newTransfer.toAccountId], null);
         })
     }
 
@@ -284,7 +283,7 @@ export default class TransactionStore {
         await agent.Transactions.createTransaction(accountId, newTransaction);
 
         runInAction(() => {
-            this.updateDataInOtherStores(accountId, newTransaction.categoryId);
+            this.updateDataInOtherStores([accountId], newTransaction.categoryId);
         })
     }
 
@@ -325,7 +324,7 @@ export default class TransactionStore {
         const accountId = Number(transaction.accountId);
 
         runInAction(() => {
-            this.updateDataInOtherStores(accountId, updatedTransaction.categoryId);
+            this.updateDataInOtherStores([accountId], updatedTransaction.categoryId);
         })
     }
 
@@ -340,8 +339,7 @@ export default class TransactionStore {
         await agent.Transactions.updateTransfer(transactionId, updatedTransfer);
 
         runInAction(() => {
-            this.updateDataInOtherStores(updatedTransfer.fromAccountId, null);
-            this.updateDataInOtherStores(updatedTransfer.toAccountId, null);
+            this.updateDataInOtherStores([updatedTransfer.fromAccountId, updatedTransfer.toAccountId], null);
         })
     }
 
@@ -357,10 +355,15 @@ export default class TransactionStore {
                 await agent.Transactions.deleteTransaction(transaction.transactionId);
 
             runInAction(() => {
-                this.updateDataInOtherStores(transaction.toAccountId, transaction.categoryId);
+                const accountIds: number[] = [];
+
+                if (transaction.toAccountId)
+                    accountIds.push(transaction.toAccountId);
 
                 if(fromAccountId)
-                    this.updateDataInOtherStores(fromAccountId, null);
+                    accountIds.push(fromAccountId);
+
+                this.updateDataInOtherStores([transaction.toAccountId, fromAccountId], transaction.categoryId);
             })
 
         } catch (error) {
@@ -419,7 +422,7 @@ export default class TransactionStore {
                 const transaction = this.plannedTransactionRegistry.get(transactionId);
                 if (transaction)
                 {
-                    this.updateDataInOtherStores(transaction.accountId, transaction.category.id);
+                    this.updateDataInOtherStores([transaction.accountId], transaction.category.id);
                     this.resetTransactionParams();
                     this.plannedTransactionRegistry.delete(transactionId);
                 }
@@ -430,14 +433,27 @@ export default class TransactionStore {
         }
     }
 
-    private updateDataInOtherStores = (accountId: number | null, categoryId: number | null) => {
-        if (accountId)
+    private updateDataInOtherStores = (accountIds: (number | null)[], categoryId: number | null) => {
+        
+        if (accountIds)
         {
-            store.accountStore.loadAccount(accountId);
+            let nulls = true;
+
+            accountIds.forEach(accountId => {
+                if (accountId)
+                {
+                    store.accountStore.loadAccount(accountId);
+                    nulls = false;
+                }  
+            });
+
+            if (!nulls)
             store.statsStore.loadNetWorthValueOverTime();
-        }
+        }   
             
         if (categoryId)
             store.budgetStore.refreshBudgets(categoryId);
+
+        store.statsStore.loadCurrentMonthIncome();
     }
 }

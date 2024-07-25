@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import Toolbar from '@mui/material/Toolbar';
 import Divider from '@mui/material/Divider';
-import { AppBar, Avatar, Box, Button, Drawer, Link as MuiLink, Stack, Typography } from '@mui/material';
+import { AppBar, Box, Button, Drawer, Link as MuiLink, Stack, Typography } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 
 import MenuIcon from '@mui/icons-material/Menu';
@@ -23,7 +23,9 @@ interface Props {
 export default observer(function Menu({ appName, drawerWidth = 288 }: Props) {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
-    const {userStore: {logout}, accountStore: {totalBalance}, currencyStore: {defaultCurrency}} = useStore();
+    const {
+      userStore: {logout}, accountStore: {totalBalance}, currencyStore: {defaultCurrency},
+      statsStore: {currentMonthIncome}} = useStore();
 
     const handleDrawerClose = () => {
         setIsClosing(true);
@@ -40,6 +42,28 @@ export default observer(function Menu({ appName, drawerWidth = 288 }: Props) {
         }
     };
 
+    const color = (value: number) => {
+      if (value > 0)
+        return 'success.light'
+      else if (value < 0)
+        return 'error.light'
+
+      return 'inherit'
+    }
+
+    const formatValue = (value: number) => {
+      if (value > 0)
+        return `+${formatAmount(value)}`;
+
+      return formatAmount(value);
+    }
+
+    const formatedCurrentMonthIncome = (
+      <Typography color={color(currentMonthIncome)} component={'span'}>
+        {formatValue(currentMonthIncome)} {defaultCurrency?.symbol}
+      </Typography>
+    )
+
     const drawer = (
         <Box>
           <Toolbar />
@@ -51,7 +75,7 @@ export default observer(function Menu({ appName, drawerWidth = 288 }: Props) {
               {formatAmount(totalBalance)} {defaultCurrency?.symbol}
             </Typography>
             <Typography variant="subtitle1" noWrap component="div">
-              This month: + {formatAmount(2350.52)} {defaultCurrency?.symbol}
+              This month: {formatedCurrentMonthIncome}
             </Typography>
           </Box>
     

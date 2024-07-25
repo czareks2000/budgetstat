@@ -65,6 +65,7 @@ export default class CommonStore {
             await store.assetStore.loadAssets();
 
             await store.statsStore.loadNetWorthStats();
+            await store.statsStore.loadCurrentMonthIncome();
         } catch (error) {
             console.log(error);
         } finally {

@@ -7,6 +7,7 @@ namespace Application.Interfaces
     public interface IStatsService
     {
         // porównanie aktulanego salda do poprzedniego miesiąca
+        Task<Result<decimal>> GetCurrentMonthIncome();
 
         // historia sald kont
 
