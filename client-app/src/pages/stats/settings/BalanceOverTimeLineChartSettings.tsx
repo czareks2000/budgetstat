@@ -11,7 +11,7 @@ import MultipleSelectWithChceckBoxes from "../../../components/formInputs/Multip
 import MyDatePicker from "../../../components/formInputs/MyDatePicker";
 import { ChartPeriod } from "../../../app/models/enums/periods/ChartPeriod";
 import SelectInput from "../../../components/formInputs/SelectInput";
-import { BalanceValueOverTimeSettings, initialBalanceValueOverTimeSettings } from "../../../app/models/ChartsSettings";
+import { BalanceValueOverTimeSettings } from "../../../app/models/ChartsSettings";
 
 
 export default observer(function BalanceOverTimeLineChartSettings() {

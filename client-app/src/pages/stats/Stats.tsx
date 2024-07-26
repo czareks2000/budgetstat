@@ -39,6 +39,11 @@ export default observer(function Stats() {
                             <TextField
                                 select
                                 fullWidth
+                                sx={{
+                                    '& .MuiOutlinedInput-notchedOutline': {
+                                        border: 'none',
+                                    },
+                                }}
                                 value={selectedChart.id}
                                 onChange={handleChange}
                                 autoComplete='off'
