@@ -1,6 +1,6 @@
 ﻿namespace Application.Dto.Stats
 {
-    public class BaseValueOverTime
+    public class ValueOverTime
     {
         public List<decimal> Data { get; set; }
         public List<string> Labels { get; set; }

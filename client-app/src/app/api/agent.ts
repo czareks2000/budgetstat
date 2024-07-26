@@ -16,8 +16,9 @@ import { LoanStatus } from "../models/enums/LoanStatus";
 import { Icon } from "../models/Icon";
 import { Asset, AssetCategory, AssetCreateUpdateValues } from "../models/Asset";
 import { NetWorthStats, ValueOverTime } from "../models/Stats";
-import { ChartPeriod } from "../models/enums/periods/NetWorthChartPeriod";
+import { ChartPeriod } from "../models/enums/periods/ChartPeriod";
 import { TransactionType } from "../models/enums/TransactionType";
+import { NetWorthChartPeriod } from "../models/enums/periods/NetWorthChartPeriod";
 
 const sleep = (delay: number) => {
     return new Promise((resolve) => {
@@ -246,12 +247,25 @@ const Settings = {
 const Stats = {
     netWorthStats: (loans: boolean = true, assets: boolean = true) =>
         requests.get<NetWorthStats>(`/stats/networthstats?loans=${loans}&assets=${assets}`),
-    netWorthValueOverTime: (period: ChartPeriod) =>
+    netWorthValueOverTime: (period: NetWorthChartPeriod) =>
         requests.get<ValueOverTime>(`/stats/networthovertime/${period}`),
     currentMothIncome: () =>
         requests.get<number>('/stats/currentmonthincome'),
-    accountBalanceOverTime: (period: ChartPeriod) =>
-        requests.get<ValueOverTime>(`/stats/balanceovertime/${period}`),
+    accountBalanceOverTime: (period: ChartPeriod, accountIds?: number[], startDate?: Date, endDate?: Date) => {
+
+        let urlParams = '';
+        
+        if (period === ChartPeriod.Custom)
+            urlParams =`startDate=${startDate!.toISOString()}&endDate=${endDate!.toISOString()}`;
+
+        if (accountIds && accountIds.length > 0) {
+            accountIds.forEach(id => {
+                urlParams += `&accountIds=${id}`;
+            });
+        }
+        
+        return requests.get<ValueOverTime>(`/stats/balanceovertime/${period}?${urlParams}`);
+    }
 }
 
 const agent = {

@@ -1,18 +1,19 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
-import { NetWorthStats, NetWorthValueOverTime, PieChartDataItem } from "../models/Stats";
+import { NetWorthStats, ValueOverTime, PieChartDataItem } from "../models/Stats";
 import agent from "../api/agent";
 import { store } from "./store";
 import { NetWorthChartPeriod } from "../models/enums/periods/NetWorthChartPeriod";
 import dayjs from "dayjs";
+import { ChartPeriod } from "../models/enums/periods/ChartPeriod";
 
 export default class StatsStore {
     netWorthStats: NetWorthStats | undefined = undefined;
 
-    netWorthValueOverTime: NetWorthValueOverTime | undefined = undefined;
-    chartPeriod: NetWorthChartPeriod = NetWorthChartPeriod.Year;
+    netWorthValueOverTime: ValueOverTime | undefined = undefined;
+    netWorthChartPeriod: NetWorthChartPeriod = NetWorthChartPeriod.Year;
     loadedNetWorthValueOverTime = false;
 
-    balanceValueOverTime: NetWorthValueOverTime | undefined = undefined;
+    balanceValueOverTime: ValueOverTime | undefined = undefined;
     balanceValueOverTimeLoaded = false;
 
     currentMonthIncome: number = 0;
@@ -21,7 +22,7 @@ export default class StatsStore {
         makeAutoObservable(this);
 
         reaction(
-            () => this.chartPeriod, 
+            () => this.netWorthChartPeriod, 
             () => {
                 this.loadNetWorthValueOverTime();
             }
@@ -30,9 +31,15 @@ export default class StatsStore {
 
     clearStore = () => {
         this.netWorthStats = undefined;
+
         this.netWorthValueOverTime = undefined;
-        this.chartPeriod = NetWorthChartPeriod.Year;
+        this.netWorthChartPeriod = NetWorthChartPeriod.Year;
         this.loadedNetWorthValueOverTime = false;
+
+        this.balanceValueOverTime = undefined;
+        this.balanceValueOverTimeLoaded = false;
+
+        this.currentMonthIncome = 0;
     }
 
     get assetsValue() {
@@ -53,8 +60,8 @@ export default class StatsStore {
         return this.netWorthStats.loansValue;
     }
 
-    setChartPeriod = (period: NetWorthChartPeriod) => {
-        this.chartPeriod = period;
+    setNetWorthChartPeriod = (period: NetWorthChartPeriod) => {
+        this.netWorthChartPeriod = period;
     }
 
     getAssetsValues = (categoryId: number) => {
@@ -117,7 +124,8 @@ export default class StatsStore {
     loadBalanceValueOverTime = async () => {
         this.balanceValueOverTimeLoaded = false;
         try {
-            const response = await agent.Stats.accountBalanceOverTime(NetWorthChartPeriod.Month);
+            const response = await agent.Stats.accountBalanceOverTime(
+                ChartPeriod.Custom, [], dayjs().add(-60, 'day').toDate(), dayjs().toDate());
             runInAction(() => {
                 response.startDate = dayjs(response.startDate).toDate(); 
                 response.endDate = dayjs(response.endDate).toDate(); 
@@ -132,7 +140,7 @@ export default class StatsStore {
     loadNetWorthValueOverTime = async () => {
         this.loadedNetWorthValueOverTime = false;
         try {
-            const response = await agent.Stats.netWorthValueOverTime(this.chartPeriod);
+            const response = await agent.Stats.netWorthValueOverTime(this.netWorthChartPeriod);
             runInAction(() => {
                 response.startDate = dayjs(response.startDate).toDate(); 
                 response.endDate = dayjs(response.endDate).toDate(); 

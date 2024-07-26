@@ -5,41 +5,41 @@ import { useStore } from '../../../app/stores/store';
 
 export default observer(function ChartPeriodButtonGroup() {
     const {
-        statsStore: {setChartPeriod, chartPeriod}
+        statsStore: {setNetWorthChartPeriod, netWorthChartPeriod}
     } = useStore();
     
     const handleButtonClick = (period: NetWorthChartPeriod) => {
-        setChartPeriod(period);
+        setNetWorthChartPeriod(period);
     };
 
     return (
         <ButtonGroup variant="outlined">
             <Button
-                variant={chartPeriod === NetWorthChartPeriod.YTD ? 'contained' : 'outlined'}
+                variant={netWorthChartPeriod === NetWorthChartPeriod.YTD ? 'contained' : 'outlined'}
                 onClick={() => handleButtonClick(NetWorthChartPeriod.YTD)}
             >
                 Ytd
             </Button>
             <Button
-                variant={chartPeriod === NetWorthChartPeriod.Month ? 'contained' : 'outlined'}
+                variant={netWorthChartPeriod === NetWorthChartPeriod.Month ? 'contained' : 'outlined'}
                 onClick={() => handleButtonClick(NetWorthChartPeriod.Month)}
             >
                 1M
             </Button>
             <Button
-                variant={chartPeriod === NetWorthChartPeriod.Year ? 'contained' : 'outlined'}
+                variant={netWorthChartPeriod === NetWorthChartPeriod.Year ? 'contained' : 'outlined'}
                 onClick={() => handleButtonClick(NetWorthChartPeriod.Year)}
             >
                 1Y
             </Button>
             <Button
-                variant={chartPeriod === NetWorthChartPeriod.FiveYears ? 'contained' : 'outlined'}
+                variant={netWorthChartPeriod === NetWorthChartPeriod.FiveYears ? 'contained' : 'outlined'}
                 onClick={() => handleButtonClick(NetWorthChartPeriod.FiveYears)}
             >
                 5Y
             </Button>
             <Button
-                variant={chartPeriod === NetWorthChartPeriod.Max ? 'contained' : 'outlined'}
+                variant={netWorthChartPeriod === NetWorthChartPeriod.Max ? 'contained' : 'outlined'}
                 onClick={() => handleButtonClick(NetWorthChartPeriod.Max)}
             >
                 Max

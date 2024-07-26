@@ -11,7 +11,7 @@ namespace Application.Interfaces
         Task<Result<decimal>> GetCurrentMonthIncome();
 
         // historia sald kont
-        Task<Result<BaseValueOverTime>> GetAccountBalanceValueOverTime(NetWorthChartPeriod period);
+        Task<Result<ValueOverTime>> GetAccountBalanceValueOverTime(ChartPeriod period, List<int> accountIds, TimeWindow customWindow);
 
         // przepływy gotówki w czasie
 
@@ -22,7 +22,7 @@ namespace Application.Interfaces
         // prognoza salda kont
 
         // historia wartości netto
-        Task<Result<BaseValueOverTime>> GetNetWorthValueOverTime(NetWorthChartPeriod period);
+        Task<Result<ValueOverTime>> GetNetWorthValueOverTime(NetWorthChartPeriod period);
 
         // aktualna suma wartości aktywów/pasywów
         Task<Result<NetWorthStats>> GetNetWorthStats(bool loans = true, bool assets = true);

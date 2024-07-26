@@ -21,7 +21,7 @@ const charts = [
 ]
 
 export default observer(function Stats() {
-    const [selectedChart, setSelectedChart] = useState(charts[0]);
+    const [selectedChart, setSelectedChart] = useState(charts[1]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const id = parseInt(event.target.value)

@@ -1,5 +1,4 @@
 import dayjs from "dayjs";
-import { NetWorthChartPeriod } from "./enums/periods/NetWorthChartPeriod";
 
 export interface NetWorthStats {
     loansValue: number;
@@ -9,15 +8,11 @@ export interface NetWorthStats {
     }[]
 }
 
-export interface BaseValueOverTime {
+export interface ValueOverTime {
     data: number[],
     labels: string[],
     startDate: Date,
     endDate: Date,
-}
-
-export interface NetWorthValueOverTime extends BaseValueOverTime {
-    period: NetWorthChartPeriod,
 }
 
 export interface PieChartDataItem {
