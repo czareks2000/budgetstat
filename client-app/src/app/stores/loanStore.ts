@@ -374,5 +374,6 @@ export default class LoanStore {
             store.accountStore.loadAccount(id))
         
         store.statsStore.updateNetWorthStats(true, false);
+        store.statsStore.setHasOldData(true);
     }
 }

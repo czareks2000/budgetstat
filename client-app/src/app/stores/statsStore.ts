@@ -4,7 +4,7 @@ import agent from "../api/agent";
 import { store } from "./store";
 import { NetWorthChartPeriod } from "../models/enums/periods/NetWorthChartPeriod";
 import dayjs from "dayjs";
-import { ChartPeriod } from "../models/enums/periods/ChartPeriod";
+import { BalanceValueOverTimeSettings, initialBalanceValueOverTimeSettings } from "../models/ChartsSettings";
 
 export default class StatsStore {
     netWorthStats: NetWorthStats | undefined = undefined;
@@ -14,9 +14,12 @@ export default class StatsStore {
     loadedNetWorthValueOverTime = false;
 
     balanceValueOverTime: ValueOverTime | undefined = undefined;
+    balanceValueOverTimeSettings: BalanceValueOverTimeSettings = initialBalanceValueOverTimeSettings;
     balanceValueOverTimeLoaded = false;
 
     currentMonthIncome: number = 0;
+
+    statsHasOldData = false;
 
     constructor() {
         makeAutoObservable(this);
@@ -60,8 +63,26 @@ export default class StatsStore {
         return this.netWorthStats.loansValue;
     }
 
+    setHasOldData = (state: boolean) => {
+        this.statsHasOldData = state;
+    }
+
     setNetWorthChartPeriod = (period: NetWorthChartPeriod) => {
         this.netWorthChartPeriod = period;
+    }
+
+    setBalanceValueOverTimeSettings = async (settings: BalanceValueOverTimeSettings) => {
+        this.balanceValueOverTimeSettings = settings;
+        await this.loadBalanceValueOverTime();
+    }
+
+    resetBalanceValueOverTimeSettings = async () => {
+        this.balanceValueOverTimeSettings = initialBalanceValueOverTimeSettings;
+        await this.loadBalanceValueOverTime();
+    }
+
+    get balanceValueOverTimeSettingsHasInitialValues() {
+        return JSON.stringify(this.balanceValueOverTimeSettings) === JSON.stringify(initialBalanceValueOverTimeSettings)
     }
 
     getAssetsValues = (categoryId: number) => {
@@ -125,7 +146,11 @@ export default class StatsStore {
         this.balanceValueOverTimeLoaded = false;
         try {
             const response = await agent.Stats.accountBalanceOverTime(
-                ChartPeriod.Custom, [], dayjs().add(-60, 'day').toDate(), dayjs().toDate());
+                    this.balanceValueOverTimeSettings.period, 
+                    this.balanceValueOverTimeSettings.accountIds.map(a => Number(a.value)),
+                    dayjs(this.balanceValueOverTimeSettings.startDate).toDate(), 
+                    dayjs(this.balanceValueOverTimeSettings.endDate).toDate()
+                );
             runInAction(() => {
                 response.startDate = dayjs(response.startDate).toDate(); 
                 response.endDate = dayjs(response.endDate).toDate(); 

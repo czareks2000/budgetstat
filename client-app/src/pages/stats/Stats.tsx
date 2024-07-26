@@ -1,8 +1,9 @@
 import { Box, Divider, MenuItem, Paper, Stack, TextField } from "@mui/material"
-import { observer } from "mobx-react-lite"
 import BalanceOverTimeLineChart from "./charts/BalanceOverTimeLineChart";
 import IncomesAndExpensesOverTimeBarChart from "./charts/IncomesAndExpensesOverTimeBarChart";
 import ResponsiveContainer from "../../components/common/ResponsiveContainer";
+import BalanceOverTimeLineChartSettings from "./settings/BalanceOverTimeLineChartSettings";
+import { observer } from "mobx-react-lite";
 import { useState } from "react";
 
 const charts = [
@@ -16,7 +17,7 @@ const charts = [
         id: 2, 
         title: "Balance Over Time", 
         chart: <BalanceOverTimeLineChart/>,
-        settings: <TextField label={"period"} value={"last 30 days"}></TextField>
+        settings: <BalanceOverTimeLineChartSettings/>
     },
 ]
 
@@ -53,7 +54,7 @@ export default observer(function Stats() {
                     {selectedChart.chart}
                     <Divider>Chart settings</Divider>
                     <Paper>
-                        <Box height={200} p={2}>
+                        <Box p={2}>
                             {selectedChart.settings}
                         </Box>
                     </Paper>

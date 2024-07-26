@@ -13,7 +13,7 @@ export default function MyDatePicker(props: Props) {
        
     return (
         <>
-            <DatePicker 
+            <DatePicker
                 label={props.label} 
                 value={field.value || props.defaultValue}
                 onChange={(date) => helpers.setValue(date, true)}
@@ -21,6 +21,7 @@ export default function MyDatePicker(props: Props) {
                 
                 slotProps={{
                     textField: {
+                        fullWidth: true,
                         error: Boolean(meta.error),
                         helperText: meta.error,
                         name: props.name,

@@ -45,6 +45,7 @@ export default class CommonStore {
             store.transactionStore.loadTransactions();
             store.statsStore.loadNetWorthValueOverTime();
 
+            
             store.statsStore.loadBalanceValueOverTime();
 
             // nie można wyświetlić intefejsu bez tych danch załadowanych

@@ -9,6 +9,7 @@ interface Props {
     placeholder?: string;
     label?: string;
     options: Option[];
+    limitTags?: number;
 }
 
 const icon = <CheckBoxOutlineBlank fontSize="small" />;
@@ -21,6 +22,8 @@ export default function MultipleSelectWithChceckBoxes(props: Props) {
     const handleChange = (_: any, value: Option[]) => {
         setFieldValue(field.name, value);
     };
+
+    const {limitTags, ...restprops} = props;
 
     return (
         <>
@@ -35,7 +38,7 @@ export default function MultipleSelectWithChceckBoxes(props: Props) {
                 isOptionEqualToValue={(option, value) => option.value === value.value}
                 renderTags={(value, getTagProps) => {
                     const numTags = value.length;
-                    const limitTags = 1;
+                    const limitTags = props.limitTags || 1;
 
                     return (
                       <>
@@ -67,7 +70,7 @@ export default function MultipleSelectWithChceckBoxes(props: Props) {
                   }}
                 renderInput={(params) => 
                 <TextField
-                    {...props}
+                    {...restprops}
                     {...params}
                     InputLabelProps={{ shrink: true }} 
                     placeholder={field.value.length > 0 ? "" : props.placeholder}

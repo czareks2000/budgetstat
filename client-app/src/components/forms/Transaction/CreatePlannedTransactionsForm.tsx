@@ -128,8 +128,8 @@ export default observer(function CreatePlannedTransactionsForm() {
                                 label="Start From" 
                                 name={"startDate"}/>  
 
-                            <Stack direction={'row'} display={'flex'} spacing={2} alignItems={'center'}>
-                                <Grid item xs={'auto'} >
+                            <Stack direction={'row'} display={'flex'} spacing={2} alignItems={'top'}>
+                                <Grid item xs={'auto'}  pt={2}>
                                     Repeats every
                                 </Grid>
                                 <Grid item xs>
@@ -144,7 +144,7 @@ export default observer(function CreatePlannedTransactionsForm() {
                                         name={"period"}
                                         options={enumToOptions(Period, values.repeatsEvery ? values.repeatsEvery > 1 : false)} />
                                 </Grid>
-                                <Grid item xs={'auto'} >
+                                <Grid item xs={'auto'}  pt={2}>
                                     X
                                 </Grid>
                                 <Grid item xs>

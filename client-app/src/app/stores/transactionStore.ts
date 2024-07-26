@@ -455,5 +455,7 @@ export default class TransactionStore {
             store.budgetStore.refreshBudgets(categoryId);
 
         store.statsStore.loadCurrentMonthIncome();
+
+        store.statsStore.setHasOldData(true);
     }
 }

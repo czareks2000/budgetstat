@@ -21,7 +21,6 @@ export interface PieChartDataItem {
     label: string;
 }
 
-
 export const mockData = [39000, 42100, 44000, 43000, 41200, 42000, 42137, 44000, 43700, 46500, 45000, 47000];
 export const mockLabels = [
 '08/2023',
