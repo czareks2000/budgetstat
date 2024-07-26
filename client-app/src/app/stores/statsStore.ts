@@ -7,17 +7,20 @@ import dayjs from "dayjs";
 import { BalanceValueOverTimeSettings, initialBalanceValueOverTimeSettings } from "../models/ChartsSettings";
 
 export default class StatsStore {
+    // Current Month Income
+    currentMonthIncome: number = 0;
+    // Net Worth Stats
     netWorthStats: NetWorthStats | undefined = undefined;
 
+    // Net Worth Value Over Time chart
     netWorthValueOverTime: ValueOverTime | undefined = undefined;
     netWorthChartPeriod: NetWorthChartPeriod = NetWorthChartPeriod.Year;
     loadedNetWorthValueOverTime = false;
 
+    // Balance Value Over Time chart
     balanceValueOverTime: ValueOverTime | undefined = undefined;
     balanceValueOverTimeSettings: BalanceValueOverTimeSettings = initialBalanceValueOverTimeSettings;
     balanceValueOverTimeLoaded = false;
-
-    currentMonthIncome: number = 0;
 
     statsHasOldData = false;
 
@@ -33,6 +36,7 @@ export default class StatsStore {
     }
 
     clearStore = () => {
+        this.currentMonthIncome = 0;
         this.netWorthStats = undefined;
 
         this.netWorthValueOverTime = undefined;
@@ -40,65 +44,32 @@ export default class StatsStore {
         this.loadedNetWorthValueOverTime = false;
 
         this.balanceValueOverTime = undefined;
+        this.balanceValueOverTimeSettings = initialBalanceValueOverTimeSettings;
         this.balanceValueOverTimeLoaded = false;
 
-        this.currentMonthIncome = 0;
-    }
-
-    get assetsValue() {
-        var value = 0;
-
-        if (this.netWorthStats)
-            this.netWorthStats.assetsValues.forEach(item => {
-                value += item.value;
-            });
-
-        return value;
-    }
-
-    get loansValue() {
-        if (!this.netWorthStats)
-            return 0;
-
-        return this.netWorthStats.loansValue;
+        this.statsHasOldData = false;
     }
 
     setHasOldData = (state: boolean) => {
         this.statsHasOldData = state;
     }
 
-    setNetWorthChartPeriod = (period: NetWorthChartPeriod) => {
-        this.netWorthChartPeriod = period;
+    //#region Current Month Income
+
+    loadCurrentMonthIncome = async () => {
+        try {
+            const value = await agent.Stats.currentMothIncome();
+            runInAction(() => {
+                this.currentMonthIncome = value;
+            })
+        } catch (error) {
+            console.log(error);
+        }
     }
 
-    setBalanceValueOverTimeSettings = async (settings: BalanceValueOverTimeSettings) => {
-        this.balanceValueOverTimeSettings = settings;
-        await this.loadBalanceValueOverTime();
-    }
+    //#endregion
 
-    resetBalanceValueOverTimeSettings = async () => {
-        this.balanceValueOverTimeSettings = initialBalanceValueOverTimeSettings;
-        await this.loadBalanceValueOverTime();
-    }
-
-    get balanceValueOverTimeSettingsHasInitialValues() {
-        return JSON.stringify(this.balanceValueOverTimeSettings) === JSON.stringify(initialBalanceValueOverTimeSettings)
-    }
-
-    getAssetsValues = (categoryId: number) => {
-        if (!this.netWorthStats)
-            return 0
-
-        var value = 0;
-
-        this.netWorthStats.assetsValues
-            .forEach(item => {
-                if(item.assetCategoryId === categoryId)
-                value += item.value;
-            });
-
-        return value;
-    }
+    //#region Net Worth Stats
 
     get assetPieChartData() {
         let data: PieChartDataItem[] = [];
@@ -122,15 +93,37 @@ export default class StatsStore {
         return data;
     }
 
-    loadCurrentMonthIncome = async () => {
-        try {
-            const value = await agent.Stats.currentMothIncome();
-            runInAction(() => {
-                this.currentMonthIncome = value;
-            })
-        } catch (error) {
-            console.log(error);
-        }
+    get assetsValue() {
+        var value = 0;
+
+        if (this.netWorthStats)
+            this.netWorthStats.assetsValues.forEach(item => {
+                value += item.value;
+            });
+
+        return value;
+    }
+
+    get loansValue() {
+        if (!this.netWorthStats)
+            return 0;
+
+        return this.netWorthStats.loansValue;
+    }
+
+    getAssetsValues = (categoryId: number) => {
+        if (!this.netWorthStats)
+            return 0
+
+        var value = 0;
+
+        this.netWorthStats.assetsValues
+            .forEach(item => {
+                if(item.assetCategoryId === categoryId)
+                value += item.value;
+            });
+
+        return value;
     }
 
     loadNetWorthStats = async () => {
@@ -141,6 +134,40 @@ export default class StatsStore {
             console.log(error);
         }
     }
+
+    updateNetWorthStats = async (loans: boolean = true, assets: boolean = true) => {
+        try {
+            var response = await agent.Stats.netWorthStats(loans, assets);
+
+            runInAction(() => {
+                if (loans)
+                    this.setLoansValue(response.loansValue);
+                if (assets)
+                    this.setAssetsValues(response.assetsValues);
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    
+    private setLoansValue = (value: number) => {
+        if (this.netWorthStats)
+            this.netWorthStats.loansValue = value;
+    }
+
+    private setAssetsValues  = (value: { assetCategoryId: number; value: number; }[]) => {
+        if (this.netWorthStats)
+            this.netWorthStats.assetsValues = value;
+    }
+
+    //#endregion
+
+    //#region Balance Value Over Time
+
+    get balanceValueOverTimeSettingsHasInitialValues() {
+        return JSON.stringify(this.balanceValueOverTimeSettings) === JSON.stringify(initialBalanceValueOverTimeSettings)
+    }
+
 
     loadBalanceValueOverTime = async () => {
         this.balanceValueOverTimeLoaded = false;
@@ -162,6 +189,20 @@ export default class StatsStore {
         }
     }
 
+    setBalanceValueOverTimeSettings = async (settings: BalanceValueOverTimeSettings) => {
+        this.balanceValueOverTimeSettings = settings;
+        await this.loadBalanceValueOverTime();
+    }
+
+    resetBalanceValueOverTimeSettings = async () => {
+        this.balanceValueOverTimeSettings = initialBalanceValueOverTimeSettings;
+        await this.loadBalanceValueOverTime();
+    }
+
+    //#endregion
+
+    //#region Net Worth Value Over Time
+
     loadNetWorthValueOverTime = async () => {
         this.loadedNetWorthValueOverTime = false;
         try {
@@ -177,29 +218,9 @@ export default class StatsStore {
         }
     }
 
-    updateNetWorthStats = async (loans: boolean = true, assets: boolean = true) => {
-        try {
-            var response = await agent.Stats.netWorthStats(loans, assets);
-
-            runInAction(() => {
-                if (loans)
-                    this.setLoansValue(response.loansValue);
-                if (assets)
-                    this.setAssetsValues(response.assetsValues);
-            })
-        } catch (error) {
-            console.log(error);
-        }
+    setNetWorthChartPeriod = (period: NetWorthChartPeriod) => {
+        this.netWorthChartPeriod = period;
     }
 
-    private setLoansValue = (value: number) => {
-        if (this.netWorthStats)
-            this.netWorthStats.loansValue = value;
-    }
-
-    private setAssetsValues  = (value: { assetCategoryId: number; value: number; }[]) => {
-        if (this.netWorthStats)
-            this.netWorthStats.assetsValues = value;
-    }
-
+    //#endregion
 }
