@@ -6,7 +6,7 @@ import { useStore } from '../../../app/stores/store';
 import { observer } from 'mobx-react-lite';
 import { convertToString } from '../../../app/utils/ConvertToString';
 import ChartPeriodButtonGroup from './ChartPeriodButtonGroup';
-import { mockData, mockDates, mockLabels } from '../../../app/models/Stats';
+import { mockData, mockDates, mockLabels } from '../../../app/utils/MockData';
 
 export default observer(function NetWorthOverTimeLineChart() {
     const {

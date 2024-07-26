@@ -2,7 +2,7 @@ import { Box, Paper } from '@mui/material'
 import { LineChart } from '@mui/x-charts'
 import { observer } from 'mobx-react-lite'
 import { useStore } from '../../../app/stores/store';
-import { mockData, mockLabels } from '../../../app/models/Stats';
+import { mockData, mockLabels } from '../../../app/utils/MockData';
 import { formatAmount } from '../../../app/utils/FormatAmount';
 import { theme } from '../../../app/layout/Theme';
 
