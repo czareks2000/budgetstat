@@ -16,7 +16,7 @@ export default observer(function BudgetItem({budget, openDeleteDialog}: Props) {
     const {currencyStore: {defaultCurrency}, budgetStore: {selectBudget}} = useStore();
     
     const progressColor = () => {
-        const percentage = (budget.currentAmount / budget.convertedAmount) * 100;
+        const percentage = budget.currentAmount / budget.convertedAmount * 100;
     
         if (percentage < 90) {
             return "success";
@@ -28,7 +28,7 @@ export default observer(function BudgetItem({budget, openDeleteDialog}: Props) {
     };
 
     const progressValue = () => {
-        return budget.currentAmount / budget.convertedAmount * 100;
+        return Math.min((budget.currentAmount / budget.convertedAmount * 100), 100);
     }
 
     const startDate = () => {

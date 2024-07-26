@@ -19,7 +19,7 @@ import { useEffect } from "react";
 
 interface Props {
     initialValues: TransactionFormValues;
-    onSubmit: (values: TransactionFormValues, helpers: FormikHelpers<TransactionFormValues>) => void;
+    onSubmit: (values: TransactionFormValues, helpers: FormikHelpers<TransactionFormValues>, initialValues: TransactionFormValues) => void;
     submitText: string;
     editMode?: boolean;
 }
@@ -102,7 +102,8 @@ export default observer(function TransactionForm({initialValues, onSubmit, submi
                 toAmount: values.fromAmount
             }
         }
-        onSubmit(transformedValues || values, helpers);
+
+        onSubmit(transformedValues || values, helpers, initialValues);
     }
 
     return (

@@ -7,7 +7,6 @@ using Domain;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
-using System.Security.Principal;
 
 namespace Application.Services
 {
@@ -95,13 +94,33 @@ namespace Application.Services
         {
             var user = await _utilities.GetCurrentUserAsync();
 
-            var budgetsDto = await _context.Budgets
+            var category = await _context.Categories
+                .Where(c => c.UserId == user.Id)
+                .FirstOrDefaultAsync(c => c.Id == categoryId);
+
+            var budgetsQuery = _context.Budgets
                 .Include(b => b.Currency)
                 .Include(b => b.Categories)
                     .ThenInclude(c => c.Category)
                         .ThenInclude(c => c.Icon)
-                .Where(b => b.User == user)
-                .Where(b => b.Categories.Select(b => b.CategoryId).Contains(categoryId))
+                .Where(b => b.User == user);
+
+            if (!category.IsMain)
+            {
+                budgetsQuery = budgetsQuery
+                    .Where(b =>
+                        b.Categories
+                            .Select(b => b.CategoryId).Contains((int)category.MainCategoryId) ||
+                        b.Categories
+                            .Select(b => b.CategoryId).Contains(category.Id));
+            }              
+            else
+                budgetsQuery = budgetsQuery
+                    .Where(b => 
+                        b.Categories
+                            .Select(b => b.CategoryId).Contains(category.Id));
+
+            var budgetsDto = await budgetsQuery
                 .ProjectTo<BudgetDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
 

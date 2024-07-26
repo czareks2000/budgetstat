@@ -287,12 +287,12 @@ export default class TransactionStore {
         })
     }
 
-    updateTransaction = async (transactionId: number, transaction: TransactionFormValues) => {
+    updateTransaction = async (transactionId: number, transaction: TransactionFormValues, initialValues: TransactionFormValues) => {
         try {
             if (transaction.type === TransactionType.Transfer)
                 await this.submitUpdatedTransfer(transactionId, transaction);
             else
-                await this.submitUpdatedTransaction(transactionId, transaction);
+                await this.submitUpdatedTransaction(transactionId, transaction, initialValues);
 
             runInAction(() => {
                 if (!this.filterHasInitialValues)
@@ -306,7 +306,7 @@ export default class TransactionStore {
         }
     }
 
-    private submitUpdatedTransaction = async (transactionId: number, transaction: TransactionFormValues) => {
+    private submitUpdatedTransaction = async (transactionId: number, transaction: TransactionFormValues, initialValues: TransactionFormValues) => {
         const updatedTransaction: TransactionUpdateValues = {
             amount: transaction.amount!,
             categoryId: transaction.type === TransactionType.Expense 
@@ -324,7 +324,19 @@ export default class TransactionStore {
         const accountId = Number(transaction.accountId);
 
         runInAction(() => {
-            this.updateDataInOtherStores([accountId], updatedTransaction.categoryId);
+            let categoryId = null;
+            if (initialValues.type === TransactionType.Income)
+            {
+                if (initialValues.incomeCategoryId!.id !== transaction.incomeCategoryId!.id)
+                    categoryId = initialValues.incomeCategoryId!.id;
+            }
+            else if (initialValues.type === TransactionType.Expense)
+            {
+                if (initialValues.expenseCategoryId!.id !== transaction.expenseCategoryId!.id)
+                    categoryId = initialValues.expenseCategoryId!.id;         
+            }  
+
+            this.updateDataInOtherStores([accountId], updatedTransaction.categoryId, categoryId);
         })
     }
 
@@ -433,7 +445,7 @@ export default class TransactionStore {
         }
     }
 
-    private updateDataInOtherStores = (accountIds: (number | null)[], categoryId: number | null) => {
+    private updateDataInOtherStores = (accountIds: (number | null)[], categoryId: number | null, oldCategoryId?: number | null) => {
         
         if (accountIds)
         {
@@ -453,6 +465,8 @@ export default class TransactionStore {
             
         if (categoryId)
             store.budgetStore.refreshBudgets(categoryId);
+        if (oldCategoryId)
+            store.budgetStore.refreshBudgets(oldCategoryId); 
 
         store.statsStore.loadCurrentMonthIncome();
 

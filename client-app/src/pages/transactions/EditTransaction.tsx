@@ -25,8 +25,8 @@ export default observer(function EditTransaction() {
     
     if (loadingFormValues || !transactionFormValues) return <LoadingWithLabel />
 
-    const handleUpdate = (values: TransactionFormValues, helpers: FormikHelpers<TransactionFormValues>) => {
-        updateTransaction(Number(id), values).then(() => {
+    const handleUpdate = (values: TransactionFormValues, helpers: FormikHelpers<TransactionFormValues>, initialValues: TransactionFormValues) => {
+        updateTransaction(Number(id), values, initialValues).then(() => {
             router.navigate('/transactions');
         }).catch((err) => {
             if (values.type === TransactionType.Transfer)
