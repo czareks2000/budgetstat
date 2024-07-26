@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { Period } from "./enums/Period";
+import { Period } from "./enums/periods/Period";
 import { TransactionType, TransactionTypeFilter } from "./enums/TransactionType";
 import { Option } from "./Option";
 import { Category, CategoryOption } from "./Category";

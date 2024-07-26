@@ -1,17 +1,9 @@
-﻿namespace Application.Dto.Stats
-{
-    public class NetWorthValueOverTime
-    {
-        public List<decimal> Data { get; set; }
-        public List<string> Labels { get; set; }
-        public ChartPeriod Period { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-    }
+﻿using Application.Dto.Stats.Periods;
 
-    public class TimeWindow
+namespace Application.Dto.Stats
+{
+    public class NetWorthValueOverTime : BaseValueOverTime
     {
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public NetWorthChartPeriod Period { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Application.Dto.Stats;
+﻿using Application.Dto.Stats.Periods;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,9 +16,15 @@ namespace API.Controllers
         }
 
         [HttpGet("stats/networthovertime/{period}")] //api/stats/networthovertime/{period}
-        public async Task<IActionResult> GetNetWorthValueOverTime(ChartPeriod period)
+        public async Task<IActionResult> GetNetWorthValueOverTime(NetWorthChartPeriod period)
         {
             return HandleResult(await _statsService.GetNetWorthValueOverTime(period));
+        }
+
+        [HttpGet("stats/balanceovertime/{period}")] //api/stats/balanceovertime/{period}
+        public async Task<IActionResult> GetAccountBalanceValueOverTime(NetWorthChartPeriod period)
+        {
+            return HandleResult(await _statsService.GetAccountBalanceValueOverTime(period));
         }
 
         [HttpGet("stats/currentmonthincome")] //api/stats/currentmonthincome
@@ -26,5 +32,6 @@ namespace API.Controllers
         {
             return HandleResult(await _statsService.GetCurrentMonthIncome());
         }
+        
     }
 }

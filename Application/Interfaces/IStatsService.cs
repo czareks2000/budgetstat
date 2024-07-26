@@ -1,5 +1,6 @@
 ﻿using Application.Core;
 using Application.Dto.Stats;
+using Application.Dto.Stats.Periods;
 
 namespace Application.Interfaces
 {
@@ -10,6 +11,7 @@ namespace Application.Interfaces
         Task<Result<decimal>> GetCurrentMonthIncome();
 
         // historia sald kont
+        Task<Result<BaseValueOverTime>> GetAccountBalanceValueOverTime(NetWorthChartPeriod period);
 
         // przepływy gotówki w czasie
 
@@ -20,7 +22,7 @@ namespace Application.Interfaces
         // prognoza salda kont
 
         // historia wartości netto
-        Task<Result<NetWorthValueOverTime>> GetNetWorthValueOverTime(ChartPeriod period);
+        Task<Result<BaseValueOverTime>> GetNetWorthValueOverTime(NetWorthChartPeriod period);
 
         // aktualna suma wartości aktywów/pasywów
         Task<Result<NetWorthStats>> GetNetWorthStats(bool loans = true, bool assets = true);

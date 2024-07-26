@@ -1,6 +1,7 @@
 ﻿using Application.Core;
 using Application.Dto.Asset;
 using Application.Dto.Stats;
+using Application.Dto.Stats.Periods;
 using Application.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -105,7 +106,7 @@ namespace Application.Services
             return assetsCategoryValues;
         }
 
-        public async Task<Result<NetWorthValueOverTime>> GetNetWorthValueOverTime(ChartPeriod period)
+        public async Task<Result<BaseValueOverTime>> GetNetWorthValueOverTime(NetWorthChartPeriod period)
         {   
             var user = await _utilities.GetCurrentUserAsync();
 
@@ -125,7 +126,8 @@ namespace Application.Services
             };
 
             // calculate start and end dates
-            var timeWindow = CalculateTimeWindow(period, assets);
+            var earliestDate = FindEarliestDate(assets);
+            var timeWindow = CalculateTimeWindow(period, earliestDate);
 
             chartObject.StartDate = timeWindow.StartDate;
             chartObject.EndDate = timeWindow.EndDate;
@@ -199,20 +201,20 @@ namespace Application.Services
             }
 
             // return data
-            return Result<NetWorthValueOverTime>.Success(chartObject);
+            return Result<BaseValueOverTime>.Success(chartObject);
         }
 
-        private static TimeWindow CalculateTimeWindow(ChartPeriod period, List<Asset> assets)
+        private static TimeWindow CalculateTimeWindow(NetWorthChartPeriod period, DateTime earilestDate)
         {
             DateTime now = DateTime.UtcNow;
 
             DateTime startDate = period switch
             {
-                ChartPeriod.YTD => new DateTime(now.Year, 1, 1),
-                ChartPeriod.Month => now.AddDays(-30),
-                ChartPeriod.Year => now.AddDays(-365),
-                ChartPeriod.FiveYears => now.AddYears(-5),
-                ChartPeriod.Max => FindEarliestDate(assets),
+                NetWorthChartPeriod.YTD => new DateTime(now.Year, 1, 1),
+                NetWorthChartPeriod.Month => now.AddDays(-30),
+                NetWorthChartPeriod.Year => now.AddDays(-365),
+                NetWorthChartPeriod.FiveYears => now.AddYears(-5),
+                NetWorthChartPeriod.Max => earilestDate,
                 _ => throw new ArgumentOutOfRangeException(nameof(period), period, null),
             };
 
@@ -238,14 +240,29 @@ namespace Application.Services
             return earliestDate;
         }
 
-        private static List<DateTime> CalculateDates(ChartPeriod period, TimeWindow timeWindow)
+        private static DateTime FindEarliestDate(List<Account> accounts)
+        {
+            if (accounts == null || accounts.Count == 0)
+            {
+                throw new ArgumentException("The assets list cannot be null or empty.");
+            }
+
+            DateTime earliestDate = accounts
+                .Where(account => account.AccountBalances != null && account.AccountBalances.Count > 0)
+                .SelectMany(account => account.AccountBalances)
+                .Min(ab => ab.Date);
+
+            return earliestDate;
+        }
+
+        private static List<DateTime> CalculateDates(NetWorthChartPeriod period, TimeWindow timeWindow)
         {
             List<DateTime> dates = new List<DateTime>();
             DateTime currentDate = timeWindow.StartDate;
 
             switch (period)
             {
-                case ChartPeriod.YTD:
+                case NetWorthChartPeriod.YTD:
                     while (currentDate <= timeWindow.EndDate)
                     {
                         var date = new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month));
@@ -254,7 +271,7 @@ namespace Application.Services
                     }
                     break;
 
-                case ChartPeriod.Month:
+                case NetWorthChartPeriod.Month:
                     for (int i = 0; i < 10; i++)
                     {
                         dates.Add(currentDate);
@@ -262,7 +279,7 @@ namespace Application.Services
                     }
                     break;
 
-                case ChartPeriod.Year:
+                case NetWorthChartPeriod.Year:
                     for (int i = 0; i < 12; i++)
                     {
                         var date = new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month));
@@ -271,7 +288,7 @@ namespace Application.Services
                     }
                     break;
 
-                case ChartPeriod.FiveYears:
+                case NetWorthChartPeriod.FiveYears:
                     for (int i = 0; i < 12; i++)
                     {
                         var date = new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month));
@@ -280,7 +297,7 @@ namespace Application.Services
                     }
                     break;
 
-                case ChartPeriod.Max:
+                case NetWorthChartPeriod.Max:
                     int totalDays = (timeWindow.EndDate - timeWindow.StartDate).Days;
                     int interval = totalDays / 11; // 12 dates mean 11 intervals
                     for (int i = 0; i < 12; i++)
@@ -302,12 +319,12 @@ namespace Application.Services
             return dates;
         }
 
-        private static string FormatDateTime(DateTime dateTime, ChartPeriod period)
+        private static string FormatDateTime(DateTime dateTime, NetWorthChartPeriod period)
         {
             return period switch
             {
-                ChartPeriod.Month => dateTime.ToString("dd/MM/yyyy"),
-                ChartPeriod.YTD or ChartPeriod.Year or ChartPeriod.FiveYears or ChartPeriod.Max => dateTime.ToString("MM/yyyy"),
+                NetWorthChartPeriod.Month => dateTime.ToString("dd/MM/yyyy"),
+                NetWorthChartPeriod.YTD or NetWorthChartPeriod.Year or NetWorthChartPeriod.FiveYears or NetWorthChartPeriod.Max => dateTime.ToString("MM/yyyy"),
                 _ => throw new ArgumentOutOfRangeException(nameof(period), period, null),
             };
         }
@@ -344,6 +361,61 @@ namespace Application.Services
             }
 
             return Result<decimal>.Success(balance);
+        }
+
+        public async Task<Result<BaseValueOverTime>> GetAccountBalanceValueOverTime(NetWorthChartPeriod period)
+        {
+            var user = await _utilities.GetCurrentUserAsync();
+
+            var accounts = await _context.Accounts
+                .Include(a => a.AccountBalances)
+                    .ThenInclude(ab => ab.Currency)
+                .Where(a => a.UserId == user.Id)
+                .Where(a => a.Status == AccountStatus.Visible)
+                .ToListAsync();
+
+            // create result object
+            NetWorthValueOverTime chartObject = new()
+            {
+                Period = period,
+                Data = [],
+                Labels = [],
+            };
+
+            // calculate start and end dates
+            var earliestDate = FindEarliestDate(accounts);
+            var timeWindow = CalculateTimeWindow(period, earliestDate);
+
+            chartObject.StartDate = timeWindow.StartDate;
+            chartObject.EndDate = timeWindow.EndDate;
+
+            // calculate date labels
+            var dates = CalculateDates(period, timeWindow);
+
+            // calculate data
+            foreach (var date in dates)
+            {
+                decimal value = 0;
+
+                // accounts value
+                foreach (var account in accounts)
+                {
+                    var accountBalance = account.AccountBalances
+                        .Where(ab => ab.Date.Date <= date.Date)
+                        .OrderByDescending(ab => ab.Date)
+                        .FirstOrDefault();
+
+                    if (accountBalance == null) continue;
+
+                    value += await _utilities.Convert(accountBalance.Currency.Code, user.DefaultCurrency.Code, accountBalance.Balance, date);
+                }
+
+                chartObject.Data.Add(value);
+                chartObject.Labels.Add(FormatDateTime(date, period));
+            }
+
+            // return data
+            return Result<BaseValueOverTime>.Success(chartObject);
         }
     }
 }

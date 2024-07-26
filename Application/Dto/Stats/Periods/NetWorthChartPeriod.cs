@@ -1,6 +1,6 @@
-﻿namespace Application.Dto.Stats
+﻿namespace Application.Dto.Stats.Periods
 {
-    public enum ChartPeriod
+    public enum NetWorthChartPeriod
     {
         YTD = 0,
         Month = 1,

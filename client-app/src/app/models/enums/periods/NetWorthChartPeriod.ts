@@ -1,4 +1,4 @@
-export enum ChartPeriod {
+export enum NetWorthChartPeriod {
     YTD = 0,
     Month = 1,
     Year = 2,

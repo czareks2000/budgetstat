@@ -2,15 +2,18 @@ import { makeAutoObservable, reaction, runInAction } from "mobx";
 import { NetWorthStats, NetWorthValueOverTime, PieChartDataItem } from "../models/Stats";
 import agent from "../api/agent";
 import { store } from "./store";
-import { ChartPeriod } from "../models/enums/ChartPeriod";
+import { NetWorthChartPeriod } from "../models/enums/periods/NetWorthChartPeriod";
 import dayjs from "dayjs";
 
 export default class StatsStore {
     netWorthStats: NetWorthStats | undefined = undefined;
 
     netWorthValueOverTime: NetWorthValueOverTime | undefined = undefined;
-    chartPeriod: ChartPeriod = ChartPeriod.Year;
+    chartPeriod: NetWorthChartPeriod = NetWorthChartPeriod.Year;
     loadedNetWorthValueOverTime = false;
+
+    balanceValueOverTime: NetWorthValueOverTime | undefined = undefined;
+    balanceValueOverTimeLoaded = false;
 
     currentMonthIncome: number = 0;
 
@@ -28,7 +31,7 @@ export default class StatsStore {
     clearStore = () => {
         this.netWorthStats = undefined;
         this.netWorthValueOverTime = undefined;
-        this.chartPeriod = ChartPeriod.Year;
+        this.chartPeriod = NetWorthChartPeriod.Year;
         this.loadedNetWorthValueOverTime = false;
     }
 
@@ -50,7 +53,7 @@ export default class StatsStore {
         return this.netWorthStats.loansValue;
     }
 
-    setChartPeriod = (period: ChartPeriod) => {
+    setChartPeriod = (period: NetWorthChartPeriod) => {
         this.chartPeriod = period;
     }
 
@@ -106,6 +109,21 @@ export default class StatsStore {
         try {
             const response = await agent.Stats.netWorthStats();
             runInAction(() => this.netWorthStats = response)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    loadBalanceValueOverTime = async () => {
+        this.balanceValueOverTimeLoaded = false;
+        try {
+            const response = await agent.Stats.accountBalanceOverTime(NetWorthChartPeriod.Month);
+            runInAction(() => {
+                response.startDate = dayjs(response.startDate).toDate(); 
+                response.endDate = dayjs(response.endDate).toDate(); 
+                this.balanceValueOverTime = response;
+                this.balanceValueOverTimeLoaded = true;
+            })
         } catch (error) {
             console.log(error);
         }

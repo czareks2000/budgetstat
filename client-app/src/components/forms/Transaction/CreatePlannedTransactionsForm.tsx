@@ -15,7 +15,7 @@ import { router } from "../../../app/router/Routes";
 import { PlannedTransactionFormValues } from "../../../app/models/Transaction";
 import { TransactionType } from "../../../app/models/enums/TransactionType";
 import CategoryGroupedInput from "../../formInputs/CategoryGroupedInput";
-import { Period } from "../../../app/models/enums/Period";
+import { Period } from "../../../app/models/enums/periods/Period";
 
 export default observer(function CreatePlannedTransactionsForm() {
     const {

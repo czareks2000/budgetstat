@@ -15,8 +15,8 @@ import { CollectivePayoffValues, PayoffCreateValues } from "../models/Payoff";
 import { LoanStatus } from "../models/enums/LoanStatus";
 import { Icon } from "../models/Icon";
 import { Asset, AssetCategory, AssetCreateUpdateValues } from "../models/Asset";
-import { NetWorthStats, NetWorthValueOverTime } from "../models/Stats";
-import { ChartPeriod } from "../models/enums/ChartPeriod";
+import { NetWorthStats, ValueOverTime } from "../models/Stats";
+import { ChartPeriod } from "../models/enums/periods/NetWorthChartPeriod";
 import { TransactionType } from "../models/enums/TransactionType";
 
 const sleep = (delay: number) => {
@@ -247,9 +247,11 @@ const Stats = {
     netWorthStats: (loans: boolean = true, assets: boolean = true) =>
         requests.get<NetWorthStats>(`/stats/networthstats?loans=${loans}&assets=${assets}`),
     netWorthValueOverTime: (period: ChartPeriod) =>
-        requests.get<NetWorthValueOverTime>(`/stats/networthovertime/${period}`),
+        requests.get<ValueOverTime>(`/stats/networthovertime/${period}`),
     currentMothIncome: () =>
         requests.get<number>('/stats/currentmonthincome'),
+    accountBalanceOverTime: (period: ChartPeriod) =>
+        requests.get<ValueOverTime>(`/stats/balanceovertime/${period}`),
 }
 
 const agent = {
