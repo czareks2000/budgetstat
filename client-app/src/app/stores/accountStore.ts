@@ -199,6 +199,7 @@ export default class AccountStore {
         store.transactionStore.loadTransactions();
 
         store.statsStore.loadNetWorthValueOverTime();
+        store.statsStore.loadCurrentMonthIncome();
         store.statsStore.setHasOldData(true);
     }
 

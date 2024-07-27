@@ -18,6 +18,7 @@ namespace Application.Interfaces
         // średnie wartości transakcji 
 
         // suma wartości transakcji
+        Task<Result<List<IncomesAndExpensesDataSetItem>>> GetIncomesAndExpensesOverTime(ExtendedChartPeriod period, List<int> accountIds, DateTime customDate);
 
         // prognoza salda kont
 

@@ -29,6 +29,13 @@ namespace API.Controllers
             return HandleResult(await _statsService.GetAccountBalanceValueOverTime(period, accountIds, customWindow));
         }
 
+        [HttpGet("stats/incomesandexpensesovertime/{period}")] //api/stats/incomesandexpensesovertime
+        public async Task<IActionResult> GetIncomesAndExpensesOverTime(
+            ExtendedChartPeriod period, [FromQuery] List<int> accountIds, [FromQuery] DateTime customDate)
+        {
+            return HandleResult(await _statsService.GetIncomesAndExpensesOverTime(period, accountIds, customDate));
+        }
+
         [HttpGet("stats/currentmonthincome")] //api/stats/currentmonthincome
         public async Task<IActionResult> GetCurrentMonthIncome()
         {

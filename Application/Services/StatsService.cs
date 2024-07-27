@@ -9,6 +9,7 @@ using Domain;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Application.Services
 {
@@ -160,7 +161,7 @@ namespace Application.Services
                 var currency = transaction.Currency;
 
                 var convertedAmount = await _utilities
-                    .Convert(currency.Code, user.DefaultCurrency.Code, transaction.Amount);
+                    .Convert(currency.Code, user.DefaultCurrency.Code, transaction.Amount, transaction.Date.Date);
 
                 if (category.Type == TransactionType.Income)
                     balance += convertedAmount;
@@ -231,7 +232,85 @@ namespace Application.Services
             return Result<ValueOverTime>.Success(chartObject);
         }
 
+        public async Task<Result<List<IncomesAndExpensesDataSetItem>>> GetIncomesAndExpensesOverTime(
+            ExtendedChartPeriod period, List<int> accountIds, DateTime customDate)
+        {
+            var user = await _utilities.GetCurrentUserAsync();
+
+            var transactions = await _context.Transactions
+                .Include(a => a.Currency)
+                .Include(a => a.Category)
+                .Include(a => a.Account)
+                .Where(a => a.UserId == user.Id)
+                .Where(t => t.Considered)
+                .Where(t => !t.Planned)
+                .ToListAsync();
+
+            // filter accounts
+            if (accountIds.Count > 0)
+                transactions = transactions
+                    .Where(t => t.Account != null)
+                    .Where(t => accountIds.Contains((int)t.AccountId))
+                    .ToList();
+
+            // create result object
+            List<IncomesAndExpensesDataSetItem> dataSet = [];
+
+            // calculate start and end dates
+            var timeWindow = CalculateTimeWindow(period, customDate);
+
+            // calculate date labels
+            var dates = CalculateDates(period, timeWindow);
+
+            // calculate data
+            foreach (var date in dates)
+            {
+                IncomesAndExpensesDataSetItem dataSetItem = new()
+                {
+                    Income = 0,
+                    Expense = 0,
+                    Label = FormatDateTime(date, period)
+                };
+
+                // incomes value
+                var incomes = FilterTransactions(transactions, TransactionType.Income, period, date);
+
+                foreach (var income in incomes)
+                    dataSetItem.Income += await _utilities.Convert(income.Currency.Code, user.DefaultCurrency.Code, income.Amount, date.Date);
+
+                // expenses value
+                var expenses = FilterTransactions(transactions, TransactionType.Expense, period, date);
+
+                foreach (var expense in expenses)
+                    dataSetItem.Expense += await _utilities.Convert(expense.Currency.Code, user.DefaultCurrency.Code, expense.Amount, date.Date);
+
+                dataSet.Add(dataSetItem);
+            }
+
+            // return data
+            return Result<List<IncomesAndExpensesDataSetItem>>.Success(dataSet);
+        }
+
         #region HelperFunctions
+
+        private static List<Transaction> FilterTransactions(List<Transaction> transactions, TransactionType type, ExtendedChartPeriod period, DateTime date)
+        {
+            var filteredTransactions = transactions
+                    .Where(t => t.Category.Type == type);
+
+            filteredTransactions = period switch
+            {
+                ExtendedChartPeriod.Last7Days or ExtendedChartPeriod.Last30Days or ExtendedChartPeriod.CustomMonth
+                    => filteredTransactions.Where(i => i.Date.Date == date.Date),
+                ExtendedChartPeriod.LastYear or ExtendedChartPeriod.CustomYear
+                    => filteredTransactions.Where(i => i.Date.Month == date.Month && i.Date.Year == date.Year),
+                ExtendedChartPeriod.Last5Years
+                    => filteredTransactions.Where(i => i.Date.Year == date.Year),
+                _ => throw new ArgumentOutOfRangeException(nameof(period), period, null),
+            };
+
+            return filteredTransactions.ToList();
+        }
 
         private async Task<decimal> GetLoansValue(User user)
         {
@@ -320,10 +399,10 @@ namespace Application.Services
             };
         }
 
-        private static TimeWindow CalculateTimeWindow(ChartPeriod period, TimeWindow window)
+        private static TimeWindow CalculateTimeWindow(ChartPeriod period, TimeWindow customWindow)
         {
             if (period == ChartPeriod.Custom)
-                return window;
+                return customWindow;
 
             DateTime now = DateTime.UtcNow;
 
@@ -333,6 +412,61 @@ namespace Application.Services
                 ChartPeriod.Last30Days => now.AddDays(-30),
                 ChartPeriod.LastYear => now.AddDays(-365),
                 ChartPeriod.Last5Years => now.AddYears(-5),
+                _ => throw new ArgumentOutOfRangeException(nameof(period), period, null),
+            };
+
+            return new TimeWindow
+            {
+                StartDate = startDate,
+                EndDate = now
+            };
+        }
+
+        private static TimeWindow CalculateTimeWindow(ExtendedChartPeriod period, DateTime customDate)
+        {
+            if (period == ExtendedChartPeriod.CustomMonth)
+            {
+                var month = customDate.Month;
+                var year = customDate.Year;
+
+                var start = new DateTime(year, month, 1);
+                start = DateTime.SpecifyKind(start, DateTimeKind.Utc);
+
+                var end = start.AddMonths(1).AddDays(-1);
+                end = DateTime.SpecifyKind(end, DateTimeKind.Utc);
+
+                return new TimeWindow
+                {
+                    StartDate = start,
+                    EndDate = end
+                };
+            }
+
+            if (period == ExtendedChartPeriod.CustomYear)
+            {
+                var year = customDate.Year;
+
+                var start = new DateTime(year, 1, 1);
+                start = DateTime.SpecifyKind(start, DateTimeKind.Utc);
+
+                var end = new DateTime(year, 12, 31);
+                end = DateTime.SpecifyKind(end, DateTimeKind.Utc);
+
+                return new TimeWindow
+                {
+                    StartDate = start,
+                    EndDate = end
+                };
+            }
+
+            DateTime now = DateTime.UtcNow;
+
+            DateTime startDate = period switch
+            {
+                ExtendedChartPeriod.Last7Days => now.AddDays(-7),
+                ExtendedChartPeriod.Last30Days => now.AddDays(-30),
+                ExtendedChartPeriod.LastYear => now.AddDays(-365),
+                ExtendedChartPeriod.Last5Years => now.AddYears(-5),
                 _ => throw new ArgumentOutOfRangeException(nameof(period), period, null),
             };
 
@@ -500,6 +634,69 @@ namespace Application.Services
             return dates;
         }
 
+        private static List<DateTime> CalculateDates(ExtendedChartPeriod period, TimeWindow timeWindow)
+        {
+            List<DateTime> dates = [];
+            DateTime currentDate = timeWindow.StartDate;
+
+            switch (period)
+            {
+                case ExtendedChartPeriod.Last7Days:
+                    for (int i = 0; i <= 7; i++)
+                    {
+                        dates.Add(currentDate);
+                        currentDate = currentDate.AddDays(1);
+                    }
+                    break;
+
+                case ExtendedChartPeriod.Last30Days:
+                    for (int i = 0; i <= 30; i++)
+                    {
+                        dates.Add(currentDate);
+                        currentDate = currentDate.AddDays(1);
+                    }
+                    break;
+
+                case ExtendedChartPeriod.LastYear:
+                    for (int i = 0; i <= 12; i++)
+                    {
+                        var date = new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month));
+                        dates.Add(DateTime.SpecifyKind(date, DateTimeKind.Utc));
+                        currentDate = currentDate.AddMonths(1);
+                    }
+                    break;
+
+                case ExtendedChartPeriod.Last5Years:
+                    while (currentDate <= timeWindow.EndDate)
+                    {
+                        dates.Add(currentDate);
+                        currentDate = currentDate.AddYears(1);
+                    }
+                    break;
+
+                case ExtendedChartPeriod.CustomMonth:
+                    while (currentDate <= timeWindow.EndDate)
+                    {
+                        dates.Add(currentDate);
+                        currentDate = currentDate.AddDays(1);
+                    }
+                    break;
+
+                case ExtendedChartPeriod.CustomYear:
+                    while (currentDate <= timeWindow.EndDate)
+                    {
+                        dates.Add(currentDate);
+                        currentDate = currentDate.AddMonths(1);
+                    }
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(period), period, null);
+            }
+
+            return dates;
+        }
+
         private static string FormatDateTime(DateTime dateTime, NetWorthChartPeriod period)
         {
             return period switch
@@ -517,6 +714,18 @@ namespace Application.Services
                 ChartPeriod.Custom => dateTime.ToString("dd/MM/yy"),
                 ChartPeriod.Last7Days or ChartPeriod.Last30Days => dateTime.ToString("dd/MM"),
                 ChartPeriod.LastYear or ChartPeriod.Last5Years => dateTime.ToString("MM/yyyy"),
+                _ => throw new ArgumentOutOfRangeException(nameof(period), period, null),
+            };
+        }
+
+        private static string FormatDateTime(DateTime dateTime, ExtendedChartPeriod period)
+        {
+            return period switch
+            {
+                ExtendedChartPeriod.CustomMonth => dateTime.ToString("dd/MM/yy"),
+                ExtendedChartPeriod.Last7Days or ExtendedChartPeriod.Last30Days => dateTime.ToString("dd/MM"),
+                ExtendedChartPeriod.LastYear or ExtendedChartPeriod.CustomYear => dateTime.ToString("MM/yyyy"),
+                ExtendedChartPeriod.Last5Years => dateTime.ToString("yyyy"),
                 _ => throw new ArgumentOutOfRangeException(nameof(period), period, null),
             };
         }
