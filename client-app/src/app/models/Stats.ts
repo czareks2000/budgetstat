@@ -13,6 +13,12 @@ export interface ValueOverTime {
     endDate: Date,
 }
 
+export type IncomesAndExpensesDataSetItem = {
+    income: number;
+    expense: number;
+    label: string;
+}
+
 export interface PieChartDataItem {
     id: number;
     value: number;

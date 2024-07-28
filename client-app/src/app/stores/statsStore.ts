@@ -1,10 +1,10 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
-import { NetWorthStats, ValueOverTime, PieChartDataItem } from "../models/Stats";
+import { NetWorthStats, ValueOverTime, PieChartDataItem, IncomesAndExpensesDataSetItem } from "../models/Stats";
 import agent from "../api/agent";
 import { store } from "./store";
 import { NetWorthChartPeriod } from "../models/enums/periods/NetWorthChartPeriod";
 import dayjs from "dayjs";
-import { BalanceValueOverTimeSettings, initialBalanceValueOverTimeSettings } from "../models/ChartsSettings";
+import { BalanceValueOverTimeSettings, IncomesAndExpensesOverTimeSettings, initialBalanceValueOverTimeSettings, initialIncomesAndExpensesOverTimeSettings } from "../models/ChartsSettings";
 
 export default class StatsStore {
     // Current Month Income
@@ -21,6 +21,11 @@ export default class StatsStore {
     balanceValueOverTime: ValueOverTime | undefined = undefined;
     balanceValueOverTimeSettings: BalanceValueOverTimeSettings = initialBalanceValueOverTimeSettings;
     balanceValueOverTimeLoaded = false;
+
+    // Incomes And Expenses Over Time
+    incomesAndExpensesOverTime: IncomesAndExpensesDataSetItem[] | undefined = undefined;
+    incomesAndExpensesOverTimeSettings: IncomesAndExpensesOverTimeSettings = initialIncomesAndExpensesOverTimeSettings;
+    incomesAndExpensesOverTimeLoaded = false;
 
     statsHasOldData = false;
 
@@ -53,6 +58,44 @@ export default class StatsStore {
     setHasOldData = (state: boolean) => {
         this.statsHasOldData = state;
     }
+
+    //#region Incomes And Expenses Over Time
+
+    get incomesAndExpensesOverTimeSettingsHasInitialValues() {
+        return JSON.stringify(this.incomesAndExpensesOverTimeSettings) 
+            === JSON.stringify(initialIncomesAndExpensesOverTimeSettings)
+    }
+
+    loadIncomesAndExpensesOverTime = async () => {
+        this.incomesAndExpensesOverTimeLoaded = false;
+        try {
+            var response = await agent.Stats.incomesAndExpensesOverTime(
+                this.incomesAndExpensesOverTimeSettings.period,
+                this.incomesAndExpensesOverTimeSettings.accountIds.map(a => Number(a.value)),
+                dayjs(this.incomesAndExpensesOverTimeSettings.customDate).toDate(),
+                this.incomesAndExpensesOverTimeSettings.incomeCategoryIds.map(ic => ic.id),
+                this.incomesAndExpensesOverTimeSettings.expenseCategoryIds.map(ec => ec.id),
+            );
+            runInAction(() => {
+                this.incomesAndExpensesOverTime = response;
+                this.incomesAndExpensesOverTimeLoaded = true;
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    setIncomesAndExpensesOverTimeSettings = async (settings: IncomesAndExpensesOverTimeSettings) => {
+        this.incomesAndExpensesOverTimeSettings = settings;
+        await this.loadIncomesAndExpensesOverTime();
+    }
+
+    resetIncomesAndExpensesOverTimeSettings = async () => {
+        this.incomesAndExpensesOverTimeSettings = initialIncomesAndExpensesOverTimeSettings;
+        await this.loadIncomesAndExpensesOverTime();
+    }
+
+    //#endregion
 
     //#region Current Month Income
 
@@ -165,7 +208,8 @@ export default class StatsStore {
     //#region Balance Value Over Time
 
     get balanceValueOverTimeSettingsHasInitialValues() {
-        return JSON.stringify(this.balanceValueOverTimeSettings) === JSON.stringify(initialBalanceValueOverTimeSettings)
+        return JSON.stringify(this.balanceValueOverTimeSettings) 
+            === JSON.stringify(initialBalanceValueOverTimeSettings)
     }
 
 

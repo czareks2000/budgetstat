@@ -1,118 +1,68 @@
-import { Box, Paper } from '@mui/material'
+import { Box, Checkbox, FormControlLabel, Paper } from '@mui/material'
 import { BarChart } from '@mui/x-charts'
 import { observer } from 'mobx-react-lite'
 import { useStore } from '../../../app/stores/store';
-
-
-export const dataset = [
-    {
-      london: 59,
-      paris: 57,
-      newYork: 86,
-      seoul: 21,
-      month: 'Jan',
-    },
-    {
-      london: 50,
-      paris: 52,
-      newYork: 78,
-      seoul: 28,
-      month: 'Feb',
-    },
-    {
-      london: 47,
-      paris: 53,
-      newYork: 106,
-      seoul: 41,
-      month: 'Mar',
-    },
-    {
-      london: 54,
-      paris: 56,
-      newYork: 92,
-      seoul: 73,
-      month: 'Apr',
-    },
-    {
-      london: 57,
-      paris: 69,
-      newYork: 92,
-      seoul: 99,
-      month: 'May',
-    },
-    {
-      london: 60,
-      paris: 63,
-      newYork: 103,
-      seoul: 144,
-      month: 'June',
-    },
-    {
-      london: 59,
-      paris: 60,
-      newYork: 105,
-      seoul: 319,
-      month: 'July',
-    },
-    {
-      london: 65,
-      paris: 60,
-      newYork: 106,
-      seoul: 249,
-      month: 'Aug',
-    },
-    {
-      london: 51,
-      paris: 51,
-      newYork: 95,
-      seoul: 131,
-      month: 'Sept',
-    },
-    {
-      london: 60,
-      paris: 65,
-      newYork: 97,
-      seoul: 55,
-      month: 'Oct',
-    },
-    {
-      london: 67,
-      paris: 64,
-      newYork: 76,
-      seoul: 48,
-      month: 'Nov',
-    },
-    {
-      london: 61,
-      paris: 70,
-      newYork: 103,
-      seoul: 25,
-      month: 'Dec',
-    },
-  ];
+import { formatAmount } from '../../../app/utils/FormatAmount';
+import { theme } from '../../../app/layout/Theme';
+import { useState } from 'react';
 
 export default observer(function IncomesAndExpensesOverTimeBarChart() {
     const {
         currencyStore: {defaultCurrency},
-        statsStore: {}
+        statsStore: {incomesAndExpensesOverTime, incomesAndExpensesOverTimeLoaded}
     } = useStore();
 
-    const valueFormatter = (value: number | null) => `${value} ${defaultCurrency?.symbol}`;
+    const [showIncome, setShowIncome] = useState(true);
+    const [showExpense, setShowExpense] = useState(true);
+
+    const valueFormatter = (value: number | null) => `${value ? formatAmount(value) : value} ${defaultCurrency?.symbol}`;
 
     const chartSetting = {
-        series: [
-            { dataKey: 'seoul', label: 'Incomes', valueFormatter },
-            { dataKey: 'london', label: 'Expenses', valueFormatter }],
-      };
+      series: [
+          ...(showIncome ? [{ dataKey: 'income', label: 'Incomes', valueFormatter, color: theme.palette.success.light }] : []),
+          ...(showExpense ? [{ dataKey: 'expense', label: 'Expenses', valueFormatter, color: theme.palette.error.light }] : [])
+      ]
+  };
 
   return (
     <Paper>
+        <Box pt={2} mb={-4} display={'flex'} justifyContent={'center'}>
+            <FormControlLabel
+                control={
+                  <Checkbox 
+                    sx={{
+                      '&.Mui-checked': {
+                          color: theme.palette.success.light,
+                      },}} 
+                    checked={showIncome} 
+                    onChange={() => setShowIncome(prev => !prev)} />}
+                label="Incomes"
+            />
+            <FormControlLabel
+                control={
+                  <Checkbox
+                    sx={{
+                      '&.Mui-checked': {
+                          color: theme.palette.error.light,
+                      },}} 
+                    checked={showExpense} 
+                    onChange={() => setShowExpense(prev => !prev)} />}
+                label="Expenses"
+            />
+        </Box>
         <Box height={300}>
             <BarChart
+                slotProps={{
+                  noDataOverlay: { message: 'There is no data to display' },
+                  legend: {
+                    hidden: true
+                  }
+                }}
+                loading={!incomesAndExpensesOverTimeLoaded}
                 margin={{ left: 65}}
-                dataset={dataset}
+                dataset={incomesAndExpensesOverTime}
                 xAxis={[
-                { scaleType: 'band', dataKey: 'month' },
+                { scaleType: 'band', dataKey: 'label' },
                 ]}
                 grid={{ horizontal: true }}
                 {...chartSetting}

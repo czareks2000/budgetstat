@@ -5,13 +5,14 @@ import ResponsiveContainer from "../../components/common/ResponsiveContainer";
 import BalanceOverTimeLineChartSettings from "./settings/BalanceOverTimeLineChartSettings";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
+import IncomesAndExpensesOverTimeBarChartSettings from "./settings/IncomesAndExpensesOverTimeBarChartSettings";
 
 const charts = [
     { 
         id: 1, 
         title: "Incomes and Expenses Over Time",
         chart: <IncomesAndExpensesOverTimeBarChart />,
-        settings: <TextField label={"year"} value={"2024"}></TextField>
+        settings: <IncomesAndExpensesOverTimeBarChartSettings />
     },
     { 
         id: 2, 
@@ -22,7 +23,7 @@ const charts = [
 ]
 
 export default observer(function Stats() {
-    const [selectedChart, setSelectedChart] = useState(charts[1]);
+    const [selectedChart, setSelectedChart] = useState(charts[0]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const id = parseInt(event.target.value)

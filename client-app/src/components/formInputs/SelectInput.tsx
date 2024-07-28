@@ -8,9 +8,10 @@ interface Props {
     label?: string;
     options: Option[];
     minWidth?: number;
+    fullWidth?: boolean;
 }
 
-export default function SelectInput({minWidth, ...props}: Props) {
+export default function SelectInput({minWidth, fullWidth, ...props}: Props) {
     const [field, meta] = useField(props.name);
     return (
         <>
@@ -20,6 +21,7 @@ export default function SelectInput({minWidth, ...props}: Props) {
                 {...props}
                 select
                 sx={{ minWidth: minWidth }}
+                fullWidth={fullWidth}
                 value={field.value}
                 error={meta.touched && Boolean(meta.error)}
                 helperText={meta.touched && meta.error}

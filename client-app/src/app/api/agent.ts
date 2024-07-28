@@ -15,10 +15,11 @@ import { CollectivePayoffValues, PayoffCreateValues } from "../models/Payoff";
 import { LoanStatus } from "../models/enums/LoanStatus";
 import { Icon } from "../models/Icon";
 import { Asset, AssetCategory, AssetCreateUpdateValues } from "../models/Asset";
-import { NetWorthStats, ValueOverTime } from "../models/Stats";
+import { IncomesAndExpensesDataSetItem, NetWorthStats, ValueOverTime } from "../models/Stats";
 import { ChartPeriod } from "../models/enums/periods/ChartPeriod";
 import { TransactionType } from "../models/enums/TransactionType";
 import { NetWorthChartPeriod } from "../models/enums/periods/NetWorthChartPeriod";
+import { ExtendedChartPeriod } from "../models/enums/periods/ExtenedChartPeriod";
 
 const sleep = (delay: number) => {
     return new Promise((resolve) => {
@@ -265,6 +266,35 @@ const Stats = {
         }
         
         return requests.get<ValueOverTime>(`/stats/balanceovertime/${period}?${urlParams}`);
+    },
+    incomesAndExpensesOverTime: (period: ExtendedChartPeriod, accountIds?: number[], customDate?: Date, 
+        incomeCategoryIds?: number[], expenseCategoryIds?: number[]) => {
+
+        let urlParams = '';
+
+        if (period === ExtendedChartPeriod.CustomMonth ||
+            period === ExtendedChartPeriod.CustomYear)
+            urlParams =`customDate=${customDate!.toISOString()}`;
+
+            if (accountIds && accountIds.length > 0) {
+                accountIds.forEach(id => {
+                    urlParams += `&accountIds=${id}`;
+                });
+            }
+
+            if (incomeCategoryIds && incomeCategoryIds.length > 0) {
+                incomeCategoryIds.forEach(id => {
+                    urlParams += `&incomeCategoryIds=${id}`;
+                });
+            }
+
+            if (expenseCategoryIds && expenseCategoryIds.length > 0) {
+                expenseCategoryIds.forEach(id => {
+                    urlParams += `&expenseCategoryIds=${id}`;
+                });
+            }
+
+        return requests.get<IncomesAndExpensesDataSetItem[]>(`/stats/incomesandexpensesovertime/${period}?${urlParams}`);
     }
 }
 

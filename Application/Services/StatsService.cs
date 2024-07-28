@@ -2,6 +2,7 @@
 using Application.Dto.Asset;
 using Application.Dto.Stats;
 using Application.Dto.Stats.Periods;
+using Application.Dto.Transaction;
 using Application.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -233,10 +234,12 @@ namespace Application.Services
         }
 
         public async Task<Result<List<IncomesAndExpensesDataSetItem>>> GetIncomesAndExpensesOverTime(
-            ExtendedChartPeriod period, List<int> accountIds, DateTime customDate)
+            ExtendedChartPeriod period, List<int> accountIds, DateTime customDate,
+            List<int> incomeCategoryIds, List<int> expenseCategoryIds)
         {
             var user = await _utilities.GetCurrentUserAsync();
 
+            // transactions
             var transactions = await _context.Transactions
                 .Include(a => a.Currency)
                 .Include(a => a.Category)
@@ -263,6 +266,8 @@ namespace Application.Services
             var dates = CalculateDates(period, timeWindow);
 
             // calculate data
+            bool isEmpty = true;
+
             foreach (var date in dates)
             {
                 IncomesAndExpensesDataSetItem dataSetItem = new()
@@ -273,30 +278,61 @@ namespace Application.Services
                 };
 
                 // incomes value
-                var incomes = FilterTransactions(transactions, TransactionType.Income, period, date);
+                var incomes = await FilterTransactions(
+                    transactions, TransactionType.Income, period, date, incomeCategoryIds, user.Id);
 
                 foreach (var income in incomes)
                     dataSetItem.Income += await _utilities.Convert(income.Currency.Code, user.DefaultCurrency.Code, income.Amount, date.Date);
 
                 // expenses value
-                var expenses = FilterTransactions(transactions, TransactionType.Expense, period, date);
+                var expenses = await FilterTransactions(
+                    transactions, TransactionType.Expense, period, date, expenseCategoryIds, user.Id);
 
                 foreach (var expense in expenses)
                     dataSetItem.Expense += await _utilities.Convert(expense.Currency.Code, user.DefaultCurrency.Code, expense.Amount, date.Date);
+
+
+                if (dataSetItem.Income != 0 || dataSetItem.Expense != 0)
+                    isEmpty = false;
 
                 dataSet.Add(dataSetItem);
             }
 
             // return data
+            if (isEmpty)
+                return Result<List<IncomesAndExpensesDataSetItem>>.Success([]);
+
             return Result<List<IncomesAndExpensesDataSetItem>>.Success(dataSet);
         }
 
         #region HelperFunctions
 
-        private static List<Transaction> FilterTransactions(List<Transaction> transactions, TransactionType type, ExtendedChartPeriod period, DateTime date)
+        private async Task<List<Transaction>> FilterTransactions(
+            List<Transaction> transactions, TransactionType type, ExtendedChartPeriod period, DateTime date, List<int> categoryIds, string userId)
         {
             var filteredTransactions = transactions
                     .Where(t => t.Category.Type == type);
+
+            if (categoryIds.Count > 0)
+            {
+                var allCategoryIds = await _context.Categories
+                    .Where(c => categoryIds.Contains(c.Id))
+                    .Where(c => c.UserId == userId)
+                    .Select(c => c.Id)
+                    .ToListAsync();
+
+                var subCategoriesOfMainCategories =  await _context.Categories
+                    .Where(c => !c.IsMain)
+                    .Where(c => categoryIds.Contains((int)c.MainCategoryId))
+                    .Where(c => c.UserId == userId)
+                    .Select(c => c.Id)
+                    .ToListAsync();
+
+                allCategoryIds.AddRange(subCategoriesOfMainCategories);
+
+                filteredTransactions = filteredTransactions
+                    .Where(t => allCategoryIds.Contains(t.CategoryId));
+            }
 
             filteredTransactions = period switch
             {
