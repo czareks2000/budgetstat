@@ -8,6 +8,7 @@ export interface User {
 export interface UserFormValues {
     userName?: string;
     email: string;
+    defaultCurrencyId?: string | number;
     password: string;
     confirmPassword?: string;
 }

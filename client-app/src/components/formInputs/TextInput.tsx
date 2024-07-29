@@ -6,6 +6,7 @@ interface Props {
     placeholder?: string;
     label?: string;
     type?: string;
+    fullWidth?: boolean;
 }
 
 export default function TextInput(props: Props) {

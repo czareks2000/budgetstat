@@ -1,11 +1,15 @@
 ﻿using API.Dto;
 using API.Interfaces;
+using Application.Core;
+using Application.Dto.Loan;
 using Application.Interfaces;
+using Application.Services;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Persistence;
 using System.Security.Claims;
 
 namespace API.Controllers
@@ -14,10 +18,14 @@ namespace API.Controllers
     [Route("api/auth")]
     public class AuthController(
         UserManager<User> userManager,
+        DataContext context,
+        ICategoryService categoryService,
         ITokenService tokenService,
         IUserAccessor userAccessor) : ControllerBase
     {
         private readonly UserManager<User> _userManager = userManager;
+        private readonly DataContext _context = context;
+        private readonly ICategoryService _categoryService = categoryService;
         private readonly ITokenService _tokenService = tokenService;
         private readonly IUserAccessor _userAccessor = userAccessor;
 
@@ -43,7 +51,7 @@ namespace API.Controllers
         {
             if (await _userManager.Users.AnyAsync(x => x.UserName == registerDto.UserName))
             {
-                ModelState.AddModelError("username", "Username taken");
+                ModelState.AddModelError("userName", "Username taken");
                 return ValidationProblem(ModelState);
             }
 
@@ -53,20 +61,59 @@ namespace API.Controllers
                 return ValidationProblem(ModelState);
             }
 
+            var currency = _context.Currencies
+                .FirstOrDefault(c => c.Id == registerDto.DefaultCurrencyId);
+
+            if (currency == null)
+            {
+                ModelState.AddModelError("defaultCurrencyId", "Invalid currency");
+                return ValidationProblem(ModelState);
+            }
+
             var user = new User
             {
                 Email = registerDto.Email,
-                UserName = registerDto.UserName
+                UserName = registerDto.UserName,
+                CurrencyId = currency.Id,
+                DefaultCurrency = currency,
+                Categories = []
             };
 
-            var result = await _userManager.CreateAsync(user, registerDto.Password);
+            var identityResult = await _userManager.CreateAsync(user, registerDto.Password);
 
-            if (result.Succeeded)
+            if (!identityResult.Succeeded)
+                return BadRequest(identityResult.Errors);
+
+            var categoryResult = await _categoryService.CreateDefaultCategories(user.Id);
+
+            if (!categoryResult.IsSucess)
             {
-                return CreateUserObject(user);
+                await _userManager.DeleteAsync(user);
+
+                return BadRequest(categoryResult.Error);
             }
 
-            return BadRequest(result.Errors);
+            return CreateUserObject(user);
+        }
+
+        [Authorize]
+        [HttpDelete("deleteuser")]
+        public async Task<IActionResult> DeleteUser()
+        {
+            var user = await _context.Users
+                .Include(u => u.Categories)
+                .FirstOrDefaultAsync(u => u.Email == _userAccessor.GetUserEmail());
+
+            if (user == null) return NotFound();
+
+            _context.RemoveRange(user.Categories);
+
+            var identityResult = await _userManager.DeleteAsync(user);
+
+            if (!identityResult.Succeeded)
+                return BadRequest(identityResult.Errors);
+
+            return Ok();
         }
 
         [Authorize]

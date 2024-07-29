@@ -57,7 +57,6 @@ export default class CommonStore {
             
             await store.budgetStore.loadBudgets();
 
-            await store.currencyStore.loadCurrencies();
             store.currencyStore.setDefaultCurrency(currencyId);
             
             await store.categoryStore.loadCategories();

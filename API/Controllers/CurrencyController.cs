@@ -1,4 +1,5 @@
 ﻿using Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -8,6 +9,7 @@ namespace API.Controllers
     {
         private readonly ICurrencyService _currencyService = currencyService;
 
+        [AllowAnonymous]
         [HttpGet("currencies")] //api/currencies
         public async Task<IActionResult> GetCurrencies()
         {

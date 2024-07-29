@@ -13,5 +13,7 @@ namespace Application.Interfaces
         Task<Result<object>> DeleteCategory(int categoryId);
         // edycja kategorii
         Task<Result<MainCategoryDto>> UpdateCategory(int categoryId, CategoryUpdateDto updatedCategory);
+        // utworzenie defaultowych kategorii użytkownika
+        Task<Result<object>> CreateDefaultCategories(string userId);
     }
 }

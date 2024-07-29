@@ -2,7 +2,6 @@
 using Application.Dto.Asset;
 using Application.Dto.Stats;
 using Application.Dto.Stats.Periods;
-using Application.Dto.Transaction;
 using Application.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -10,7 +9,6 @@ using Domain;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Application.Services
 {
@@ -61,7 +59,7 @@ namespace Application.Services
             };
 
             // calculate start and end dates
-            var earliestDate = FindEarliestDate(assets);
+            var earliestDate = FindEarliestDate(assets); // sprawdzanie nie tylko z assetów tylko też z accounts
             var timeWindow = CalculateTimeWindow(period, earliestDate);
 
             chartObject.StartDate = timeWindow.StartDate;

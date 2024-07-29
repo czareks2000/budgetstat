@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite"
 import { useStore } from "../../../app/stores/store";
 import { ErrorMessage, Form, Formik } from "formik";
-import { Stack, Typography } from "@mui/material";
+import { Paper, Stack, Typography } from "@mui/material";
 import LoadingButton from '@mui/lab/LoadingButton';
 import TextInput from "../../formInputs/TextInput";
 
@@ -22,8 +22,12 @@ export default observer(function LoginForm() {
                     autoComplete="off"
                 >     
                     <Stack spacing={2} width={400}>
-                        <TextInput label="Email" name="email"/>
-                        <TextInput label="Password" name="password" type="password"/>
+                        <Paper>
+                            <TextInput label="Email" name="email" fullWidth />
+                        </Paper>
+                        <Paper>
+                            <TextInput label="Password" name="password" type="password" fullWidth/>
+                        </Paper>
                         <Typography color={'error'}>
                             <ErrorMessage 
                                 name="error"
@@ -37,7 +41,7 @@ export default observer(function LoginForm() {
                             type="submit" 
                             disabled={isSubmitting}
                             loading={isSubmitting}>
-                            Submit
+                            Sign in
                         </LoadingButton>
                     </Stack>              
                 </Form>

@@ -25,8 +25,8 @@ export default class UserStore {
             store.commonStore.setToken(user.token);
             runInAction(() => {
                 this.user = user;
+                router.navigate('home');
             });
-            router.navigate('home');
         } catch (error) {
             console.log(error);
             throw error;

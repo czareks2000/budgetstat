@@ -13,7 +13,6 @@ import NetWorth from "../../pages/networth/NetWorth";
 import Preferences from "../../pages/preferences/Preferences";
 import Stats from "../../pages/stats/Stats";
 import Transactions from "../../pages/transactions/Transactions";
-import Login from "../../pages/login/Login";
 import CreateBudget from "../../pages/budgets/CreateBudget";
 import EditBudget from "../../pages/budgets/EditBudget";
 import CreateAccount from "../../pages/accounts/CreateAccount";
@@ -36,6 +35,7 @@ export const routes: RouteObject[] = [
         element: <App/>,
         children: [
             {element: <RequireAuth />, children: [
+                {path: '', element: <Home />},
                 {path: 'home', element: <Home />},
                 {path: 'stats', element: <Stats />},
                 {path: 'calendar', element: <Calendar />},
@@ -70,11 +70,11 @@ export const routes: RouteObject[] = [
                 
                 {path: 'not-found', element: <NotFound />},
             ]},
-            {path: 'login', element: <Login />},
             {path: 'server-error', element: <ServerError />},
             {path: '*', element: <NotFound />}
         ]
-    }
+    },
+    
 ]
 
 export const router = createBrowserRouter(routes);

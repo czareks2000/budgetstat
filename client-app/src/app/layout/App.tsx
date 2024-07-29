@@ -6,7 +6,6 @@ import { Box, CssBaseline, ThemeProvider } from '@mui/material';
 import Menu from './menu/Menu';
 import { Outlet, ScrollRestoration, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
-import Login from '../../pages/login/Login';
 import { useEffect } from 'react';
 import { useStore } from '../stores/store';
 import Loading from '../../components/common/LoadingCenter';
@@ -14,12 +13,13 @@ import { theme } from './Theme';
 
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import Auth from '../../pages/auth/Auth';
 
 const drawerWidth = 288;
 
 export default observer(function App() {
   const location = useLocation();
-  const {commonStore, userStore } = useStore();
+  const {commonStore, userStore, currencyStore: {currenciesLoaded, loadCurrencies} } = useStore();
 
   useEffect(() => {
     if (commonStore.token) {
@@ -27,7 +27,10 @@ export default observer(function App() {
     } else {
       commonStore.setApploaded();
     }
-  }, [commonStore, userStore]);
+    if (!currenciesLoaded)
+      loadCurrencies();
+
+  }, [commonStore, userStore, currenciesLoaded]);
 
   if (!commonStore.appLoaded) return <Loading />
 
@@ -36,9 +39,9 @@ export default observer(function App() {
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <CssBaseline />
         <ScrollRestoration/>
-        {location.pathname === '/' 
+        {!userStore.isLoggedIn
         ? 
-          <Login /> 
+          <Auth /> 
         : (
           <Box sx={{ display: 'flex' }}>
             <Menu appName='BudgetStat' drawerWidth={drawerWidth}/>

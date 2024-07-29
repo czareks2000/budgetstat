@@ -1,3 +1,4 @@
+using Application.Core.CustomDataAnnotations;
 using System.ComponentModel.DataAnnotations;
 
 namespace API.Dto
@@ -9,6 +10,9 @@ namespace API.Dto
         [Required]
         [EmailAddress]
         public string Email { get; set; }
+        [Required]
+        [GreaterThanZero(ErrorMessage = "Invalid currency id")]
+        public int DefaultCurrencyId { get; set; }
         [Required]
         [RegularExpression("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{4,}$", 
             ErrorMessage = 
