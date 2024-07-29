@@ -4,7 +4,7 @@ import Toolbar from '@mui/material/Toolbar';
 import { Box, CssBaseline, ThemeProvider } from '@mui/material';
 
 import Menu from './menu/Menu';
-import { Outlet, ScrollRestoration, useLocation } from 'react-router-dom';
+import { Outlet, ScrollRestoration } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useEffect } from 'react';
 import { useStore } from '../stores/store';
@@ -18,7 +18,6 @@ import Auth from '../../pages/auth/Auth';
 const drawerWidth = 288;
 
 export default observer(function App() {
-  const location = useLocation();
   const {commonStore, userStore, currencyStore: {currenciesLoaded, loadCurrencies} } = useStore();
 
   useEffect(() => {
