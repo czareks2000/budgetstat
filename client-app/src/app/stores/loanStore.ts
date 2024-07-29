@@ -44,6 +44,8 @@ export default class LoanStore {
 
         this.counterparties = [];
         this.counterpartiesLoaded = false;
+
+        this.selectedSummaries= [];
     }
 
     clearPaidOffLoansRegistry = () => {

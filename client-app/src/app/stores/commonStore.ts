@@ -60,8 +60,8 @@ export default class CommonStore {
             
             await store.categoryStore.loadCategories();
 
-            await store.loanStore.loadLoans(LoanStatus.InProgress);
             await store.loanStore.loadCounterparties();
+            await store.loanStore.loadLoans(LoanStatus.InProgress);
 
             await store.assetStore.loadAssetCategories();
             await store.assetStore.loadAssets();
