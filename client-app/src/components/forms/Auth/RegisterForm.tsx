@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite"
 import { useStore } from "../../../app/stores/store";
 import { ErrorMessage, Form, Formik } from "formik";
-import { Paper, Stack, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import LoadingButton from '@mui/lab/LoadingButton';
 import TextInput from "../../formInputs/TextInput";
 import * as Yup from 'yup';
@@ -22,7 +22,7 @@ export default observer(function RegisterForm() {
             }
             validationSchema={Yup.object({
                 userName: Yup.string().required('Username is required'),
-                email: Yup.string().required('Email is required'),
+                email: Yup.string().email('Invalid email format').required('Email is required'),
                 defaultCurrencyId: Yup.string().required("Default currency is required"),
                 password: Yup.string().required('Password is required'),
                 confirmPassword: Yup.string().required('Confirm password')
@@ -35,22 +35,17 @@ export default observer(function RegisterForm() {
                     autoComplete="off"
                 >     
                     <Stack spacing={2} width={400}>
-                        <Paper>
-                            <TextInput label="Username" name="userName" fullWidth/>
-                        </Paper>
-                        <Paper>
-                            <TextInput label="Email" name="email" fullWidth />
-                        </Paper>
-                        <Paper>
-                            <SelectInput label="Default Currency" name="defaultCurrencyId" fullWidth
-                                options={currenciesAsOptions}/>
-                        </Paper>
-                        <Paper>
-                            <TextInput label="Password" name="password" type="password" fullWidth/>
-                        </Paper>
-                        <Paper>
-                            <TextInput label="Confirm Password" name="confirmPassword" type="password" fullWidth/>
-                        </Paper>
+                       
+                        <TextInput label="Username" name="userName" fullWidth/>
+                    
+                        <TextInput label="Email" name="email" fullWidth />
+                    
+                        <SelectInput label="Default Currency" name="defaultCurrencyId" fullWidth
+                            options={currenciesAsOptions}/>
+                    
+                        <TextInput label="Password" name="password" type="password" fullWidth/>
+                    
+                        <TextInput label="Confirm Password" name="confirmPassword" type="password" fullWidth/>
                         
                         <Typography color={'error'}>
                             <ErrorMessage 
