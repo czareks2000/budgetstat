@@ -24,8 +24,14 @@ export default class LoanStore {
     counterparties: Counterparty[] = [];
     counterpartiesLoaded = false;
 
+    selectedSummaries: GroupedLoan[] = [];
+
     constructor() {
         makeAutoObservable(this);
+    }
+
+    selectSummaries = (counterpartyId: number) => {
+        this.selectedSummaries = this.getCounterpartyGroupedLoans(counterpartyId);
     }
 
     clearStore = () => {
@@ -108,6 +114,8 @@ export default class LoanStore {
                 loans.forEach(loan => this.setLoan(loan));
                 this.setLoadedLoansFlag(loanStatus, true);
                 this.setPaidOffLoansLoaded(loanStatus, counterpartyId);
+                if (this.counterparties.length > 0)
+                    this.selectSummaries(this.counterparties[0].id);
             })
         } catch (error) {
             console.log(error);

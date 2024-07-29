@@ -16,20 +16,17 @@ import CollectivePayoffForm from "../../components/forms/Loan/CollectivePayoffFo
 
 export default observer(function CounterpartyDetails() {
     const {
-        loanStore: {getCounterpartyGroupedLoans, getCounterpartyLoans}} = useStore();
+        loanStore: {
+            getCounterpartyLoans, selectedSummaries: summaries, selectSummaries}} = useStore();
 
     const {id} = useParams();
 
     const [searchParams, setSearchParams] = useSearchParams();
     const [currencyId, setCurrencyId] = useState<string | null>(searchParams.get('currencyId'));
 
-    const summaries = getCounterpartyGroupedLoans(Number(id));
-
     useEffect(() => {
-        if (summaries.length === 0) {
-            router.navigate('/loans');
-        }
-    }, [summaries]);
+        selectSummaries(Number(id));
+    },[id])
 
     useEffect(() => {
         if (summaries.filter(s => s.currencyId === Number(currencyId)).length === 0 && summaries.length > 0) {
