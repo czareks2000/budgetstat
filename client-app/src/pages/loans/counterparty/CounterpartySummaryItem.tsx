@@ -25,6 +25,8 @@ export default observer(function CounterpartySummaryItem({detailsAction, summary
 
     const [open, setOpen] = useState(false);
 
+    if (!summary) return <></>
+
     summary = summary.loanType === LoanType.Credit 
     ? 
         {...summary} 
@@ -65,68 +67,69 @@ export default observer(function CounterpartySummaryItem({detailsAction, summary
     }
     
     return (
-    <NoDecorationLink
-        to={`/loans/counterparty/${summary.counterpartyId}?currencyId=${currency.id}`}
-        disabled={!detailsAction}
-        content={
-            <Card>
-            <CardContent>
-                <Grid container justifyContent="flex-end">
-                    <Grid item xs>
-                        <Stack direction={'row'}>
-                            <Typography variant="h5" gutterBottom>
-                                {summary.nearestRepaymentDate ? header() : counterparty.name} 
-                            </Typography>
-                        </Stack>
-                        <Stack>
-                            {summary.nearestRepaymentDate ? <>
-                                <Typography variant="body1">
-                                    Credits: {formatAmount(summary.creditsFullAmount - summary.creditsCurrentAmount)} {currency.symbol}
+        <>
+        <DeleteCounterpartyDialog 
+            open={open}
+            setOpen={setOpen}
+            counterparty={counterparty} 
+            redirectAfterSubmit={!detailsAction}/>
+        <NoDecorationLink
+            to={`/loans/counterparty/${summary.counterpartyId}?currencyId=${currency.id}`}
+            disabled={!detailsAction}
+            content={
+                <Card>
+                <CardContent>
+                    <Grid container justifyContent="flex-end">
+                        <Grid item xs>
+                            <Stack direction={'row'}>
+                                <Typography variant="h5" gutterBottom>
+                                    {summary.nearestRepaymentDate ? header() : counterparty.name} 
                                 </Typography>
-                                <Typography variant="body1">
-                                    Debts: {formatAmount(summary.debtsFullAmount - summary.debtsCurrentAmount)} {currency.symbol}
+                            </Stack>
+                            <Stack>
+                                {summary.nearestRepaymentDate ? <>
+                                    <Typography variant="body1">
+                                        Credits: {formatAmount(summary.creditsFullAmount - summary.creditsCurrentAmount)} {currency.symbol}
+                                    </Typography>
+                                    <Typography variant="body1">
+                                        Debts: {formatAmount(summary.debtsFullAmount - summary.debtsCurrentAmount)} {currency.symbol}
+                                    </Typography>
+                                    <Typography variant="body1">
+                                        Nearest repayment: {convertToString(summary.nearestRepaymentDate!)}
+                                    </Typography></>
+                                :<>
+                                    <Typography variant="body1">
+                                        This counterparty has no current loans
+                                    </Typography>
+                                </>}
+                            </Stack>
+                        </Grid>
+                        <Grid item xs={'auto'} >
+                            {summary.nearestRepaymentDate ?
+                            <>
+                                <Typography variant="h5" color={`${progressColor()}.main`}>
+                                    {formatAmount(remainingAmount)} {currency.symbol}
                                 </Typography>
-                                <Typography variant="body1">
-                                    Nearest repayment: {convertToString(summary.nearestRepaymentDate!)}
-                                </Typography></>
-                            :<>
-                                <Typography variant="body1">
-                                    This counterparty has no current loans
-                                </Typography>
+                            </>
+                            :
+                            <>
+                                <Box mr={-1}>           
+                                    <IconButton 
+                                        aria-label="delete"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            setOpen(true);
+                                        }}>
+                                        <Delete />
+                                    </IconButton>                     
+                                </Box>
                             </>}
-                        </Stack>
+                        </Grid> 
                     </Grid>
-                    <Grid item xs={'auto'} >
-                        {summary.nearestRepaymentDate ?
-                        <>
-                            <Typography variant="h5" color={`${progressColor()}.main`}>
-                                {formatAmount(remainingAmount)} {currency.symbol}
-                            </Typography>
-                        </>
-                        :
-                        <>
-                            <DeleteCounterpartyDialog 
-                                open={open}
-                                setOpen={setOpen}
-                                counterparty={counterparty} 
-                                redirectAfterSubmit={!detailsAction}/>
-                            <Box mr={-1}>           
-                                <IconButton 
-                                    aria-label="delete"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        setOpen(true);
-                                    }}>
-                                    <Delete />
-                                </IconButton>                     
-                            </Box>
-                        </>}
-                    </Grid> 
-                </Grid>
-            </CardContent>
-        </Card>
-    }/>
-
+                </CardContent>
+            </Card>
+        }/>
+    </>
     )
 })

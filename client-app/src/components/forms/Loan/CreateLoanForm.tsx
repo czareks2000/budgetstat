@@ -16,11 +16,11 @@ import TextInput from "../../formInputs/TextInput";
 import { router } from "../../../app/router/Routes";
 
 interface Props {
-    counterpartyId?: string | null;
-    redirectToNetWorthOnCancel?: boolean;
+    counterpartyId: string | null;
+    onCancel: () => void;
 }
 
-export default observer(function CrateLoanForm({counterpartyId, redirectToNetWorthOnCancel = false}: Props) {
+export default observer(function CrateLoanForm({counterpartyId, onCancel}: Props) {
     const {
         accountStore: {accountsAsOptions, getAccountCurrency},
         loanStore: {createLoan, counterpartiesAsOptions}} = useStore();
@@ -49,15 +49,6 @@ export default observer(function CrateLoanForm({counterpartyId, redirectToNetWor
         loanDate: dayjs(),
         repaymentDate: dayjs().add(7, 'days'),
         description: ""
-    }
-
-    const onCancel = () => {
-        if (counterpartyId)
-            router.navigate(`/loans/counterparty/${counterpartyId}`);
-        else if (redirectToNetWorthOnCancel)
-            router.navigate(`/net-worth`);
-        else
-            router.navigate(`/loans`);
     }
 
     const handleCreateLoanFormSubmit = (loan: LoanCreateValues, helpers: FormikHelpers<LoanCreateValues>) => {

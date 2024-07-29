@@ -18,7 +18,11 @@ export default observer(function Loans() {
         <FloatingAddButton onClick={handleAddButtonClick}/>
         <ResponsiveContainer content={
             <Stack spacing={2}>
-                <Divider>Loans summary</Divider>
+                {groupedLoansByCounterpartyAndCurrency.length > 0 ? 
+                    <Divider>Loans summary</Divider>
+                :
+                    <Divider>You have no loans</Divider>
+                }
                 {groupedLoansByCounterpartyAndCurrency.map((summary) => 
                     <CounterpartySummaryItem 
                     key={`${summary.counterpartyId}-${summary.currencyId}`} 

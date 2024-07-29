@@ -27,6 +27,9 @@ export default observer(function Budgets() {
         <FloatingAddButton onClick={handleAddButtonClick}/>
         <ResponsiveContainer content={
             <Stack spacing={2}>
+                {weeklyBudgets.length === 0 && monthlyBudgets.length === 0 && annualBudgets.length === 0 &&
+                    <Divider>You have no budgets</Divider>
+                }
                 {weeklyBudgets.length > 0 && <>
                     <Divider>Weekly Budgets</Divider>
                     <BudgetsList 

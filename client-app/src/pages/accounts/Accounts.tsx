@@ -29,7 +29,11 @@ export default observer(function Accounts() {
             <FloatingAddButton onClick={handleAddButtonClick}/>
             <ResponsiveContainer content={
                 <Stack spacing={2}>
-                    <Divider>Accounts</Divider>
+                    {accounts.length > 0 ? 
+                        <Divider>Accounts</Divider>
+                    :
+                        <Divider>You have no accounts</Divider>
+                    }
                     <AccountsList 
                         accounts={accounts}
                         openDeleteDialog={handleOpenDeleteDialog}/>

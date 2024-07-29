@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { Stack } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { Form, Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
@@ -8,7 +8,12 @@ import { CounterpartyCreateValues } from "../../../app/models/Counterparty";
 import TextInput from "../../formInputs/TextInput";
 import { useStore } from "../../../app/stores/store";
 
-export default observer(function CrateCounterpartyForm() {
+interface Props {
+    cancelButton?: boolean;
+    onCancel: () => void;
+}
+
+export default observer(function CrateCounterpartyForm({cancelButton, onCancel}: Props) {
     const {loanStore: {createCounterparty}} = useStore();
 
     const validationSchema = Yup.object({
@@ -39,16 +44,26 @@ export default observer(function CrateCounterpartyForm() {
                         {/* Name */}
                         <TextInput label="Counterparty name" name={"name"}/>
                             
-                        {/* Button */}
-                        <LoadingButton
-                            color="success"
-                            variant="contained"
-                            type="submit"
-                            fullWidth
-                            disabled={!(dirty && isValid) || isSubmitting}
-                            loading={isSubmitting}>
-                            Create
-                        </LoadingButton>
+                        {/* Buttons */}
+                        <Stack direction={'row'} spacing={2}>
+                            {cancelButton && 
+                            <Button
+                                color="error"
+                                variant="contained"
+                                fullWidth
+                                onClick={onCancel}>
+                                Cancel
+                            </Button>}
+                            <LoadingButton
+                                color="success"
+                                variant="contained"
+                                type="submit"
+                                fullWidth
+                                disabled={!(dirty && isValid) || isSubmitting}
+                                loading={isSubmitting}>
+                                Create
+                            </LoadingButton>
+                        </Stack>
                     </Stack>
                 </Form>
             )}
