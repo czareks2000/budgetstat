@@ -78,12 +78,13 @@ export default class CommonStore {
     clearAppData = async () => {
         try {
             store.accountStore.clearStore();
-            store.currencyStore.clearStore();
-            store.budgetStore.clearStore();
+            store.assetStore.clearStore();
             store.categoryStore.clearStore();
+            store.currencyStore.clearStore();
             store.loanStore.clearStore();
-            store.transactionStore.clearStore();
+            store.budgetStore.clearStore();
             store.statsStore.clearStore();
+            store.transactionStore.clearStore();
         } catch (error) {
             console.log(error);
         }
