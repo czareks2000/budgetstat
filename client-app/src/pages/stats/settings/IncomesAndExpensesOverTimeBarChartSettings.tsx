@@ -51,7 +51,7 @@ export default observer(function IncomesAndExpensesOverTimeBarChartSettings() {
         if (!incomesAndExpensesOverTimeSettingsHasInitialValues)
             resetIncomesAndExpensesOverTimeSettings();
 
-        resetForm({values: {...incomesAndExpensesOverTimeSettings}});
+        resetForm();
     }
 
     const periodOptions: Option[] = [
@@ -146,7 +146,7 @@ export default observer(function IncomesAndExpensesOverTimeBarChartSettings() {
                                 variant="contained"
                                 disabled={
                                     (incomesAndExpensesOverTimeSettingsHasInitialValues
-                                    && !dirty && !isSubmitting) || !isValid}
+                                    && !dirty && !isSubmitting)}
                                 fullWidth
                                 onClick={() => handleReset(resetForm)}>
                                 Reset

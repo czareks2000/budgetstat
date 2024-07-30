@@ -1,6 +1,7 @@
 ﻿using Application.Dto.Stats;
-using Application.Dto.Stats.Periods;
+using Application.Dto.Stats.Enums;
 using Application.Interfaces;
+using Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -38,6 +39,17 @@ namespace API.Controllers
             return HandleResult(
                 await _statsService.GetIncomesAndExpensesOverTime(
                     period, accountIds, customDate, incomeCategoryIds, expenseCategoryIds));
+        }
+
+        [HttpGet("stats/avgmonthlytransactionsvalues/{period}")] //api/stats/avgmonthlytransactionsvalues
+        public async Task<IActionResult> GetAvgMonthlyTransactionsValuesByCategories(
+            AvgChartPeriod period, [FromQuery] TransactionType transactionType,
+            [FromQuery] TimeWindow customWindow, [FromQuery] CategoryType categoryType, 
+            [FromQuery] int mainCategoryId, [FromQuery] List<int> accountIds)
+        {
+            return HandleResult(
+                await _statsService.GetAvgMonthlyTransactionsValuesByCategories(
+                    transactionType, period, customWindow, categoryType, mainCategoryId, accountIds));
         }
 
         [HttpGet("stats/currentmonthincome")] //api/stats/currentmonthincome

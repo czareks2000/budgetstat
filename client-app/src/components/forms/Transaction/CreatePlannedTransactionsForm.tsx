@@ -40,6 +40,7 @@ export default observer(function CreatePlannedTransactionsForm() {
             then: schema => schema.required('Category is required').nonNullable('Category is required')
         }),
         startDate: Yup.date()
+            .typeError('Invalid date format')
             .required('Date is required')
             .min(dayjs().startOf('day').toDate(), 'Start date cannot be in the past'),
         description: Yup.string(),

@@ -15,11 +15,13 @@ import { CollectivePayoffValues, PayoffCreateValues } from "../models/Payoff";
 import { LoanStatus } from "../models/enums/LoanStatus";
 import { Icon } from "../models/Icon";
 import { Asset, AssetCategory, AssetCreateUpdateValues } from "../models/Asset";
-import { IncomesAndExpensesDataSetItem, NetWorthStats, ValueOverTime } from "../models/Stats";
+import { IncomesAndExpensesDataSetItem, LabelValueItem, NetWorthStats, ValueOverTime } from "../models/Stats";
 import { ChartPeriod } from "../models/enums/periods/ChartPeriod";
 import { TransactionType } from "../models/enums/TransactionType";
 import { NetWorthChartPeriod } from "../models/enums/periods/NetWorthChartPeriod";
 import { ExtendedChartPeriod } from "../models/enums/periods/ExtenedChartPeriod";
+import { AvgChartPeriod } from "../models/enums/periods/AvgChartPeriod";
+import { CategoryType } from "../models/enums/CategoryType";
 
 const sleep = (delay: number) => {
     return new Promise((resolve) => {
@@ -295,6 +297,26 @@ const Stats = {
             }
 
         return requests.get<IncomesAndExpensesDataSetItem[]>(`/stats/incomesandexpensesovertime/${period}?${urlParams}`);
+    },
+    avgTransactionsValuesByCategories: (transactionType: TransactionType, period: AvgChartPeriod, 
+        categoryType: CategoryType, mainCategoryId?: number,
+        startDate?: Date, endDate?: Date, accountIds?: number[]) => {
+        
+        let urlParams = `&transactionType=${transactionType}&categoryType=${categoryType}`;
+
+        if (categoryType === CategoryType.Sub)
+            urlParams += `&mainCategoryId=${mainCategoryId}`
+
+        if (period === AvgChartPeriod.Custom)
+            urlParams +=`&startDate=${startDate!.toISOString()}&endDate=${endDate!.toISOString()}`;
+
+        if (accountIds && accountIds.length > 0) {
+            accountIds.forEach(id => {
+                urlParams += `&accountIds=${id}`;
+            });
+        }
+
+        return requests.get<LabelValueItem[]>(`/stats/avgmonthlytransactionsvalues/${period}?${urlParams}`)
     }
 }
 

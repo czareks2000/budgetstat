@@ -19,7 +19,7 @@ export type IncomesAndExpensesDataSetItem = {
     label: string;
 }
 
-export interface PieChartDataItem {
+export type LabelValueItem = {
     id: number;
     value: number;
     label: string;

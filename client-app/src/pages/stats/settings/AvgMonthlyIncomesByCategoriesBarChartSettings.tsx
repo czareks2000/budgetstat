@@ -9,19 +9,26 @@ import { Option } from "../../../app/models/Option";
 import dayjs from "dayjs";
 import MultipleSelectWithChceckBoxes from "../../../components/formInputs/MultipleSelectWithChceckBoxes";
 import MyDatePicker from "../../../components/formInputs/MyDatePicker";
-import { ChartPeriod } from "../../../app/models/enums/periods/ChartPeriod";
 import SelectInput from "../../../components/formInputs/SelectInput";
-import { BalanceValueOverTimeSettings } from "../../../app/models/ChartsSettings";
+import { AvgMonthlyTransactionsValuesSettings } from "../../../app/models/ChartsSettings";
+import { AvgChartPeriod } from "../../../app/models/enums/periods/AvgChartPeriod";
+import { CategoryType } from "../../../app/models/enums/CategoryType";
 
 
-export default observer(function BalanceOverTimeLineChartSettings() {
+export default observer(function AvgMonthlyIncomesByCategoriesBarChartSettings() {
     const {
         accountStore: {accountsNamesAsOptions},
+        categoryStore: {mainIncomeCategoriesAsOptions},
         statsStore: {
-            balanceValueOverTimeSettingsHasInitialValues, resetBalanceValueOverTimeSettings, 
-            balanceValueOverTimeSettings, setBalanceValueOverTimeSettings} } = useStore()
+            avgMonthlyIncomesByCategoriesSettingsHasInitialValues, resetAvgMonthlyIncomesByCategoriesSettings, 
+            avgMonthlyIncomesByCategoriesSettings, setAvgMonthlyIncomesByCategoriesSettings} } = useStore()
     
     const validationSchema = Yup.object({
+        categoryType: Yup.string().required('Category type is required'),
+        mainCategoryId: Yup.string().when('categoryType', {
+            is: (val: CategoryType) => val == CategoryType.Sub,
+            then: schema => schema.required('Main category required')
+        }),
         startDate: Yup.date()
             .typeError('Invalid date format')
             .required('Start date is required')
@@ -37,75 +44,92 @@ export default observer(function BalanceOverTimeLineChartSettings() {
                 return !startDate || value >= startDate;
             })
             .max(dayjs().add(1, 'day').startOf('day').toDate(), 'End date cannot be in the future')
-            .test('min-duration', 'The range must be at least 30 days', function(value) {
-                const { startDate } = this.parent;
-                return !startDate || !value || dayjs(value).diff(dayjs(startDate), 'day') >= 30;
-            })
     });
 
     const handleSubmit = (
-        settings: BalanceValueOverTimeSettings, 
-        helpers: FormikHelpers<BalanceValueOverTimeSettings>
+        settings: AvgMonthlyTransactionsValuesSettings, 
+        helpers: FormikHelpers<AvgMonthlyTransactionsValuesSettings>
     ) => {
-        setBalanceValueOverTimeSettings(settings).then(() => {
+        setAvgMonthlyIncomesByCategoriesSettings(settings).then(() => {
             helpers.resetForm({values: {...settings}});
         });
     }
 
     const handleReset = (
-        resetForm: (nextState?: Partial<FormikState<BalanceValueOverTimeSettings>>) => void) => {     
+        resetForm: (nextState?: Partial<FormikState<AvgMonthlyTransactionsValuesSettings>>) => void) => {     
         
-        if (!balanceValueOverTimeSettingsHasInitialValues)
-            resetBalanceValueOverTimeSettings();
+        if (!avgMonthlyIncomesByCategoriesSettingsHasInitialValues)
+            resetAvgMonthlyIncomesByCategoriesSettings();
 
         resetForm();
     }
 
     const periodOptions: Option[] = [
         {
-            value: ChartPeriod.Last7Days,
-            text: "Last 7 days"
-        },
-        {
-            value: ChartPeriod.Last30Days,
-            text: "Last 30 days"
-        },
-        {
-            value: ChartPeriod.LastYear,
+            value: AvgChartPeriod.LastYear,
             text: "Last year"
         },
         {
-            value: ChartPeriod.Last5Years,
-            text: "Last 5 years"
+            value: AvgChartPeriod.Custom,
+            text: "Custom"
+        },
+    ]
+
+    const categoryOptions: Option[] = [
+        {
+            value: CategoryType.Main,
+            text: "Main categories"
         },
         {
-            value: ChartPeriod.Custom,
-            text: "Custom"
+            value: AvgChartPeriod.Custom,
+            text: "Subcategories"
         },
     ]
 
     return (
         <>
             <Formik
-                key={Number(balanceValueOverTimeSettingsHasInitialValues)}
-                initialValues={balanceValueOverTimeSettings}
+                key={Number(avgMonthlyIncomesByCategoriesSettingsHasInitialValues)}
+                initialValues={avgMonthlyIncomesByCategoriesSettings}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit}>
             {({ isValid, dirty, isSubmitting, values, resetForm }) => (
                 <Form>
                     <Stack spacing={2}>
+
+                        {/* Category */}
+                        <Stack direction={'row'} spacing={2} alignItems={'top'}>
+                            <Grid item xs>
+                                <SelectInput 
+                                    label="Categories type" name={"categoryType"}
+                                    fullWidth 
+                                    options={categoryOptions} />   
+                            </Grid>
+                            {values.categoryType === CategoryType.Sub && <>
+                            <Grid item xs={'auto'} pt={2}>
+                                of
+                            </Grid>
+                            <Grid item xs>
+                                <SelectInput 
+                                    label="Main category" name={"mainCategoryId"} 
+                                    fullWidth 
+                                    options={mainIncomeCategoriesAsOptions} />
+                            </Grid></>}
+                        </Stack>
                     
                         {/* Period */}
                         <SelectInput 
                             label="Period" name={"period"} 
                             options={periodOptions} />     
 
-                        {values.period === ChartPeriod.Custom &&
+                        {values.period === AvgChartPeriod.Custom &&
                         <Stack direction={'row'} spacing={2} alignItems={'top'}>
                             <Grid item xs>
                                 {/* Start Date */}
                                 <MyDatePicker 
                                     defaultValue={dayjs().add(-30, 'days')}
+                                    format="MM/YYYY"
+                                    views={['month','year']}
                                     label="Start Date" 
                                     name={"startDate"}/>
                             </Grid>
@@ -116,6 +140,8 @@ export default observer(function BalanceOverTimeLineChartSettings() {
                                 {/* End Date */}
                                 <MyDatePicker 
                                     defaultValue={dayjs()}
+                                    format="MM/YYYY"
+                                    views={['month','year']}
                                     label="End Date" 
                                     name={"endDate"}/>
                             </Grid>
@@ -134,7 +160,7 @@ export default observer(function BalanceOverTimeLineChartSettings() {
                                 color="info"
                                 variant="contained"
                                 disabled={
-                                    (balanceValueOverTimeSettingsHasInitialValues
+                                    (avgMonthlyIncomesByCategoriesSettingsHasInitialValues
                                     && !dirty && !isSubmitting)}
                                 fullWidth
                                 onClick={() => handleReset(resetForm)}>

@@ -22,12 +22,14 @@ export default observer(function FilterTransactionsForm() {
     
     const validationSchema = Yup.object({
         startDate: Yup.date()
+            .typeError('Invalid date format')
             .required('Start date is required')
             .test('start-before-end', 'Start date cannot be after end date', function(value) {
                 const { endDate } = this.parent;
                 return !endDate || value <= endDate;
             }),
         endDate: Yup.date()
+            .typeError('Invalid date format')
             .required('End date is required')
             .max(dayjs().add(1, 'day').startOf('day').toDate(), 'End date cannot be in the future')
     });

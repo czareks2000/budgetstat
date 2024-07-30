@@ -1,6 +1,7 @@
 ﻿using Application.Core;
 using Application.Dto.Stats;
-using Application.Dto.Stats.Periods;
+using Application.Dto.Stats.Enums;
+using Domain.Enums;
 
 namespace Application.Interfaces
 {
@@ -11,11 +12,13 @@ namespace Application.Interfaces
         Task<Result<decimal>> GetCurrentMonthIncome();
 
         // historia sald kont
-        Task<Result<ValueOverTime>> GetAccountBalanceValueOverTime(ChartPeriod period, List<int> accountIds, TimeWindow customWindow);
+        Task<Result<ValueOverTime>> GetAccountBalanceValueOverTime(
+            ChartPeriod period, List<int> accountIds, TimeWindow customWindow);
 
-        // przepływy gotówki w czasie
-
-        // średnie wartości transakcji 
+        // średnie wartości transakcji
+        Task<Result<List<LabelValueItem>>> GetAvgMonthlyTransactionsValuesByCategories(
+            TransactionType transactionType, AvgChartPeriod period, TimeWindow customWindow,
+            CategoryType categoryType, int mainCategoryId, List<int> accountIds);
 
         // suma wartości transakcji
         Task<Result<List<IncomesAndExpensesDataSetItem>>> GetIncomesAndExpensesOverTime(

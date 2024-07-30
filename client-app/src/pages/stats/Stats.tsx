@@ -4,18 +4,34 @@ import IncomesAndExpensesOverTimeBarChart from "./charts/IncomesAndExpensesOverT
 import ResponsiveContainer from "../../components/common/ResponsiveContainer";
 import BalanceOverTimeLineChartSettings from "./settings/BalanceOverTimeLineChartSettings";
 import { observer } from "mobx-react-lite";
-import { useState } from "react";
 import IncomesAndExpensesOverTimeBarChartSettings from "./settings/IncomesAndExpensesOverTimeBarChartSettings";
+import AvgMonthlyExpensesByCategoriesBarChart from "./charts/AvgMonthlyExpensesByCategoriesBarChart";
+import AvgMonthlyExpensesByCategoriesBarChartSettings from "./settings/AvgMonthlyExpensesByCategoriesBarChartSettings";
+import AvgMonthlyIncomesByCategoriesBarChart from "./charts/AvgMonthlyIncomesByCategoriesBarChart";
+import AvgMonthlyIncomesByCategoriesBarChartSettings from "./settings/AvgMonthlyIncomesByCategoriesBarChartSettings";
+import { useStore } from "../../app/stores/store";
 
 const charts = [
     { 
+        id: 0, 
+        title: "Average Monthly Expenses By Categories", 
+        chart: <AvgMonthlyExpensesByCategoriesBarChart/>,
+        settings: <AvgMonthlyExpensesByCategoriesBarChartSettings/>
+    },
+    { 
         id: 1, 
+        title: "Average Monthly Incomes By Categories", 
+        chart: <AvgMonthlyIncomesByCategoriesBarChart/>,
+        settings: <AvgMonthlyIncomesByCategoriesBarChartSettings/>
+    },
+    { 
+        id: 2, 
         title: "Incomes and Expenses Over Time",
         chart: <IncomesAndExpensesOverTimeBarChart />,
         settings: <IncomesAndExpensesOverTimeBarChartSettings />
     },
     { 
-        id: 2, 
+        id: 3, 
         title: "Balance Over Time", 
         chart: <BalanceOverTimeLineChart/>,
         settings: <BalanceOverTimeLineChartSettings/>
@@ -23,11 +39,11 @@ const charts = [
 ]
 
 export default observer(function Stats() {
-    const [selectedChart, setSelectedChart] = useState(charts[0]);
+    const {statsStore: {selectedChart, setSelectedChart}} = useStore();
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const id = parseInt(event.target.value)
-        setSelectedChart(charts.find(c => c.id === id)!);
+        setSelectedChart(charts.find(c => c.id === id)!.id);
     }
 
     return (
@@ -45,7 +61,7 @@ export default observer(function Stats() {
                                         border: 'none',
                                     },
                                 }}
-                                value={selectedChart.id}
+                                value={charts[selectedChart].id}
                                 onChange={handleChange}
                                 autoComplete='off'
                             >   
@@ -57,11 +73,11 @@ export default observer(function Stats() {
                             </TextField>
                         </Box>
                     </Paper>
-                    {selectedChart.chart}
+                    {charts[selectedChart].chart}
                     <Divider>Chart settings</Divider>
                     <Paper>
                         <Box p={2}>
-                            {selectedChart.settings}
+                            {charts[selectedChart].settings}
                         </Box>
                     </Paper>
             </Stack>

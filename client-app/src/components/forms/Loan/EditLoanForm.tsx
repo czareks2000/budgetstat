@@ -27,6 +27,7 @@ export default observer(function EditLoanForm({loan, onSubmit, onCancel}: Props)
             .required('Amount is required')
             .positive('The amount must be positive'),
         repaymentDate: Yup.date()
+            .typeError('Invalid date format')
             .required('Repayment date is required')
             .min(dayjs().startOf('day').toDate(), 'Repayment date cannot be in the past'),
         description: Yup.string().notRequired()

@@ -1,7 +1,7 @@
 ﻿using Application.Core;
 using Application.Dto.Asset;
 using Application.Dto.Stats;
-using Application.Dto.Stats.Periods;
+using Application.Dto.Stats.Enums;
 using Application.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -9,6 +9,8 @@ using Domain;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using System.Security.AccessControl;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Application.Services
 {
@@ -303,6 +305,76 @@ namespace Application.Services
             return Result<List<IncomesAndExpensesDataSetItem>>.Success(dataSet);
         }
 
+        public async Task<Result<List<LabelValueItem>>> GetAvgMonthlyTransactionsValuesByCategories(
+            TransactionType transactionType, AvgChartPeriod period, TimeWindow customWindow, 
+            CategoryType categoryType, int mainCategoryId, List<int> accountIds)
+        {
+            var user = await _utilities.GetCurrentUserAsync();
+
+            // transactions
+            var transactionsQuery = _context.Transactions
+                .Include(a => a.Currency)
+                .Include(a => a.Category)
+                    .ThenInclude(c => c.MainCategory)
+                .Include(a => a.Account)
+                .Where(a => a.UserId == user.Id)
+                .Where(t => t.Considered)
+                .Where(t => !t.Planned)
+                .Where(t => t.Category.Type == transactionType);
+
+            // filter accounts
+            if (accountIds.Count > 0)
+                transactionsQuery = transactionsQuery
+                    .Where(t => t.Account != null)
+                    .Where(t => accountIds.Contains((int)t.AccountId));
+            
+            // filter category type
+            if (categoryType == CategoryType.Sub)
+                transactionsQuery = transactionsQuery
+                    .Where(t => t.Category.MainCategoryId == mainCategoryId);
+
+            // calculate time window
+            var timeWindow = CalculateTimeWindow(period, customWindow);
+
+            // filter by dates
+            transactionsQuery = transactionsQuery
+                .Where(t => t.Date >= timeWindow.StartDate && t.Date <= timeWindow.EndDate);
+
+            // fetch transactions
+            var transactions = await transactionsQuery.ToListAsync();
+
+            // create result object
+            List<LabelValueItem> result = [];
+
+            // calculate data
+            var groupedTransactions = transactions
+                .GroupBy(t => categoryType == CategoryType.Main ? t.Category.MainCategory : t.Category)
+                .Select(group => new
+                {
+                    Category = group.Key,
+                    Transactions = group.ToList()
+                });
+
+            foreach (var group in groupedTransactions)
+            {
+                var monthsInRange = (timeWindow.EndDate.Year - timeWindow.StartDate.Year) * 12 +
+                                    timeWindow.EndDate.Month - timeWindow.StartDate.Month + 1;
+
+                var totalAmount = group.Transactions
+                    .Sum(t => _utilities.Convert(t.Currency.Code, user.DefaultCurrency.Code, t.Amount, t.Date).Result);
+
+                var averageMonthlyValue = monthsInRange > 0 ? totalAmount / monthsInRange : 0;
+
+                result.Add(new LabelValueItem
+                {
+                    Label = group.Category.Name,
+                    Value = averageMonthlyValue
+                });
+            }
+
+            return Result<List<LabelValueItem>>.Success(result);
+        }
+
         #region HelperFunctions
 
         private async Task<List<Transaction>> FilterTransactions(
@@ -509,6 +581,28 @@ namespace Application.Services
                 StartDate = startDate,
                 EndDate = now
             };
+        }
+
+        private static TimeWindow CalculateTimeWindow(AvgChartPeriod period, TimeWindow customWindow)
+        {
+            DateTime now = DateTime.UtcNow;
+
+            var timeWindow = period switch
+            {
+                AvgChartPeriod.LastYear => new TimeWindow
+                {
+                    StartDate = new DateTime(now.AddDays(-365).Year, now.AddDays(-365).Month, 1, 0, 0, 0, DateTimeKind.Utc),
+                    EndDate = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month), 23, 59, 59, DateTimeKind.Utc)
+                },
+                AvgChartPeriod.Custom => new TimeWindow
+                {
+                    StartDate = new DateTime(customWindow.StartDate.Year, customWindow.StartDate.Month, 1, 0, 0, 0, DateTimeKind.Utc),
+                    EndDate = new DateTime(customWindow.EndDate.Year, customWindow.EndDate.Month, DateTime.DaysInMonth(customWindow.EndDate.Year, customWindow.EndDate.Month), 23, 59, 59, DateTimeKind.Utc)
+                },
+                _ => throw new ArgumentOutOfRangeException(nameof(period), period, null),
+            };
+
+            return timeWindow;
         }
 
         private static DateTime FindEarliestDate(List<Asset> assets)

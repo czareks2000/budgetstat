@@ -47,6 +47,8 @@ export default class CommonStore {
             
             store.statsStore.loadBalanceValueOverTime();
             store.statsStore.loadIncomesAndExpensesOverTime();
+            store.statsStore.loadAvgMonthlyExpensesByCategories();
+            store.statsStore.loadAvgMonthlyIncomesByCategories();
 
             // nie można wyświetlić intefejsu bez tych danch załadowanych
             // (w przyszłości dostosować intefejs zeby nie trzeba było czekać)

@@ -33,9 +33,11 @@ export default observer(function CrateLoanForm({counterpartyId, onCancel}: Props
             .positive('The amount must be positive'),
         counterpartyId: Yup.string().required('Choose counterparty'),
         loanDate: Yup.date()
+            .typeError('Invalid date format')
             .required('Repayment date is required')
             .max(dayjs().add(1, 'days').startOf('day').toDate(), 'Loan date cannot be in the future'),
         repaymentDate: Yup.date()
+            .typeError('Invalid date format')
             .required('Repayment date is required')
             .min(dayjs().startOf('day').toDate(), 'Repayment date cannot be in the past'),
         description: Yup.string().notRequired()

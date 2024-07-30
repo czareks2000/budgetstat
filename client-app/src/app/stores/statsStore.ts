@@ -1,10 +1,14 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
-import { NetWorthStats, ValueOverTime, PieChartDataItem, IncomesAndExpensesDataSetItem } from "../models/Stats";
+import { NetWorthStats, ValueOverTime, LabelValueItem, IncomesAndExpensesDataSetItem } from "../models/Stats";
 import agent from "../api/agent";
 import { store } from "./store";
 import { NetWorthChartPeriod } from "../models/enums/periods/NetWorthChartPeriod";
 import dayjs from "dayjs";
-import { BalanceValueOverTimeSettings, IncomesAndExpensesOverTimeSettings, initialBalanceValueOverTimeSettings, initialIncomesAndExpensesOverTimeSettings } from "../models/ChartsSettings";
+import { AvgMonthlyTransactionsValuesSettings, BalanceValueOverTimeSettings, 
+    IncomesAndExpensesOverTimeSettings, initialAvgMonthlyExpensesSettings, 
+    initialAvgMonthlyIncomesSettings, initialBalanceValueOverTimeSettings, 
+    initialIncomesAndExpensesOverTimeSettings } from "../models/ChartsSettings";
+import { TransactionType } from "../models/enums/TransactionType";
 
 export default class StatsStore {
     // Current Month Income
@@ -17,6 +21,9 @@ export default class StatsStore {
     netWorthChartPeriod: NetWorthChartPeriod = NetWorthChartPeriod.Year;
     loadedNetWorthValueOverTime = false;
 
+    // selected chart 
+    selectedChart: number = 0;
+
     // Balance Value Over Time chart
     balanceValueOverTime: ValueOverTime | undefined = undefined;
     balanceValueOverTimeSettings: BalanceValueOverTimeSettings = initialBalanceValueOverTimeSettings;
@@ -26,6 +33,16 @@ export default class StatsStore {
     incomesAndExpensesOverTime: IncomesAndExpensesDataSetItem[] | undefined = undefined;
     incomesAndExpensesOverTimeSettings: IncomesAndExpensesOverTimeSettings = initialIncomesAndExpensesOverTimeSettings;
     incomesAndExpensesOverTimeLoaded = false;
+
+    // Avg Monthly Expenses By Categories
+    avgMonthlyExpensesByCategories: LabelValueItem[] | undefined = undefined;
+    avgMonthlyExpensesByCategoriesSettings: AvgMonthlyTransactionsValuesSettings = initialAvgMonthlyExpensesSettings;
+    avgMonthlyExpensesByCategoriesLoaded = false;
+
+    // Avg Monthly Incomes By Categories
+    avgMonthlyIncomesByCategories: LabelValueItem[] | undefined = undefined;
+    avgMonthlyIncomesByCategoriesSettings: AvgMonthlyTransactionsValuesSettings = initialAvgMonthlyIncomesSettings;
+    avgMonthlyIncomesByCategoriesLoaded = false;
 
     statsHasOldData = false;
 
@@ -52,12 +69,108 @@ export default class StatsStore {
         this.balanceValueOverTimeSettings = initialBalanceValueOverTimeSettings;
         this.balanceValueOverTimeLoaded = false;
 
+        this.incomesAndExpensesOverTime = undefined;
+        this.incomesAndExpensesOverTimeSettings = initialIncomesAndExpensesOverTimeSettings;
+        this.incomesAndExpensesOverTimeLoaded = false;
+
+        this.avgMonthlyExpensesByCategories = undefined;
+        this.avgMonthlyExpensesByCategoriesSettings = initialAvgMonthlyExpensesSettings;
+        this.avgMonthlyExpensesByCategoriesLoaded = false;
+
+        this.avgMonthlyIncomesByCategories = undefined;
+        this.avgMonthlyIncomesByCategoriesSettings= initialAvgMonthlyIncomesSettings;
+        this.avgMonthlyIncomesByCategoriesLoaded = false;
+
         this.statsHasOldData = false;
     }
 
     setHasOldData = (state: boolean) => {
         this.statsHasOldData = state;
     }
+
+    setSelectedChart = (id: number) => {
+        this.selectedChart = id;
+    }
+
+    //#region Avg Monthly Expenses By Categories
+
+    get avgMonthlyExpensesByCategoriesSettingsHasInitialValues() {
+        return JSON.stringify(this.avgMonthlyExpensesByCategoriesSettings) 
+            === JSON.stringify(initialAvgMonthlyExpensesSettings)
+    }
+
+    loadAvgMonthlyExpensesByCategories = async () => {
+        this.avgMonthlyExpensesByCategoriesLoaded = false;
+        try {
+            var response = await agent.Stats.avgTransactionsValuesByCategories(
+                TransactionType.Expense,
+                this.avgMonthlyExpensesByCategoriesSettings.period,
+                this.avgMonthlyExpensesByCategoriesSettings.categoryType,
+                Number(this.avgMonthlyExpensesByCategoriesSettings.mainCategoryId),
+                dayjs(this.avgMonthlyExpensesByCategoriesSettings.startDate).toDate(),
+                dayjs(this.avgMonthlyExpensesByCategoriesSettings.endDate).toDate(),
+                this.avgMonthlyExpensesByCategoriesSettings.accountIds.map(a => Number(a.value)),
+            );
+            runInAction(() => {
+                this.avgMonthlyExpensesByCategories = response;
+                this.avgMonthlyExpensesByCategoriesLoaded = true;
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    setAvgMonthlyExpensesByCategoriesSettings = async (settings: AvgMonthlyTransactionsValuesSettings) => {
+        this.avgMonthlyExpensesByCategoriesSettings = settings;
+        await this.loadAvgMonthlyExpensesByCategories();
+    }
+
+    resetAvgMonthlyExpensesByCategoriesSettings = async () => {
+        this.avgMonthlyExpensesByCategoriesSettings = initialAvgMonthlyExpensesSettings;
+        await this.loadAvgMonthlyExpensesByCategories();
+    }
+
+    //#endregion
+
+    //#region Avg Monthly Incomes By Categories
+
+    get avgMonthlyIncomesByCategoriesSettingsHasInitialValues() {
+        return JSON.stringify(this.avgMonthlyIncomesByCategoriesSettings) 
+            === JSON.stringify(initialAvgMonthlyIncomesSettings)
+    }
+
+    loadAvgMonthlyIncomesByCategories = async () => {
+        this.avgMonthlyIncomesByCategoriesLoaded = false;
+        try {
+            var response = await agent.Stats.avgTransactionsValuesByCategories(
+                TransactionType.Income,
+                this.avgMonthlyIncomesByCategoriesSettings.period,
+                this.avgMonthlyIncomesByCategoriesSettings.categoryType,
+                Number(this.avgMonthlyIncomesByCategoriesSettings.mainCategoryId),
+                dayjs(this.avgMonthlyIncomesByCategoriesSettings.startDate).toDate(),
+                dayjs(this.avgMonthlyIncomesByCategoriesSettings.endDate).toDate(),
+                this.avgMonthlyIncomesByCategoriesSettings.accountIds.map(a => Number(a.value)),
+            );
+            runInAction(() => {
+                this.avgMonthlyIncomesByCategories = response;
+                this.avgMonthlyIncomesByCategoriesLoaded = true;
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    setAvgMonthlyIncomesByCategoriesSettings = async (settings: AvgMonthlyTransactionsValuesSettings) => {
+        this.avgMonthlyIncomesByCategoriesSettings = settings;
+        await this.loadAvgMonthlyIncomesByCategories();
+    }
+
+    resetAvgMonthlyIncomesByCategoriesSettings = async () => {
+        this.avgMonthlyIncomesByCategoriesSettings = initialAvgMonthlyIncomesSettings;
+        await this.loadAvgMonthlyIncomesByCategories();
+    }
+
+    //#endregion
 
     //#region Incomes And Expenses Over Time
 
@@ -115,7 +228,7 @@ export default class StatsStore {
     //#region Net Worth Stats
 
     get assetPieChartData() {
-        let data: PieChartDataItem[] = [];
+        let data: LabelValueItem[] = [];
 
         let index = 1;
 

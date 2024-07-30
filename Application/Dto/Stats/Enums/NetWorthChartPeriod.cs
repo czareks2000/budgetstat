@@ -1,4 +1,4 @@
-﻿namespace Application.Dto.Stats.Periods
+﻿namespace Application.Dto.Stats.Enums
 {
     public enum NetWorthChartPeriod
     {

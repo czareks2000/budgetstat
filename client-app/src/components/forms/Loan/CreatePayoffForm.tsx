@@ -26,6 +26,7 @@ export default observer(function CratePayoffForm() {
             .required('Amount is required')
             .positive('The amount must be positive'),
         date: Yup.date()
+            .typeError('Invalid date format')
             .required('Repayment date is required')
             .max(dayjs().add(1, 'day').startOf('day').toDate(), 'Repayment date cannot be in the future')
             .min(dayjs(loan.loanDate).startOf('day').toDate(), 'Repayment date cannot be before loan date'),

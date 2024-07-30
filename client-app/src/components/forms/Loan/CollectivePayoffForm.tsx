@@ -30,6 +30,7 @@ export default observer(function CollectivePayoffForm({loans, counterpartyId}: P
             .required('Amount is required')
             .positive('The amount must be positive'),
         date: Yup.date()
+            .typeError('Invalid date format')
             .required('Repayment date is required')
             .max(dayjs().add(1, 'day').startOf('day').toDate(), 'Repayment date cannot be in the future'),
         loanType: Yup.number().required('Choose which type of loans you want to repay'),

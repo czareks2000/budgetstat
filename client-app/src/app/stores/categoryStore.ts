@@ -2,6 +2,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
 import { Category, CategoryOption, MainCategory } from "../models/Category";
 import { TransactionType } from "../models/enums/TransactionType";
+import { Option } from "../models/Option";
 
 export default class CategoryStore {
     mainCategories: MainCategory[] = [];
@@ -16,9 +17,30 @@ export default class CategoryStore {
         this.categoriesLoaded = false;
     }
 
-    get expenseCategories() {
-        return this.mainCategories
-            .filter(category => category.type === TransactionType.Expense);
+    get mainExpenseCategoriesAsOptions() {
+        let options: Option[] = []
+        this.mainCategories
+        .filter(c => c.type === TransactionType.Expense)
+        .forEach(category => {
+            options.push({
+                text: category.name,
+                value: category.id
+            })
+        })
+        return options;
+    }
+
+    get mainIncomeCategoriesAsOptions() {
+        let options: Option[] = []
+        this.mainCategories
+        .filter(c => c.type === TransactionType.Income)
+        .forEach(category => {
+            options.push({
+                text: category.name,
+                value: category.id
+            })
+        })
+        return options;
     }
 
     getCategoriesAsOptions = (type: TransactionType, includeMainCategories: boolean = false) => {
