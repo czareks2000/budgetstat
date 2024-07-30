@@ -4,9 +4,9 @@ import agent from "../api/agent";
 import { store } from "./store";
 import { NetWorthChartPeriod } from "../models/enums/periods/NetWorthChartPeriod";
 import dayjs from "dayjs";
-import { AvgMonthlyTransactionsValuesSettings, BalanceValueOverTimeSettings, 
+import { AvgMonthlyTransactionsValuesSettings, BalanceOverTimeForecastSettings, BalanceValueOverTimeSettings, 
     IncomesAndExpensesOverTimeSettings, initialAvgMonthlyExpensesSettings, 
-    initialAvgMonthlyIncomesSettings, initialBalanceValueOverTimeSettings, 
+    initialAvgMonthlyIncomesSettings, initialBalanceOverTimeForecastSettings, initialBalanceValueOverTimeSettings, 
     initialIncomesAndExpensesOverTimeSettings } from "../models/ChartsSettings";
 import { TransactionType } from "../models/enums/TransactionType";
 
@@ -43,6 +43,11 @@ export default class StatsStore {
     avgMonthlyIncomesByCategories: LabelValueItem[] | undefined = undefined;
     avgMonthlyIncomesByCategoriesSettings: AvgMonthlyTransactionsValuesSettings = initialAvgMonthlyIncomesSettings;
     avgMonthlyIncomesByCategoriesLoaded = false;
+
+    // Balance Over Time Forecast
+    balanceOverTimeForecast: ValueOverTime | undefined = undefined;
+    balanceOverTimeForecastSettings: BalanceOverTimeForecastSettings = initialBalanceOverTimeForecastSettings;
+    balanceOverTimeForecastLoaded = false;
 
     statsHasOldData = false;
 
@@ -81,6 +86,10 @@ export default class StatsStore {
         this.avgMonthlyIncomesByCategoriesSettings= initialAvgMonthlyIncomesSettings;
         this.avgMonthlyIncomesByCategoriesLoaded = false;
 
+        this.balanceOverTimeForecast = undefined;
+        this.balanceOverTimeForecastSettings = initialBalanceOverTimeForecastSettings;
+        this.balanceOverTimeForecastLoaded = false;
+
         this.statsHasOldData = false;
     }
 
@@ -91,6 +100,44 @@ export default class StatsStore {
     setSelectedChart = (id: number) => {
         this.selectedChart = id;
     }
+
+    //#region Balance Over Time Forecast
+
+    get balanceOverTimeForecastSettingsHasInitialValues() {
+        return JSON.stringify(this.balanceOverTimeForecastSettings) 
+            === JSON.stringify(initialBalanceOverTimeForecastSettings)
+    }
+
+
+    loadBalanceOverTimeForecast = async () => {
+        this.balanceOverTimeForecastLoaded = false;
+        try {
+            const response = await agent.Stats.balanceOverTimeForecast(
+                    this.balanceOverTimeForecastSettings.period, 
+                    this.balanceOverTimeForecastSettings.accountIds.map(a => Number(a.value))
+                );
+            runInAction(() => {
+                response.startDate = dayjs(response.startDate).toDate(); 
+                response.endDate = dayjs(response.endDate).toDate(); 
+                this.balanceOverTimeForecast = response;
+                this.balanceOverTimeForecastLoaded = true;
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    setBalanceOverTimeForecastSettings = async (settings: BalanceOverTimeForecastSettings) => {
+        this.balanceOverTimeForecastSettings = settings;
+        await this.loadBalanceOverTimeForecast();
+    }
+
+    resetBalanceOverTimeForecastSettings = async () => {
+        this.balanceOverTimeForecastSettings = initialBalanceOverTimeForecastSettings;
+        await this.loadBalanceOverTimeForecast();
+    }
+
+    //#endregion
 
     //#region Avg Monthly Expenses By Categories
 

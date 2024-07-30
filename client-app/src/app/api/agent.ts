@@ -22,6 +22,7 @@ import { NetWorthChartPeriod } from "../models/enums/periods/NetWorthChartPeriod
 import { ExtendedChartPeriod } from "../models/enums/periods/ExtenedChartPeriod";
 import { AvgChartPeriod } from "../models/enums/periods/AvgChartPeriod";
 import { CategoryType } from "../models/enums/CategoryType";
+import { ForecastPeriod } from "../models/enums/periods/ForecastPeriod";
 
 const sleep = (delay: number) => {
     return new Promise((resolve) => {
@@ -278,23 +279,23 @@ const Stats = {
             period === ExtendedChartPeriod.CustomYear)
             urlParams =`customDate=${customDate!.toISOString()}`;
 
-            if (accountIds && accountIds.length > 0) {
-                accountIds.forEach(id => {
-                    urlParams += `&accountIds=${id}`;
-                });
-            }
+        if (accountIds && accountIds.length > 0) {
+            accountIds.forEach(id => {
+                urlParams += `&accountIds=${id}`;
+            });
+        }
 
-            if (incomeCategoryIds && incomeCategoryIds.length > 0) {
-                incomeCategoryIds.forEach(id => {
-                    urlParams += `&incomeCategoryIds=${id}`;
-                });
-            }
+        if (incomeCategoryIds && incomeCategoryIds.length > 0) {
+            incomeCategoryIds.forEach(id => {
+                urlParams += `&incomeCategoryIds=${id}`;
+            });
+        }
 
-            if (expenseCategoryIds && expenseCategoryIds.length > 0) {
-                expenseCategoryIds.forEach(id => {
-                    urlParams += `&expenseCategoryIds=${id}`;
-                });
-            }
+        if (expenseCategoryIds && expenseCategoryIds.length > 0) {
+            expenseCategoryIds.forEach(id => {
+                urlParams += `&expenseCategoryIds=${id}`;
+            });
+        }
 
         return requests.get<IncomesAndExpensesDataSetItem[]>(`/stats/incomesandexpensesovertime/${period}?${urlParams}`);
     },
@@ -317,6 +318,18 @@ const Stats = {
         }
 
         return requests.get<LabelValueItem[]>(`/stats/avgmonthlytransactionsvalues/${period}?${urlParams}`)
+    },
+    balanceOverTimeForecast: (period: ForecastPeriod, accountIds?: number[]) => {
+
+        let urlParams = '';
+
+        if (accountIds && accountIds.length > 0) {
+            accountIds.forEach(id => {
+                urlParams += `&accountIds=${id}`;
+            });
+        }
+
+        return requests.get<ValueOverTime>(`/stats/balanceovertimeforecast/${period}?${urlParams}`)
     }
 }
 

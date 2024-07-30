@@ -5,6 +5,7 @@ import { ExtendedChartPeriod } from "./enums/periods/ExtenedChartPeriod";
 import { CategoryOption } from "./Category";
 import { AvgChartPeriod } from "./enums/periods/AvgChartPeriod";
 import { CategoryType } from "./enums/CategoryType";
+import { ForecastPeriod } from "./enums/periods/ForecastPeriod";
 
 
 export interface BalanceValueOverTimeSettings {
@@ -45,7 +46,7 @@ export interface AvgMonthlyTransactionsValuesSettings {
     mainCategoryId: number | string;
     startDate: Date | dayjs.Dayjs;
     endDate: Date | dayjs.Dayjs;
-    accountIds: Option[]
+    accountIds: Option[];
 }
 
 export const initialAvgMonthlyExpensesSettings:
@@ -65,5 +66,16 @@ export const initialAvgMonthlyIncomesSettings:
         mainCategoryId: "",
         startDate: dayjs().add(-6, 'month'),
         endDate: dayjs(),
+        accountIds: []
+    }
+
+export interface BalanceOverTimeForecastSettings {
+    period: ForecastPeriod;
+    accountIds: Option[];
+}
+
+export const initialBalanceOverTimeForecastSettings:
+    BalanceOverTimeForecastSettings = {
+        period: ForecastPeriod.NextYear,
         accountIds: []
     }

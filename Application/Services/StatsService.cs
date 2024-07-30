@@ -375,6 +375,102 @@ namespace Application.Services
             return Result<List<LabelValueItem>>.Success(result);
         }
 
+        public async Task<Result<ValueOverTime>> GetAccountBalanceValueForecast(ForecastPeriod period, List<int> accountIds)
+        {
+            var user = await _utilities.GetCurrentUserAsync();
+
+            var accounts = await _context.Accounts
+                .Include(a => a.AccountBalances)
+                    .ThenInclude(ab => ab.Currency)
+                .Where(a => a.UserId == user.Id)
+                .Where(a => a.Status == AccountStatus.Visible)
+                .ToListAsync();
+
+            // filter accounts
+            if (accountIds.Count > 0)
+                accounts = accounts
+                    .Where(a => accountIds.Contains(a.Id))
+                    .ToList();
+
+            // create result object
+            ValueOverTime chartObject = new()
+            {
+                Data = [],
+                Labels = [],
+            };
+
+            // calculate start and end dates
+            var timeWindow = CalculateTimeWindow(period);
+
+            chartObject.StartDate = timeWindow.StartDate;
+            chartObject.EndDate = timeWindow.EndDate;
+
+            // calculate date labels
+            var dates = CalculateDates(period, timeWindow);
+
+            // accounts current value
+            decimal accountsCurrentValue = 0;
+            foreach (var account in accounts)
+            {
+                var accountBalance = account.AccountBalances
+                    .Where(ab => ab.Date.Date <= timeWindow.StartDate.Date)
+                    .OrderByDescending(ab => ab.Date)
+                    .FirstOrDefault();
+
+                if (accountBalance == null) continue;
+
+                accountsCurrentValue += await _utilities.Convert(
+                    accountBalance.Currency.Code, user.DefaultCurrency.Code, accountBalance.Balance, timeWindow.StartDate);
+            }
+
+            // get planned transactions
+            var plannedTransactions = await _context.Transactions
+                .Include(t => t.Currency)
+                .Include(t => t.Category)
+                .Where(t => t.Category.Type != TransactionType.Transfer)
+                .Where(t => t.Planned)
+                .Where(t => t.Considered)
+                .Where(a => a.UserId == user.Id)
+                .Where(t => t.Date.Date >= timeWindow.StartDate.Date)
+                .Where(t => t.Date.Date <= timeWindow.EndDate.Date)
+                .ToListAsync();
+
+            if (accountIds.Count > 0)
+                plannedTransactions = plannedTransactions
+                    .Where(t => t.Account != null)
+                    .Where(t => accountIds.Contains((int)t.AccountId))
+                    .ToList();
+
+            // calculate data
+            DateTime currentStartDate = timeWindow.StartDate;
+            foreach (var currentEndDate in dates)
+            {
+                //dodać wartość planowanych transakcji
+                var filteredTransactions = plannedTransactions
+                    .Where(t => t.Date.Date > currentStartDate.Date)
+                    .Where(t => t.Date.Date <= currentEndDate)
+                    .ToList();
+
+                foreach (var transaction in filteredTransactions)
+                {
+                    if (transaction.Category.Type == TransactionType.Income)
+                        accountsCurrentValue += await _utilities.Convert(
+                            transaction.Currency.Code, user.DefaultCurrency.Code, transaction.Amount, currentEndDate);
+                    else if (transaction.Category.Type == TransactionType.Expense)
+                        accountsCurrentValue -= await _utilities.Convert(
+                            transaction.Currency.Code, user.DefaultCurrency.Code, transaction.Amount, currentEndDate);
+                }
+
+                chartObject.Data.Add(accountsCurrentValue);
+                chartObject.Labels.Add(FormatDateTime(currentEndDate, period));
+
+                currentStartDate = currentEndDate;
+            }
+
+            // return data
+            return Result<ValueOverTime>.Success(chartObject);
+        }
+
         #region HelperFunctions
 
         private async Task<List<Transaction>> FilterTransactions(
@@ -605,6 +701,24 @@ namespace Application.Services
             return timeWindow;
         }
 
+        private static TimeWindow CalculateTimeWindow(ForecastPeriod period)
+        {
+            DateTime now = DateTime.UtcNow;
+
+            var endDate = period switch
+            {
+                ForecastPeriod.NextMonth => now.AddMonths(1),
+                ForecastPeriod.NextYear => now.AddYears(1),
+                _ => throw new ArgumentOutOfRangeException(nameof(period), period, null),
+            };
+
+            return new TimeWindow
+            {
+                StartDate = now,
+                EndDate = endDate
+            };
+        }
+
         private static DateTime FindEarliestDate(List<Asset> assets)
         {
             if (assets == null || assets.Count == 0)
@@ -825,6 +939,36 @@ namespace Application.Services
             return dates;
         }
 
+        private static List<DateTime> CalculateDates(ForecastPeriod period, TimeWindow timeWindow)
+        {
+            List<DateTime> dates = [];
+            DateTime currentDate = timeWindow.StartDate;
+
+            switch (period)
+            {
+                case ForecastPeriod.NextMonth:
+                    for (int i = 0; i < 30; i++)
+                    {
+                        dates.Add(currentDate);
+                        currentDate = currentDate.AddDays(1);
+                    }
+                    break;
+
+                case ForecastPeriod.NextYear:
+                    for (int i = 0; i < 12; i++)
+                    {
+                        dates.Add(currentDate);
+                        currentDate = currentDate.AddMonths(1);
+                    }
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(period), period, null);
+            }
+
+            return dates;
+        }
+
         private static string FormatDateTime(DateTime dateTime, NetWorthChartPeriod period)
         {
             return period switch
@@ -854,6 +998,16 @@ namespace Application.Services
                 ExtendedChartPeriod.Last7Days or ExtendedChartPeriod.Last30Days => dateTime.ToString("dd/MM"),
                 ExtendedChartPeriod.LastYear or ExtendedChartPeriod.CustomYear => dateTime.ToString("MM/yyyy"),
                 ExtendedChartPeriod.Last5Years => dateTime.ToString("yyyy"),
+                _ => throw new ArgumentOutOfRangeException(nameof(period), period, null),
+            };
+        }
+
+        private static string FormatDateTime(DateTime dateTime, ForecastPeriod period)
+        {
+            return period switch
+            {
+                ForecastPeriod.NextMonth => dateTime.ToString("dd/MM"),
+                ForecastPeriod.NextYear => dateTime.ToString("MM/yyyy"),
                 _ => throw new ArgumentOutOfRangeException(nameof(period), period, null),
             };
         }

@@ -52,6 +52,13 @@ namespace API.Controllers
                     transactionType, period, customWindow, categoryType, mainCategoryId, accountIds));
         }
 
+        [HttpGet("stats/balanceovertimeforecast/{period}")] //api/stats/avgmonthlytransactionsvalues
+        public async Task<IActionResult> GetAccountBalanceValueForecast(ForecastPeriod period, [FromQuery] List<int> accountIds)
+        {
+            return HandleResult(
+                await _statsService.GetAccountBalanceValueForecast(period, accountIds));
+        }
+
         [HttpGet("stats/currentmonthincome")] //api/stats/currentmonthincome
         public async Task<IActionResult> GetCurrentMonthIncome()
         {

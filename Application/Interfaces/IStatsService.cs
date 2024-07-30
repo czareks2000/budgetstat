@@ -26,6 +26,7 @@ namespace Application.Interfaces
             List<int> incomeCategoryIds, List<int> expenseCategoryIds);
 
         // prognoza salda kont
+        Task<Result<ValueOverTime>> GetAccountBalanceValueForecast(ForecastPeriod period, List<int> accountIds);
 
         // historia wartości netto
         Task<Result<ValueOverTime>> GetNetWorthValueOverTime(NetWorthChartPeriod period);

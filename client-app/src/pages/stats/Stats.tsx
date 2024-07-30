@@ -10,6 +10,8 @@ import AvgMonthlyExpensesByCategoriesBarChartSettings from "./settings/AvgMonthl
 import AvgMonthlyIncomesByCategoriesBarChart from "./charts/AvgMonthlyIncomesByCategoriesBarChart";
 import AvgMonthlyIncomesByCategoriesBarChartSettings from "./settings/AvgMonthlyIncomesByCategoriesBarChartSettings";
 import { useStore } from "../../app/stores/store";
+import BalanceOverTimeForecastLineChart from "./charts/BalanceOverTimeForecastLineChart";
+import BalanceOverTimeForecastLineChartSettings from "./settings/BalanceOverTimeForecastLineChartSettings";
 
 const charts = [
     { 
@@ -35,6 +37,12 @@ const charts = [
         title: "Balance Over Time", 
         chart: <BalanceOverTimeLineChart/>,
         settings: <BalanceOverTimeLineChartSettings/>
+    },
+    { 
+        id: 4, 
+        title: "Balance Over Time Forecast", 
+        chart: <BalanceOverTimeForecastLineChart/>,
+        settings: <BalanceOverTimeForecastLineChartSettings/>
     },
 ]
 
