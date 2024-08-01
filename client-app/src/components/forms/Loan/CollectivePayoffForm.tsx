@@ -22,7 +22,7 @@ interface Props {
 export default observer(function CollectivePayoffForm({loans, counterpartyId}: Props) {
     const {
         accountStore: {getAccountsByCurrencyAsOptions, getAccountCurrency},
-        loanStore: {collectivePayoff} }= useStore();
+        loanStore: {collectivePayoff, selectSummaries} }= useStore();
     
     const validationSchema = Yup.object({
         accountId: Yup.string().required('Choose account'),
@@ -44,6 +44,7 @@ export default observer(function CollectivePayoffForm({loans, counterpartyId}: P
         
         collectivePayoff(counterpartyId, transformedValues).then(() => {
             helpers.resetForm();
+            selectSummaries(counterpartyId);
         }).catch((err) => {
             helpers.setErrors({
                 amount: err
