@@ -71,6 +71,7 @@ export default class CommonStore {
 
             await store.statsStore.loadNetWorthStats();
             await store.statsStore.loadCurrentMonthIncome();
+            await store.statsStore.loadAvgMonthlyIncomesAndExpensesLastYear();
         } catch (error) {
             console.log(error);
         } finally {

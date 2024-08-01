@@ -9,7 +9,10 @@ namespace Application.Interfaces
     public interface IStatsService
     {
         // porównanie aktulanego salda do poprzedniego miesiąca
-        Task<Result<decimal>> GetCurrentMonthIncome();
+        Task<Result<IncomesExpensesValue>> GetCurrentMonthIncome();
+
+        // średnie miesięczne przychody i wydatki w osatnich 12 miesiącach
+        Task<Result<IncomesExpensesValue>> GetAvgMonthlyIncomesAndExpensesLastYear();
 
         // historia sald kont
         Task<Result<ValueOverTime>> GetAccountBalanceValueOverTime(

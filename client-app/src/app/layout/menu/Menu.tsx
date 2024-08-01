@@ -85,7 +85,7 @@ export default observer(function Menu({ appName, drawerWidth = 288 }: Props) {
             <NavLinks items={[
                     {text: 'Home', icon: <Home />, link: 'home'}, 
                     {text: 'Stats', icon: <BarChart />, link: 'stats'}, 
-                    {text: 'Calendar', icon: <CalendarMonth />, link: 'calendar'}
+                    //{text: 'Calendar', icon: <CalendarMonth />, link: 'calendar'}
                 ]}/>
           </Box>
     

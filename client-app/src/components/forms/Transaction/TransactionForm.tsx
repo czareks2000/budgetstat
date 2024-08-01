@@ -150,6 +150,13 @@ export default observer(function TransactionForm({initialValues, onSubmit, submi
                                 options={accountsAsOptions} />
                             }
 
+                            {/* Amount */}
+                            {(values.type !== TransactionType.Transfer) &&
+                            <NumberInput label="Amount" name={"amount"}
+                                adornment adornmentPosition="end" 
+                                adormentText={getAccountCurrency(values.accountId)?.symbol} />
+                            }
+
                             {/* Expense Categories */}
                             {(values.type === TransactionType.Expense) &&
                             <CategoryGroupedInput label="Category" name={"expenseCategoryId"}
@@ -160,13 +167,6 @@ export default observer(function TransactionForm({initialValues, onSubmit, submi
                             {(values.type === TransactionType.Income) &&
                             <CategoryGroupedInput label="Category" name={"incomeCategoryId"}
                                 options={getCategoriesAsOptions(TransactionType.Income)} />
-                            }
-
-                            {/* Amount */}
-                            {(values.type !== TransactionType.Transfer) &&
-                            <NumberInput label="Amount" name={"amount"}
-                                adornment adornmentPosition="end" 
-                                adormentText={getAccountCurrency(values.accountId)?.symbol} />
                             }
 
                             {(values.type === TransactionType.Transfer) &&

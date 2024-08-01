@@ -24,3 +24,8 @@ export type LabelValueItem = {
     value: number;
     label: string;
 }
+
+export type IncomesExpensesValue = {
+    incomes: number;
+    expenses: number;
+}

@@ -139,7 +139,7 @@ namespace Application.Services
             return Result<ValueOverTime>.Success(chartObject);
         }
 
-        public async Task<Result<decimal>> GetCurrentMonthIncome()
+        public async Task<Result<IncomesExpensesValue>> GetCurrentMonthIncome()
         {
             var user = await _utilities.GetCurrentUserAsync();
 
@@ -154,7 +154,8 @@ namespace Application.Services
                 .Where(t => t.Date.Month == DateTime.UtcNow.Month)
                 .ToListAsync();
 
-            decimal balance = 0;
+            decimal incomes = 0;
+            decimal expenses = 0;
 
             foreach (var transaction in transactions)
             {
@@ -165,12 +166,59 @@ namespace Application.Services
                     .Convert(currency.Code, user.DefaultCurrency.Code, transaction.Amount, transaction.Date.Date);
 
                 if (category.Type == TransactionType.Income)
-                    balance += convertedAmount;
+                    incomes += convertedAmount;
                 else if (category.Type == TransactionType.Expense)
-                    balance -= convertedAmount;
+                    expenses += convertedAmount;
             }
 
-            return Result<decimal>.Success(balance);
+            var result = new IncomesExpensesValue
+            {
+                Incomes = incomes,
+                Expenses = expenses
+            };
+
+            return Result<IncomesExpensesValue>.Success(result);
+        }
+
+        public async Task<Result<IncomesExpensesValue>> GetAvgMonthlyIncomesAndExpensesLastYear()
+        {
+            var user = await _utilities.GetCurrentUserAsync();
+
+            var oneYearAgo = DateTime.UtcNow.AddYears(-1);
+
+            var transactions = await _context.Transactions
+                .Include(t => t.Category)
+                .Include(t => t.Currency)
+                .Where(t => t.UserId == user.Id)
+                .Where(t => !t.Planned)
+                .Where(t => t.Considered)
+                .Where(t => t.Date >= oneYearAgo && t.Date <= DateTime.UtcNow)
+                .ToListAsync();
+
+            decimal incomes = 0;
+            decimal expenses = 0;
+
+            foreach (var transaction in transactions)
+            {
+                var category = transaction.Category;
+                var currency = transaction.Currency;
+
+                var convertedAmount = await _utilities
+                    .Convert(currency.Code, user.DefaultCurrency.Code, transaction.Amount, transaction.Date.Date);
+
+                if (category.Type == TransactionType.Income)
+                    incomes += convertedAmount;
+                else if (category.Type == TransactionType.Expense)
+                    expenses += convertedAmount;
+            }
+
+            var result = new IncomesExpensesValue
+            {
+                Incomes = incomes / 12,
+                Expenses = expenses / 12
+            };
+
+            return Result<IncomesExpensesValue>.Success(result);
         }
 
         public async Task<Result<ValueOverTime>> GetAccountBalanceValueOverTime(

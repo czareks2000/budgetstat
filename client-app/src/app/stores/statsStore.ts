@@ -1,5 +1,5 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
-import { NetWorthStats, ValueOverTime, LabelValueItem, IncomesAndExpensesDataSetItem } from "../models/Stats";
+import { NetWorthStats, ValueOverTime, LabelValueItem, IncomesAndExpensesDataSetItem, IncomesExpensesValue } from "../models/Stats";
 import agent from "../api/agent";
 import { store } from "./store";
 import { NetWorthChartPeriod } from "../models/enums/periods/NetWorthChartPeriod";
@@ -12,7 +12,9 @@ import { TransactionType } from "../models/enums/TransactionType";
 
 export default class StatsStore {
     // Current Month Income
-    currentMonthIncome: number = 0;
+    currentMonthIncomesAndExpenses: IncomesExpensesValue = { incomes: 0, expenses: 0 };
+    // Avg Monthly Incomes And Expenses Last Year
+    avgMonthlyIncomesAndExpensesLastYear: IncomesExpensesValue = { incomes: 0, expenses: 0 };
     // Net Worth Stats
     netWorthStats: NetWorthStats | undefined = undefined;
 
@@ -63,7 +65,7 @@ export default class StatsStore {
     }
 
     clearStore = () => {
-        this.currentMonthIncome = 0;
+        this.currentMonthIncomesAndExpenses = { incomes: 0, expenses: 0 };
         this.netWorthStats = undefined;
 
         this.netWorthValueOverTime = undefined;
@@ -259,11 +261,30 @@ export default class StatsStore {
 
     //#region Current Month Income
 
+    get currentMonthIncome() {
+        return this.currentMonthIncomesAndExpenses.incomes - this.currentMonthIncomesAndExpenses.expenses;
+    }
+
     loadCurrentMonthIncome = async () => {
         try {
             const value = await agent.Stats.currentMothIncome();
             runInAction(() => {
-                this.currentMonthIncome = value;
+                this.currentMonthIncomesAndExpenses = value;
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    //#endregion
+
+    //#region Avg Monthly Incomes And Expenses Last Year
+
+    loadAvgMonthlyIncomesAndExpensesLastYear = async () => {
+        try {
+            const value = await agent.Stats.avgMonthlyIncomesAndExpensesLastYear();
+            runInAction(() => {
+                this.avgMonthlyIncomesAndExpensesLastYear = value;
             })
         } catch (error) {
             console.log(error);

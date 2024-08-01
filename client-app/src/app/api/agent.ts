@@ -15,7 +15,7 @@ import { CollectivePayoffValues, PayoffCreateValues } from "../models/Payoff";
 import { LoanStatus } from "../models/enums/LoanStatus";
 import { Icon } from "../models/Icon";
 import { Asset, AssetCategory, AssetCreateUpdateValues } from "../models/Asset";
-import { IncomesAndExpensesDataSetItem, LabelValueItem, NetWorthStats, ValueOverTime } from "../models/Stats";
+import { IncomesAndExpensesDataSetItem, IncomesExpensesValue, LabelValueItem, NetWorthStats, ValueOverTime } from "../models/Stats";
 import { ChartPeriod } from "../models/enums/periods/ChartPeriod";
 import { TransactionType } from "../models/enums/TransactionType";
 import { NetWorthChartPeriod } from "../models/enums/periods/NetWorthChartPeriod";
@@ -254,7 +254,9 @@ const Stats = {
     netWorthValueOverTime: (period: NetWorthChartPeriod) =>
         requests.get<ValueOverTime>(`/stats/networthovertime/${period}`),
     currentMothIncome: () =>
-        requests.get<number>('/stats/currentmonthincome'),
+        requests.get<IncomesExpensesValue>('/stats/currentmonthincome'),
+    avgMonthlyIncomesAndExpensesLastYear: () =>
+        requests.get<IncomesExpensesValue>('/stats/avgmonthlyincomesandexpenseslastyear'),
     accountBalanceOverTime: (period: ChartPeriod, accountIds?: number[], startDate?: Date, endDate?: Date) => {
 
         let urlParams = '';

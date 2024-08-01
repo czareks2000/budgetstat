@@ -64,6 +64,12 @@ namespace API.Controllers
         {
             return HandleResult(await _statsService.GetCurrentMonthIncome());
         }
-        
+
+        [HttpGet("stats/avgmonthlyincomesandexpenseslastyear")] //api/stats/avgmonthlyincomesandexpenseslastyear
+        public async Task<IActionResult> GetAvgMonthlyIncomesAndExpensesLastYear()
+        {
+            return HandleResult(await _statsService.GetAvgMonthlyIncomesAndExpensesLastYear());
+        }
+
     }
 }

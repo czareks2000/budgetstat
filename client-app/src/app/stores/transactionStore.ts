@@ -469,6 +469,7 @@ export default class TransactionStore {
             store.budgetStore.refreshBudgets(oldCategoryId); 
 
         store.statsStore.loadCurrentMonthIncome();
+        store.statsStore.loadAvgMonthlyIncomesAndExpensesLastYear()
 
         store.statsStore.setHasOldData(true);
     }
