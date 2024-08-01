@@ -78,6 +78,7 @@ namespace Application.Services
                 new AccountBalance()
                 {
                     Balance = newAccount.Balance,
+                    Date = newAccount.Date,
                     Currency = _context.Currencies.Find(newAccount.CurrencyId)
                 }
             };

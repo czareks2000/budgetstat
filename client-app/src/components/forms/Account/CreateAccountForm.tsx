@@ -8,6 +8,8 @@ import { Button, Grid, Stack } from "@mui/material";
 import SelectInput from "../../formInputs/SelectInput";
 import { useStore } from "../../../app/stores/store";
 import NumberInput from "../../formInputs/NumberInput";
+import dayjs from "dayjs";
+import MyDatePicker from "../../formInputs/MyDatePicker";
 
 interface Props {
     onSubmit: (account: AccountFormValues, formikHelpers: FormikHelpers<AccountFormValues>) => void;
@@ -22,6 +24,9 @@ export default observer(function CreateAccountForm({onSubmit, onCancel}: Props) 
         balance: Yup.number().required('Balance is required')
                         .min(0, 'Balance must be greater than or equal to 0'),
         currencyId: Yup.string().required('Currency is required'),
+        date: Yup.date()
+            .required('Date is required')
+            .max(dayjs().add(1, 'day').startOf('day').toDate(), 'Date cannot be in the future'),
         description: Yup.string().notRequired()
     });
 
@@ -29,6 +34,7 @@ export default observer(function CreateAccountForm({onSubmit, onCancel}: Props) 
         name: "",
         balance: null,
         currencyId: defaultCurrency?.id || "",
+        date: dayjs(),
         description: ""
     }
     
@@ -59,6 +65,12 @@ export default observer(function CreateAccountForm({onSubmit, onCancel}: Props) 
                                 minWidth={120}/>
                         </Grid>
                     </Stack>
+
+                    {/* Create Date */}
+                    <MyDatePicker 
+                                defaultValue={dayjs()}
+                                label="Created at" 
+                                name={"date"}/>
 
                     {/* Description */}
                     <TextInput label="Description" name="description"/>
