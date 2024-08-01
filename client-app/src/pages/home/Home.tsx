@@ -3,8 +3,20 @@ import { Box, Divider, Grid, Paper, Stack } from "@mui/material"
 import CurrentBalanceCard from "./cards/CurrentBalanceCard"
 import IncomesExpensesThisMonthCard from "./cards/IncomesExpensesThisMonthCard"
 import AvgMonthlyIncomesAndExpensesCard from "./cards/AvgMonthlyIncomesAndExpensesCard"
+import TransactionsToConfirmCard from "./cards/TransactionsToConfirmCard"
+import { useStore } from "../../app/stores/store"
+import BudgetsCard from "./cards/BudgetsCard"
+import AccountsCard from "./cards/AccountsCard"
+import NoDecorationLink from "../../components/common/NoDecorationLink"
+import LoansCard from "./cards/LoansCard"
+import TransactionsCard from "./cards/TransactionsCard"
 
 export default observer(function Home() {
+    const {
+        transactionStore: {plannedTransactionsToConfirm},
+    } = useStore();
+
+    
     return (
         <Grid container>
             <Grid item xs lg xl/>
@@ -32,22 +44,41 @@ export default observer(function Home() {
 
                     </Grid>
 
+                    <Grid container gap={2} direction={"row"}>
+                        <Grid item xs={12} lg>
+                    
+                            <Paper><Box p={2} height={300}>Incomes expenses sum chart this month</Box></Paper>
+
+                        </Grid>
+                        <Grid item xs={12} lg>
+                          
+                            <Paper><Box p={2} height={300}>Account balance last 30 days</Box></Paper>
+
+                        </Grid>
+                    </Grid>
+
                     <Grid container gap={2}>
                         <Grid item xs={12} lg>
                             <Stack spacing={2}>
 
-                                <Paper><Box p={2} height={300}>Incomes expenses sum chart this month</Box></Paper>
-                                <Paper><Box p={2} height={100}>Accounts list</Box></Paper>
-                                <Paper><Box p={2} height={200}>Loans summary</Box></Paper>
+                                <NoDecorationLink to={"/accounts"} 
+                                    content={<AccountsCard />} />
+
+                                <NoDecorationLink to={"/budgets"} 
+                                    content={<BudgetsCard/>} />
 
                             </Stack>
                         </Grid>
                         <Grid item xs={12} lg>
                             <Stack spacing={2}>
 
-                                <Paper><Box p={2} height={300}>Account balance last 30 days</Box></Paper>
-                                <Paper><Box p={2} height={150}>Budgets</Box></Paper>
-                                <Paper><Box p={2} height={100}>Transactions to confirm</Box></Paper>
+                                <NoDecorationLink to={"/loans"} 
+                                    content={<LoansCard />} />
+                                
+                                <TransactionsCard />
+
+                                {plannedTransactionsToConfirm.length > 0 &&
+                                    <TransactionsToConfirmCard /> }
 
                             </Stack>
                         </Grid>

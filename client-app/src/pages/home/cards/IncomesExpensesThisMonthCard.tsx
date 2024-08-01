@@ -12,7 +12,7 @@ export default observer(function IncomesExpensesThisMonthCard() {
   return (
     <Card>
         <CardContent>
-            <Stack textAlign={'right'}>
+            <Stack textAlign={{xs: 'center', lg: 'right'}}>
                 <Typography variant="body1" noWrap component="div">
                     Income this month:
                 </Typography>

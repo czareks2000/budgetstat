@@ -102,6 +102,11 @@ export default observer(function CreatePlannedTransactionsForm() {
                                 label="Account" name={"accountId"}
                                 options={accountsAsOptions} />
 
+                            {/* Amount */}
+                            <NumberInput label="Amount" name={"amount"}
+                                adornment adornmentPosition="end" 
+                                adormentText={getAccountCurrency(values.accountId)?.symbol} />
+
                             {/* Expense Categories */}
                             {(values.type === TransactionType.Expense) &&
                             <CategoryGroupedInput label="Category" name={"expenseCategoryId"}
@@ -113,11 +118,6 @@ export default observer(function CreatePlannedTransactionsForm() {
                             <CategoryGroupedInput label="Category" name={"incomeCategoryId"}
                                 options={getCategoriesAsOptions(TransactionType.Income)} />
                             }
-
-                            {/* Amount */}
-                            <NumberInput label="Amount" name={"amount"}
-                                adornment adornmentPosition="end" 
-                                adormentText={getAccountCurrency(values.accountId)?.symbol} />
 
                             {/* Description */}
                             {values.type !== TransactionType.Transfer &&

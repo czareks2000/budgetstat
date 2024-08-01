@@ -1,8 +1,7 @@
-import { ExpandMore } from '@mui/icons-material'
+import { ExpandMore, Wallet } from '@mui/icons-material'
 import { Accordion, AccordionDetails, AccordionSummary, Box, Divider, List, Typography } from '@mui/material'
 import { formatAmount } from '../../../app/utils/FormatAmount'
 import AccountItem from './AccountItem'
-import CategoryIcon from '../../../components/common/CategoryIcon'
 import { useStore } from '../../../app/stores/store'
 import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
@@ -41,7 +40,7 @@ export default observer(function AccountGroup({index, expanded, handleToggle}: P
             >
                 <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
                     <Box display="flex" alignItems="center">
-                        <CategoryIcon iconId={1} fontSize="small" sx={{mr: 1}}/>
+                        <Wallet fontSize="small" sx={{mr: 1}}/>
                         <Typography>Accounts</Typography>
                     </Box>
                     <Typography sx={{mr: 2}} fontWeight={700}>

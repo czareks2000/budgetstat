@@ -18,7 +18,7 @@ export default observer(function AvgMonthlyIncomesAndExpensesCard() {
                 arrow
                 >
                 <span>
-                <Stack textAlign={'left'}>
+                <Stack textAlign={{xs: 'center', lg: 'left'}}>
                     <Typography variant="body1" noWrap component="div">
                         Avg monthly income:
                     </Typography>
