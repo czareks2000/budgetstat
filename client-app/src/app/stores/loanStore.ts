@@ -9,6 +9,7 @@ import { store } from "./store";
 import { LoanType } from "../models/enums/LoanType";
 import { convertToDate } from "../utils/ConvertToDate";
 import { CollectivePayoffValues, PayoffCreateValues } from "../models/Payoff";
+import { Currency } from "../models/Currency";
 
 export default class LoanStore {
     loansInProgressRegistry = new Map<number, Loan>();
@@ -161,6 +162,8 @@ export default class LoanStore {
                 groupedLoansMap.set(key, {
                     counterpartyId: loan.counterpartyId,
                     currencyId: loan.currencyId,
+                    counterparty: this.counterparties.find(c => c.id === loan.counterpartyId) as Counterparty,
+                    currency: store.currencyStore.currencies.find(c => c.id === loan.currencyId) as Currency,
                     creditsCurrentAmount: loan.loanType === LoanType.Credit ? loan.currentAmount : 0,
                     debtsCurrentAmount:loan.loanType === LoanType.Debt ? loan.currentAmount : 0,
                     creditsFullAmount: loan.loanType === LoanType.Credit ? loan.fullAmount: 0,
@@ -177,11 +180,13 @@ export default class LoanStore {
         this.counterparties.forEach(counterparty => {
             const hasLoans = Array.from(groupedLoansMap.values()).some(group => group.counterpartyId === counterparty.id);
             if (!hasLoans) {
-                const defaultCurrencyId = store.currencyStore.defaultCurrency!.id;
-                const key = `${counterparty.id}-${defaultCurrencyId}`;
+                const defaultCurrency = store.currencyStore.defaultCurrency!;
+                const key = `${counterparty.id}-${defaultCurrency.id}`;
                 groupedLoansMap.set(key, {
                     counterpartyId: counterparty.id,
-                    currencyId: defaultCurrencyId,
+                    currencyId: defaultCurrency.id,
+                    counterparty: counterparty,
+                    currency: defaultCurrency,
                     creditsCurrentAmount: 0,
                     debtsCurrentAmount: 0,
                     creditsFullAmount: 0,

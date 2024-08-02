@@ -72,8 +72,7 @@ export default observer(function Home() {
                         <Grid item xs={12} lg>
                             <Stack spacing={2}>
 
-                                <NoDecorationLink to={"/loans"} 
-                                    content={<LoansCard />} />
+                                <LoansCard />
                                 
                                 <TransactionsCard />
 

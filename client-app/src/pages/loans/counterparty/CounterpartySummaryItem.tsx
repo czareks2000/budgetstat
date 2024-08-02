@@ -18,11 +18,6 @@ interface Props {
 }
 
 export default observer(function CounterpartySummaryItem({detailsAction, summary}: Props) {
-    const {
-        loanStore: {counterparties},
-        currencyStore: {currencies}
-    } = useStore();
-
     const [open, setOpen] = useState(false);
 
     if (!summary) return <></>
@@ -32,18 +27,14 @@ export default observer(function CounterpartySummaryItem({detailsAction, summary
         {...summary} 
     : 
         {...summary, currentAmount: -summary.currentAmount, fullAmount: -summary.fullAmount}
-
-    const counterparty = counterparties.find(c => c.id === summary.counterpartyId) as Counterparty;
-    
-    const currency = currencies.find(c => c.id === summary.currencyId) as Currency;
-
+   
     const remainingAmount = summary.fullAmount - summary.currentAmount;
 
     const header = () => {
         if (summary.loanType === LoanType.Credit)
             return (
                 <>
-                    {counterparty.name} 
+                    {summary.counterparty.name} 
                     <Box component="span" sx={{ verticalAlign: 'middle', display: 'inline-flex', alignItems: 'center' }}>
                         <ArrowForward fontSize="small" sx={{ mx: "6px", mt: "-3px" }} />
                     </Box>
@@ -57,7 +48,7 @@ export default observer(function CounterpartySummaryItem({detailsAction, summary
                     <Box component="span" sx={{ verticalAlign: 'middle', display: 'inline-flex', alignItems: 'center' }}>
                         <ArrowForward fontSize="small" sx={{ mx: "6px", mt: "-3px" }} />
                     </Box>
-                    {counterparty.name}
+                    {summary.counterparty.name}
                 </>
             );
     }
@@ -71,10 +62,10 @@ export default observer(function CounterpartySummaryItem({detailsAction, summary
         <DeleteCounterpartyDialog 
             open={open}
             setOpen={setOpen}
-            counterparty={counterparty} 
+            counterparty={summary.counterparty} 
             redirectAfterSubmit={!detailsAction}/>
         <NoDecorationLink
-            to={`/loans/counterparty/${summary.counterpartyId}?currencyId=${currency.id}`}
+            to={`/loans/counterparty/${summary.counterpartyId}?currencyId=${summary.currency.id}`}
             disabled={!detailsAction}
             content={
                 <Card>
@@ -83,16 +74,16 @@ export default observer(function CounterpartySummaryItem({detailsAction, summary
                         <Grid item xs>
                             <Stack direction={'row'}>
                                 <Typography variant="h5" gutterBottom>
-                                    {summary.nearestRepaymentDate ? header() : counterparty.name} 
+                                    {summary.nearestRepaymentDate ? header() : summary.counterparty.name} 
                                 </Typography>
                             </Stack>
                             <Stack>
                                 {summary.nearestRepaymentDate ? <>
                                     <Typography variant="body1">
-                                        Credits: {formatAmount(summary.creditsFullAmount - summary.creditsCurrentAmount)} {currency.symbol}
+                                        Credits: {formatAmount(summary.creditsFullAmount - summary.creditsCurrentAmount)} {summary.currency.symbol}
                                     </Typography>
                                     <Typography variant="body1">
-                                        Debts: {formatAmount(summary.debtsFullAmount - summary.debtsCurrentAmount)} {currency.symbol}
+                                        Debts: {formatAmount(summary.debtsFullAmount - summary.debtsCurrentAmount)} {summary.currency.symbol}
                                     </Typography>
                                     <Typography variant="body1">
                                         Nearest repayment: {convertToString(summary.nearestRepaymentDate!)}
@@ -108,7 +99,7 @@ export default observer(function CounterpartySummaryItem({detailsAction, summary
                             {summary.nearestRepaymentDate ?
                             <>
                                 <Typography variant="h5" color={`${progressColor()}.main`}>
-                                    {formatAmount(remainingAmount)} {currency.symbol}
+                                    {formatAmount(remainingAmount)} {summary.currency.symbol}
                                 </Typography>
                             </>
                             :

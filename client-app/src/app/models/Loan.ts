@@ -2,6 +2,8 @@ import dayjs from "dayjs";
 import { Payoff } from "./Payoff";
 import { LoanStatus } from "./enums/LoanStatus";
 import { LoanType } from "./enums/LoanType";
+import { Counterparty } from "./Counterparty";
+import { Currency } from "./Currency";
 
 export interface Loan {
     id: number;
@@ -37,6 +39,8 @@ export interface LoanUpdateValues {
 export interface GroupedLoan {
     counterpartyId: number;
     currencyId: number;
+    counterparty: Counterparty;
+    currency: Currency;
     creditsCurrentAmount: number;
     debtsCurrentAmount: number;
     creditsFullAmount: number;
