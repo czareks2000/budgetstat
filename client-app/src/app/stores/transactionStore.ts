@@ -518,7 +518,8 @@ export default class TransactionStore {
             store.budgetStore.refreshBudgets(oldCategoryId); 
 
         store.statsStore.loadCurrentMonthIncome();
-        store.statsStore.loadAvgMonthlyIncomesAndExpensesLastYear()
+        store.statsStore.loadAvgMonthlyIncomesAndExpensesLastYear();
+        store.statsStore.homePageChartsLoaded = false;
 
         store.statsStore.setHasOldData(true);
     }

@@ -390,5 +390,6 @@ export default class LoanStore {
         
         store.statsStore.updateNetWorthStats(true, false);
         store.statsStore.setHasOldData(true);
+        store.statsStore.homePageChartsLoaded = false;
     }
 }

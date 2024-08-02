@@ -201,6 +201,6 @@ export default class AccountStore {
         store.statsStore.loadNetWorthValueOverTime();
         store.statsStore.loadCurrentMonthIncome();
         store.statsStore.setHasOldData(true);
+        store.statsStore.homePageChartsLoaded = false;
     }
-
 }
