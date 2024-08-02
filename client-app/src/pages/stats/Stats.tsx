@@ -12,34 +12,44 @@ import AvgMonthlyIncomesByCategoriesBarChartSettings from "./settings/AvgMonthly
 import { useStore } from "../../app/stores/store";
 import BalanceOverTimeForecastLineChart from "./charts/BalanceOverTimeForecastLineChart";
 import BalanceOverTimeForecastLineChartSettings from "./settings/BalanceOverTimeForecastLineChartSettings";
+import { useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+
+export enum ChartType {
+    AvgMonthlyExpensesByCategoriesBarChart = 0,
+    AvgMonthlyIncomesByCategoriesBarChart = 1,
+    IncomesAndExpensesOverTimeBarChart = 2,
+    BalanceOverTimeLineChart = 3,
+    BalanceOverTimeForecastLineChart = 4,
+}
 
 const charts = [
     { 
-        id: 0, 
+        id: ChartType.AvgMonthlyExpensesByCategoriesBarChart, 
         title: "Average Monthly Expenses By Categories", 
         chart: <AvgMonthlyExpensesByCategoriesBarChart/>,
         settings: <AvgMonthlyExpensesByCategoriesBarChartSettings/>
     },
     { 
-        id: 1, 
+        id: ChartType.AvgMonthlyIncomesByCategoriesBarChart, 
         title: "Average Monthly Incomes By Categories", 
         chart: <AvgMonthlyIncomesByCategoriesBarChart/>,
         settings: <AvgMonthlyIncomesByCategoriesBarChartSettings/>
     },
     { 
-        id: 2, 
+        id: ChartType.IncomesAndExpensesOverTimeBarChart, 
         title: "Incomes and Expenses Over Time",
         chart: <IncomesAndExpensesOverTimeBarChart />,
         settings: <IncomesAndExpensesOverTimeBarChartSettings />
     },
     { 
-        id: 3, 
+        id: ChartType.BalanceOverTimeLineChart, 
         title: "Balance Over Time", 
         chart: <BalanceOverTimeLineChart/>,
         settings: <BalanceOverTimeLineChartSettings/>
     },
     { 
-        id: 4, 
+        id: ChartType.BalanceOverTimeForecastLineChart, 
         title: "Balance Over Time Forecast", 
         chart: <BalanceOverTimeForecastLineChart/>,
         settings: <BalanceOverTimeForecastLineChartSettings/>
@@ -49,9 +59,22 @@ const charts = [
 export default observer(function Stats() {
     const {statsStore: {selectedChart, setSelectedChart}} = useStore();
 
+
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [chartId, setChartId] = useState<string | null>(searchParams.get('chartId'));
+
+    useEffect(() => {
+        if(chartId)
+            setSelectedChart(charts.find(c => c.id === Number(chartId)) ? Number(chartId) : 0);
+    },[chartId])
+
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const id = parseInt(event.target.value)
-        setSelectedChart(charts.find(c => c.id === id)!.id);
+        const chart = charts.find(c => c.id === id);
+
+        setSelectedChart(chart ? id : 0);
+        setChartId(chart ? id.toString() : '0')
+        setSearchParams({ chartId: chart ? id.toString() : '0'});
     }
 
     return (

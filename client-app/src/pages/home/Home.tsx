@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite"
-import { Box, Divider, Grid, Paper, Stack } from "@mui/material"
+import { Divider, Grid, Stack } from "@mui/material"
 import CurrentBalanceCard from "./cards/CurrentBalanceCard"
 import IncomesExpensesThisMonthCard from "./cards/IncomesExpensesThisMonthCard"
 import AvgMonthlyIncomesAndExpensesCard from "./cards/AvgMonthlyIncomesAndExpensesCard"
@@ -10,11 +10,19 @@ import AccountsCard from "./cards/AccountsCard"
 import NoDecorationLink from "../../components/common/NoDecorationLink"
 import LoansCard from "./cards/LoansCard"
 import TransactionsCard from "./cards/TransactionsCard"
+import BalanceLastMonthLineChart from "./charts/BalanceLastMonthLineChart"
+import IncomesAndExpensesSumThisMonthChart from "./charts/IncomesAndExpensesSumThisMonthChart"
+import { useEffect } from "react"
 
 export default observer(function Home() {
     const {
-        transactionStore: {},
+        statsStore: {homePageChartsLoaded, loadHomePageCharts},
     } = useStore();
+
+    useEffect(() => {
+        if (!homePageChartsLoaded)
+            loadHomePageCharts();
+    }, [homePageChartsLoaded, loadHomePageCharts])
 
     return (
         <Grid container>
@@ -46,12 +54,12 @@ export default observer(function Home() {
                     <Grid container gap={2} direction={"row"}>
                         <Grid item xs={12} lg>
                     
-                            <Paper><Box p={2} height={300}>Incomes expenses sum chart this month</Box></Paper>
+                            <IncomesAndExpensesSumThisMonthChart />
 
                         </Grid>
                         <Grid item xs={12} lg>
                           
-                            <Paper><Box p={2} height={300}>Account balance last 30 days</Box></Paper>
+                            <BalanceLastMonthLineChart />
 
                         </Grid>
                     </Grid>

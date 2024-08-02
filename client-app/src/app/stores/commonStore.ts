@@ -54,6 +54,7 @@ export default class CommonStore {
             // (w przyszłości dostosować intefejs zeby nie trzeba było czekać)
             await store.transactionStore.loadPlannedTransactions();
             await store.transactionStore.loadLatestTransactions(true);
+            
 
             await store.accountStore.loadAccounts();
             
@@ -71,6 +72,7 @@ export default class CommonStore {
 
             await store.statsStore.loadNetWorthStats();
             await store.statsStore.loadCurrentMonthIncome();
+            await store.statsStore.loadHomePageCharts();
             await store.statsStore.loadAvgMonthlyIncomesAndExpensesLastYear();
         } catch (error) {
             console.log(error);

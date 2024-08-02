@@ -9,12 +9,21 @@ import { AvgMonthlyTransactionsValuesSettings, BalanceOverTimeForecastSettings, 
     initialAvgMonthlyIncomesSettings, initialBalanceOverTimeForecastSettings, initialBalanceValueOverTimeSettings, 
     initialIncomesAndExpensesOverTimeSettings } from "../models/ChartsSettings";
 import { TransactionType } from "../models/enums/TransactionType";
+import { ChartPeriod } from "../models/enums/periods/ChartPeriod";
+import { AvgChartPeriod } from "../models/enums/periods/AvgChartPeriod";
+import { CategoryType } from "../models/enums/CategoryType";
 
 export default class StatsStore {
     // Current Month Income
     currentMonthIncomesAndExpenses: IncomesExpensesValue = { incomes: 0, expenses: 0 };
     // Avg Monthly Incomes And Expenses Last Year
     avgMonthlyIncomesAndExpensesLastYear: IncomesExpensesValue = { incomes: 0, expenses: 0 };
+    // Home page charts
+    incomesThisMonth: LabelValueItem[] | undefined = undefined;
+    expensesThisMonth: LabelValueItem[] | undefined = undefined;
+    balanceLast30Days: ValueOverTime | undefined = undefined;
+    homePageChartsLoaded = false;
+    
     // Net Worth Stats
     netWorthStats: NetWorthStats | undefined = undefined;
 
@@ -103,6 +112,37 @@ export default class StatsStore {
         this.selectedChart = id;
     }
 
+    //#region Home Page Charts
+
+    loadHomePageCharts = async () => {
+        this.homePageChartsLoaded = false;
+        try {
+            const balanceLast30Days = await agent.Stats.accountBalanceOverTime(ChartPeriod.Last30Days);
+            const incomesThisMonth = await agent.Stats.avgTransactionsValuesByCategories(
+                TransactionType.Income, AvgChartPeriod.Custom, CategoryType.Main, Number(""),
+                dayjs().toDate(), dayjs().toDate(),[],
+            );
+            const expensesThisMonth = await agent.Stats.avgTransactionsValuesByCategories(
+                TransactionType.Expense, AvgChartPeriod.Custom, CategoryType.Main, Number(""),
+                dayjs().toDate(), dayjs().toDate(),[],
+            );
+            runInAction(() => {
+                balanceLast30Days.startDate = dayjs(balanceLast30Days.startDate).toDate(); 
+                balanceLast30Days.endDate = dayjs(balanceLast30Days.endDate).toDate(); 
+                this.balanceLast30Days = balanceLast30Days;
+
+                this.incomesThisMonth = incomesThisMonth;
+                this.expensesThisMonth = expensesThisMonth;
+
+                this.homePageChartsLoaded = true;
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    //#endregion
+
     //#region Balance Over Time Forecast
 
     get balanceOverTimeForecastSettingsHasInitialValues() {
@@ -151,7 +191,7 @@ export default class StatsStore {
     loadAvgMonthlyExpensesByCategories = async () => {
         this.avgMonthlyExpensesByCategoriesLoaded = false;
         try {
-            var response = await agent.Stats.avgTransactionsValuesByCategories(
+            const response = await agent.Stats.avgTransactionsValuesByCategories(
                 TransactionType.Expense,
                 this.avgMonthlyExpensesByCategoriesSettings.period,
                 this.avgMonthlyExpensesByCategoriesSettings.categoryType,
@@ -191,7 +231,7 @@ export default class StatsStore {
     loadAvgMonthlyIncomesByCategories = async () => {
         this.avgMonthlyIncomesByCategoriesLoaded = false;
         try {
-            var response = await agent.Stats.avgTransactionsValuesByCategories(
+            const response = await agent.Stats.avgTransactionsValuesByCategories(
                 TransactionType.Income,
                 this.avgMonthlyIncomesByCategoriesSettings.period,
                 this.avgMonthlyIncomesByCategoriesSettings.categoryType,
@@ -231,7 +271,7 @@ export default class StatsStore {
     loadIncomesAndExpensesOverTime = async () => {
         this.incomesAndExpensesOverTimeLoaded = false;
         try {
-            var response = await agent.Stats.incomesAndExpensesOverTime(
+            const response = await agent.Stats.incomesAndExpensesOverTime(
                 this.incomesAndExpensesOverTimeSettings.period,
                 this.incomesAndExpensesOverTimeSettings.accountIds.map(a => Number(a.value)),
                 dayjs(this.incomesAndExpensesOverTimeSettings.customDate).toDate(),
@@ -361,7 +401,7 @@ export default class StatsStore {
 
     updateNetWorthStats = async (loans: boolean = true, assets: boolean = true) => {
         try {
-            var response = await agent.Stats.netWorthStats(loans, assets);
+            const response = await agent.Stats.netWorthStats(loans, assets);
 
             runInAction(() => {
                 if (loans)
