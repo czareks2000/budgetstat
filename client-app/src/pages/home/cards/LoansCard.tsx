@@ -5,6 +5,7 @@ import { ArrowForward, PendingActions } from '@mui/icons-material';
 import { LoanType } from '../../../app/models/enums/LoanType';
 import { formatAmount } from '../../../app/utils/FormatAmount';
 import NoDecorationLink from '../../../components/common/NoDecorationLink';
+import { GroupedLoan } from '../../../app/models/Loan';
 
 export default observer(function LoansCard() {
   const {
@@ -38,6 +39,22 @@ export default observer(function LoansCard() {
         return loanType === LoanType.Credit ? 'success.main' : 'error.main';
     }
 
+    const amount = (summary: GroupedLoan) => {
+        summary = summary.loanType === LoanType.Credit 
+        ? 
+            {...summary} 
+        : 
+            {...summary, currentAmount: -summary.currentAmount, fullAmount: -summary.fullAmount}
+    
+        const remainingAmount = summary.fullAmount - summary.currentAmount;
+
+        return (
+            <Typography color={color(summary.loanType)}>
+                {formatAmount(remainingAmount)} {summary.currency.symbol}
+            </Typography>
+        )
+    }
+
   return (
     <Paper>
         <Stack>
@@ -56,10 +73,7 @@ export default observer(function LoansCard() {
                     <NoDecorationLink to={`/loans/counterparty/${summary.counterpartyId}?currencyId=${summary.currencyId}`}
                     key={`${summary.counterpartyId}-${summary.currencyId}`} 
                     content={<ListItem
-                        secondaryAction={
-                            <Typography color={color(summary.loanType)}>
-                                {formatAmount(summary.fullAmount-summary.currentAmount)} {summary.currency.symbol}
-                            </Typography>}
+                        secondaryAction={amount(summary)}
                         >
                         <ListItemText 
                             primary={listItem(summary.loanType, summary.counterparty.name)}/>

@@ -1,12 +1,9 @@
 import { Box, Card, CardContent, Grid, IconButton, Stack, Typography } from "@mui/material"
 import { observer } from "mobx-react-lite"
 import { GroupedLoan } from "../../../app/models/Loan";
-import { useStore } from "../../../app/stores/store";
 import { convertToString } from "../../../app/utils/ConvertToString";
 import { formatAmount } from "../../../app/utils/FormatAmount";
 import { ArrowForward, Delete } from "@mui/icons-material";
-import { Counterparty } from "../../../app/models/Counterparty";
-import { Currency } from "../../../app/models/Currency";
 import { LoanType } from "../../../app/models/enums/LoanType";
 import { useState } from "react";
 import DeleteCounterpartyDialog from "../dialogs/DeleteCounterpartyDialog";
