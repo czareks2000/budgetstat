@@ -63,6 +63,9 @@ export default class CurrencyStore {
                 store.statsStore.clearStore();
                 store.statsStore.loadNetWorthStats();
                 store.statsStore.loadNetWorthValueOverTime();
+                // stats
+                store.statsStore.loadCurrentMonthIncome();
+                store.statsStore.loadAvgMonthlyIncomesAndExpensesLastYear();
             });
         } catch (error) {
             console.log(error);

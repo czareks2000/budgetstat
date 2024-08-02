@@ -3,7 +3,6 @@ import { Budget } from "../../app/models/Budget";
 import { Box, Card, CardContent, Chip, Divider, Grid, IconButton, LinearProgress, Stack, Typography } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 import { useStore } from "../../app/stores/store";
-import { BudgetPeriod } from "../../app/models/enums/BudgetPeriod";
 import { router } from "../../app/router/Routes";
 import { formatAmount } from "../../app/utils/FormatAmount";
 
@@ -13,73 +12,9 @@ interface Props {
 }
 
 export default observer(function BudgetItem({budget, openDeleteDialog}: Props) {
-    const {currencyStore: {defaultCurrency}, budgetStore: {selectBudget}} = useStore();
-    
-    const progressColor = () => {
-        const percentage = budget.currentAmount / budget.convertedAmount * 100;
-    
-        if (percentage < 90) {
-            return "success";
-        } else if (percentage >= 90 && percentage < 100) {
-            return "warning";
-        } else {
-            return "error";
-        }
-    };
-
-    const progressValue = () => {
-        return Math.min((budget.currentAmount / budget.convertedAmount * 100), 100);
-    }
-
-    const startDate = () => {
-        const now = new Date();
-        let start;
-
-        switch (budget.period) {
-            case BudgetPeriod.Week:
-                start = new Date(now.setDate(now.getDate() - now.getDay() + 1)); // Monday as the first day of the week
-                break;
-            case BudgetPeriod.Month:
-                start = new Date(now.getFullYear(), now.getMonth(), 1);
-                break;
-            case BudgetPeriod.Year:
-                start = new Date(now.getFullYear(), 0, 1);
-                break;
-            default:
-                return null;
-        }
-
-        const dd = String(start.getDate()).padStart(2, '0');
-        const mm = String(start.getMonth() + 1).padStart(2, '0'); // January is 0
-        const yyyy = start.getFullYear();
-
-        return `${dd}.${mm}.${yyyy}`;
-    }
-
-    const endDate = () => {
-        const now = new Date();
-        let end;
-
-        switch (budget.period) {
-            case BudgetPeriod.Week:
-                end = new Date(now.setDate(now.getDate() - now.getDay() + 7)); // Sunday as the last day of the week
-                break;
-            case BudgetPeriod.Month:
-                end = new Date(now.getFullYear(), now.getMonth() + 1, 0); // Last day of the current month
-                break;
-            case BudgetPeriod.Year:
-                end = new Date(now.getFullYear(), 11, 31); // December 31st of the current year
-                break;
-            default:
-                return null;
-        }
-
-        const dd = String(end.getDate()).padStart(2, '0');
-        const mm = String(end.getMonth() + 1).padStart(2, '0'); // January is 0
-        const yyyy = end.getFullYear();
-
-        return `${dd}.${mm}.${yyyy}`;
-    }
+    const {
+        currencyStore: {defaultCurrency}, 
+        budgetStore: {selectBudget, startDate, endDate, progressColor, progressValue}} = useStore();
 
     const isInDefaultCurrency = budget.currency.id === defaultCurrency?.id;
 
@@ -145,21 +80,21 @@ export default observer(function BudgetItem({budget, openDeleteDialog}: Props) {
                         <Grid container justifyContent="space-between">
                             <Grid item>
                                 <Typography variant="body1" gutterBottom>
-                                    {startDate()}
+                                    {startDate(budget.period)}
                                 </Typography>
                             </Grid>
                             <Grid item>
                                 <Typography variant="body1" gutterBottom>
-                                    {endDate()}
+                                    {endDate(budget.period)}
                                 </Typography>
                             </Grid>
                         </Grid>
                         <Box mb={1}>
                             <LinearProgress 
                                 variant="determinate" 
-                                value={progressValue()} 
+                                value={progressValue(budget)} 
                                 sx={{height: 10}} 
-                                color={progressColor()}/>
+                                color={progressColor(progressValue(budget))}/>
                         </Box>
                         <Grid container justifyContent="space-between">
                             <Grid item>

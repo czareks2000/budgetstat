@@ -13,6 +13,13 @@ export interface Budget {
     categories: Category[];
 }
 
+export interface BudgetSummary {
+    percentage: number;
+    progressValue: number; 
+    currentAmount: number; 
+    fullAmount: number;
+}
+
 export interface BudgetFormValues {
     name: string;
     categories: CategoryOption[];
