@@ -67,7 +67,8 @@ export default observer(function LoansCard() {
                 </Typography>
             </Box>} />
             <Divider/>
-            {true &&
+            {groupedLoansByCounterpartyAndCurrency.filter(s => s.nearestRepaymentDate).length > 0 
+            ?
             <List disablePadding sx={{p: 1}}>
                 {groupedLoansByCounterpartyAndCurrency.filter(s => s.nearestRepaymentDate).map((summary) => 
                     <NoDecorationLink to={`/loans/counterparty/${summary.counterpartyId}?currencyId=${summary.currencyId}`}
@@ -79,7 +80,12 @@ export default observer(function LoansCard() {
                             primary={listItem(summary.loanType, summary.counterparty.name)}/>
                     </ListItem>} />
                 )}
-            </List>}            
+            </List>
+            :
+            <Box p={2}>
+                <Typography>There are no loans with in progress status</Typography>
+            </Box>
+            }       
         </Stack>
     </Paper>
   )

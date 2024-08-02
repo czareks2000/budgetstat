@@ -42,7 +42,6 @@ export default class CommonStore {
     loadAppData = async (currencyId: number) => {
         try {
             // można wyświetlić intefejs bez tych danch załadowanych
-            store.transactionStore.loadTransactions();
             store.statsStore.loadNetWorthValueOverTime();
             
             store.statsStore.loadBalanceValueOverTime();
@@ -54,6 +53,7 @@ export default class CommonStore {
             // nie można wyświetlić intefejsu bez tych danch załadowanych
             // (w przyszłości dostosować intefejs zeby nie trzeba było czekać)
             await store.transactionStore.loadPlannedTransactions();
+            await store.transactionStore.loadLatestTransactions(true);
 
             await store.accountStore.loadAccounts();
             

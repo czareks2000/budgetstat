@@ -20,7 +20,7 @@ export default observer(function AccountsCard() {
                 </Typography>
             </Box>
             <Divider/>
-            {accounts.length > 0 &&
+            {accounts.filter(a => a.status == AccountStatus.Visible).length > 0 ?
             <List disablePadding sx={{p: 1}}>
                 {accounts.filter(a => a.status == AccountStatus.Visible)
                     .map(account =>
@@ -32,7 +32,12 @@ export default observer(function AccountsCard() {
                             primary={account.name}/>
                     </ListItem>
                 )}
-            </List>}
+            </List>
+            :
+            <Box p={2}>
+                <Typography>There are no visible accounts</Typography>
+            </Box>
+            }
         </Stack>
     </Paper>
   )

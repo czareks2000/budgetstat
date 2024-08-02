@@ -13,10 +13,9 @@ import TransactionsCard from "./cards/TransactionsCard"
 
 export default observer(function Home() {
     const {
-        transactionStore: {plannedTransactionsToConfirm},
+        transactionStore: {},
     } = useStore();
 
-    
     return (
         <Grid container>
             <Grid item xs lg xl/>
@@ -61,8 +60,7 @@ export default observer(function Home() {
                         <Grid item xs={12} lg>
                             <Stack spacing={2}>
 
-                                <NoDecorationLink to={"/accounts"} 
-                                    content={<AccountsCard />} />
+                                <LoansCard />
 
                                 <NoDecorationLink to={"/budgets"} 
                                     content={<BudgetsCard/>} />
@@ -72,12 +70,12 @@ export default observer(function Home() {
                         <Grid item xs={12} lg>
                             <Stack spacing={2}>
 
-                                <LoansCard />
+                                <NoDecorationLink to={"/accounts"} 
+                                    content={<AccountsCard />} />
                                 
                                 <TransactionsCard />
 
-                                {plannedTransactionsToConfirm.length > 0 &&
-                                    <TransactionsToConfirmCard /> }
+                                <TransactionsToConfirmCard />
 
                             </Stack>
                         </Grid>

@@ -13,7 +13,7 @@ import { useState } from "react";
 import DeleteTransactionDialog from "../dialogs/DeleteTransactionDialog";
 
 export default observer(function TransactionsDataGrid() {
-    const {transactionStore: {transactions, transactionsLoaded, showDescriptionColumn, setShowDescriptionColumn}} = useStore();
+    const {transactionStore: {transactions, transactionsLoaded, showDescriptionColumn, setShowDescriptionColumn, amountColor}} = useStore();
     
     const handleEditButtonClick = (transactionId: number, type: TransactionType) => {
         router.navigate(`/transactions/${type}/${transactionId}/edit`);
@@ -129,13 +129,6 @@ export default observer(function TransactionsDataGrid() {
             },
           },
     ];
-
-    const amountColor = (type: TransactionType) => {
-        if (type === TransactionType.Expense)
-            return 'error'
-        else if (type === TransactionType.Income)
-            return 'success.main'
-    }
 
     const handleColumnVisibilityModelChange = (newModel: GridColumnVisibilityModel) => {
         if (newModel.description !== showDescriptionColumn) {

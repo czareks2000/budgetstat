@@ -13,6 +13,9 @@ export default class TransactionStore {
     transactionRegistry = new Map<number, TransactionRowItem>();
     transactionsLoaded = false;
 
+    latestTransactionsRegistry = new Map<number, TransactionRowItem>();
+    latestTransactionsLoaded = false;
+
     plannedTransactionRegistry = new Map<number, PlannedTransaction>();
     plannedTransactionsLoaded = true;
 
@@ -85,6 +88,10 @@ export default class TransactionStore {
         return Array.from(this.transactionRegistry.values());
     }
 
+    get latestTransactions() {
+        return Array.from(this.latestTransactionsRegistry.values());
+    }
+
     get plannedTransactions() {
         const today = dayjs().startOf('day');
         return Array.from(this.plannedTransactionRegistry.values())
@@ -107,6 +114,13 @@ export default class TransactionStore {
     private setPlannedTransaction = (transaction: PlannedTransaction) => {
         transaction.date = convertToDate(transaction.date);
         this.plannedTransactionRegistry.set(transaction.id, transaction);
+    }
+
+    amountColor = (type: TransactionType) => {
+        if (type === TransactionType.Expense)
+            return 'error'
+        else if (type === TransactionType.Income)
+            return 'success.main'
     }
 
     resetTransactionParams = () => {
@@ -194,6 +208,34 @@ export default class TransactionStore {
         }
     }
 
+    loadLatestTransactions = async (initial: boolean = false) => {
+        this.latestTransactionsLoaded = false;
+        this.latestTransactionsRegistry.clear();
+        if (initial)
+        {
+            this.transactionsLoaded = false;
+            this.transactionRegistry.clear();
+        }
+        try {
+            const latestTransactions = await agent.Transactions.list(this.initialParams);
+            runInAction(() => {
+                latestTransactions.forEach(transaction => {
+                    this.latestTransactionsRegistry.set(transaction.id, transaction);
+                    if (initial)  
+                        this.setTransaction(transaction);
+                })
+            })
+        } catch (error) {
+            console.log(error);
+        } finally {
+            runInAction(() => {
+                this.latestTransactionsLoaded = true;
+                if (initial)
+                    this.transactionsLoaded = true;
+            })
+        }
+    }
+
     loadTransactionFormValues = async (transactionId: number, type: TransactionType) => {
         this.transactionFormValues = undefined;
         this.loadingFormValues = true;
@@ -243,6 +285,8 @@ export default class TransactionStore {
                     this.resetTransactionParams();
                 else
                     this.loadTransactions();
+
+                this.latestTransactionsLoaded = false;
             })
             
         } catch (error) {
@@ -299,6 +343,8 @@ export default class TransactionStore {
                     this.resetTransactionParams();
                 else
                     this.loadTransactions();
+
+                this.latestTransactionsLoaded = false;
             })
         } catch (error) {
             console.log(error);
@@ -376,6 +422,8 @@ export default class TransactionStore {
                     accountIds.push(fromAccountId);
 
                 this.updateDataInOtherStores([transaction.toAccountId, fromAccountId], transaction.categoryId);
+
+                this.latestTransactionsLoaded = false;
             })
 
         } catch (error) {
@@ -437,6 +485,7 @@ export default class TransactionStore {
                     this.updateDataInOtherStores([transaction.accountId], transaction.category.id);
                     this.resetTransactionParams();
                     this.plannedTransactionRegistry.delete(transactionId);
+                    this.latestTransactionsLoaded = false;
                 }
             })
         } catch (error) {

@@ -1,4 +1,4 @@
-import { Box, Divider, Grid, LinearProgress, List, ListItem, ListItemText, Paper, Stack, Typography } from '@mui/material'
+import { Box, Divider, Grid, LinearProgress, Paper, Stack, Typography } from '@mui/material'
 import { observer } from 'mobx-react-lite'
 import { useStore } from '../../../app/stores/store';
 import { NoteAlt } from '@mui/icons-material';
@@ -64,7 +64,7 @@ export default observer(function BudgetsCard() {
             <Box display={'flex'} p={2}>
                 <NoteAlt />
                 <Typography ml={1}>
-                    Budgets
+                    Budgets summary
                 </Typography>
             </Box>
         <Divider/>

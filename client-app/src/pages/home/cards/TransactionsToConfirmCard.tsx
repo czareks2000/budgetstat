@@ -22,7 +22,7 @@ export default observer(function TransactionsToConfirmCard() {
                 </Typography>
             </Box>} />
         <Divider/>
-            {plannedTransactionsToConfirm.length > 0 &&
+            {plannedTransactionsToConfirm.length > 0 ?
             <List disablePadding>
                 {plannedTransactionsToConfirm.map(transaction => 
                     <PlannedTransactionListItem 
@@ -31,7 +31,12 @@ export default observer(function TransactionsToConfirmCard() {
                         transaction={transaction}
                     />  
                 )}
-            </List>}
+            </List>
+            :
+            <Box p={2}>
+                <Typography>There are no transactions to confirm</Typography>
+            </Box>
+            }
         </Stack>
     </Paper>
   )
