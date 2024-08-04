@@ -347,11 +347,14 @@ export default class StatsStore {
         })
 
         store.assetStore.assetCategories.forEach((category) => {
-            data.push({
-                id: index++,
-                value: this.getAssetsValues(category.id),
-                label: category.name
-            })
+            const assetsValue = this.getAssetsValues(category.id);
+            
+            if (assetsValue > 0)
+                data.push({
+                    id: index++,
+                    value: assetsValue,
+                    label: category.name
+                })
         })
 
         return data;
