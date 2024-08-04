@@ -125,8 +125,8 @@ export default observer(function TransactionForm({initialValues, onSubmit, submi
                         }
                     },[values.type, values.toAccountId, values.fromAccountId, getCurrentExchangeRate, currentExchangeRate]);
 
-                    useEffect(() => {
-                        if (values.type === TransactionType.Transfer &&
+                    useEffect(() => {           
+                        if (values.type === TransactionType.Transfer && dirty &&
                             !isTheSameCurrency(values.fromAccountId, values.toAccountId) &&
                             values.fromAmount && currentExchangeRate) {
                             setFieldValue('toAmount', (values.fromAmount * currentExchangeRate).toFixed(2));
