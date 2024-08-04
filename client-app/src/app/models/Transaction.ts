@@ -44,6 +44,28 @@ export interface TransactionRowItem {
     description: string;
 }
 
+export interface DataGridSettings {
+    id: boolean;
+    date: boolean;
+    account: boolean
+    category: boolean;
+    description: boolean;
+    amount: boolean;
+    actions: boolean;
+    itemsPerPage: number;
+}
+
+export const defaultDataGridSetttings: DataGridSettings = {
+    id: true,
+    date: true,
+    account: true,
+    category: true,
+    description: false,
+    amount: true,
+    actions: true,
+    itemsPerPage: 10
+}
+
 export interface CategoryItem {
     id: number;
     name: string;

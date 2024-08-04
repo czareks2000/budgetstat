@@ -1,5 +1,5 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
-import { PlannedTransaction, PlannedTransactionCreateValues, PlannedTransactionFormValues, TransactionCreateValues, TransactionFormValues, TransactionParams, TransactionParamsFormValues, TransactionRowItem, TransactionToDelete, TransactionUpdateValues } from "../models/Transaction";
+import { DataGridSettings, PlannedTransaction, PlannedTransactionCreateValues, PlannedTransactionFormValues, TransactionCreateValues, TransactionFormValues, TransactionParams, TransactionParamsFormValues, TransactionRowItem, TransactionToDelete, TransactionUpdateValues, defaultDataGridSetttings } from "../models/Transaction";
 import agent from "../api/agent";
 import { convertToDate } from "../utils/ConvertToDate";
 import dayjs from "dayjs";
@@ -7,7 +7,6 @@ import { TransactionType, TransactionTypeFilter } from "../models/enums/Transact
 import { store } from "./store";
 import { AxiosError } from "axios";
 import { TransferCreateUpdateValues } from "../models/Transfer";
-
 
 export default class TransactionStore {
     transactionRegistry = new Map<number, TransactionRowItem>();
@@ -33,7 +32,9 @@ export default class TransactionStore {
     transactionParams: TransactionParams = this.initialParams;
     filterHasInitialValues = true;
 
-    showDescriptionColumn: boolean = localStorage.getItem('showDecriptionColumn') === 'true';
+    dataGridSettings: DataGridSettings = localStorage.getItem('dataGridSettings') 
+        ? JSON.parse(localStorage.getItem('dataGridSettings')!)
+        : defaultDataGridSetttings;
 
     constructor() {
         makeAutoObservable(this);
@@ -46,15 +47,15 @@ export default class TransactionStore {
         )
 
         reaction(
-            () => this.showDescriptionColumn,
+            () => this.dataGridSettings,
             () => {
-                localStorage.setItem('showDecriptionColumn', this.showDescriptionColumn ? 'true' : 'false')
+                localStorage.setItem('dataGridSettings', JSON.stringify(this.dataGridSettings))
             }
         )
     }
 
-    setShowDescriptionColumn = (state: boolean) => {
-        this.showDescriptionColumn = state;
+    setDataGridSettings = (settings: DataGridSettings) => {
+        this.dataGridSettings = settings;
     }
 
     clearStore = () => {

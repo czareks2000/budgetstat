@@ -1,7 +1,7 @@
 import { Box, Paper, Typography } from "@mui/material"
 import { observer } from "mobx-react-lite"
 import { router } from "../../../app/router/Routes"
-import { DataGrid, GridActionsCellItem, GridColDef, GridColumnVisibilityModel, GridToolbar } from '@mui/x-data-grid';
+import { DataGrid, GridActionsCellItem, GridColDef, GridColumnVisibilityModel, GridPaginationModel, GridToolbar } from '@mui/x-data-grid';
 import { Delete, Edit } from "@mui/icons-material"
 import CategoryIcon from "../../../components/common/CategoryIcon"
 import { formatAmount } from "../../../app/utils/FormatAmount"
@@ -13,7 +13,10 @@ import { useState } from "react";
 import DeleteTransactionDialog from "../dialogs/DeleteTransactionDialog";
 
 export default observer(function TransactionsDataGrid() {
-    const {transactionStore: {transactions, transactionsLoaded, showDescriptionColumn, setShowDescriptionColumn, amountColor}} = useStore();
+    const {transactionStore: {
+        transactions, transactionsLoaded, amountColor,
+        dataGridSettings, setDataGridSettings,
+    }} = useStore();
     
     const handleEditButtonClick = (transactionId: number, type: TransactionType) => {
         router.navigate(`/transactions/${type}/${transactionId}/edit`);
@@ -131,9 +134,27 @@ export default observer(function TransactionsDataGrid() {
     ];
 
     const handleColumnVisibilityModelChange = (newModel: GridColumnVisibilityModel) => {
-        if (newModel.description !== showDescriptionColumn) {
-            setShowDescriptionColumn(newModel.description);
-        }
+        setDataGridSettings({
+            id: newModel.id,
+            date: newModel.date,
+            account: newModel.accountName,
+            category: newModel.category,
+            description: newModel.description,
+            amount: newModel.amount,
+            actions: newModel.actions,
+            itemsPerPage: dataGridSettings.itemsPerPage
+        })
+    }
+
+    const [key, setKey] = useState(0);
+
+    const handlePaginationModelChange = (newModel: GridPaginationModel) => {
+        setDataGridSettings({
+            ...dataGridSettings,
+            itemsPerPage: newModel.pageSize
+        })
+
+        setKey(prevKey => prevKey + 1);
     }
 
     return (
@@ -144,7 +165,7 @@ export default observer(function TransactionsDataGrid() {
         <Paper>
             <Box>
                 <DataGrid 
-                    key={Number(dayjs())}
+                    key={key}
                     sx={{
                         display: 'grid',
                         gridTemplateRows: 'auto 1f auto',
@@ -154,14 +175,22 @@ export default observer(function TransactionsDataGrid() {
                     rows={transactions}
                     initialState={{
                         pagination: {
-                            paginationModel: { pageSize: 10, page: 0 },
+                            paginationModel: { pageSize: dataGridSettings.itemsPerPage, page: 0 },
                         },
                         columns: {
-                        columnVisibilityModel: {
-                            description: showDescriptionColumn, 
-                        },
+                            columnVisibilityModel: {
+                                id: dataGridSettings.id,
+                                date: dataGridSettings.date,
+                                accountName: dataGridSettings.account,
+                                category: dataGridSettings.category,
+                                description: dataGridSettings.description,
+                                amount: dataGridSettings.amount,
+                                actions: dataGridSettings.actions, 
+                            },
                         },
                     }}
+                    onColumnVisibilityModelChange={handleColumnVisibilityModelChange}
+                    onPaginationModelChange={handlePaginationModelChange}
                     pageSizeOptions={[10, 25, 50, 100]}
                     columns={columns}
                     autoHeight
@@ -174,13 +203,12 @@ export default observer(function TransactionsDataGrid() {
                     }}
                     disableDensitySelector
                     disableColumnFilter
-                    onColumnVisibilityModelChange={handleColumnVisibilityModelChange}
                     slots={{ toolbar: GridToolbar }}
                     slotProps={{
                         toolbar: {
-                        showQuickFilter: true,
-                        printOptions: { 
-                            disableToolbarButton: true 
+                            showQuickFilter: true,
+                            printOptions: { 
+                                disableToolbarButton: true 
                         },
                         sx: {
                             px: 2,
