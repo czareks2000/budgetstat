@@ -66,9 +66,9 @@ export const routes: RouteObject[] = [
                 {path: 'loans/:id', element: <LoanDetails />},
                 
                 {path: 'net-worth', element: <NetWorth />},
-                {path: 'assets/create', element: <CreateAsset />},
-                {path: 'assets/:id/edit', element: <EditAsset />},
-                {path: 'assets/:id', element: <AssetDetails />},
+                {path: 'net-worth/assets/create', element: <CreateAsset />},
+                {path: 'net-worth/assets/:id/edit', element: <EditAsset />},
+                {path: 'net-worth/assets/:id', element: <AssetDetails />},
 
                 {path: 'import-export', element: <ImportExport />},
 

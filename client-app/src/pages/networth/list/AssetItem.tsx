@@ -24,7 +24,7 @@ export default observer(function AssetItem({asset, openDeleteDialog}: Props) {
 
     const handleEditButtonClick = () => {
         selectAsset(asset.id);
-        router.navigate(`/assets/${asset.id}/edit`)
+        router.navigate(`/net-worth/assets/${asset.id}/edit`)
     }
 
     return (

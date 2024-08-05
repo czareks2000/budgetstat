@@ -13,7 +13,7 @@ export default observer(function AssetsCard()  {
     } = useStore();
 
     const handleAddButtonClick = () => {
-        router.navigate('/assets/create');
+        router.navigate('/net-worth/assets/create');
     }
 
     return (
