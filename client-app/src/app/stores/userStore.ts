@@ -23,6 +23,7 @@ export default class UserStore {
         try {
             const user = await agent.Auth.register(creds);
             store.commonStore.setToken(user.token);
+            await store.commonStore.loadAppData(user.currencyId);
             runInAction(() => {
                 this.user = user;
                 router.navigate('home');
