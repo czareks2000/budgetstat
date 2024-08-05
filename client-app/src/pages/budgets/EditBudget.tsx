@@ -5,8 +5,9 @@ import { BudgetFormValues, BudgetDto } from "../../app/models/Budget";
 import BudgetForm from "../../components/forms/Budget/BudgetForm";
 import { router } from "../../app/router/Routes";
 import ResponsiveContainer from "../../components/common/ResponsiveContainer";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
+import LoadingWithLabel from "../../components/common/LoadingWithLabel";
 
 export default observer(function EditBudget() {
     const {
@@ -27,10 +28,13 @@ export default observer(function EditBudget() {
 
     const {id} = useParams();
     useEffect(() => {
-        if (id) selectBudget(parseInt(id));
+        if (id) 
+            selectBudget(parseInt(id));
+        else
+            router.navigate('/not-found');
     }, [id, selectBudget])
 
-    if (!selectedBudget) return <></>
+    if (!selectedBudget) return <LoadingWithLabel/>
 
     const initialValues: BudgetFormValues = {
         name: selectedBudget.name,

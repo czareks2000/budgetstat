@@ -3,6 +3,7 @@ import { Asset, AssetCategory, AssetCreateUpdateValues } from "../models/Asset";
 import agent from "../api/agent";
 import { Option } from "../models/Option";
 import { store } from "./store";
+import { router } from "../router/Routes";
 
 export default class AssetStore {
     assetRegistry = new Map<number, Asset>();
@@ -45,6 +46,8 @@ export default class AssetStore {
 
     selectAsset = (assetId: number) => {
         this.selectedAsset = this.assetRegistry.get(assetId);
+        if (!this.selectedAsset)
+            router.navigate('/not-found');
     }
     
     deselectAccount = () => {

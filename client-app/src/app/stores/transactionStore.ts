@@ -7,6 +7,7 @@ import { TransactionType, TransactionTypeFilter } from "../models/enums/Transact
 import { store } from "./store";
 import { AxiosError } from "axios";
 import { TransferCreateUpdateValues } from "../models/Transfer";
+import { router } from "../router/Routes";
 
 export default class TransactionStore {
     transactionRegistry = new Map<number, TransactionRowItem>();
@@ -252,10 +253,14 @@ export default class TransactionStore {
                 values.date = dayjs(values.date);
                 
                 this.transactionFormValues = values;
-                this.loadingFormValues = false;
             })
         } catch (error) {
             console.log(error);
+            router.navigate('/not-found');
+        } finally {
+            runInAction(()=> {
+                this.loadingFormValues = false;
+            })
         }
     }
 

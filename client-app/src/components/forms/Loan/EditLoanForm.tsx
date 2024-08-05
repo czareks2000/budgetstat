@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { Loan, LoanUpdateValues } from "../../../app/models/Loan";
-import { Button, Stack } from "@mui/material";
+import { Button, Stack, Tooltip } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { Form, Formik, FormikHelpers } from "formik";
 import * as Yup from "yup";
@@ -10,6 +10,8 @@ import { useStore } from "../../../app/stores/store";
 import dayjs from "dayjs";
 import MyDatePicker from "../../formInputs/MyDatePicker";
 import TextInput from "../../formInputs/TextInput";
+import { LoanType } from "../../../app/models/enums/LoanType";
+import { LoanStatus } from "../../../app/models/enums/LoanStatus";
 
 interface Props {
     loan: Loan;
@@ -92,9 +94,9 @@ export default observer(function EditLoanForm({loan, onSubmit, onCancel}: Props)
                                 variant="contained"
                                 type="submit"
                                 fullWidth
-                                disabled={!(dirty && isValid) || isSubmitting}
+                                disabled={loan.loanStatus === LoanStatus.PaidOff || !(dirty && isValid) || isSubmitting}
                                 loading={isSubmitting}>
-                                Save
+                                    Save
                             </LoadingButton>
                         </Stack>
                     </Stack>

@@ -8,16 +8,20 @@ import { FormikHelpers } from "formik"
 import { useStore } from "../../app/stores/store"
 import { useParams } from "react-router-dom"
 import { useEffect } from "react"
+import LoadingWithLabel from "../../components/common/LoadingWithLabel"
 
 export default observer(function EditAsset() {
   const {assetStore: {updateAsset, selectedAsset, selectAsset}} = useStore();
 
   const {id} = useParams();
     useEffect(() => {
-        if (id) selectAsset(parseInt(id));
+        if (id) 
+          selectAsset(parseInt(id));
+          else
+            router.navigate('/not-found');
     }, [id, selectAsset])
 
-    if (!selectedAsset) return <></>
+    if (!selectedAsset) return <LoadingWithLabel/>
 
   const handleGoBack = () => {
     router.navigate('/net-worth');

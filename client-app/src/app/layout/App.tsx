@@ -15,7 +15,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import Auth from '../../pages/auth/Auth';
 
-const drawerWidth = 288;
+export const drawerWidth = 288;
+export const marginBottom = 150;
 
 export default observer(function App() {
   const {commonStore, userStore, currencyStore: {currenciesLoaded, loadCurrencies} } = useStore();
@@ -51,7 +52,7 @@ export default observer(function App() {
             >
               <Toolbar />
               <Outlet/>
-              <Box height={150}/>
+              <Box height={marginBottom}/>
             </Box>
 
           </Box>

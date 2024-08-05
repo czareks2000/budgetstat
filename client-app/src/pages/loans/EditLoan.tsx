@@ -8,6 +8,8 @@ import { useEffect } from 'react'
 import { useStore } from '../../app/stores/store'
 import LoanItem from './common/LoanItem'
 import FloatingGoBackButton from '../../components/common/FloatingGoBackButton'
+import LoadingWithLabel from '../../components/common/LoadingWithLabel'
+import { LoanStatus } from '../../app/models/enums/LoanStatus'
 
 export default observer(function EditLoan() {  
     const {
@@ -19,7 +21,7 @@ export default observer(function EditLoan() {
         if (id) selectLoan(parseInt(id));
     }, [id, selectLoan])
     
-    if (!loan) return <></>
+    if (!loan) return <LoadingWithLabel />
 
     const handleRedirect = () => {
         router.navigate(`/loans/${id}`);
@@ -34,11 +36,16 @@ export default observer(function EditLoan() {
             <Divider>Edit Loan</Divider>
             <Paper>
                 <Box p={2}>
-                    <EditLoanForm
-                        key={loan.id}
-                        loan={loan}
-                        onSubmit={handleRedirect} 
-                        onCancel={handleRedirect}/>
+                    {loan.loanStatus !== LoanStatus.PaidOff 
+                    ? 
+                        <EditLoanForm
+                            key={loan.id}
+                            loan={loan}
+                            onSubmit={handleRedirect} 
+                            onCancel={handleRedirect}/>
+                    :
+                        <>It is not possible to edit a paid-off loan</>
+                    }
                 </Box>
             </Paper>
         </Stack>

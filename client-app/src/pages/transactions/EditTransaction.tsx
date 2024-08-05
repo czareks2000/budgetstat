@@ -22,7 +22,7 @@ export default observer(function EditTransaction() {
         if(id)
             loadTransactionFormValues(Number(id), Number(type));
     }, [id, type, loadTransactionFormValues])
-    
+
     if (loadingFormValues || !transactionFormValues) return <LoadingWithLabel />
 
     const handleUpdate = (values: TransactionFormValues, helpers: FormikHelpers<TransactionFormValues>, initialValues: TransactionFormValues) => {

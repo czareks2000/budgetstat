@@ -25,7 +25,10 @@ export default observer(function CounterpartyDetails() {
     const [currencyId, setCurrencyId] = useState<string | null>(searchParams.get('currencyId'));
 
     useEffect(() => {
-        selectSummaries(Number(id));
+        if(id)
+            selectSummaries(Number(id));
+        else
+            router.navigate('/not-found');
     },[id])
 
     useEffect(() => {

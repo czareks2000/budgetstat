@@ -2,6 +2,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 import { Budget, BudgetDto, BudgetSummary } from "../models/Budget";
 import agent from "../api/agent";
 import { BudgetPeriod } from "../models/enums/BudgetPeriod";
+import { router } from "../router/Routes";
 
 export default class BudgetStore {
     budgetsRegistry = new Map<number, Budget>();
@@ -153,6 +154,8 @@ export default class BudgetStore {
 
     selectBudget = (budgetId: number) => {
         this.selectedBudget = this.getBudget(budgetId);
+        if(!this.selectedBudget)
+            router.navigate('/not-found');
     }
     
     deselectBudget = () => {

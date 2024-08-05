@@ -4,9 +4,10 @@ import { AccountFormValues } from "../../app/models/Account";
 import { useStore } from "../../app/stores/store";
 import EditAccountForm from "../../components/forms/Account/EditAccountForm";
 import { router } from "../../app/router/Routes";
-import { useParams, useSearchParams } from "react-router-dom";
+import { Navigate, useParams, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import ResponsiveContainer from "../../components/common/ResponsiveContainer";
+import LoadingWithLabel from "../../components/common/LoadingWithLabel";
 
 export default observer(function EditAccount() {
     const [searchParams] = useSearchParams();
@@ -30,10 +31,13 @@ export default observer(function EditAccount() {
 
     const {id} = useParams();
     useEffect(() => {
-        if (id) selectAccount(parseInt(id));
+        if (id) 
+            selectAccount(parseInt(id));
+        else
+            router.navigate('/not-found');
     }, [id, selectAccount])
 
-    if (!selectedAccount) return <></>
+    if (!selectedAccount) return <LoadingWithLabel/>
 
     const initialValues: AccountFormValues = {
         name: selectedAccount.name,

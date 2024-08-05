@@ -6,6 +6,7 @@ import { Option } from "../models/Option";
 import { convertToDate } from "../utils/ConvertToDate";
 import { store } from "./store";
 import { formatAmount } from "../utils/FormatAmount";
+import { router } from "../router/Routes";
 
 export default class AccountStore {
     accountsRegistry = new Map<number, Account>();
@@ -93,6 +94,8 @@ export default class AccountStore {
 
     selectAccount = (accountId: number) => {
         this.selectedAccount = this.getAccount(accountId);
+        if (!this.selectedAccount) 
+            router.navigate('/not-found');
     }
     
     deselectAccount = () => {
