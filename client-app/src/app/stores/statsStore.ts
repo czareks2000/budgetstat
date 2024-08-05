@@ -340,11 +340,12 @@ export default class StatsStore {
 
         let index = 1;
 
-        data.push({
-            id: index++,
-            value: store.accountStore.totalBalance,
-            label: "Accounts"
-        })
+        if (store.accountStore.totalBalance > 0)
+            data.push({
+                id: index++,
+                value: store.accountStore.totalBalance,
+                label: "Accounts"
+            })
 
         store.assetStore.assetCategories.forEach((category) => {
             const assetsValue = this.getAssetsValues(category.id);
