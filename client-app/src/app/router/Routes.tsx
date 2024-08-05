@@ -30,6 +30,9 @@ import EditTransaction from "../../pages/transactions/EditTransaction";
 import CreatePlannedTransactions from "../../pages/transactions/planned/CreatePlannedTransactions";
 import Forbidden from "../../pages/errors/Forbidden";
 import Unauthorised from "../../pages/errors/Unauthorised";
+import ManageCategories from "../../pages/preferences/ManageCategories";
+import CreateCategory from "../../pages/preferences/CreateCategory";
+import EditCategory from "../../pages/preferences/EditCategory";
 
 export const routes: RouteObject[] = [
     {
@@ -68,7 +71,11 @@ export const routes: RouteObject[] = [
                 {path: 'assets/:id', element: <AssetDetails />},
 
                 {path: 'import-export', element: <ImportExport />},
+
                 {path: 'preferences', element: <Preferences />},
+                {path: 'preferences/categories', element: <ManageCategories />},
+                {path: 'preferences/categories/create', element: <CreateCategory />},
+                {path: 'preferences/categories/:id/edit', element: <EditCategory />},
                 
                 {path: 'not-found', element: <NotFound />},
                 {path: 'forbidden', element: <Forbidden />},
