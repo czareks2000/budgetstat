@@ -117,7 +117,7 @@ export default class LoanStore {
                 loans.forEach(loan => this.setLoan(loan));
                 this.setLoadedLoansFlag(loanStatus, true);
                 this.setPaidOffLoansLoaded(loanStatus, counterpartyId);
-                if (this.counterparties.length > 0)
+                if (this.counterparties.length > 0 && counterpartyId === 0)
                     this.selectSummaries(this.counterparties[0].id);
             })
         } catch (error) {
