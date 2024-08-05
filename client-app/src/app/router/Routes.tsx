@@ -28,6 +28,8 @@ import PlannedTransactions from "../../pages/transactions/planned/PlannedTransac
 import CreateTransaction from "../../pages/transactions/CreateTransaction";
 import EditTransaction from "../../pages/transactions/EditTransaction";
 import CreatePlannedTransactions from "../../pages/transactions/planned/CreatePlannedTransactions";
+import Forbidden from "../../pages/errors/Forbidden";
+import Unauthorised from "../../pages/errors/Unauthorised";
 
 export const routes: RouteObject[] = [
     {
@@ -69,9 +71,11 @@ export const routes: RouteObject[] = [
                 {path: 'preferences', element: <Preferences />},
                 
                 {path: 'not-found', element: <NotFound />},
+                {path: 'forbidden', element: <Forbidden />},
+                {path: 'unauthorised', element: <Unauthorised />},
+                {path: 'server-error', element: <ServerError />},
+                {path: '*', element: <NotFound />}
             ]},
-            {path: 'server-error', element: <ServerError />},
-            {path: '*', element: <NotFound />}
         ]
     },
     

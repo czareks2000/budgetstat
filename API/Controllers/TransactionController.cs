@@ -80,6 +80,7 @@ namespace API.Controllers
             return HandleResult(await _transactionService.GetTransactions(param));
         }
 
+        [Authorize(Policy = "IsOwner")]
         [HttpGet("transactions/{transactionId}/")] //api/transactions
         public async Task<IActionResult> GetTransactionFormValues(int transactionId, [FromQuery] TransactionType type)
         {

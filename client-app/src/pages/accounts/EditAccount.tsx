@@ -4,7 +4,7 @@ import { AccountFormValues } from "../../app/models/Account";
 import { useStore } from "../../app/stores/store";
 import EditAccountForm from "../../components/forms/Account/EditAccountForm";
 import { router } from "../../app/router/Routes";
-import { Navigate, useParams, useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import ResponsiveContainer from "../../components/common/ResponsiveContainer";
 import LoadingWithLabel from "../../components/common/LoadingWithLabel";

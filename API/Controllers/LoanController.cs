@@ -37,6 +37,7 @@ namespace API.Controllers
             return HandleResult(await _loanService.GetLoans(loanStatus, counterpartyId));
         }
 
+        [Authorize(Policy = "IsOwner")]
         [HttpGet("loans/{loanId}")] //api/loans/{loanId}
         public async Task<IActionResult> GetLoan(int loanId)
         {
@@ -48,7 +49,8 @@ namespace API.Controllers
         {
             return HandleResult(await _loanService.CreateLoan(newLoan));
         }
-        
+
+        [Authorize(Policy = "IsOwner")]
         [HttpPut("loans/{loanId}")] //api/loans/{loanId}
         public async Task<IActionResult> UpdateLoan(int loanId, LoanUpdateDto updatedLoan)
         {

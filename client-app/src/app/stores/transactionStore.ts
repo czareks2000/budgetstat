@@ -325,7 +325,8 @@ export default class TransactionStore {
                 : 
                 transactionFormValues.incomeCategoryId!.id,
             date: dayjs(transactionFormValues.date).toDate(),
-            considered: transactionFormValues.considered
+            considered: transactionFormValues.considered,
+            description: transactionFormValues.description
         }
 
         const accountId = Number(transactionFormValues.accountId);
@@ -368,7 +369,8 @@ export default class TransactionStore {
                 transaction.incomeCategoryId!.id,
             accountId: Number(transaction.accountId),
             date: dayjs(transaction.date).toDate(),
-            considered: transaction.considered
+            considered: transaction.considered,
+            description: transaction.description
         }
 
         await agent.Transactions.updateTransaction(transactionId, updatedTransaction);

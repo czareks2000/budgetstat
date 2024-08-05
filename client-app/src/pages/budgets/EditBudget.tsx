@@ -5,7 +5,7 @@ import { BudgetFormValues, BudgetDto } from "../../app/models/Budget";
 import BudgetForm from "../../components/forms/Budget/BudgetForm";
 import { router } from "../../app/router/Routes";
 import ResponsiveContainer from "../../components/common/ResponsiveContainer";
-import { Navigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import LoadingWithLabel from "../../components/common/LoadingWithLabel";
 

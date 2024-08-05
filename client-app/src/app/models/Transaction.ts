@@ -106,7 +106,7 @@ export interface TransactionUpdateValues {
     categoryId: number; 
     accountId: number; 
     date: Date;
-    description?: string;
+    description: string;
     considered: boolean;
 }
 
