@@ -13,6 +13,7 @@ import { Currency } from "../../../app/models/Currency";
 import NoDecorationLink from "../../../components/common/NoDecorationLink";
 import DeleteLoanDialog from "../dialogs/DeleteLoanDialog";
 import { useState } from "react";
+import { calculateSpaces } from "../../../app/utils/CalculateSpaces";
 
 interface Props {
     loan: Loan;
@@ -64,6 +65,13 @@ export default observer(function LoanItem({loan, detailsAction, noButtons = fals
     const remainingAmount = loan.fullAmount - loan.currentAmount;
 
     const inProgress = loan.loanStatus === LoanStatus.InProgress;
+
+    const loanEndAmount = `${formatAmount(loan.fullAmount)} ${currency.symbol}`
+
+    const loanStartAmount = `0 ${currency.symbol}`;
+    const spacesNeeded = calculateSpaces(loanEndAmount.length, loanStartAmount.length);
+    
+    const formatedLoanStartAmount = `${loanStartAmount}${spacesNeeded}`;
 
     const progressColor = () => {
         return loan.loanType === LoanType.Credit ? 'success' : 'error';
@@ -152,7 +160,7 @@ export default observer(function LoanItem({loan, detailsAction, noButtons = fals
                             <Grid container justifyContent="space-between">
                                 <Grid item>
                                     <Typography variant="body1">
-                                        0 {currency.symbol}
+                                        {formatedLoanStartAmount}
                                     </Typography>
                                 </Grid>
                                 <Grid item>
@@ -162,7 +170,7 @@ export default observer(function LoanItem({loan, detailsAction, noButtons = fals
                                 </Grid>
                                 <Grid item>
                                     <Typography variant="body1">
-                                        {formatAmount(loan.fullAmount)} {currency.symbol}
+                                        {loanEndAmount}
                                     </Typography>
                                 </Grid>
                             </Grid>

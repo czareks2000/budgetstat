@@ -5,6 +5,7 @@ import { Delete, Edit } from "@mui/icons-material";
 import { useStore } from "../../app/stores/store";
 import { router } from "../../app/router/Routes";
 import { formatAmount } from "../../app/utils/FormatAmount";
+import { calculateSpaces } from "../../app/utils/CalculateSpaces";
 
 interface Props {
     budget: Budget;
@@ -19,11 +20,6 @@ export default observer(function BudgetItem({budget, openDeleteDialog}: Props) {
     const isInDefaultCurrency = budget.currency.id === defaultCurrency?.id;
 
     const budgetEndAmount = `${formatAmount(budget.convertedAmount)} ${defaultCurrency?.symbol} ${!isInDefaultCurrency ? `(${formatAmount(budget.amount)} ${budget.currency.symbol})` : ''}`;
-
-    const calculateSpaces = (targetLength: number, currentLength: number) => {
-        const spaceCount = targetLength - currentLength;
-        return '\u00A0'.repeat(spaceCount); // '\u00A0' is a non-breaking space character
-    };
     
     const budgetStartAmount = `0 ${defaultCurrency?.symbol}`;
     const spacesNeeded = calculateSpaces(budgetEndAmount.length, budgetStartAmount.length);

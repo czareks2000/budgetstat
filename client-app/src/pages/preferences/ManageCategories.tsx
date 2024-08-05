@@ -12,7 +12,7 @@ export default observer(function ManageCategories() {
     }
 
     const handleAddButtonClick = () => {
-
+        router.navigate('/preferences/categories/create')
     }
 
     return (
