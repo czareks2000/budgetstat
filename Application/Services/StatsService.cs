@@ -829,10 +829,10 @@ namespace Application.Services
                     break;
 
                 case NetWorthChartPeriod.Month:
-                    for (int i = 0; i < 10; i++)
+                    for (int i = 0; i < 30; i++)
                     {
                         dates.Add(currentDate);
-                        currentDate = currentDate.AddDays(3);
+                        currentDate = currentDate.AddDays(1);
                     }
                     break;
 
