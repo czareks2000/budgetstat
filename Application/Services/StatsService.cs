@@ -60,8 +60,29 @@ namespace Application.Services
                 Labels = [],
             };
 
+            // get accounts
+            var accounts = await _context.Accounts
+                .Include(a => a.AccountBalances)
+                    .ThenInclude(ab => ab.Currency)
+                .Where(a => a.UserId == user.Id)
+                .Where(a => a.Status == AccountStatus.Visible)
+                .ToListAsync();
+
             // calculate start and end dates
-            var earliestDate = FindEarliestDate(assets); // sprawdzanie nie tylko z assetów tylko też z accounts
+            DateTime earliestDate = DateTime.UtcNow;
+            if (assets.Count > 0)
+                earliestDate = FindEarliestDate(assets);
+
+            if (accounts.Count > 0)
+            {
+                var earliestAccountsDate = FindEarliestDate(accounts);
+                earliestDate = earliestDate < earliestAccountsDate ? earliestDate : earliestAccountsDate;
+            }
+
+            // if there is no data to show
+            if (earliestDate == DateTime.UtcNow)
+                return Result<ValueOverTime>.Success(chartObject);
+
             var timeWindow = CalculateTimeWindow(period, earliestDate);
 
             chartObject.StartDate = timeWindow.StartDate;
@@ -71,12 +92,6 @@ namespace Application.Services
             var dates = CalculateDates(period, timeWindow);
 
             // calculate data
-            var accounts = await _context.Accounts
-                .Include(a => a.AccountBalances)
-                    .ThenInclude(ab => ab.Currency)
-                .Where(a => a.UserId == user.Id)
-                .Where(a => a.Status == AccountStatus.Visible)
-                .ToListAsync();
 
             foreach (var date in dates) 
             {
@@ -786,7 +801,7 @@ namespace Application.Services
         {
             if (accounts == null || accounts.Count == 0)
             {
-                throw new ArgumentException("The assets list cannot be null or empty.");
+                throw new ArgumentException("The account list cannot be null or empty.");
             }
 
             DateTime earliestDate = accounts
