@@ -27,7 +27,6 @@ export default observer(function TransactionsDataGrid() {
     const [transactionToDelete, setTransactionToDelete] = useState<TransactionToDelete | undefined>(undefined);
 
     const handleDeleteButtonClick = (transaction: TransactionRowItem) => {
-        console.log();
         setTransactionToDelete({
             index: transaction.id, 
             transactionId: transaction.transactionId, 
@@ -72,6 +71,8 @@ export default observer(function TransactionsDataGrid() {
         {
             field: 'category',
             headerName: 'Category',
+            minWidth: 175,
+            flex: 1.45,
             editable: false,
             renderCell: ({value}) => {
                 return <Box component={"span"} display={'flex'}>
@@ -86,7 +87,8 @@ export default observer(function TransactionsDataGrid() {
             field: 'description',
             headerName: 'Description',
             editable: false,
-            hideable: true,
+            minWidth: 175,
+            flex: 1.45,
             renderCell: (params) => {
                 return params.value || <i>(no description)</i>
             },
@@ -99,7 +101,7 @@ export default observer(function TransactionsDataGrid() {
             align: 'right',
             headerAlign: 'right',
             minWidth: 100,
-            flex: 1,
+            flex: 0.85,
             editable: false,
             renderCell: (params) => {
                 return (
@@ -146,15 +148,11 @@ export default observer(function TransactionsDataGrid() {
         })
     }
 
-    const [key, setKey] = useState(0);
-
     const handlePaginationModelChange = (newModel: GridPaginationModel) => {
         setDataGridSettings({
             ...dataGridSettings,
             itemsPerPage: newModel.pageSize
         })
-
-        setKey(prevKey => prevKey + 1);
     }
 
     return (
@@ -165,7 +163,6 @@ export default observer(function TransactionsDataGrid() {
         <Paper>
             <Box>
                 <DataGrid 
-                    key={key}
                     sx={{
                         display: 'grid',
                         gridTemplateRows: 'auto 1f auto',
@@ -195,12 +192,6 @@ export default observer(function TransactionsDataGrid() {
                     columns={columns}
                     autoHeight
                     disableRowSelectionOnClick
-                    autosizeOnMount
-                    autosizeOptions={{
-                        includeHeaders: false,
-                        includeOutliers: true,
-                        expand: true,
-                    }}
                     disableDensitySelector
                     disableColumnFilter
                     slots={{ toolbar: GridToolbar }}
