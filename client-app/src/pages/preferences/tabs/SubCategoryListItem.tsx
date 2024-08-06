@@ -3,14 +3,20 @@ import { Category } from "../../../app/models/Category";
 import { Box, IconButton, ListItem, ListItemText, Tooltip } from "@mui/material";
 import CategoryIcon from "../../../components/common/CategoryIcon";
 import { Delete, Edit } from "@mui/icons-material";
+import { useStore } from "../../../app/stores/store";
 
 interface Props {
     subcategory: Category;
+    openDeleteDialog: () => void;
 }
 
-export default observer(function SubCategoryListItem({subcategory}: Props) {
+export default observer(function SubCategoryListItem({subcategory, openDeleteDialog}: Props) {
+    const {categoryStore: {setCategoryToDelete}} = useStore();
+
 
     const handleDeleteButtonClick = () => {
+        setCategoryToDelete({id: subcategory.id, isMain: false, name: subcategory.name});
+        openDeleteDialog();
     }
 
     const handleEditButtonClick = () => {

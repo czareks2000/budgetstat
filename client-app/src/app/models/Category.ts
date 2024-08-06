@@ -38,3 +38,9 @@ export interface CategoryUpdateValues {
     name: string;
     iconId: number;
 }
+
+export interface CategoryToDelete {
+    id: number;
+    isMain: boolean; 
+    name: string;
+}

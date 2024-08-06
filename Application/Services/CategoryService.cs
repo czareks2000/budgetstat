@@ -57,12 +57,23 @@ namespace Application.Services
             var category = _mapper.Map<Category>(newCategory);
             category.Icon = icon;
             category.User = user;
+            category.Transactions = [];
+            category.Budgets = [];
+            category.SubCategories = [];
 
             // sprawdzenie nadrzędnej kategorii (jeżeli została podana)
             if (!newCategory.IsMain)
             {
                 var mainCategory = await _context.Categories
+                    .Include(c => c.Transactions)
+                    .Include(c => c.Budgets)
+                    .Include(c => c.Icon)
                     .Include(c => c.SubCategories)
+                        .ThenInclude(c => c.Transactions)
+                    .Include(c => c.SubCategories)
+                        .ThenInclude(c => c.Budgets)
+                    .Include(c => c.SubCategories)
+                        .ThenInclude(c => c.Icon)
                     .Where(c => c.UserId == user.Id)
                     .Where(c => c.IsMain)
                     .Where(c => c.Id == newCategory.MainCategoryId)

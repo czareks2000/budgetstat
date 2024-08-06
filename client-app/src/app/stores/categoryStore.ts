@@ -1,12 +1,14 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
-import { Category, CategoryOption, MainCategory } from "../models/Category";
+import { Category, CategoryOption, CategoryToDelete, MainCategory } from "../models/Category";
 import { TransactionType } from "../models/enums/TransactionType";
 import { Option } from "../models/Option";
 
 export default class CategoryStore {
     mainCategories: MainCategory[] = [];
     categoriesLoaded = false;
+
+    categoryToDelete: CategoryToDelete | undefined = undefined;
 
     constructor() {
         makeAutoObservable(this);
@@ -15,6 +17,16 @@ export default class CategoryStore {
     clearStore = () => {
         this.mainCategories = [];
         this.categoriesLoaded = false;
+
+        this.categoryToDelete = undefined;
+    }
+
+    setCategoryToDelete = (categoryToDelete: CategoryToDelete) => {
+        this.categoryToDelete = categoryToDelete;
+    }
+
+    unsetCategoryToDelete = () => {
+        this.categoryToDelete = undefined;
     }
 
     get mainExpenseCategories() {
@@ -155,5 +167,27 @@ export default class CategoryStore {
         } catch (error) {
             console.log(error);
         } 
+    }
+
+    deleteCategory = async (categoryId: number, isMain: boolean) => {
+        try {
+            if (isMain)
+                this.mainCategories = this.mainCategories.filter(c => c.id !== categoryId);
+            else {
+                this.mainCategories = this.mainCategories.map(mainCategory => {
+                    if (mainCategory.subCategories.some(subCategory => subCategory.id === categoryId)) {
+                        return {
+                            ...mainCategory,
+                            subCategories: mainCategory.subCategories.filter(subCategory => subCategory.id !== categoryId)
+                        };
+                    }
+                    return mainCategory;
+                });
+            }
+            
+            await agent.Categories.delete(categoryId);
+        } catch (error) {
+            console.log(error);
+        }
     }
 }

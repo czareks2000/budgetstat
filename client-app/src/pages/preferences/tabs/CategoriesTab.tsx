@@ -3,14 +3,17 @@ import { observer } from "mobx-react-lite"
 import CategoryIcon from "../../../components/common/CategoryIcon"
 import { Add, Delete, Edit, ExpandMore } from "@mui/icons-material"
 import { useState } from "react"
-import { MainCategory } from "../../../app/models/Category"
+import { CategoryToDelete, MainCategory } from "../../../app/models/Category"
 import SubCategoryListItem from "./SubCategoryListItem"
+import DeleteCategoryDialog from "../dialogs/DeleteCategoryDialog"
+import { useStore } from "../../../app/stores/store"
 
 interface Props {
     mainCategories: MainCategory[];
 }
 
 export default observer(function CategoriesTab({mainCategories}: Props) {
+    const {categoryStore: {categoryToDelete, setCategoryToDelete}} = useStore();
 
     const [expanded, setExpanded] = useState(new Array(mainCategories.length).fill(false));
 
@@ -20,7 +23,20 @@ export default observer(function CategoriesTab({mainCategories}: Props) {
         setExpanded(newExpanded);
     };
 
-    const handleDeleteButtonClick = () => {
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+
+    const handleOpenDeleteDialog = () => {
+        setOpenDeleteDialog(true);
+    }
+
+    const handleDeleteButtonClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, category: MainCategory) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setCategoryToDelete({
+            id: category.id, 
+            isMain: true, 
+            name: category.name});
+        handleOpenDeleteDialog();
     }
 
     const handleEditButtonClick = () => {
@@ -33,6 +49,9 @@ export default observer(function CategoriesTab({mainCategories}: Props) {
 
     return (
         <Box>
+            <DeleteCategoryDialog 
+                key={categoryToDelete?.id} 
+                open={openDeleteDialog} setOpen={setOpenDeleteDialog} />
             {mainCategories
                 .map((category, index) => 
                 <Accordion 
@@ -54,7 +73,11 @@ export default observer(function CategoriesTab({mainCategories}: Props) {
                                     <IconButton
                                         sx={{mr: "0px", my: -1}} 
                                         edge={"end"} aria-label="edit"
-                                        onClick={handleEditButtonClick}>
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            handleEditButtonClick();
+                                        }}>
                                         <Edit fontSize="small"/>
                                     </IconButton>
                                     <Tooltip 
@@ -67,7 +90,7 @@ export default observer(function CategoriesTab({mainCategories}: Props) {
                                             disabled={!category.canBeDeleted}
                                             sx={{my: -1}} 
                                             edge={"end"} aria-label="delete"
-                                            onClick={handleDeleteButtonClick}>
+                                            onClick={(e) => handleDeleteButtonClick(e, category)}>
                                             <Delete fontSize="small"/>
                                         </IconButton>
                                         </span>
@@ -78,13 +101,18 @@ export default observer(function CategoriesTab({mainCategories}: Props) {
                     </AccordionSummary>
                     <Divider/>
                     <AccordionDetails sx={{p: 2}}>
-                        <List disablePadding>
-                        {category.subCategories.map((subcategory) => 
-                            <SubCategoryListItem 
-                                key={subcategory.id} 
-                                subcategory={subcategory}/>              
-                        )}
-                        </List>   
+                        {category.subCategories.length > 0 ?
+                            <List disablePadding>
+                            {category.subCategories.map((subcategory) => 
+                                <SubCategoryListItem 
+                                    key={subcategory.id}
+                                    openDeleteDialog={handleOpenDeleteDialog} 
+                                    subcategory={subcategory}/>              
+                            )}
+                            </List>
+                        :
+                            <Typography>This category has no subcategories</Typography>
+                        } 
                     </AccordionDetails>
                     <Divider/>
                     <Box display={'flex'} justifyContent={'center'} py={1} gap={5}>

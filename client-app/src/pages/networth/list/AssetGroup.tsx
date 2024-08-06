@@ -8,7 +8,7 @@ import { Fragment } from 'react/jsx-runtime';
 import AssetItem from './AssetItem';
 import { AssetCategory } from '../../../app/models/Asset';
 import { useState } from 'react';
-import DeleteAssetDialog from '../../loans/dialogs/DeleteAssetDialog';
+import DeleteAssetDialog from '../dialogs/DeleteAssetDialog';
 
 interface Props {
     index: number;
