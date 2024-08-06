@@ -9,13 +9,17 @@ import { useStore } from "../../app/stores/store"
 import CustomTabPanel, { a11yProps } from "./tabs/CustomTabPanel"
 import CategoriesTab from "./tabs/CategoriesTab"
 import LoadingCenter from "../../components/common/loadings/LoadingCenter"
+import { useSearchParams } from "react-router-dom"
+import { TransactionType } from "../../app/models/enums/TransactionType"
 
 export default observer(function ManageCategories() {
     const {categoryStore: {
         mainExpenseCategories, mainIncomeCategories, 
         loadCategories, categoriesLoaded}} = useStore();
 
-    const [selectedTab, setselectedTab] = useState(0);
+    const [searchParams] = useSearchParams();
+
+    const [selectedTab, setselectedTab] = useState(searchParams.get('type') === 'income' ? 1 : 0);
 
     useEffect(() => {
         if (!categoriesLoaded)
@@ -31,7 +35,9 @@ export default observer(function ManageCategories() {
     }
 
     const handleAddButtonClick = () => {
-        router.navigate('/preferences/categories/create')
+        const transactionType = selectedTab === 0 ? TransactionType.Expense : TransactionType.Income;
+
+        router.navigate(`/preferences/categories/create?transactionType=${transactionType}`)
     }
 
     return (
@@ -52,7 +58,7 @@ export default observer(function ManageCategories() {
 
                 {!categoriesLoaded && <LoadingCenter />}
 
-                <Fade in={categoriesLoaded}>
+                <Fade in={categoriesLoaded} appear={false}>
                     <span>
                         <CustomTabPanel value={selectedTab} index={0}>
                             <CategoriesTab 
@@ -60,7 +66,7 @@ export default observer(function ManageCategories() {
                         </CustomTabPanel>
 
                         <CustomTabPanel value={selectedTab} index={1}>
-                            <CategoriesTab 
+                            <CategoriesTab
                                 mainCategories={mainIncomeCategories}/>
                         </CustomTabPanel>
                     </span>

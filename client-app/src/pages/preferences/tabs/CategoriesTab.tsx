@@ -3,10 +3,12 @@ import { observer } from "mobx-react-lite"
 import CategoryIcon from "../../../components/common/CategoryIcon"
 import { Add, Delete, Edit, ExpandMore } from "@mui/icons-material"
 import { useState } from "react"
-import { CategoryToDelete, MainCategory } from "../../../app/models/Category"
+import { MainCategory } from "../../../app/models/Category"
 import SubCategoryListItem from "./SubCategoryListItem"
 import DeleteCategoryDialog from "../dialogs/DeleteCategoryDialog"
 import { useStore } from "../../../app/stores/store"
+import { router } from "../../../app/router/Routes"
+import { CategoryType } from "../../../app/models/enums/CategoryType"
 
 interface Props {
     mainCategories: MainCategory[];
@@ -43,8 +45,14 @@ export default observer(function CategoriesTab({mainCategories}: Props) {
 
     }
 
-    const handleAddButtonClick = () => {
+    const handleAddButtonClick = (category: MainCategory) => {
+        const transactionType = category.type;
+        const categoryType = CategoryType.Sub;
+        const mainCategoryId = category.id;
 
+        const params = `?transactionType=${transactionType}&categoryType=${categoryType}&mainCategoryId=${mainCategoryId}`
+
+        router.navigate(`/preferences/categories/create${params}`)
     }
 
     return (
@@ -57,6 +65,7 @@ export default observer(function CategoriesTab({mainCategories}: Props) {
                 <Accordion 
                     key={category.id}
                     expanded={expanded[index]}
+                    slotProps={{ transition: { unmountOnExit: true } }}
                     onChange={() => handleToggle(index)}>
                     <AccordionSummary
                         expandIcon={<ExpandMore />}
@@ -118,7 +127,7 @@ export default observer(function CategoriesTab({mainCategories}: Props) {
                     <Box display={'flex'} justifyContent={'center'} py={1} gap={5}>
                         <IconButton 
                             aria-label="add" 
-                            onClick={handleAddButtonClick}>
+                            onClick={() => handleAddButtonClick(category)}>
                             <Add/>
                         </IconButton>
                     </Box>  

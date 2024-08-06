@@ -1,8 +1,9 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
-import { Category, CategoryOption, CategoryToDelete, MainCategory } from "../models/Category";
+import { Category, CategoryCreateFormValues, CategoryOption, CategoryToDelete, MainCategory } from "../models/Category";
 import { TransactionType } from "../models/enums/TransactionType";
 import { Option } from "../models/Option";
+import { CategoryType } from "../models/enums/CategoryType";
 
 export default class CategoryStore {
     mainCategories: MainCategory[] = [];
@@ -44,7 +45,8 @@ export default class CategoryStore {
         .forEach(category => {
             options.push({
                 text: category.name,
-                value: category.id
+                value: category.id,
+                iconId: category.iconId
             })
         })
         return options;
@@ -57,7 +59,8 @@ export default class CategoryStore {
         .forEach(category => {
             options.push({
                 text: category.name,
-                value: category.id
+                value: category.id,
+                iconId: category.iconId
             })
         })
         return options;
@@ -184,8 +187,38 @@ export default class CategoryStore {
                     return mainCategory;
                 });
             }
-            
+
             await agent.Categories.delete(categoryId);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    createCategory = async (category: CategoryCreateFormValues) => {
+        try {
+            const mainCategory = await agent.Categories.create({
+                name: category.name,
+                iconId: Number(category.iconId),
+                type: category.transactionType,
+                isMain: category.categoryType === CategoryType.Main,
+                mainCategoryId: category.transactionType === TransactionType.Income 
+                    ? Number(category.mainIncomeCategoryId)
+                    : Number(category.mainExpenseCategoryId)
+            })
+
+            runInAction(() => {
+                if (category.categoryType === CategoryType.Main)
+                    this.mainCategories.push(mainCategory);
+                else
+                {
+                    this.mainCategories = this.mainCategories.map(current => {
+                        if (current.id === mainCategory.id)
+                            return mainCategory;
+    
+                        return current;
+                    })
+                }
+            })
         } catch (error) {
             console.log(error);
         }

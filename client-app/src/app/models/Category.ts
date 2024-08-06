@@ -1,3 +1,4 @@
+import { CategoryType } from "./enums/CategoryType";
 import { TransactionType } from "./enums/TransactionType";
 
 export interface MainCategory {
@@ -26,12 +27,21 @@ export interface CategoryOption {
     mainCategoryId: number
 }
 
+export interface CategoryCreateFormValues {
+    categoryType: CategoryType;
+    transactionType: TransactionType;
+    name: string;
+    iconId: number | string;
+    mainExpenseCategoryId: number | string;
+    mainIncomeCategoryId: number | string;
+}
+
 export interface CategoryCreateValues {
     name: string;
     iconId: number;
     type: TransactionType;
     isMain: boolean;
-    mainCategoryId?: number;
+    mainCategoryId: number;
 }   
 
 export interface CategoryUpdateValues {

@@ -38,7 +38,7 @@ export default observer(function DeleteCategoryDialog({open, setOpen}: Props) {
                 <DialogContent>
                     <Box id='dialog-description'>
                         <Typography variant="body1" mb={2}>
-                            Are you sure you want to delete this category ({categoryToDelete?.name})?
+                            Are you sure you want to delete this category ({categoryToDelete?.name}){categoryToDelete?.isMain && <> and its subcategories</>}?
                         </Typography>
                     </Box>
                 </DialogContent>
