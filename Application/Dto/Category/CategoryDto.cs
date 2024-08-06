@@ -8,5 +8,6 @@ namespace Application.Dto.Category
         public string Name { get; set; }
         public int IconId { get; set; }
         public TransactionType Type { get; set; }
+        public bool CanBeDeleted { get; set; }
     }
 }

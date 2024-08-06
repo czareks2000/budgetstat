@@ -1,10 +1,10 @@
 import { Divider, Grid, Stack } from "@mui/material"
 import { observer } from "mobx-react-lite"
-import FloatingAddButton from "../../components/common/FloatingAddButton"
+import FloatingAddButton from "../../components/common/fabs/FloatingAddButton"
 import { router } from "../../app/router/Routes"
 import TransactionsDataGrid from "./list/TransactionsDataGrid"
 import TransactionsFilters from "./list/TransactionsFilters"
-import FloatingShowPlannedTransactionButton from "../../components/common/FloatingShowPlannedTransactionButton"
+import FloatingShowPlannedTransactionButton from "../../components/common/fabs/FloatingShowPlannedTransactionButton"
 
 export default observer(function Transactions() {   
     const handleAddButtonClick = () => {

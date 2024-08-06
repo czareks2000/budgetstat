@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite"
 import ResponsiveContainer from "../../components/common/ResponsiveContainer"
-import FloatingAddButton from "../../components/common/FloatingAddButton"
+import FloatingAddButton from "../../components/common/fabs/FloatingAddButton"
 import { router } from "../../app/router/Routes"
 import { Divider, Stack } from "@mui/material"
 import CounterpartySummaryItem from "./counterparty/CounterpartySummaryItem"

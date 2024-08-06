@@ -6,7 +6,7 @@ import DeleteBudgetDialog from "./DeleteBudgetDialog"
 import { useState } from "react"
 import { router } from "../../app/router/Routes"
 import ResponsiveContainer from "../../components/common/ResponsiveContainer"
-import FloatingAddButton from "../../components/common/FloatingAddButton"
+import FloatingAddButton from "../../components/common/fabs/FloatingAddButton"
 
 export default observer(function Budgets() {
     const {budgetStore: {weeklyBudgets, monthlyBudgets, annualBudgets, selectedBudget}} = useStore()

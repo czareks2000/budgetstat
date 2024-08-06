@@ -7,8 +7,8 @@ import EditLoanForm from '../../components/forms/Loan/EditLoanForm'
 import { useEffect } from 'react'
 import { useStore } from '../../app/stores/store'
 import LoanItem from './common/LoanItem'
-import FloatingGoBackButton from '../../components/common/FloatingGoBackButton'
-import LoadingWithLabel from '../../components/common/LoadingWithLabel'
+import FloatingGoBackButton from '../../components/common/fabs/FloatingGoBackButton'
+import LoadingWithLabel from '../../components/common/loadings/LoadingWithLabel'
 import { LoanStatus } from '../../app/models/enums/LoanStatus'
 
 export default observer(function EditLoan() {  

@@ -9,5 +9,6 @@ namespace Application.Dto.Category
         public int IconId { get; set; }
         public TransactionType Type { get; set; }
         public List<CategoryDto> SubCategories { get; set; }
+        public bool CanBeDeleted { get; set; }
     }
 }

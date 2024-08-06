@@ -17,6 +17,14 @@ export default class CategoryStore {
         this.categoriesLoaded = false;
     }
 
+    get mainExpenseCategories() {
+       return this.mainCategories.filter(c => c.type === TransactionType.Expense);
+    }
+
+    get mainIncomeCategories() {
+        return this.mainCategories.filter(c => c.type === TransactionType.Income);
+     }
+
     get mainExpenseCategoriesAsOptions() {
         let options: Option[] = []
         this.mainCategories

@@ -23,12 +23,21 @@ namespace Application.Services
         {
             var user = await _utilities.GetCurrentUserAsync();
             
-            var categoriesDto = await _context.Categories
+            var categories = await _context.Categories
                 .Where(c => c.User == user)
                 .Where(c => c.IsMain)
+                .Include(c => c.Transactions)
+                .Include(c => c.Budgets)
+                .Include(c => c.Icon)
                 .Include(c => c.SubCategories)
-                .ProjectTo<MainCategoryDto>(_mapper.ConfigurationProvider)
+                    .ThenInclude(c => c.Transactions)
+                .Include(c => c.SubCategories)
+                    .ThenInclude(c => c.Budgets)
+                .Include(c => c.SubCategories)
+                    .ThenInclude(c => c.Icon)
                 .ToListAsync();
+
+            var categoriesDto = _mapper.Map<List<MainCategoryDto>>(categories);
 
             return Result<List<MainCategoryDto>>.Success(categoriesDto);
         }
@@ -114,6 +123,12 @@ namespace Application.Services
             
             if(category.IsMain)
             {
+                if (category.Budgets.Count > 0)
+                    return Result<object>
+                        .Failure("Cannot delete a category with budgets assigned. " +
+                            "You must first delete these budgets.");
+
+
                 foreach (var subCategory in category.SubCategories)
                 {
                     if (subCategory.Transactions.Count > 0 || subCategory.Budgets.Count > 0)

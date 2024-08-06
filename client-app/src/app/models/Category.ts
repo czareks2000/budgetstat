@@ -3,16 +3,18 @@ import { TransactionType } from "./enums/TransactionType";
 export interface MainCategory {
     id: number;
     name: string;
-    iconId: number,
+    iconId: number;
     type: TransactionType;
-    subCategories: Category[]
+    subCategories: Category[];
+    canBeDeleted: boolean;
 }
 
 export interface Category {
     id: number;
     name: string;
-    iconId: number,
+    iconId: number;
     type: TransactionType;
+    canBeDeleted: boolean;
 }
 
 export interface CategoryOption {

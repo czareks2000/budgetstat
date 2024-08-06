@@ -5,7 +5,7 @@ import { Divider, Stack } from "@mui/material";
 import AccountsList from "./AccountsList";
 import { useState } from "react";
 import DeleteAccountDialog from "./DeleteAccountDialog";
-import FloatingAddButton from "../../components/common/FloatingAddButton";
+import FloatingAddButton from "../../components/common/fabs/FloatingAddButton";
 import { router } from "../../app/router/Routes";
 import ResponsiveContainer from "../../components/common/ResponsiveContainer";
 

@@ -8,7 +8,7 @@ import { FormikHelpers } from "formik"
 import { useStore } from "../../app/stores/store"
 import { useParams } from "react-router-dom"
 import { useEffect } from "react"
-import LoadingWithLabel from "../../components/common/LoadingWithLabel"
+import LoadingWithLabel from "../../components/common/loadings/LoadingWithLabel"
 
 export default observer(function EditAsset() {
   const {assetStore: {updateAsset, selectedAsset, selectAsset}} = useStore();

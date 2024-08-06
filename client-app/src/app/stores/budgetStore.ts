@@ -3,6 +3,7 @@ import { Budget, BudgetDto, BudgetSummary } from "../models/Budget";
 import agent from "../api/agent";
 import { BudgetPeriod } from "../models/enums/BudgetPeriod";
 import { router } from "../router/Routes";
+import { store } from "./store";
 
 export default class BudgetStore {
     budgetsRegistry = new Map<number, Budget>();
@@ -178,6 +179,7 @@ export default class BudgetStore {
 
             runInAction(() => {
                 this.setBudget(createdBudget);
+                store.categoryStore.categoriesLoaded = false;
             });    
         } catch (error) {
             console.log(error);
@@ -191,6 +193,7 @@ export default class BudgetStore {
             runInAction(() => {
                 this.budgetsRegistry.delete(budgetId);
                 this.deselectBudget();
+                store.categoryStore.categoriesLoaded = false;
             });     
         } catch (error) {
             console.log(error);
@@ -204,6 +207,7 @@ export default class BudgetStore {
             runInAction(() => {
                 this.setBudget(updatedBudget);
                 this.deselectBudget();
+                store.categoryStore.categoriesLoaded = false;
             });    
         } catch (error) {
             console.log(error);

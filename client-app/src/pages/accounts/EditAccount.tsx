@@ -7,7 +7,7 @@ import { router } from "../../app/router/Routes";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import ResponsiveContainer from "../../components/common/ResponsiveContainer";
-import LoadingWithLabel from "../../components/common/LoadingWithLabel";
+import LoadingWithLabel from "../../components/common/loadings/LoadingWithLabel";
 
 export default observer(function EditAccount() {
     const [searchParams] = useSearchParams();

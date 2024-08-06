@@ -8,7 +8,7 @@ import { Outlet, ScrollRestoration } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useEffect } from 'react';
 import { useStore } from '../stores/store';
-import Loading from '../../components/common/LoadingCenter';
+import Loading from '../../components/common/loadings/LoadingCenterScreen';
 import { theme } from './Theme';
 
 import { LocalizationProvider } from '@mui/x-date-pickers';

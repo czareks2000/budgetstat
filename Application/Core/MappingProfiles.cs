@@ -52,10 +52,15 @@ namespace Application.Core
             CreateMap<CategoryUpdateDto, Category>();
             CreateMap<Category, CategoryDto>()
                 .ForMember(dest => dest.IconId, opt => opt
-                    .MapFrom(src => src.Icon.Id));
+                    .MapFrom(src => src.Icon.Id))
+                .ForMember(dest => dest.CanBeDeleted, opt => opt
+                    .MapFrom(src => src.Transactions.Count == 0 && src.Budgets.Count == 0));
+
             CreateMap<Category, MainCategoryDto>()
                 .ForMember(dest => dest.IconId, opt => opt
-                    .MapFrom(src => src.Icon.Id));
+                    .MapFrom(src => src.Icon.Id))
+                .ForMember(dest => dest.CanBeDeleted, opt => opt
+                    .MapFrom<CanBeDeletedResolver>());
 
             CreateMap<TransactionCreateDto, Transaction>();
             CreateMap<TransactionUpdateDto, Transaction>();
@@ -113,7 +118,7 @@ namespace Application.Core
             CreateMap<Transfer, TransactionFormValues>()
                 .ForMember(dest => dest.Description, opt => opt
                    .MapFrom(src => ""));
-            //skonfigurowaæ MainCategoryName
+
             CreateMap<Category, CategoryOption>()
                 .ForMember(dest => dest.MainCategoryName, opt => opt
                    .MapFrom(src => src.MainCategory.Name));
@@ -140,6 +145,22 @@ namespace Application.Core
             CreateMap<AssetCategory, AssetCategoryDto>();
 
             CreateMap<Icon, IconDto>();
+        }
+    }
+
+    public class CanBeDeletedResolver : IValueResolver<Category, MainCategoryDto, bool>
+    {
+        public bool Resolve(Category source, MainCategoryDto destination, bool destMember, ResolutionContext context)
+        {
+            if (source.Budgets.Count > 0)
+                return false;
+
+            foreach (var subCategory in source.SubCategories)
+            {
+                if (subCategory.Transactions.Count > 0 || subCategory.Budgets.Count > 0)
+                    return false;
+            }
+            return true;
         }
     }
 }

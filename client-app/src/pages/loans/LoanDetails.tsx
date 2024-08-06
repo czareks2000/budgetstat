@@ -3,7 +3,7 @@ import ResponsiveContainer from "../../components/common/ResponsiveContainer"
 import { Accordion, AccordionDetails, AccordionSummary, Divider, Stack } from "@mui/material"
 import { useStore } from "../../app/stores/store";
 import { useParams } from "react-router-dom";
-import FloatingGoBackButton from "../../components/common/FloatingGoBackButton";
+import FloatingGoBackButton from "../../components/common/fabs/FloatingGoBackButton";
 import { router } from "../../app/router/Routes";
 import LoanItem from "./common/LoanItem";
 import CreatePayoffForm from "../../components/forms/Loan/CreatePayoffForm";
@@ -11,7 +11,7 @@ import PayoffList from "./details/PayoffList";
 import { useEffect, useState } from "react";
 import { ExpandMore } from "@mui/icons-material";
 import { LoanStatus } from "../../app/models/enums/LoanStatus";
-import FloatingAddButton from "../../components/common/FloatingAddButton";
+import FloatingAddButton from "../../components/common/fabs/FloatingAddButton";
 
 export default observer(function LoanDetails() {
     const {

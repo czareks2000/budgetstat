@@ -6,7 +6,7 @@ import { LoanType } from "../../../app/models/enums/LoanType"
 import { LoanStatus } from "../../../app/models/enums/LoanStatus"
 import LoanItem from "../common/LoanItem"
 import { useEffect } from "react"
-import LoadingWithLabel from "../../../components/common/LoadingWithLabel"
+import LoadingWithLabel from "../../../components/common/loadings/LoadingWithLabel"
 
 export default observer(function CounterpartyPaidoffLoans() {
     const {loanStore: {getCounterpartyLoans, loadLoans, loansPaidOffLoaded, counterpartyLoansLoaded}} = useStore()

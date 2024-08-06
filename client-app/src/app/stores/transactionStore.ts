@@ -529,6 +529,8 @@ export default class TransactionStore {
         store.statsStore.loadAvgMonthlyIncomesAndExpensesLastYear();
         store.statsStore.homePageChartsLoaded = false;
 
+        store.categoryStore.categoriesLoaded = false;
+
         store.statsStore.setHasOldData(true);
     }
 }

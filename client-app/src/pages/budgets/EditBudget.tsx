@@ -7,7 +7,7 @@ import { router } from "../../app/router/Routes";
 import ResponsiveContainer from "../../components/common/ResponsiveContainer";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
-import LoadingWithLabel from "../../components/common/LoadingWithLabel";
+import LoadingWithLabel from "../../components/common/loadings/LoadingWithLabel";
 
 export default observer(function EditBudget() {
     const {
