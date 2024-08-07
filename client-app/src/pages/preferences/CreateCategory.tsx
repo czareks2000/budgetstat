@@ -31,9 +31,9 @@ export default observer(function CreateCategory() {
         name: "",
         iconId: 1,
         mainExpenseCategoryId: (categoryType === CategoryType.Sub && transactionType === TransactionType.Expense ) 
-            ? mainCategoryId || "" : "",
+            ? mainCategoryId : "",
         mainIncomeCategoryId: (categoryType === CategoryType.Sub && transactionType === TransactionType.Income ) 
-            ? mainCategoryId || "" : "",
+            ? mainCategoryId : "",
     }
 
     const handleSubmit = (values: CategoryFormValues) => {
