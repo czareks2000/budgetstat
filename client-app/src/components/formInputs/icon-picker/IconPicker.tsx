@@ -86,6 +86,7 @@ const IconPicker = ({ name, value, onChange }: Props) => {
                 helperText={!dialogOpen ? meta.touched && meta.error : ''}
                 autoComplete='off'
                 fullWidth
+                label={"Icon"}
                 variant="outlined"
                 InputProps={{
                     readOnly: true,
@@ -104,7 +105,7 @@ const IconPicker = ({ name, value, onChange }: Props) => {
                         </Tooltip>
                     ),
                 }}
-                value={value !== undefined && value !== '' ? 'Selected Icon:' : 'Select Icon'}
+                value={value !== undefined && value !== '' ? Icons.get(Number(value))!.name : ''}
                 sx={{
                     '& .MuiInputBase-input': {
                         cursor: 'pointer'

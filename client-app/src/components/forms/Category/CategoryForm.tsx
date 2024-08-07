@@ -73,52 +73,52 @@ export default observer(function CategoryForm({onSubmit, onCancel, initialValues
 
                     <Stack direction={'row'} spacing={2} alignItems={'top'}>
                             
-                            {/* Category Type */}
-                            <Grid item xs>
-                                <SelectInput
-                                    disabled={editMode}
-                                    label="Category Type" name={"categoryType"}
-                                    fullWidth
-                                    options={categoryTypeOptions} />  
-                            </Grid>
+                        {/* Category Type */}
+                        <Grid item xs>
+                            <SelectInput
+                                disabled={editMode}
+                                label="Category Type" name={"categoryType"}
+                                fullWidth
+                                options={categoryTypeOptions} />  
+                        </Grid>
 
-                            {values.categoryType === CategoryType.Sub &&
-                            <Grid item xs={'auto'} pt={2}>
-                                of
-                            </Grid>}
+                        {values.categoryType === CategoryType.Sub &&
+                        <Grid item xs={'auto'} pt={2}>
+                            of
+                        </Grid>}
 
-                            {/* Main Income category */}
-                            {(values.categoryType === CategoryType.Sub && values.transactionType === TransactionType.Expense) &&
-                            <Grid item xs>
-                                <SelectInput
-                                    disabled={editMode}
-                                    fullWidth
-                                    label="Main Category" name={"mainExpenseCategoryId"}
-                                    options={mainExpenseCategoriesAsOptions} />
-                            </Grid>
-                            }
+                        {/* Main Income category */}
+                        {(values.categoryType === CategoryType.Sub && values.transactionType === TransactionType.Expense) &&
+                        <Grid item xs>
+                            <SelectInput
+                                disabled={editMode}
+                                fullWidth
+                                label="Main Category" name={"mainExpenseCategoryId"}
+                                options={mainExpenseCategoriesAsOptions} />
+                        </Grid>
+                        }
 
-                            {/* Main Expense category */}
-                            {(values.categoryType === CategoryType.Sub && values.transactionType === TransactionType.Income) &&
-                            <Grid item xs>
-                                <SelectInput
-                                    disabled={editMode}
-                                    fullWidth
-                                    label="Main Category" name={"mainIncomeCategoryId"}
-                                    options={mainIncomeCategoriesAsOptions} />
-                            </Grid>}
+                        {/* Main Expense category */}
+                        {(values.categoryType === CategoryType.Sub && values.transactionType === TransactionType.Income) &&
+                        <Grid item xs>
+                            <SelectInput
+                                disabled={editMode}
+                                fullWidth
+                                label="Main Category" name={"mainIncomeCategoryId"}
+                                options={mainIncomeCategoriesAsOptions} />
+                        </Grid>}
 
                     </Stack>
 
                     {/* Name */}
-                    <TextInput label="Name" name="name"/>
+                    <TextInput label="Name" fullWidth name="name"/>
                     
                     {/* Icon Picker */}
                     <IconPicker
-                        name={"iconId"}
-                        value={values.iconId}
-                        onChange={iconId => setFieldValue('iconId', iconId)}
-                    />
+                            name={"iconId"}
+                            value={values.iconId}
+                            onChange={iconId => setFieldValue('iconId', iconId)}
+                        />
                    
                     {/* Buttons */}
                      <Stack direction={'row'} spacing={2}>
