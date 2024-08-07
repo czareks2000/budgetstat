@@ -9,9 +9,10 @@ interface Props {
     options: Option[];
     minWidth?: number;
     fullWidth?: boolean;
+    disabled?: boolean;
 }
 
-export default function SelectInput({minWidth, fullWidth, ...props}: Props) {
+export default function SelectInput({minWidth, fullWidth, disabled, ...props}: Props) {
     const [field, meta] = useField(props.name);
     return (
         <>
@@ -19,6 +20,7 @@ export default function SelectInput({minWidth, fullWidth, ...props}: Props) {
                 id={field.name}
                 {...field} 
                 {...props}
+                disabled={disabled}
                 select
                 sx={{ minWidth: minWidth }}
                 fullWidth={fullWidth}

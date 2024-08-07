@@ -15,7 +15,7 @@ interface Props {
 }
 
 export default observer(function CategoriesTab({mainCategories}: Props) {
-    const {categoryStore: {categoryToDelete, setCategoryToDelete}} = useStore();
+    const {categoryStore: {selectedCategory, setSelectedCategory}} = useStore();
 
     const [expanded, setExpanded] = useState(new Array(mainCategories.length).fill(false));
 
@@ -34,15 +34,17 @@ export default observer(function CategoriesTab({mainCategories}: Props) {
     const handleDeleteButtonClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, category: MainCategory) => {
         e.preventDefault();
         e.stopPropagation();
-        setCategoryToDelete({
+        setSelectedCategory({
             id: category.id, 
             isMain: true, 
             name: category.name});
         handleOpenDeleteDialog();
     }
 
-    const handleEditButtonClick = () => {
-
+    const handleEditButtonClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, categoryId: number) => {
+        e.preventDefault();
+        e.stopPropagation();
+        router.navigate(`/preferences/categories/${categoryId}/edit`);
     }
 
     const handleAddButtonClick = (category: MainCategory) => {
@@ -58,7 +60,7 @@ export default observer(function CategoriesTab({mainCategories}: Props) {
     return (
         <Box>
             <DeleteCategoryDialog 
-                key={categoryToDelete?.id} 
+                key={selectedCategory?.id} 
                 open={openDeleteDialog} setOpen={setOpenDeleteDialog} />
             {mainCategories
                 .map((category, index) => 
@@ -82,11 +84,7 @@ export default observer(function CategoriesTab({mainCategories}: Props) {
                                     <IconButton
                                         sx={{mr: "0px", my: -1}} 
                                         edge={"end"} aria-label="edit"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            handleEditButtonClick();
-                                        }}>
+                                        onClick={(e) => handleEditButtonClick(e, category.id)}>
                                         <Edit fontSize="small"/>
                                     </IconButton>
                                     <Tooltip 

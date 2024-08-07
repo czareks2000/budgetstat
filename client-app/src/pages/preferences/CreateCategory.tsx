@@ -2,15 +2,45 @@ import { observer } from "mobx-react-lite"
 import ResponsiveContainer from "../../components/common/ResponsiveContainer"
 import { Box, Divider, Paper, Stack } from "@mui/material"
 import { router } from "../../app/router/Routes"
-import CreateCategoryForm from "../../components/forms/Category/CreateCategoryForm"
+import CategoryForm from "../../components/forms/Category/CategoryForm"
 import { useSearchParams } from "react-router-dom"
+import { CategoryType } from "../../app/models/enums/CategoryType"
+import { useState } from "react"
+import { TransactionType } from "../../app/models/enums/TransactionType"
+import { CategoryFormValues } from "../../app/models/Category"
+import { useStore } from "../../app/stores/store"
 
 export default observer(function CreateCategory() {
+    const {categoryStore: {createCategory}} = useStore();
 
     const [searchParams] = useSearchParams();
 
     const handleGoBack = () => {
         router.navigate('/preferences/categories')
+    }
+
+    // potrzebna walidacja
+    const [categoryType] = useState(Number(searchParams.get('categoryType')));
+    const [transactionType] = useState(Number(searchParams.get('transactionType')));
+    const [mainCategoryId] = useState(Number(searchParams.get('mainCategoryId')));
+
+    const initialValues: CategoryFormValues = {
+        categoryType: categoryType || CategoryType.Main,
+        transactionType: transactionType || TransactionType.Expense,
+        name: "",
+        iconId: 1,
+        mainExpenseCategoryId: (categoryType === CategoryType.Sub && transactionType === TransactionType.Expense ) 
+            ? mainCategoryId || "" : "",
+        mainIncomeCategoryId: (categoryType === CategoryType.Sub && transactionType === TransactionType.Income ) 
+            ? mainCategoryId || "" : "",
+    }
+
+    const handleSubmit = (values: CategoryFormValues) => {
+        const type = values.transactionType === TransactionType.Expense ? 'expense' : 'income';
+
+        createCategory(values).then(() => {
+            router.navigate(`/preferences/categories?type=${type}`);
+        });
     }
 
     return (
@@ -20,10 +50,9 @@ export default observer(function CreateCategory() {
                 <Divider>Create category</Divider>
                 <Paper>
                     <Box p={2}>
-                        <CreateCategoryForm 
-                            categoryType={Number(searchParams.get('categoryType'))}
-                            transactionType={Number(searchParams.get('transactionType'))}
-                            mainCategoryId={Number(searchParams.get('mainCategoryId'))}
+                        <CategoryForm 
+                            initialValues={initialValues}
+                            onSubmit={handleSubmit}
                             onCancel={handleGoBack}/>
                     </Box>
                 </Paper>

@@ -1,15 +1,16 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
-import { Category, CategoryCreateFormValues, CategoryOption, CategoryToDelete, MainCategory } from "../models/Category";
+import { Category, CategoryFormValues, CategoryOption, SelectedCategory, MainCategory } from "../models/Category";
 import { TransactionType } from "../models/enums/TransactionType";
 import { Option } from "../models/Option";
 import { CategoryType } from "../models/enums/CategoryType";
+import { router } from "../router/Routes";
 
 export default class CategoryStore {
     mainCategories: MainCategory[] = [];
     categoriesLoaded = false;
 
-    categoryToDelete: CategoryToDelete | undefined = undefined;
+    selectedCategory: SelectedCategory | undefined = undefined;
 
     constructor() {
         makeAutoObservable(this);
@@ -19,15 +20,52 @@ export default class CategoryStore {
         this.mainCategories = [];
         this.categoriesLoaded = false;
 
-        this.categoryToDelete = undefined;
+        this.selectedCategory = undefined;
     }
 
-    setCategoryToDelete = (categoryToDelete: CategoryToDelete) => {
-        this.categoryToDelete = categoryToDelete;
+    selectCategory = (categoryId: number) => {
+        const mainCategory = this.mainCategories.find(category => category.id === categoryId);
+    
+        if (mainCategory) {
+            this.selectedCategory = {
+                id: mainCategory.id,
+                isMain: true,
+                name: mainCategory.name,
+                transactionType: mainCategory.type,
+                iconId: mainCategory.iconId,
+            };
+        } else {
+            let found = false;
+    
+            for (const category of this.mainCategories) {
+                const subCategory = category.subCategories.find(sub => sub.id === categoryId);
+    
+                if (subCategory) {
+                    this.selectedCategory = {
+                        id: subCategory.id,
+                        isMain: false,
+                        name: subCategory.name,
+                        transactionType: subCategory.type,
+                        iconId: subCategory.iconId,
+                        mainCategoryId: category.id
+                    };
+                    found = true;
+                    break;
+                }
+            }
+    
+            if (!found) {
+                router.navigate('/not-found');
+            }
+        }
+    };
+
+    setSelectedCategory = (selectedCategory: SelectedCategory) => {
+        this.selectedCategory = selectedCategory;
     }
 
-    unsetCategoryToDelete = () => {
-        this.categoryToDelete = undefined;
+    unsetSelectedCategory = () => {
+        this.selectedCategory = undefined;
     }
 
     get mainExpenseCategories() {
@@ -194,7 +232,7 @@ export default class CategoryStore {
         }
     }
 
-    createCategory = async (category: CategoryCreateFormValues) => {
+    createCategory = async (category: CategoryFormValues) => {
         try {
             const mainCategory = await agent.Categories.create({
                 name: category.name,
@@ -207,20 +245,44 @@ export default class CategoryStore {
             })
 
             runInAction(() => {
-                if (category.categoryType === CategoryType.Main)
-                    this.mainCategories.push(mainCategory);
-                else
-                {
-                    this.mainCategories = this.mainCategories.map(current => {
-                        if (current.id === mainCategory.id)
-                            return mainCategory;
-    
-                        return current;
-                    })
-                }
+                this.updateMainCategory(mainCategory, category.categoryType);
             })
         } catch (error) {
             console.log(error);
+        }
+    }
+
+    updateCategory = async (categoryId: number, category: CategoryFormValues) => {
+        try {
+            const mainCategory = await agent.Categories.update(categoryId, {
+                name: category.name,
+                iconId: Number(category.iconId)
+            });
+
+            runInAction(() => {
+                this.mainCategories = this.mainCategories.map(current => {
+                    if (current.id === mainCategory.id)
+                        return mainCategory;
+    
+                    return current;
+                })
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    private updateMainCategory = (mainCategory: MainCategory, categoryType: CategoryType) => {
+        if (categoryType === CategoryType.Main)
+            this.mainCategories.push(mainCategory);
+        else
+        {
+            this.mainCategories = this.mainCategories.map(current => {
+                if (current.id === mainCategory.id)
+                    return mainCategory;
+
+                return current;
+            })
         }
     }
 }

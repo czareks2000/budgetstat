@@ -4,6 +4,7 @@ import { Box, IconButton, ListItem, ListItemText, Tooltip } from "@mui/material"
 import CategoryIcon from "../../../components/common/CategoryIcon";
 import { Delete, Edit } from "@mui/icons-material";
 import { useStore } from "../../../app/stores/store";
+import { router } from "../../../app/router/Routes";
 
 interface Props {
     subcategory: Category;
@@ -11,16 +12,16 @@ interface Props {
 }
 
 export default observer(function SubCategoryListItem({subcategory, openDeleteDialog}: Props) {
-    const {categoryStore: {setCategoryToDelete}} = useStore();
+    const {categoryStore: {setSelectedCategory}} = useStore();
 
 
     const handleDeleteButtonClick = () => {
-        setCategoryToDelete({id: subcategory.id, isMain: false, name: subcategory.name});
+        setSelectedCategory({id: subcategory.id, isMain: false, name: subcategory.name});
         openDeleteDialog();
     }
 
     const handleEditButtonClick = () => {
-
+        router.navigate(`/preferences/categories/${subcategory.id}/edit`);
     }
 
     return (

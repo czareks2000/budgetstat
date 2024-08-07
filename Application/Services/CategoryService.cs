@@ -166,7 +166,15 @@ namespace Application.Services
         {   
             // sprawdzenie czy istnieje
             var category = await _context.Categories
-                .Include(c => c.SubCategories)
+                .Include(c => c.Transactions)
+                    .Include(c => c.Budgets)
+                    .Include(c => c.Icon)
+                    .Include(c => c.SubCategories)
+                        .ThenInclude(c => c.Transactions)
+                    .Include(c => c.SubCategories)
+                        .ThenInclude(c => c.Budgets)
+                    .Include(c => c.SubCategories)
+                        .ThenInclude(c => c.Icon)
                 .Include(c => c.MainCategory)
                     .ThenInclude(c => c.SubCategories)
                 .FirstOrDefaultAsync(c => c.Id == categoryId);
@@ -191,11 +199,31 @@ namespace Application.Services
                 return Result<MainCategoryDto>.Failure("Failed to create category");
 
             // utworzenie obiektu DTO
+
             MainCategoryDto mainCategoryDto;
             if (category.IsMain)
                 mainCategoryDto = _mapper.Map<MainCategoryDto>(category);
             else
+            {
+                var mainCategory = await _context.Categories
+                    .Include(c => c.Transactions)
+                    .Include(c => c.Budgets)
+                    .Include(c => c.Icon)
+                    .Include(c => c.SubCategories)
+                        .ThenInclude(c => c.Transactions)
+                    .Include(c => c.SubCategories)
+                        .ThenInclude(c => c.Budgets)
+                    .Include(c => c.SubCategories)
+                        .ThenInclude(c => c.Icon)
+                    .Where(c => c.IsMain)
+                    .Where(c => c.Id == category.MainCategoryId)
+                    .FirstOrDefaultAsync();
+
+                mainCategory.SubCategories = [.. mainCategory.SubCategories.OrderBy(c => c.Id)];
+
                 mainCategoryDto = _mapper.Map<MainCategoryDto>(category.MainCategory);
+            }
+                
 
             return Result<MainCategoryDto>.Success(mainCategoryDto);
         }

@@ -10,20 +10,22 @@ interface Props {
 }
 
 export default observer(function DeleteCategoryDialog({open, setOpen}: Props) {
-    const {categoryStore: {deleteCategory, categoryToDelete}} = useStore();
+    const {categoryStore: {deleteCategory, selectedCategory, unsetSelectedCategory}} = useStore();
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     
     const handleDelete = () => {
         setIsSubmitting(true);
-        deleteCategory(categoryToDelete!.id, categoryToDelete!.isMain)
+        deleteCategory(selectedCategory!.id, selectedCategory!.isMain)
             .then(() => {
                 setIsSubmitting(false);
+                unsetSelectedCategory();
                 setOpen(false);
             });
     }
 
     const handleCancel = () => {
+        unsetSelectedCategory();
         setOpen(false);
     }
 
@@ -38,7 +40,7 @@ export default observer(function DeleteCategoryDialog({open, setOpen}: Props) {
                 <DialogContent>
                     <Box id='dialog-description'>
                         <Typography variant="body1" mb={2}>
-                            Are you sure you want to delete this category ({categoryToDelete?.name}){categoryToDelete?.isMain && <> and its subcategories</>}?
+                            Are you sure you want to delete this category ({selectedCategory?.name}){selectedCategory?.isMain && <> and its subcategories</>}?
                         </Typography>
                     </Box>
                 </DialogContent>

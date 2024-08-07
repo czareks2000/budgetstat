@@ -5,22 +5,21 @@ import TextInput from "../../formInputs/TextInput";
 import { LoadingButton } from "@mui/lab";
 import { Box, Button, Stack } from "@mui/material";
 import { useStore } from "../../../app/stores/store";
-import { CategoryCreateFormValues } from "../../../app/models/Category";
+import { CategoryFormValues } from "../../../app/models/Category";
 import { TransactionType } from "../../../app/models/enums/TransactionType";
 import { CategoryType } from "../../../app/models/enums/CategoryType";
 import SelectInput from "../../formInputs/SelectInput";
 import { enumToOptions } from "../../../app/models/Option";
-import { router } from "../../../app/router/Routes";
 
 interface Props {
-    categoryType?: CategoryType;
-    transactionType?: TransactionType;
-    mainCategoryId?: number;
+    initialValues: CategoryFormValues;
+    onSubmit: (values: CategoryFormValues) => void;
     onCancel: () => void;
+    editMode?: boolean;
 }
 
-export default observer(function CreateCategoryForm({onCancel, categoryType, transactionType, mainCategoryId }: Props) {
-    const {categoryStore: {mainExpenseCategoriesAsOptions, mainIncomeCategoriesAsOptions, createCategory}} = useStore();
+export default observer(function CategoryForm({onSubmit, onCancel, initialValues, editMode}: Props) {
+    const {categoryStore: {mainExpenseCategoriesAsOptions, mainIncomeCategoriesAsOptions}} = useStore();
 
     const validationSchema = Yup.object({
         name: Yup.string().required('Name is required'),
@@ -38,32 +37,13 @@ export default observer(function CreateCategoryForm({onCancel, categoryType, tra
             then: schema => schema.required('Main category is required')
         }),
     });
-
-    const initialValues: CategoryCreateFormValues = {
-        categoryType: categoryType || CategoryType.Main,
-        transactionType: transactionType || TransactionType.Expense,
-        name: "",
-        iconId: 1,
-        mainExpenseCategoryId: (categoryType === CategoryType.Sub && transactionType === TransactionType.Expense ) 
-            ? mainCategoryId || "" : "",
-        mainIncomeCategoryId: (categoryType === CategoryType.Sub && transactionType === TransactionType.Income ) 
-            ? mainCategoryId || "" : "",
-    }
-
-    const handleSubmit = (values: CategoryCreateFormValues) => {
-        const type = values.transactionType === TransactionType.Expense ? 'expense' : 'income';
-
-        createCategory(values).then(() => {
-            router.navigate(`/preferences/categories?type=${type}`);
-        });
-    }
     
     return (
       <>
         <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
-            onSubmit={handleSubmit}
+            onSubmit={onSubmit}
         >
         {({ isValid, dirty, isSubmitting, values }) => {
         return(
@@ -71,29 +51,32 @@ export default observer(function CreateCategoryForm({onCancel, categoryType, tra
                 <Stack spacing={2}>
 
                     <Box display={'flex'} gap={2}>
-                        {/* Category Type */}
-                        <SelectInput
-                            label="Category Type" name={"categoryType"}
-                            fullWidth
-                            options={enumToOptions(CategoryType)} />
-
                         {/* Transaction Type */}
                         <SelectInput
+                            disabled={editMode}
                             label="Transaction Type" name={"transactionType"}
                             fullWidth
                             options={enumToOptions(TransactionType)
                             .filter(o => o.value !== TransactionType.Transfer)} />
+                        {/* Category Type */}
+                        <SelectInput
+                            disabled={editMode}
+                            label="Category Type" name={"categoryType"}
+                            fullWidth
+                            options={enumToOptions(CategoryType)} />
                     </Box>
 
                     {/* Main Income category */}
                     {(values.categoryType === CategoryType.Sub && values.transactionType === TransactionType.Expense) &&
                     <SelectInput
+                        disabled={editMode}
                         label="Main Category" name={"mainExpenseCategoryId"}
                         options={mainExpenseCategoriesAsOptions} />}
 
                     {/* Main Expense category */}
                     {(values.categoryType === CategoryType.Sub && values.transactionType === TransactionType.Income) &&
                     <SelectInput
+                        disabled={editMode}
                         label="Main Category" name={"mainIncomeCategoryId"}
                         options={mainIncomeCategoriesAsOptions} /> }
 
@@ -113,13 +96,13 @@ export default observer(function CreateCategoryForm({onCancel, categoryType, tra
                             Cancel
                         </Button>
                         <LoadingButton 
-                            color="success" 
+                            color={editMode ? "primary" : "success"} 
                             variant="contained" 
                             fullWidth 
                             type="submit" 
                             disabled={!(dirty && isValid) || isSubmitting}
                             loading={isSubmitting}>
-                            Create
+                            {editMode ? "Save" : "Create"}
                         </LoadingButton>
                     </Stack>
                 </Stack>

@@ -27,7 +27,7 @@ export interface CategoryOption {
     mainCategoryId: number
 }
 
-export interface CategoryCreateFormValues {
+export interface CategoryFormValues {
     categoryType: CategoryType;
     transactionType: TransactionType;
     name: string;
@@ -49,8 +49,11 @@ export interface CategoryUpdateValues {
     iconId: number;
 }
 
-export interface CategoryToDelete {
+export interface SelectedCategory {
     id: number;
     isMain: boolean; 
     name: string;
+    transactionType?: TransactionType;
+    iconId?: number;
+    mainCategoryId?: number;
 }
