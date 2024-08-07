@@ -76,7 +76,7 @@ export default observer(function CreateAccountForm({onSubmit, onCancel}: Props) 
                     <TextInput label="Description" name="description"/>
                    
                     {/* Buttons */}
-                     <Stack direction={'row'} spacing={2}>
+                    <Stack direction={'row'} spacing={2}>
                         <Button 
                             color="error"
                             variant="contained"

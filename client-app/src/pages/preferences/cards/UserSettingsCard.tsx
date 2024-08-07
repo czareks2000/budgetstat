@@ -1,14 +1,25 @@
-import { Box, Card, CardContent, Typography } from "@mui/material"
+import { Box, Button, Paper, Typography } from "@mui/material"
 import { observer } from "mobx-react-lite"
+import { router } from "../../../app/router/Routes"
 
 export default observer(function UserSettingsCard() {
+    const handleButtonClick = () => {
+        router.navigate('/preferences/change-password');
+    }
+
   return (
-    <Card>
-        <CardContent>
-            <Box>
-                <Typography variant="body1">Tu będzie formularz zmiany hasła</Typography>
+    <Paper>
+            <Box p={2}>
+                <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
+                    <Typography>Change password</Typography>
+                    <Button
+                        variant="contained"
+                        onClick={handleButtonClick}
+                    >
+                        Change
+                    </Button>
+                </Box>
             </Box>
-        </CardContent>
-    </Card>
+        </Paper>
 )
 })

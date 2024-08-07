@@ -33,6 +33,7 @@ import Unauthorised from "../../pages/errors/Unauthorised";
 import ManageCategories from "../../pages/preferences/ManageCategories";
 import CreateCategory from "../../pages/preferences/CreateCategory";
 import EditCategory from "../../pages/preferences/EditCategory";
+import ChangePassword from "../../pages/preferences/ChangePassword";
 
 export const routes: RouteObject[] = [
     {
@@ -76,6 +77,7 @@ export const routes: RouteObject[] = [
                 {path: 'preferences/categories', element: <ManageCategories />},
                 {path: 'preferences/categories/create', element: <CreateCategory />},
                 {path: 'preferences/categories/:id/edit', element: <EditCategory />},
+                {path: 'preferences/change-password', element: <ChangePassword />},
                 
                 {path: 'not-found', element: <NotFound />},
                 {path: 'forbidden', element: <Forbidden />},
