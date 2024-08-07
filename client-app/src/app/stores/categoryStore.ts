@@ -74,7 +74,11 @@ export default class CategoryStore {
 
     get mainIncomeCategories() {
         return this.mainCategories.filter(c => c.type === TransactionType.Income);
-     }
+    }
+
+    validateMainCategoryId = (id: number, transactionType: TransactionType) => {
+        return this.mainCategories.find(c => c.id === id && c.type === transactionType)?.id || "";
+    }
 
     get mainExpenseCategoriesAsOptions() {
         let options: Option[] = []

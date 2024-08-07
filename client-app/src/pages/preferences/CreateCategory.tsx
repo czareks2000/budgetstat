@@ -11,7 +11,7 @@ import { CategoryFormValues } from "../../app/models/Category"
 import { useStore } from "../../app/stores/store"
 
 export default observer(function CreateCategory() {
-    const {categoryStore: {createCategory}} = useStore();
+    const {categoryStore: {createCategory, validateMainCategoryId}} = useStore();
 
     const [searchParams] = useSearchParams();
 
@@ -19,14 +19,15 @@ export default observer(function CreateCategory() {
         router.navigate('/preferences/categories')
     }
 
-    // potrzebna walidacja
-    const [categoryType] = useState(Number(searchParams.get('categoryType')));
-    const [transactionType] = useState(Number(searchParams.get('transactionType')));
-    const [mainCategoryId] = useState(Number(searchParams.get('mainCategoryId')));
+    const [categoryType] = useState(Number(searchParams.get('categoryType')) === CategoryType.Sub 
+        ? CategoryType.Sub : CategoryType.Main);
+    const [transactionType] = useState(Number(searchParams.get('transactionType')) === TransactionType.Income 
+        ? TransactionType.Income : TransactionType.Expense);
+    const [mainCategoryId] = useState(validateMainCategoryId(Number(searchParams.get('mainCategoryId')), transactionType));
 
     const initialValues: CategoryFormValues = {
-        categoryType: categoryType || CategoryType.Main,
-        transactionType: transactionType || TransactionType.Expense,
+        categoryType: categoryType,
+        transactionType: transactionType,
         name: "",
         iconId: 1,
         mainExpenseCategoryId: (categoryType === CategoryType.Sub && transactionType === TransactionType.Expense ) 
