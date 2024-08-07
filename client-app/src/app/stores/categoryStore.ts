@@ -5,6 +5,7 @@ import { TransactionType } from "../models/enums/TransactionType";
 import { Option } from "../models/Option";
 import { CategoryType } from "../models/enums/CategoryType";
 import { router } from "../router/Routes";
+import { store } from "./store";
 
 export default class CategoryStore {
     mainCategories: MainCategory[] = [];
@@ -270,6 +271,9 @@ export default class CategoryStore {
     
                     return current;
                 })
+
+                store.transactionStore.loadTransactions();
+                store.transactionStore.latestTransactionsLoaded = false;
             })
         } catch (error) {
             console.log(error);

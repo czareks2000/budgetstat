@@ -29,7 +29,7 @@ export default observer(function CreateCategory() {
         categoryType: categoryType,
         transactionType: transactionType,
         name: "",
-        iconId: 1,
+        iconId: "",
         mainExpenseCategoryId: (categoryType === CategoryType.Sub && transactionType === TransactionType.Expense ) 
             ? mainCategoryId : "",
         mainIncomeCategoryId: (categoryType === CategoryType.Sub && transactionType === TransactionType.Income ) 

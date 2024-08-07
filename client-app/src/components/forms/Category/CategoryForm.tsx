@@ -3,13 +3,15 @@ import { observer } from "mobx-react-lite"
 import * as Yup from "yup";
 import TextInput from "../../formInputs/TextInput";
 import { LoadingButton } from "@mui/lab";
-import { Box, Button, Stack } from "@mui/material";
+import { Button, Grid, Stack } from "@mui/material";
 import { useStore } from "../../../app/stores/store";
 import { CategoryFormValues } from "../../../app/models/Category";
 import { TransactionType } from "../../../app/models/enums/TransactionType";
 import { CategoryType } from "../../../app/models/enums/CategoryType";
 import SelectInput from "../../formInputs/SelectInput";
 import { enumToOptions } from "../../../app/models/Option";
+import IconPicker from "../../formInputs/icon-picker/IconPicker";
+import { Option } from "../../../app/models/Option";
 
 interface Props {
     initialValues: CategoryFormValues;
@@ -37,6 +39,17 @@ export default observer(function CategoryForm({onSubmit, onCancel, initialValues
             then: schema => schema.required('Main category is required')
         }),
     });
+
+    const categoryTypeOptions: Option[] = [
+        {
+            value: CategoryType.Main,
+            text: "Main category"
+        },
+        {
+            value: CategoryType.Sub,
+            text: "Subcategory"
+        },
+    ]
     
     return (
       <>
@@ -45,46 +58,67 @@ export default observer(function CategoryForm({onSubmit, onCancel, initialValues
             validationSchema={validationSchema}
             onSubmit={onSubmit}
         >
-        {({ isValid, dirty, isSubmitting, values }) => {
+        {({ isValid, dirty, isSubmitting, values, setFieldValue }) => {
         return(
             <Form>
                 <Stack spacing={2}>
 
-                    <Box display={'flex'} gap={2}>
-                        {/* Transaction Type */}
-                        <SelectInput
+                    {/* Transaction Type */}
+                    <SelectInput
                             disabled={editMode}
                             label="Transaction Type" name={"transactionType"}
                             fullWidth
                             options={enumToOptions(TransactionType)
                             .filter(o => o.value !== TransactionType.Transfer)} />
-                        {/* Category Type */}
-                        <SelectInput
-                            disabled={editMode}
-                            label="Category Type" name={"categoryType"}
-                            fullWidth
-                            options={enumToOptions(CategoryType)} />
-                    </Box>
 
-                    {/* Main Income category */}
-                    {(values.categoryType === CategoryType.Sub && values.transactionType === TransactionType.Expense) &&
-                    <SelectInput
-                        disabled={editMode}
-                        label="Main Category" name={"mainExpenseCategoryId"}
-                        options={mainExpenseCategoriesAsOptions} />}
+                    <Stack direction={'row'} spacing={2} alignItems={'top'}>
+                            
+                            {/* Category Type */}
+                            <Grid item xs>
+                                <SelectInput
+                                    disabled={editMode}
+                                    label="Category Type" name={"categoryType"}
+                                    fullWidth
+                                    options={categoryTypeOptions} />  
+                            </Grid>
 
-                    {/* Main Expense category */}
-                    {(values.categoryType === CategoryType.Sub && values.transactionType === TransactionType.Income) &&
-                    <SelectInput
-                        disabled={editMode}
-                        label="Main Category" name={"mainIncomeCategoryId"}
-                        options={mainIncomeCategoriesAsOptions} /> }
+                            {values.categoryType === CategoryType.Sub &&
+                            <Grid item xs={'auto'} pt={2}>
+                                of
+                            </Grid>}
+
+                            {/* Main Income category */}
+                            {(values.categoryType === CategoryType.Sub && values.transactionType === TransactionType.Expense) &&
+                            <Grid item xs>
+                                <SelectInput
+                                    disabled={editMode}
+                                    fullWidth
+                                    label="Main Category" name={"mainExpenseCategoryId"}
+                                    options={mainExpenseCategoriesAsOptions} />
+                            </Grid>
+                            }
+
+                            {/* Main Expense category */}
+                            {(values.categoryType === CategoryType.Sub && values.transactionType === TransactionType.Income) &&
+                            <Grid item xs>
+                                <SelectInput
+                                    disabled={editMode}
+                                    fullWidth
+                                    label="Main Category" name={"mainIncomeCategoryId"}
+                                    options={mainIncomeCategoriesAsOptions} />
+                            </Grid>}
+
+                    </Stack>
 
                     {/* Name */}
                     <TextInput label="Name" name="name"/>
-
-                    {/* Icon */}
-                    <TextInput label="Icon select" name="iconId"/>
+                    
+                    {/* Icon Picker */}
+                    <IconPicker
+                        name={"iconId"}
+                        value={values.iconId}
+                        onChange={iconId => setFieldValue('iconId', iconId)}
+                    />
                    
                     {/* Buttons */}
                      <Stack direction={'row'} spacing={2}>

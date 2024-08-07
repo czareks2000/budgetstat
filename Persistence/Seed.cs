@@ -106,26 +106,26 @@ namespace Persistence
             var icons = new List<Icon>
             {
                 // expenses
-                new() { Name = "home" },//0
-                new() { Name = "food" },//1
-                new() { Name = "recreation" },//2
-                new() { Name = "transportation" },//3
-                new() { Name = "travels" },//4
-                new() { Name = "health" },//5
-                new() { Name = "investment" },//6
-                new() { Name = "financial" },//7
-                new() { Name = "shopping" },//8
-                new() { Name = "kids" }, //9 
+                new() { Name = "Home" },//0
+                new() { Name = "Restaurant" },//1
+                new() { Name = "SelfImprovement" },//2
+                new() { Name = "Commute" },//3
+                new() { Name = "Flight" },//4
+                new() { Name = "MedicalServices" },//5
+                new() { Name = "ShowChart" },//6
+                new() { Name = "AccountBalance" },//7
+                new() { Name = "ShoppingCart" },//8
+                new() { Name = "ChildFriendly" }, //9 
                 // incomes
-                new() { Name = "earnings" },//10 
+                new() { Name = "Paid" },//10 
                 // assets
-                new() { Name = "property" },//11
-                new() { Name = "movable_property" },//12
+                new() { Name = "MapsHomeWork" },//11
+                new() { Name = "DirectionsCar" },//12
                 // common
-                new() { Name = "investment" },//13 
-                new() { Name = "other" },//14
+                new() { Name = "ShowChart" },//13 //to zmienic
+                new() { Name = "Help" },//14
                 // transfer
-                new() { Name = "transfer" },//15
+                new() { Name = "SwapHoriz" },//15
             };
 
             context.Icons.AddRange(icons);
@@ -343,16 +343,16 @@ namespace Persistence
                 },
                 new()
                 {
-                    Icon = icons[13],
+                    Icon = icons[6],
                     Name = "Investment",
                     Type = TransactionType.Income,
                     IsMain = true,
                     User = users[0],
                     SubCategories = new List<Category>()
                     {
-                        new() { Icon = icons[13], Name = "Interest", Type = TransactionType.Income, User = users[0] },
-                        new() { Icon = icons[13], Name = "Dividends", Type = TransactionType.Income, User = users[0] },
-                        new() { Icon = icons[13], Name = "Other (Investment)", Type = TransactionType.Income, User = users[0] }
+                        new() { Icon = icons[6], Name = "Interest", Type = TransactionType.Income, User = users[0] },
+                        new() { Icon = icons[6], Name = "Dividends", Type = TransactionType.Income, User = users[0] },
+                        new() { Icon = icons[6], Name = "Other (Investment)", Type = TransactionType.Income, User = users[0] }
                     }
                 },
                 new()
@@ -376,7 +376,7 @@ namespace Persistence
 
             var assetCategories = new List<AssetCategory>()
 {
-                new() { Name = "Investments", Icon = icons[13] },
+                new() { Name = "Investments", Icon = icons[6] },
                 new() { Name = "Property", Icon = icons[11] },
                 new() { Name = "Movable property", Icon = icons[12] },
                 new() { Name = "Other", Icon = icons[14] }

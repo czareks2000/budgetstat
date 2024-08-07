@@ -456,16 +456,16 @@ namespace Application.Services
                 },
                 new()
                 {
-                    Icon = icons.First(i => i.Id == 14),
+                    Icon = icons.First(i => i.Id == 7),
                     Name = "Investment",
                     Type = income,
                     IsMain = true,
                     User = user,
                     SubCategories = new List<Category>()
                     {
-                        new() { Icon = icons.First(i => i.Id == 14), Name = "Interest", Type = income, User = user },
-                        new() { Icon = icons.First(i => i.Id == 14), Name = "Dividends", Type = income, User = user },
-                        new() { Icon = icons.First(i => i.Id == 14), Name = "Other (Investment)", Type = income, User = user }
+                        new() { Icon = icons.First(i => i.Id == 7), Name = "Interest", Type = income, User = user },
+                        new() { Icon = icons.First(i => i.Id == 7), Name = "Dividends", Type = income, User = user },
+                        new() { Icon = icons.First(i => i.Id == 7), Name = "Other (Investment)", Type = income, User = user }
                     }
                 },
                 new()

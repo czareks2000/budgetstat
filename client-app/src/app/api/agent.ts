@@ -52,7 +52,7 @@ axios.interceptors.response.use(async response => {
                 }
                 throw modalStateErrors.flat();
             } else {
-                //store.commonStore.setError(data);
+                console.error(data);
             }
             break;
         case 401:
