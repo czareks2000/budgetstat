@@ -1,4 +1,4 @@
-import { Divider, Grid, Stack } from "@mui/material"
+import { Divider, Fade, Grid, Stack } from "@mui/material"
 import { observer } from "mobx-react-lite"
 import FloatingAddButton from "../../components/common/fabs/FloatingAddButton"
 import { router } from "../../app/router/Routes"
@@ -28,13 +28,21 @@ export default observer(function Transactions() {
                     <Stack spacing={2} minWidth={300} maxWidth={{xs: 1000, sm: 300, md: 1000, lg: 300}}>
                         <Divider>Filters</Divider>
                         {/* tutaj 2 wersje komponentu dla 12 i dla auto */}
-                        <TransactionsFilters />
+                        <Fade in={true} timeout={300}>
+                            <span>
+                            <TransactionsFilters />
+                            </span>
+                        </Fade>
                     </Stack>
                 </Grid>
                 <Grid item xs md xl>
                     <Stack spacing={2}>
                         <Divider>Transactions</Divider>
-                        <TransactionsDataGrid />
+                        <Fade in={true} timeout={300}>
+                            <span>
+                            <TransactionsDataGrid />
+                            </span>
+                        </Fade>
                     </Stack>
                 </Grid>
             </Grid>

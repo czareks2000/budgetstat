@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite"
 import ResponsiveContainer from "../../components/common/ResponsiveContainer"
-import { Box, Divider, Paper, Stack } from "@mui/material"
+import { Box, Divider, Fade, Paper, Stack } from "@mui/material"
 import TransactionForm from "../../components/forms/Transaction/TransactionForm"
 import { FormikHelpers } from "formik"
 import { TransactionFormValues } from "../../app/models/Transaction"
@@ -46,16 +46,20 @@ export default observer(function EditTransaction() {
             <ResponsiveContainer content={
                 <Stack spacing={2}>
                     <Divider>Edit {TransactionType[Number(type)]}</Divider>
-                    <Paper>
-                        <Box p={2}>
-                        <TransactionForm 
-                            key={Number(transactionFormValues)}
-                            editMode
-                            initialValues={transactionFormValues!} 
-                            onSubmit={handleUpdate} 
-                            submitText={"Save"} />
-                        </Box>
-                    </Paper>
+                    <Fade in={!loadingFormValues} timeout={200}>
+                    <span>
+                        <Paper>
+                            <Box p={2}>
+                                <TransactionForm 
+                                key={Number(transactionFormValues)}
+                                editMode
+                                initialValues={transactionFormValues!} 
+                                onSubmit={handleUpdate} 
+                                submitText={"Save"} />
+                            </Box>
+                        </Paper>
+                    </span>
+                    </Fade>
                 </Stack>
             } />
         </>

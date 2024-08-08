@@ -193,10 +193,10 @@ export default class TransactionStore {
 
     loadTransactions = async () => {
         this.transactionsLoaded = false;
-        this.transactionRegistry.clear();
         try {
             const transactions = await agent.Transactions.list(this.transactionParams);
             runInAction(() => {
+                this.transactionRegistry.clear();
                 transactions.forEach(transaction => {
                     this.setTransaction(transaction);
                 })
@@ -262,6 +262,10 @@ export default class TransactionStore {
                 this.loadingFormValues = false;
             })
         }
+    }
+
+    clearTransactionFormValues = () => {
+        this.transactionFormValues = undefined;
     }
 
     loadPlannedTransactions = async () => {

@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite"
 import { useStore } from "../../app/stores/store";
-import { Divider, Stack } from "@mui/material";
+import { Divider, Fade, Stack } from "@mui/material";
 
 import AccountsList from "./AccountsList";
 import { useState } from "react";
@@ -34,9 +34,11 @@ export default observer(function Accounts() {
                     :
                         <Divider>You have no accounts</Divider>
                     }
+                    
                     <AccountsList 
                         accounts={accounts}
                         openDeleteDialog={handleOpenDeleteDialog}/>
+                        
                 </Stack>
             } />
         </>

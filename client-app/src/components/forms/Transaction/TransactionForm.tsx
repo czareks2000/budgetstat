@@ -27,6 +27,7 @@ interface Props {
 export default observer(function TransactionForm({initialValues, onSubmit, submitText, editMode}: Props) {
     const {
         accountStore: {accountsAsOptions, getAccountCurrency, isTheSameCurrency},
+        transactionStore: {clearTransactionFormValues},
         currencyStore: {getCurrentExchangeRate, currentExchangeRate},
         categoryStore: {getCategoriesAsOptions}} = useStore();
 
@@ -89,6 +90,7 @@ export default observer(function TransactionForm({initialValues, onSubmit, submi
 
     const onCancel = () => {
         router.navigate('/transactions');
+        //clearTransactionFormValues();
     }
 
     const handleSubmit = (values: TransactionFormValues, helpers: FormikHelpers<TransactionFormValues>) => {
