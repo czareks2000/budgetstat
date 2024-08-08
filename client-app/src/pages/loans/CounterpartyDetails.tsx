@@ -2,22 +2,24 @@ import { observer } from "mobx-react-lite"
 import FloatingAddButton from "../../components/common/fabs/FloatingAddButton"
 import { router } from "../../app/router/Routes";
 import ResponsiveContainer from "../../components/common/ResponsiveContainer";
-import { Accordion, AccordionDetails, AccordionSummary, Box, Divider, Paper, Stack, Tab, Tabs, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Divider, Paper, Stack, Switch, Tab, Tabs, Tooltip, Typography } from "@mui/material";
 import FloatingGoBackButton from "../../components/common/fabs/FloatingGoBackButton";
 import { useStore } from "../../app/stores/store";
 import { useParams, useSearchParams } from "react-router-dom";
 import { LoanType } from "../../app/models/enums/LoanType";
 import LoanItem from "./common/LoanItem";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { ExpandMore } from "@mui/icons-material";
 import CounterpartySummaryWithPagination from "./counterparty/CounterpartySummaryWithPagination";
 import CounterpartyPaidoffLoans from "./counterparty/CounterpartyPaidoffLoans";
 import CollectivePayoffForm from "../../components/forms/Loan/CollectivePayoffForm";
 import CustomTabPanel, { a11yProps } from "../preferences/tabs/CustomTabPanel";
+import LoanItemCompact from "./common/LoanItemCompact";
 
 export default observer(function CounterpartyDetails() {
     const {
         loanStore: {
+            denseLoanItems, toggleDensity,
             getCounterpartyLoans, selectedSummaries: summaries, selectSummaries}} = useStore();
 
     const {id} = useParams();
@@ -124,17 +126,32 @@ export default observer(function CounterpartyDetails() {
                 {!showHistory && (credits.length > 0 || debts.length > 0) && <>
                     <Divider>Current loans</Divider>
                     <Paper>
-                        <Tabs value={selectedTab} onChange={handleChange} aria-label="categories-tabs">
-                            <Tab label={"Credits"}  {...a11yProps(0)}/>
-                            <Tab label={"Debts"}  {...a11yProps(1)}/>
-                        </Tabs>
+                        <Box display={'flex'} justifyContent={'space-between'} alignItems={"center"}>
+                            <Tabs value={selectedTab} onChange={handleChange} aria-label="categories-tabs">
+                                <Tab label={"Credits"}  {...a11yProps(0)}/>
+                                <Tab label={"Debts"}  {...a11yProps(1)}/>
+                            </Tabs>
+                            <Tooltip title={"Toggle item density"} 
+                                    arrow placement="top">
+                                <Box>
+                                    <Switch
+                                        checked={denseLoanItems} 
+                                        onClick={toggleDensity}
+                                    />                                   
+                                </Box>
+                            </Tooltip>
+                        </Box>
                     </Paper>
 
                     <CustomTabPanel value={selectedTab} index={0}>
                         {credits.length > 0 ?
                             <Stack spacing={2}>
                                 {credits.map((loan) => 
-                                    <LoanItem key={loan.id} loan={loan} detailsAction/>
+                                    <Fragment key={loan.id}>
+                                        {denseLoanItems 
+                                        ? <LoanItemCompact loan={loan} detailsAction/>
+                                        : <LoanItem  loan={loan} detailsAction/>}
+                                    </Fragment>
                                 )}
                             </Stack>
                             :
@@ -150,7 +167,11 @@ export default observer(function CounterpartyDetails() {
                         {debts.length > 0 ?
                             <Stack spacing={2}>
                             {debts.map((loan) => 
-                                <LoanItem key={loan.id} loan={loan} detailsAction/>
+                                <Fragment key={loan.id}>
+                                    {denseLoanItems 
+                                    ? <LoanItemCompact loan={loan} detailsAction/>
+                                    : <LoanItem  loan={loan} detailsAction/>}
+                                </Fragment>
                             )}
                             </Stack>
                         :

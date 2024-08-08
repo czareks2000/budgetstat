@@ -1,4 +1,4 @@
-import { makeAutoObservable, runInAction } from "mobx";
+import { makeAutoObservable, reaction, runInAction } from "mobx";
 import { GroupedLoan, Loan, LoanCreateValues, LoanUpdateValues } from "../models/Loan";
 import { Counterparty, CounterpartyCreateValues } from "../models/Counterparty";
 import { LoanStatus } from "../models/enums/LoanStatus";
@@ -27,8 +27,17 @@ export default class LoanStore {
 
     selectedSummaries: GroupedLoan[] = [];
 
+    denseLoanItems: boolean = localStorage.getItem('denseLoanItems') === "true";
+
     constructor() {
         makeAutoObservable(this);
+
+        reaction(
+            () => this.denseLoanItems, 
+            () => {
+                localStorage.setItem('denseLoanItems', this.denseLoanItems ? "true" : "false");
+            }
+        )
     }
 
     selectSummaries = (counterpartyId: number) => {
@@ -53,6 +62,10 @@ export default class LoanStore {
         this.loansPaidOffRegistry.clear();
         this.loansPaidOffLoaded = false;
         this.counterpartyLoansLoaded= [];
+    }
+
+    toggleDensity = () => {
+        this.denseLoanItems = !this.denseLoanItems;
     }
 
     selectLoan = async (loanId: number) => {
