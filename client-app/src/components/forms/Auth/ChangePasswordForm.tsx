@@ -49,16 +49,16 @@ export default observer(function ChangePasswordForm() {
                 confirmNewPassword: '',
                 error: null
             }}
-            onSubmit={(values, {setErrors, resetForm}) => {
-                try {
-                    userStore.changePassword(values).then(() => {
-                        resetForm();
-                        setMessage('Password changed');
-                        setOpen(true);
-                    });
-                } catch (error) {
+            onSubmit={(values, {setErrors, resetForm, setSubmitting}) => {
+                userStore.changePassword(values).then(() => {
+                    resetForm();
+                    setMessage('Password changed');
+                    setOpen(true);
+                }).catch(error =>{
+                    console.log(error[0]);
                     setErrors({error: error as string});
-                }
+                    setSubmitting(false);
+                });
             } 
             }
             validationSchema={Yup.object({
@@ -68,7 +68,7 @@ export default observer(function ChangePasswordForm() {
                     .oneOf([Yup.ref('newPassword')], 'Your passwords do not match.')
             })}
         >
-        {({handleSubmit, isSubmitting, isValid, dirty}) => ( 
+        {({handleSubmit, isSubmitting, isValid, dirty, errors}) => ( 
             <Form
                 onSubmit={handleSubmit} 
                 autoComplete="off"
@@ -85,13 +85,11 @@ export default observer(function ChangePasswordForm() {
                         label="Confirm password"
                         name="confirmNewPassword" type="password"/>
 
+                    {errors.error &&
                     <Typography color={'error'}>
-                        <ErrorMessage 
-                            name="error"
-                            component="span"
-                        />
-                    </Typography>
-
+                        {errors.error}
+                    </Typography>}
+                     
                     <Stack direction={'row'} spacing={2}>
                         <Button 
                             color="error"
