@@ -17,6 +17,7 @@ import { useEffect } from "react"
 export default observer(function Home() {
     const {
         statsStore: {homePageChartsLoaded, loadHomePageCharts},
+        transactionStore: {plannedTransactionsToConfirm}
     } = useStore();
 
     useEffect(() => {
@@ -68,6 +69,9 @@ export default observer(function Home() {
                         <Grid item xs={12} lg>
                             <Stack spacing={2}>
 
+                                {plannedTransactionsToConfirm.length > 0 &&
+                                <TransactionsToConfirmCard />}
+
                                 <LoansCard />
 
                                 <NoDecorationLink to={"/budgets"} 
@@ -83,7 +87,8 @@ export default observer(function Home() {
                                 
                                 <TransactionsCard />
 
-                                <TransactionsToConfirmCard />
+                                {plannedTransactionsToConfirm.length === 0 &&
+                                <TransactionsToConfirmCard />}
 
                             </Stack>
                         </Grid>
