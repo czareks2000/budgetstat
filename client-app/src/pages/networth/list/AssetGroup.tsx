@@ -1,5 +1,5 @@
-import { ExpandMore } from '@mui/icons-material';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Divider, List, Typography } from '@mui/material'
+import { Add, ExpandMore } from '@mui/icons-material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Divider, IconButton, List, Typography } from '@mui/material'
 import CategoryIcon from '../../../components/common/CategoryIcon';
 import { useStore } from '../../../app/stores/store';
 import { observer } from 'mobx-react-lite';
@@ -9,6 +9,7 @@ import AssetItem from './AssetItem';
 import { AssetCategory } from '../../../app/models/Asset';
 import { useState } from 'react';
 import DeleteAssetDialog from '../dialogs/DeleteAssetDialog';
+import { router } from '../../../app/router/Routes';
 
 interface Props {
     index: number;
@@ -28,6 +29,10 @@ export default observer(function AssetGroup({index, expanded, handleToggle, cate
 
     const handleOpenDeleteDialog = () => {
         setOpenDeleteDialog(true);
+    }
+
+    const handleAddButtonClick = () => {
+        router.navigate(`/net-worth/assets/create?categoryId=${category.id}`);
     }
 
     return (
@@ -54,7 +59,8 @@ export default observer(function AssetGroup({index, expanded, handleToggle, cate
                 </Box>
             </AccordionSummary>
             <Divider/>
-            <AccordionDetails>
+            {assets.filter(a => a.assetCategoryId === category.id).length > 0 &&<>
+            <AccordionDetails sx={{p: 2}}>
                 <List disablePadding>
                 {assets.map((asset) => 
                 <Fragment key={asset.id}>
@@ -63,8 +69,16 @@ export default observer(function AssetGroup({index, expanded, handleToggle, cate
                     }
                 </Fragment>                 
                 )}
-                </List>      
+                </List>
             </AccordionDetails>
+            <Divider/></>}
+            <Box display={'flex'} justifyContent={'center'} py={1}>
+                <IconButton 
+                    aria-label="add" 
+                    onClick={handleAddButtonClick}>
+                    <Add/>
+                </IconButton>
+            </Box>  
         </Accordion>
     </>
   )

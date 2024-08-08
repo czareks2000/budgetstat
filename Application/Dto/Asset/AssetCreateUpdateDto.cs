@@ -17,5 +17,7 @@ namespace Application.Dto.Asset
         [Required]
         [GreaterThanZero(ErrorMessage = "Invalid currency id")]
         public int CurrencyId { get; set; }
+        [Required]
+        public DateTime Date { get; set; }
     }
 }

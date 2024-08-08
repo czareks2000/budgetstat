@@ -9,6 +9,7 @@ import { useStore } from "../../app/stores/store"
 import { useParams } from "react-router-dom"
 import { useEffect } from "react"
 import LoadingWithLabel from "../../components/common/loadings/LoadingWithLabel"
+import dayjs from "dayjs"
 
 export default observer(function EditAsset() {
   const {assetStore: {updateAsset, selectedAsset, selectAsset}} = useStore();
@@ -40,7 +41,8 @@ export default observer(function EditAsset() {
     name: selectedAsset.name,
     description: selectedAsset.description || "",
     assetValue: selectedAsset.assetValue,
-    currencyId: selectedAsset.currencyId
+    currencyId: selectedAsset.currencyId,
+    date: dayjs(),
   }
   
   return (
@@ -51,6 +53,7 @@ export default observer(function EditAsset() {
             <Paper>
                 <Box p={2}>
                     <AssetForm
+                      editMode
                       initialValues={initialValues} 
                       onSubmit={handleOnSubmit}
                       onGoBack={handleGoBack}

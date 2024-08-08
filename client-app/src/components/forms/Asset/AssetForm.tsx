@@ -8,19 +8,33 @@ import SelectInput from "../../formInputs/SelectInput";
 import { useStore } from "../../../app/stores/store";
 import NumberInput from "../../formInputs/NumberInput";
 import { AssetCreateUpdateValues } from "../../../app/models/Asset";
+import MyDatePicker from "../../formInputs/MyDatePicker";
+import dayjs from "dayjs";
 
 interface Props {
     initialValues: AssetCreateUpdateValues;
     onSubmit: (budget: AssetCreateUpdateValues, formikHelpers: FormikHelpers<AssetCreateUpdateValues>) => void;
     onGoBack: () => void;
     submitText: string;
+    editMode?: boolean;
 }
 
-export default observer(function AssetForm({initialValues, onSubmit, onGoBack, submitText}: Props) {
+export default observer(function AssetForm({initialValues, onSubmit, onGoBack, submitText, editMode}: Props) {
     const {
         currencyStore: {currenciesAsOptions},
         assetStore: {assetCategoriesAsOptions}
     } = useStore();
+
+    const dateValidationSchema = () => {
+        if (editMode)
+            return Yup.date()
+            .typeError('Invalid date format')
+            .notRequired()
+        else
+            return Yup.date()
+            .typeError('Invalid date format')
+            .required('Date is required')
+    }
 
     const validationSchema = Yup.object({
         assetCategoryId: Yup.string().required('Category is required'),
@@ -29,6 +43,7 @@ export default observer(function AssetForm({initialValues, onSubmit, onGoBack, s
         assetValue: Yup.number().required('Asset value is required')
                         .min(0, 'Asset value must be greater than or equal to 0'),
         currencyId: Yup.string().required('Currency is required'),
+        date: dateValidationSchema(),
     });
     
     return (
@@ -52,7 +67,7 @@ export default observer(function AssetForm({initialValues, onSubmit, onGoBack, s
                     <Stack direction={"row"} display="flex" spacing={2}>
                         <Grid item xs>
                             {/* Asset value */}
-                            <NumberInput label="Current value" name="assetValue" fullWidth/>
+                            <NumberInput label={editMode ? "Current Value" : "Value"} name="assetValue" fullWidth/>
                         </Grid>
                         <Grid item xs={'auto'}>
                             {/* CurrencyId */}
@@ -61,6 +76,13 @@ export default observer(function AssetForm({initialValues, onSubmit, onGoBack, s
                                 minWidth={120}/>
                         </Grid>
                     </Stack>
+
+                    {/* Date */}
+                    {!editMode &&
+                    <MyDatePicker 
+                            defaultValue={dayjs()}
+                            label="Asset value at" 
+                            name={"date"}/>}
 
                     {/* Description */}
                     <TextInput label="Description" name="description"/>

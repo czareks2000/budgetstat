@@ -6,12 +6,18 @@ import { observer } from "mobx-react-lite"
 import AssetForm from "../../components/forms/Asset/AssetForm"
 import { FormikHelpers } from "formik"
 import { useStore } from "../../app/stores/store"
+import dayjs from "dayjs"
+import { useSearchParams } from "react-router-dom"
+import { useState } from "react"
 
 export default observer(function CreateAsset() {
   const {
-    assetStore: {createAsset},
+    assetStore: {createAsset, validateAssetCategoryId},
     currencyStore: {defaultCurrency}
   } = useStore();
+
+  const [searchParams] = useSearchParams();
+  const [assetCategoryId] = useState(validateAssetCategoryId(searchParams.get('categoryId')));
 
   const handleGoBack = () => {
     router.navigate('/net-worth');
@@ -26,11 +32,12 @@ export default observer(function CreateAsset() {
   }
 
   const initialValues: AssetCreateUpdateValues = {
-    assetCategoryId: "",
+    assetCategoryId: assetCategoryId || "",
     name: "",
     description: "",
     assetValue: null,
-    currencyId: defaultCurrency?.id || ""
+    currencyId: defaultCurrency?.id || "",
+    date: dayjs(),
 }
   
   return (

@@ -39,6 +39,7 @@ namespace Application.Services
             {
                 Value = newAsset.AssetValue,
                 Currency = currency,
+                Date = newAsset.Date,
             };
 
             // utworzenie assetu
@@ -116,6 +117,7 @@ namespace Application.Services
             {
                 Value = updatedAsset.AssetValue,
                 Currency = currency,
+                Date = updatedAsset.Date,
             };
 
             // aktualizacja assetu

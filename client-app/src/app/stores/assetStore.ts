@@ -40,6 +40,13 @@ export default class AssetStore {
         }));
     }
 
+    validateAssetCategoryId = (categoryId: string | null) => {
+        if (categoryId)
+            return this.assetCategories.find(c => c.id === Number(categoryId))?.id || null;
+
+        return null;
+    }
+
     getAssetCategoryIconId = (assetCategoryId: number) => {
         return this.assetCategories.find(ac => ac.id === assetCategoryId)?.iconId as number;
     }
@@ -83,7 +90,7 @@ export default class AssetStore {
             const newAsset = await agent.Assets.create(asset);
             runInAction(() => {
                 this.setAsset(newAsset);
-                store.statsStore.updateNetWorthStats(false, true);
+                this.updateDataInOtherStores();
             })
         } catch (error) {
             console.log(error);
@@ -95,7 +102,7 @@ export default class AssetStore {
             const updatedAsset = await agent.Assets.update(assetId, asset);
             runInAction(() => {
                 this.setAsset(updatedAsset);
-                store.statsStore.updateNetWorthStats(false, true);
+                this.updateDataInOtherStores();
             })
         } catch (error) {
             console.log(error);
@@ -107,11 +114,16 @@ export default class AssetStore {
             await agent.Assets.delete(assetId);
             runInAction(() => {
                 this.assetRegistry.delete(assetId);
-                store.statsStore.updateNetWorthStats(false, true);
+                this.updateDataInOtherStores();
             })
         } catch (error) {
             console.log(error);
         }
+    }
+
+    private updateDataInOtherStores = () => {
+        store.statsStore.updateNetWorthStats(false, true);
+        store.statsStore.loadNetWorthValueOverTime();
     }
 
 }

@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export interface Asset {
     id: number;
     assetCategoryId: number;
@@ -19,4 +21,5 @@ export interface AssetCreateUpdateValues {
     description?: string;
     assetValue: number | null;
     currencyId: number | string;
+    date: Date | dayjs.Dayjs;
 }
