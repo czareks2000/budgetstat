@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import * as Yup from 'yup';
-import { ErrorMessage, Form, Formik } from "formik";
+import { Form, Formik } from "formik";
 import { useStore } from "../../../app/stores/store";
 import TextInput from "../../formInputs/TextInput";
 import { LoadingButton } from "@mui/lab";
@@ -55,7 +55,6 @@ export default observer(function ChangePasswordForm() {
                     setMessage('Password changed');
                     setOpen(true);
                 }).catch(error =>{
-                    console.log(error[0]);
                     setErrors({error: error as string});
                     setSubmitting(false);
                 });
