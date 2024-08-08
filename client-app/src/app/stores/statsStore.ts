@@ -12,6 +12,7 @@ import { TransactionType } from "../models/enums/TransactionType";
 import { ChartPeriod } from "../models/enums/periods/ChartPeriod";
 import { AvgChartPeriod } from "../models/enums/periods/AvgChartPeriod";
 import { CategoryType } from "../models/enums/CategoryType";
+import { ExtendedChartPeriod } from "../models/enums/periods/ExtenedChartPeriod";
 
 export default class StatsStore {
     // Current Month Income
@@ -236,8 +237,8 @@ export default class StatsStore {
                 this.avgMonthlyIncomesByCategoriesSettings.period,
                 this.avgMonthlyIncomesByCategoriesSettings.categoryType,
                 Number(this.avgMonthlyIncomesByCategoriesSettings.mainCategoryId),
-                dayjs(this.avgMonthlyIncomesByCategoriesSettings.startDate).toDate(),
-                dayjs(this.avgMonthlyIncomesByCategoriesSettings.endDate).toDate(),
+                dayjs(this.avgMonthlyIncomesByCategoriesSettings.startDate).set('date', 15).toDate(),
+                dayjs(this.avgMonthlyIncomesByCategoriesSettings.endDate).set('date', 15).toDate(),
                 this.avgMonthlyIncomesByCategoriesSettings.accountIds.map(a => Number(a.value)),
             );
             runInAction(() => {
@@ -271,10 +272,18 @@ export default class StatsStore {
     loadIncomesAndExpensesOverTime = async () => {
         this.incomesAndExpensesOverTimeLoaded = false;
         try {
+            let customDate = this.incomesAndExpensesOverTimeSettings.customDate;
+
+            if (this.incomesAndExpensesOverTimeSettings.period === ExtendedChartPeriod.CustomMonth)
+                customDate = dayjs(customDate).set('date', 15);
+
+            if (this.incomesAndExpensesOverTimeSettings.period === ExtendedChartPeriod.CustomYear)
+                customDate = dayjs(customDate).set('month', 6); 
+
             const response = await agent.Stats.incomesAndExpensesOverTime(
                 this.incomesAndExpensesOverTimeSettings.period,
                 this.incomesAndExpensesOverTimeSettings.accountIds.map(a => Number(a.value)),
-                dayjs(this.incomesAndExpensesOverTimeSettings.customDate).toDate(),
+                dayjs(customDate).toDate(),
                 this.incomesAndExpensesOverTimeSettings.incomeCategoryIds.map(ic => ic.id),
                 this.incomesAndExpensesOverTimeSettings.expenseCategoryIds.map(ec => ec.id),
             );

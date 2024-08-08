@@ -649,8 +649,8 @@ namespace Application.Services
             {
                 NetWorthChartPeriod.YTD => new DateTime(now.Year, 1, 1),
                 NetWorthChartPeriod.Month => now.AddDays(-30),
-                NetWorthChartPeriod.Year => now.AddDays(-365),
-                NetWorthChartPeriod.FiveYears => now.AddYears(-5),
+                NetWorthChartPeriod.Year => now.AddMonths(-11),
+                NetWorthChartPeriod.FiveYears => now.AddYears(-4),
                 NetWorthChartPeriod.Max => earilestDate,
                 _ => throw new ArgumentOutOfRangeException(nameof(period), period, null),
             };
@@ -673,8 +673,8 @@ namespace Application.Services
             {
                 ChartPeriod.Last7Days => now.AddDays(-7),
                 ChartPeriod.Last30Days => now.AddDays(-30),
-                ChartPeriod.LastYear => now.AddDays(-365),
-                ChartPeriod.Last5Years => now.AddYears(-5),
+                ChartPeriod.LastYear => now.AddMonths(-11),
+                ChartPeriod.Last5Years => now.AddYears(-4),
                 _ => throw new ArgumentOutOfRangeException(nameof(period), period, null),
             };
 
@@ -728,8 +728,8 @@ namespace Application.Services
             {
                 ExtendedChartPeriod.Last7Days => now.AddDays(-7),
                 ExtendedChartPeriod.Last30Days => now.AddDays(-30),
-                ExtendedChartPeriod.LastYear => now.AddDays(-365),
-                ExtendedChartPeriod.Last5Years => now.AddYears(-5),
+                ExtendedChartPeriod.LastYear => now.AddMonths(-11),
+                ExtendedChartPeriod.Last5Years => now.AddYears(-4),
                 _ => throw new ArgumentOutOfRangeException(nameof(period), period, null),
             };
 
@@ -748,7 +748,7 @@ namespace Application.Services
             {
                 AvgChartPeriod.LastYear => new TimeWindow
                 {
-                    StartDate = new DateTime(now.AddDays(-365).Year, now.AddDays(-365).Month, 1, 0, 0, 0, DateTimeKind.Utc),
+                    StartDate = new DateTime(now.AddMonths(-11).Year, now.AddMonths(-11).Month, 1, 0, 0, 0, DateTimeKind.Utc),
                     EndDate = new DateTime(now.Year, now.Month, DateTime.DaysInMonth(now.Year, now.Month), 23, 59, 59, DateTimeKind.Utc)
                 },
                 AvgChartPeriod.Custom => new TimeWindow
@@ -769,7 +769,7 @@ namespace Application.Services
             var endDate = period switch
             {
                 ForecastPeriod.NextMonth => now.AddMonths(1),
-                ForecastPeriod.NextYear => now.AddYears(1),
+                ForecastPeriod.NextYear => now.AddMonths(11),
                 _ => throw new ArgumentOutOfRangeException(nameof(period), period, null),
             };
 
@@ -827,7 +827,7 @@ namespace Application.Services
                     break;
 
                 case NetWorthChartPeriod.Month:
-                    for (int i = 0; i < 30; i++)
+                    for (int i = 0; i <= 30; i++)
                     {
                         dates.Add(currentDate);
                         currentDate = currentDate.AddDays(1);
@@ -961,7 +961,7 @@ namespace Application.Services
                     break;
 
                 case ExtendedChartPeriod.LastYear:
-                    for (int i = 0; i <= 12; i++)
+                    for (int i = 0; i < 12; i++)
                     {
                         var date = new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month));
                         dates.Add(DateTime.SpecifyKind(date, DateTimeKind.Utc));
