@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite"
 import { useStore } from "../../app/stores/store";
-import { Divider, Fade, Stack } from "@mui/material";
+import { Divider, Stack } from "@mui/material";
 
 import AccountsList from "./AccountsList";
 import { useState } from "react";

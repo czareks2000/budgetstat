@@ -27,7 +27,6 @@ interface Props {
 export default observer(function TransactionForm({initialValues, onSubmit, submitText, editMode}: Props) {
     const {
         accountStore: {accountsAsOptions, getAccountCurrency, isTheSameCurrency},
-        transactionStore: {clearTransactionFormValues},
         currencyStore: {getCurrentExchangeRate, currentExchangeRate},
         categoryStore: {getCategoriesAsOptions}} = useStore();
 
