@@ -22,5 +22,5 @@ export interface CollectivePayoffValues {
     amount: number | null;
     accountId: number | string;
     date: dayjs.Dayjs | Date;
-    loanType: LoanType;
+    loanType: LoanType | string;
 }

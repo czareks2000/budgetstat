@@ -1,15 +1,22 @@
 import { observer } from "mobx-react-lite"
-import { Divider } from "@mui/material"
+import { Box, Divider, Fade, Paper, Stack, Tab, Tabs, Typography } from "@mui/material"
 import { useStore } from "../../../app/stores/store"
 import { useParams } from "react-router-dom"
 import { LoanType } from "../../../app/models/enums/LoanType"
 import { LoanStatus } from "../../../app/models/enums/LoanStatus"
-import LoanItem from "../common/LoanItem"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import LoadingWithLabel from "../../../components/common/loadings/LoadingWithLabel"
+import CustomTabPanel, { a11yProps } from "../../preferences/tabs/CustomTabPanel"
+import LoanListWithPagination from "../common/LoanListWithPagination"
 
 export default observer(function CounterpartyPaidoffLoans() {
     const {loanStore: {getCounterpartyLoans, loadLoans, loansPaidOffLoaded, counterpartyLoansLoaded}} = useStore()
+
+    const [selectedTab, setselectedTab] = useState(0);
+
+    const handleChange = (_: React.SyntheticEvent, newValue: number) => {
+        setselectedTab(newValue);
+    };
 
     const {id} = useParams();
 
@@ -25,27 +32,50 @@ export default observer(function CounterpartyPaidoffLoans() {
     
     return (
         <>
-            {loansPaidOffLoaded ? 
-            <>
-                {credits.length == 0 && debts.length == 0 &&
-                <Divider>There is no history</Divider>
-                }
-                {credits.length > 0 &&
-                <Divider>Credits history</Divider>}
-                {credits.map((loan) => 
-                    <LoanItem key={loan.id} loan={loan} detailsAction/>
-                )}
-                {debts.length > 0 &&
-                <Divider>Debts history</Divider>}
-                {debts.map((loan) => 
-                    <LoanItem key={loan.id} loan={loan} detailsAction/>
-                )}
-            </>
-            :
-            <>
-                <LoadingWithLabel />
-            </>
-            }
+            {!loansPaidOffLoaded && <LoadingWithLabel />}
+
+            <Fade in={loansPaidOffLoaded} appear={false}>
+                <Stack spacing={2}>
+                    {(credits.length == 0 && debts.length == 0) 
+                    ? 
+                        <Divider>There is no history</Divider>
+                    : 
+                    <>
+                        <Divider>History</Divider>
+                        <Paper>
+                            <Tabs value={selectedTab} onChange={handleChange} aria-label="categories-tabs">
+                                <Tab label={"Credits"}  {...a11yProps(0)}/>
+                                <Tab label={"Debts"}  {...a11yProps(1)}/>
+                            </Tabs>
+                        </Paper>
+
+                        <CustomTabPanel value={selectedTab} index={0}>
+                            {credits.length > 0 ?
+                                <LoanListWithPagination key={credits.length} loans={credits} />
+                                :
+                                <Paper>
+                                    <Box p={2}>
+                                        <Typography>There is no credits history</Typography>
+                                    </Box>
+                                </Paper>
+                            }
+                        </CustomTabPanel>
+                        
+                        <CustomTabPanel value={selectedTab} index={1}>
+                            {debts.length > 0 ?
+                                <LoanListWithPagination key={debts.length} loans={debts} />
+                            :
+                                <Paper>
+                                    <Box p={2}>
+                                        <Typography>There is no debts history</Typography>
+                                    </Box>
+                                </Paper>
+                            }
+                        </CustomTabPanel>
+                    </>
+                    } 
+                </Stack>
+            </Fade>
         </>
     )
 })

@@ -43,8 +43,8 @@ export default observer(function CollectivePayoffForm({loans, counterpartyId}: P
         }
         
         collectivePayoff(counterpartyId, transformedValues).then(() => {
-            helpers.resetForm();
             selectSummaries(counterpartyId);
+            helpers.resetForm();
         }).catch((err) => {
             helpers.setErrors({
                 amount: err
@@ -53,20 +53,22 @@ export default observer(function CollectivePayoffForm({loans, counterpartyId}: P
         });
     }
 
-    let seen = new Set();
-    const loanTypeOptions = loans
-    .map(loan => loan.loanType)
-    .map(type => ({
-        value: type,
-        text: `${LoanType[type]}s`
-    }))
-    .filter(item => {
-        const duplicate = seen.has(item.value);
-        seen.add(item.value);
-        return !duplicate;
-    });        
+    const getLoanTypeOptions = (loans: Loan[]) => {
+        let seen = new Set();
+        return loans
+        .map(loan => loan.loanType)
+        .map(type => ({
+            value: type,
+            text: `${LoanType[type]}s`
+        }))
+        .filter(item => {
+            const duplicate = seen.has(item.value);
+            seen.add(item.value);
+            return !duplicate;
+        });  
+    }
     
-    const loanCurrencies = [...new Set(loans.map(l => l.currencyId))];
+    let loanCurrencies = [...new Set(loans.map(l => l.currencyId))];
 
     let accountOptions: Option[] = []
 
@@ -78,12 +80,13 @@ export default observer(function CollectivePayoffForm({loans, counterpartyId}: P
         amount: null,
         accountId: "",
         date: dayjs(),
-        loanType: loanTypeOptions[0].value
+        loanType: getLoanTypeOptions(loans)[0].value
     }
     
     return (
         <>
             <Formik
+                key={getLoanTypeOptions(loans)[0].value}
                 initialValues={initialValues}
                 validationSchema={validationSchema}
                 onSubmit={handleCreateLoanFormSubmit}>
@@ -93,7 +96,7 @@ export default observer(function CollectivePayoffForm({loans, counterpartyId}: P
                         {/* LoanType */}
                         <SelectInput
                             label="Which type of loans you want to repay" name={"loanType"}
-                            options={loanTypeOptions} />
+                            options={getLoanTypeOptions(loans)} />
                             
                         {/* Account */}
                         <SelectInput

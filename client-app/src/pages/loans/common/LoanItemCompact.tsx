@@ -4,7 +4,6 @@ import { router } from "../../../app/router/Routes";
 import { Loan } from "../../../app/models/Loan";
 import { useStore } from "../../../app/stores/store";
 import { formatAmount } from "../../../app/utils/FormatAmount";
-import { convertToString } from "../../../app/utils/ConvertToString";
 import { LoanStatus } from "../../../app/models/enums/LoanStatus";
 import { LoanType } from "../../../app/models/enums/LoanType";
 import { ArrowForward, Delete, Edit } from "@mui/icons-material";
@@ -13,7 +12,7 @@ import { Currency } from "../../../app/models/Currency";
 import NoDecorationLink from "../../../components/common/NoDecorationLink";
 import DeleteLoanDialog from "../dialogs/DeleteLoanDialog";
 import { useState } from "react";
-import { calculateSpaces } from "../../../app/utils/CalculateSpaces";
+import { convertToString } from "../../../app/utils/ConvertToString";
 
 interface Props {
     loan: Loan;
@@ -21,7 +20,7 @@ interface Props {
     noButtons?: boolean;
 }
 
-export default observer(function LoanItem({loan, detailsAction, noButtons = false}: Props) {
+export default observer(function LoanItemCompact({loan, detailsAction, noButtons = false}: Props) {
     const {
         currencyStore: {currencies},
         loanStore: {counterparties},
@@ -46,6 +45,7 @@ export default observer(function LoanItem({loan, detailsAction, noButtons = fals
                         <ArrowForward fontSize="small" sx={{ mx: "6px", mt: "-3px" }} />
                     </Box>
                     You
+                    <> : {formatAmount(loan.fullAmount)} {currency.symbol}</>
                 </>
             );
         else
@@ -56,6 +56,7 @@ export default observer(function LoanItem({loan, detailsAction, noButtons = fals
                         <ArrowForward fontSize="small" sx={{ mx: "6px", mt: "-3px" }} />
                     </Box>
                     {counterparty.name}
+                    <> : {formatAmount(loan.fullAmount)} {currency.symbol}</>
                 </>
             );
     }
@@ -64,14 +65,7 @@ export default observer(function LoanItem({loan, detailsAction, noButtons = fals
 
     const remainingAmount = loan.fullAmount - loan.currentAmount;
 
-    const inProgress = loan.loanStatus === LoanStatus.InProgress;
-
-    const loanEndAmount = `${formatAmount(loan.fullAmount)} ${currency.symbol}`
-
-    const loanStartAmount = `0 ${currency.symbol}`;
-    const spacesNeeded = calculateSpaces(loanEndAmount.length, loanStartAmount.length);
-    
-    const formatedLoanStartAmount = `${loanStartAmount}${spacesNeeded}`;
+    const inProgress = loan.loanStatus === LoanStatus.InProgress;  
 
     const progressColor = () => {
         return loan.loanType === LoanType.Credit ? 'success' : 'error';
@@ -90,7 +84,7 @@ export default observer(function LoanItem({loan, detailsAction, noButtons = fals
             content={
             <Card>
                 <CardContent>
-                    <Grid container justifyContent="flex-end" mb={2}>
+                    <Grid container justifyContent="flex-end">
                             <Grid item xs>
                                 <Stack direction={'row'}>
                                     <Typography variant="h6">
@@ -98,8 +92,8 @@ export default observer(function LoanItem({loan, detailsAction, noButtons = fals
                                     </Typography>
                                 </Stack>
                                 <Stack>
-                                    <Typography variant="subtitle2" gutterBottom>
-                                        <i>{loan.description || "(no description)"}</i>
+                                    <Typography variant="subtitle2">
+                                        <i>{!inProgress && <>{convertToString(loan.loanDate)} - </>}{loan.description || "(no description)"}</i>
                                     </Typography>
                                     {inProgress &&
                                     <Typography variant="subtitle1">
@@ -136,45 +130,17 @@ export default observer(function LoanItem({loan, detailsAction, noButtons = fals
                                 </>}  
                             </Grid>
                         </Grid>
-                    <Divider />
-                        <Box mt={3}>
-                            <Grid container justifyContent="space-between">
-                                <Grid item>
-                                    <Typography variant="body1" gutterBottom>
-                                        {convertToString(loan.loanDate)}
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography variant="body1" gutterBottom>
-                                        {convertToString(loan.repaymentDate)}
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                            <Box mb={1}>
+                        {inProgress &&
+                        <Box mt={1}> 
+                            <Divider /> 
+                            <Box>
                                 <LinearProgress 
                                     variant="determinate" 
                                     value={percentagePaid} 
                                     sx={{height: 10}} 
                                     color={progressColor()}/>
                             </Box>
-                            <Grid container justifyContent="space-between">
-                                <Grid item>
-                                    <Typography variant="body1">
-                                        {formatedLoanStartAmount}
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography variant="body1">
-                                        {formatAmount(loan.currentAmount)} / {formatAmount(loan.fullAmount)} {currency.symbol}
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography variant="body1">
-                                        {loanEndAmount}
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                        </Box>
+                        </Box>}                       
                 </CardContent>
             </Card>
         }/>

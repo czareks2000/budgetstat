@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite"
 import FloatingAddButton from "../../components/common/fabs/FloatingAddButton"
 import { router } from "../../app/router/Routes";
 import ResponsiveContainer from "../../components/common/ResponsiveContainer";
-import { Accordion, AccordionDetails, AccordionSummary, Divider, Stack } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Divider, Paper, Stack, Tab, Tabs, Typography } from "@mui/material";
 import FloatingGoBackButton from "../../components/common/fabs/FloatingGoBackButton";
 import { useStore } from "../../app/stores/store";
 import { useParams, useSearchParams } from "react-router-dom";
@@ -13,6 +13,7 @@ import { ExpandMore } from "@mui/icons-material";
 import CounterpartySummaryWithPagination from "./counterparty/CounterpartySummaryWithPagination";
 import CounterpartyPaidoffLoans from "./counterparty/CounterpartyPaidoffLoans";
 import CollectivePayoffForm from "../../components/forms/Loan/CollectivePayoffForm";
+import CustomTabPanel, { a11yProps } from "../preferences/tabs/CustomTabPanel";
 
 export default observer(function CounterpartyDetails() {
     const {
@@ -79,6 +80,12 @@ export default observer(function CounterpartyDetails() {
         router.navigate('/loans');
     }
     
+    const [selectedTab, setselectedTab] = useState(0);
+
+    const handleChange = (_: React.SyntheticEvent, newValue: number) => {
+        setselectedTab(newValue);
+    };
+
     return (
         <>
         <FloatingGoBackButton onClick={handleGoBack} position={1}/>
@@ -93,16 +100,15 @@ export default observer(function CounterpartyDetails() {
                     onClick={handleShowHistoryToggle}
                     buttonText={showHistory ? "Current loans" : "Show history"}/>
 
-                {!showHistory && showPayoffForm &&
+                {showPayoffForm &&
                 <>
-                    <Divider>Collective repayment</Divider>
                     <Accordion expanded={isAcordionOpen} onChange={handleAcordionToggle}>
                         <AccordionSummary
                         expandIcon={<ExpandMore />}
                         aria-controls="collective-payoff-form"
                         id="collective-payoff-form"
                         >
-                            {!isAcordionOpen ? 'Click to open' : 'Click to hide'}
+                            {!isAcordionOpen ? 'Collective repayment' : 'Click to hide'}
                         </AccordionSummary>
                         <Divider sx={{mb: 1}}/>
                         <AccordionDetails>
@@ -115,18 +121,47 @@ export default observer(function CounterpartyDetails() {
                     <CounterpartyPaidoffLoans />
                 }
                 
-                {!showHistory && <>
-                {debts.length > 0 &&
-                <Divider>Debts</Divider>}
-                {debts.map((loan) => 
-                    <LoanItem key={loan.id} loan={loan} detailsAction/>
-                )}
+                {!showHistory && (credits.length > 0 || debts.length > 0) && <>
+                    <Divider>Current loans</Divider>
+                    <Paper>
+                        <Tabs value={selectedTab} onChange={handleChange} aria-label="categories-tabs">
+                            <Tab label={"Credits"}  {...a11yProps(0)}/>
+                            <Tab label={"Debts"}  {...a11yProps(1)}/>
+                        </Tabs>
+                    </Paper>
 
-                {credits.length > 0 &&
-                <Divider>Credits</Divider>}
-                {credits.map((loan) => 
-                    <LoanItem key={loan.id} loan={loan} detailsAction/>
-                )}</>}
+                    <CustomTabPanel value={selectedTab} index={0}>
+                        {credits.length > 0 ?
+                            <Stack spacing={2}>
+                                {credits.map((loan) => 
+                                    <LoanItem key={loan.id} loan={loan} detailsAction/>
+                                )}
+                            </Stack>
+                            :
+                            <Paper>
+                                <Box p={2}>
+                                    <Typography>There is no current credits</Typography>
+                                </Box>
+                            </Paper>
+                        }
+                    </CustomTabPanel>
+
+                    <CustomTabPanel value={selectedTab} index={1}>
+                        {debts.length > 0 ?
+                            <Stack spacing={2}>
+                            {debts.map((loan) => 
+                                <LoanItem key={loan.id} loan={loan} detailsAction/>
+                            )}
+                            </Stack>
+                        :
+                            <Paper>
+                                <Box p={2}>
+                                    <Typography>There is no current debts</Typography>
+                                </Box>
+                            </Paper>
+                        }
+                    </CustomTabPanel>                    
+                </>}
             </Stack>
         }/>
         </>
