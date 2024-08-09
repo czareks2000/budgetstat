@@ -12,6 +12,7 @@ namespace Application.Dto.Transaction
         public AmountItem Amount { get; set; }
         public DateTime Date { get; set; }
         public string Description { get; set; }
+        public bool Considered { get; set; }
     }
 
     public class CategoryItem

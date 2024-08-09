@@ -113,6 +113,12 @@ export default observer(function TransactionsDataGrid() {
           valueFormatter: (value) => `${(value as AmountItem).value} ${(value as AmountItem).currencySymbol}`,
           sortComparator: (v1, v2) => v1.value - v2.value,
         },
+        { 
+            field: 'considered', 
+            headerName: 'Considered',
+            type: 'boolean', 
+            minWidth: 90 
+        },
         {
             field: 'actions',
             type: 'actions',
@@ -143,6 +149,7 @@ export default observer(function TransactionsDataGrid() {
             category: newModel.category,
             description: newModel.description,
             amount: newModel.amount,
+            considered: newModel.considered,
             actions: newModel.actions,
             itemsPerPage: dataGridSettings.itemsPerPage
         })
@@ -182,6 +189,7 @@ export default observer(function TransactionsDataGrid() {
                                 category: dataGridSettings.category,
                                 description: dataGridSettings.description,
                                 amount: dataGridSettings.amount,
+                                considered: dataGridSettings.considered,
                                 actions: dataGridSettings.actions, 
                             },
                         },
@@ -193,7 +201,7 @@ export default observer(function TransactionsDataGrid() {
                     autoHeight
                     disableRowSelectionOnClick
                     disableDensitySelector
-                    disableColumnFilter
+                    //disableColumnFilter
                     slots={{ toolbar: GridToolbar }}
                     slotProps={{
                         toolbar: {

@@ -8,6 +8,7 @@ import { store } from "./store";
 import { AxiosError } from "axios";
 import { TransferCreateUpdateValues } from "../models/Transfer";
 import { router } from "../router/Routes";
+import { ChartPeriod } from "../models/enums/periods/ChartPeriod";
 
 export default class TransactionStore {
     transactionRegistry = new Map<number, TransactionRowItem>();
@@ -23,8 +24,9 @@ export default class TransactionStore {
     loadingFormValues = false;
 
     private initialParams: TransactionParams = {
-        startDate: dayjs().add(-30, 'days').toDate(),
-        endDate: dayjs().toDate(),
+        period: ChartPeriod.Last30Days,
+        startDate: dayjs().startOf('day').add(12,'hours').add(-30, 'days').toDate(),
+        endDate: dayjs().startOf('day').add(12,'hours').toDate(),
         types: [],
         accountIds: [],
         categoryIds: []
@@ -69,6 +71,7 @@ export default class TransactionStore {
 
     get transactionParamsFormValues() {
         const formValue: TransactionParamsFormValues = {
+            period: this.transactionParams.period,
             startDate: dayjs(this.transactionParams.startDate),
             endDate: dayjs(this.transactionParams.endDate),
             type: this.convertToTransactionTypeFilter(this.transactionParams.types),
@@ -133,6 +136,7 @@ export default class TransactionStore {
     setTransactionParams = async (params: TransactionParamsFormValues) =>
     {   
         const transactionPrams: TransactionParams = {
+            period: params.period,
             startDate: dayjs(params.startDate).toDate(),
             endDate: dayjs(params.endDate).toDate(),
             types: this.convertToTransactionType(params.type),

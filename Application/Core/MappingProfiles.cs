@@ -95,11 +95,13 @@ namespace Application.Core
                 .ForMember(dest => dest.AccountId, opt => opt
                     .MapFrom(src => src.ToAccount.Id))
                 .ForMember(dest => dest.Category, opt => opt
-                    .MapFrom(src => new CategoryItem { Name = "Transfer", IconId = 16}))
+                    .MapFrom(src => new CategoryItem { Name = "Transfer", IconId = 16 }))
                 .ForMember(dest => dest.Amount, opt => opt
                    .MapFrom(src => src))
                 .ForMember(dest => dest.Description, opt => opt
-                   .MapFrom(src => $"Transfer from {src.FromAccount.Name} account"));
+                   .MapFrom(src => $"Transfer from {src.FromAccount.Name} account"))
+                .ForMember(dest => dest.Considered, opt => opt
+                   .MapFrom(src => false));
             CreateMap<Transfer, AmountItem>()
                 .ForMember(dest => dest.Value, opt => opt
                    .MapFrom(src => src.ToAmount))

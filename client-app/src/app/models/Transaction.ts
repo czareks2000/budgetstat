@@ -3,6 +3,7 @@ import { Period } from "./enums/periods/Period";
 import { TransactionType, TransactionTypeFilter } from "./enums/TransactionType";
 import { Option } from "./Option";
 import { Category, CategoryOption } from "./Category";
+import { ChartPeriod } from "./enums/periods/ChartPeriod";
 
 export interface Transaction {
     id: number;
@@ -17,6 +18,7 @@ export interface Transaction {
 }
 
 export interface TransactionParams {
+    period: ChartPeriod;
     startDate: Date | dayjs.Dayjs;
     endDate: Date | dayjs.Dayjs;
     types: TransactionType[];
@@ -25,6 +27,7 @@ export interface TransactionParams {
 }
 
 export interface TransactionParamsFormValues {
+    period: ChartPeriod;
     startDate: Date | dayjs.Dayjs;
     endDate: Date | dayjs.Dayjs;
     type: TransactionTypeFilter;
@@ -42,6 +45,7 @@ export interface TransactionRowItem {
     amount: AmountItem;
     date: Date;
     description: string;
+    considered: boolean;
 }
 
 export interface DataGridSettings {
@@ -51,6 +55,7 @@ export interface DataGridSettings {
     category: boolean;
     description: boolean;
     amount: boolean;
+    considered: boolean;
     actions: boolean;
     itemsPerPage: number;
 }
@@ -62,6 +67,7 @@ export const defaultDataGridSetttings: DataGridSettings = {
     category: true,
     description: false,
     amount: true,
+    considered: false,
     actions: true,
     itemsPerPage: 10
 }
