@@ -55,14 +55,20 @@ export default observer(function ChangePasswordForm() {
                     setMessage('Password changed');
                     setOpen(true);
                 }).catch(error =>{
-                    setErrors({error: error as string});
+                    setErrors({currentPassword: error as string});
                     setSubmitting(false);
                 });
             } 
             }
             validationSchema={Yup.object({
                 currentPassword: Yup.string().required('Current password is required'),
-                newPassword: Yup.string().required('New password is required'),
+                newPassword: 
+                    Yup.string().required('New password is required')
+                    .min(4, 'Password must be at least 4 characters')
+                    .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
+                    .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
+                    .matches(/\d/, 'Password must contain at least one digit')
+                    .matches(/[\W_]/, 'Password must contain at least one special character'),
                 confirmNewPassword: Yup.string().required('Confirm password')
                     .oneOf([Yup.ref('newPassword')], 'Your passwords do not match.')
             })}

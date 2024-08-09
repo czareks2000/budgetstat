@@ -7,13 +7,14 @@ namespace API.Dto
         [Required]
         public string CurrentPassword { get; set; }
         [Required]
-        [RegularExpression("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{4,}$", 
-            ErrorMessage = 
-                "Password needs to have "+
-                "at least one digit, "+
-                "one lowercase letter, "+
-                "one uppercase letter "+
-                "and minimum 4 characters.")]
+        [RegularExpression(@"(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{4,}$",
+        ErrorMessage =
+            "Password needs to have " +
+            "at least one digit, " +
+            "one lowercase letter, " +
+            "one uppercase letter, " +
+            "one special character, " +
+            "and minimum 4 characters.")]
         public string NewPassword { get; set; }
         [Required]
         [Compare("NewPassword")]
