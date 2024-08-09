@@ -7,15 +7,17 @@ import BudgetForm from "../../components/forms/Budget/BudgetForm";
 import { router } from "../../app/router/Routes";
 import ResponsiveContainer from "../../components/common/ResponsiveContainer";
 import { BudgetPeriod } from "../../app/models/enums/BudgetPeriod";
+import ExpensesChart from "./ExpensesChart";
 
 export default observer(function CreateBudget() {
     const {
-        budgetStore: {createBudget},
+        budgetStore: {createBudget, loadChart},
         currencyStore: {defaultCurrency}
     } = useStore();
 
     const handleGoBack = () => {
         router.navigate('/budgets');
+        loadChart([]);
     }
 
     function handleCreate(budget: BudgetDto, formikHelpers: FormikHelpers<BudgetFormValues>): void {
@@ -31,7 +33,7 @@ export default observer(function CreateBudget() {
         period: BudgetPeriod.Month,
         amount: null,
     }
-  
+
     return (
     <ResponsiveContainer content={
         <Stack spacing={2}>
@@ -46,6 +48,7 @@ export default observer(function CreateBudget() {
                         submitText="Create"/>
                 </Box>
             </Paper>
+            <ExpensesChart />
         </Stack>
     }/>
   )

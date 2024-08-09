@@ -8,21 +8,23 @@ import ResponsiveContainer from "../../components/common/ResponsiveContainer";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import LoadingWithLabel from "../../components/common/loadings/LoadingWithLabel";
+import ExpensesChart from "./ExpensesChart";
 
 export default observer(function EditBudget() {
     const {
-        budgetStore: {updateBudget, selectedBudget, selectBudget, deselectBudget}, 
+        budgetStore: {updateBudget, selectedBudget, selectBudget, deselectBudget, loadChart}, 
         categoryStore: {convertToCategoryOptions}
     } = useStore();
   
     function handleUpdate(budget: BudgetDto): void {
         updateBudget(selectedBudget!.id, budget).then(() => {
-            router.navigate('/budgets');
+            handleCancel();
         });
     }
 
     const handleCancel = () => {
         deselectBudget();
+        loadChart([]);
         router.navigate('/budgets');
     }
 
@@ -57,6 +59,7 @@ export default observer(function EditBudget() {
                             submitText="Save"/>
                     </Box>
                 </Paper>
+                <ExpensesChart />
             </Stack>
         }/>
     )

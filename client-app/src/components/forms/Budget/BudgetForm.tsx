@@ -13,6 +13,7 @@ import NumberInput from "../../formInputs/NumberInput";
 import CategoryGroupedInput from "../../formInputs/CategoryGroupedInput";
 import { CategoryOption } from "../../../app/models/Category";
 import { TransactionType } from "../../../app/models/enums/TransactionType";
+import { useEffect } from "react";
 
 interface Props {
     initialValues: BudgetFormValues;
@@ -24,7 +25,9 @@ interface Props {
 
 export default observer(function BudgetForm({initialValues, onSubmit, onCancel, submitText, currencySymbol}: Props) {
     const {
-        categoryStore: {getCategoriesAsOptions}} = useStore();
+        categoryStore: {getCategoriesAsOptions},
+        budgetStore: {loadChart}
+    } = useStore();
 
     const validationSchema = Yup.object({
         name: Yup.string().required('Name is required'),
@@ -49,7 +52,12 @@ export default observer(function BudgetForm({initialValues, onSubmit, onCancel, 
                 onSubmit(transformedValues, formikHelpers);
             }}
         >
-        {({ isValid, dirty, isSubmitting }) => {
+        {({ isValid, dirty, isSubmitting, values }) => {
+
+            useEffect(() => {
+                loadChart(values.categories.map(c => c.id));
+            }, [values.categories])
+
         return(
             <Form>
                 <Stack spacing={2}>

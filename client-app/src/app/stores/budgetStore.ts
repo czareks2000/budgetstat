@@ -4,11 +4,16 @@ import agent from "../api/agent";
 import { BudgetPeriod } from "../models/enums/BudgetPeriod";
 import { router } from "../router/Routes";
 import { store } from "./store";
+import { IncomesAndExpensesDataSetItem } from "../models/Stats";
+import { ExtendedChartPeriod } from "../models/enums/periods/ExtenedChartPeriod";
 
 export default class BudgetStore {
     budgetsRegistry = new Map<number, Budget>();
     selectedBudget: Budget | undefined = undefined;
     budgetsLoaded = false;
+
+    chart: IncomesAndExpensesDataSetItem[] | undefined = undefined;
+    chartLoaded = false;
 
     constructor() {
         makeAutoObservable(this);
@@ -213,4 +218,29 @@ export default class BudgetStore {
             console.log(error);
         }
     }
+
+    loadChart = async (expenseCategoryIds: number[]) => {
+        this.chartLoaded = false;
+        try {
+            if (expenseCategoryIds.length == 0)
+            {
+                this.chartLoaded = true;
+                this.chart = undefined;
+                return;
+            }
+
+            const response = await agent.Stats.incomesAndExpensesOverTime(
+                ExtendedChartPeriod.LastYear, undefined, undefined, undefined, 
+                expenseCategoryIds,
+            );
+            runInAction(() => {
+                this.chart = response;
+                this.chartLoaded = true;
+            })
+            
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    
 }
