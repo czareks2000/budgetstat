@@ -60,7 +60,7 @@ export default observer(function IncomesAndExpensesOverTimeBarChart() {
                 }}
                 loading={!incomesAndExpensesOverTimeLoaded}
                 margin={{ left: 65}}
-                dataset={incomesAndExpensesOverTime}
+                dataset={incomesAndExpensesOverTime || []}
                 xAxis={[
                 { scaleType: 'band', dataKey: 'label' },
                 ]}

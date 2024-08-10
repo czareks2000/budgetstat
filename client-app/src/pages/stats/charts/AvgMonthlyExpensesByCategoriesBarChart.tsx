@@ -31,7 +31,7 @@ export default observer(function AvgMonthlyExpensesByCategoriesBarChart() {
                 }}
                 loading={!avgMonthlyExpensesByCategoriesLoaded}
                 margin={{ left: 65}}
-                dataset={avgMonthlyExpensesByCategories}
+                dataset={avgMonthlyExpensesByCategories || []}
                 xAxis={[
                 { scaleType: 'band', dataKey: 'label' },
                 ]}
