@@ -9,7 +9,7 @@ import { useState } from "react";
 export default observer(function AssetValueHistoryWithPagination() {
   const {
     assetStore: {
-      selectedAssetValues, assetValuesLoaded},
+      selectedAssetValues, assetValuesLoaded, selectedAsset},
   } = useStore();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -28,8 +28,8 @@ export default observer(function AssetValueHistoryWithPagination() {
     <>
         {!assetValuesLoaded && <LoadingCenter />}
 
-        <Fade in={assetValuesLoaded} appear={false}>
-          
+        <Fade in={assetValuesLoaded} appear={false} key={selectedAsset!.id}>
+            <span>
             <Stack spacing={2}>
               <Paper>
                 <List disablePadding>
@@ -46,7 +46,7 @@ export default observer(function AssetValueHistoryWithPagination() {
                   page={currentPage}
                   onChange={handlePageChange}/>}
             </Stack>
-          
+            </span>
         </Fade>
     </>
   )

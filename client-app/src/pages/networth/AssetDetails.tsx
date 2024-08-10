@@ -8,12 +8,12 @@ import { useEffect, useState } from "react";
 import { router } from "../../app/router/Routes";
 import LoadingWithLabel from "../../components/common/loadings/LoadingWithLabel";
 import { useStore } from "../../app/stores/store";
-import NetWorthOverTimeLineChart from "./charts/NetWorthOverTimeLineChart";
 import DeleteAssetDialog from "./dialogs/DeleteAssetDialog";
 import ButtonGroupMenu from "./details/ButtonGroupMenu";
 import CreateAssetValue from "./details/CreateAssetValue";
 import AssetValueHistoryWithPagination from "./details/AssetValueHistoryWithPagination";
 import CategoryIcon from "../../components/common/CategoryIcon";
+import AssetValueOverTimeLineChart from "./charts/AssetValueOverTimeLineChart";
 
 interface Props {
   editView?: boolean;
@@ -22,7 +22,8 @@ interface Props {
 export default observer(function AssetDetails({editView}: Props) {
   const {
     assetStore: {
-      selectedAsset, selectAsset, loadAssetValues, getAssetCategoryIconId},
+      selectedAsset, selectAsset, deselectAsset, 
+      loadAssetValues, loadAssetValueOverTime, getAssetCategoryIconId},
   } = useStore();
 
   const [selectedPage, setSeletedPage] = useState(editView ? 'edit' : 'history');
@@ -35,6 +36,7 @@ export default observer(function AssetDetails({editView}: Props) {
         {
           selectAsset(parseInt(id));
           loadAssetValues(parseInt(id));
+          loadAssetValueOverTime(parseInt(id));
         } 
           else
             router.navigate('/not-found');
@@ -44,6 +46,7 @@ export default observer(function AssetDetails({editView}: Props) {
 
   const handleGoBack = () => {
     router.navigate('/net-worth');
+    deselectAsset();
   }
 
   return (
@@ -59,7 +62,7 @@ export default observer(function AssetDetails({editView}: Props) {
               </Box>
             </Divider>
             
-            <NetWorthOverTimeLineChart />
+            <AssetValueOverTimeLineChart />
 
             <ButtonGroupMenu 
               selectedPage={selectedPage} setSeletedPage={setSeletedPage} 

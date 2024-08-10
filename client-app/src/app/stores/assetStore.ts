@@ -1,10 +1,12 @@
-import { makeAutoObservable, runInAction } from "mobx";
+import { makeAutoObservable, reaction, runInAction } from "mobx";
 import { Asset, AssetCategory, AssetCreateUpdateValues, AssetValue, AssetValueCreateValues } from "../models/Asset";
 import agent from "../api/agent";
 import { Option } from "../models/Option";
 import { store } from "./store";
 import { router } from "../router/Routes";
 import dayjs from "dayjs";
+import { ValueOverTime } from "../models/Stats";
+import { NetWorthChartPeriod } from "../models/enums/periods/NetWorthChartPeriod";
 
 export default class AssetStore {
     assetRegistry = new Map<number, Asset>();
@@ -14,11 +16,22 @@ export default class AssetStore {
     selectedAssetValues: AssetValue[] = [];
     assetValuesLoaded = false;
 
+    assetValueOverTime: ValueOverTime | undefined = undefined;
+    chartPeriod: NetWorthChartPeriod = NetWorthChartPeriod.Year;
+    assetValueOverTimeLoaded = false;
+
     assetCategories: AssetCategory[] = [];
     categoriesLoaded = false;
 
     constructor() {
         makeAutoObservable(this);
+
+        reaction(
+            () => this.chartPeriod, 
+            () => {
+                this.loadAssetValueOverTime(this.selectedAsset?.id);
+            }
+        )
     }
 
     clearStore = () => {
@@ -108,6 +121,7 @@ export default class AssetStore {
             runInAction(() => {
                 this.setAsset(updatedAsset);
                 this.loadAssetValues(assetId);
+                this.loadAssetValueOverTime(assetId);
                 this.updateDataInOtherStores();
             })
         } catch (error) {
@@ -127,9 +141,35 @@ export default class AssetStore {
         }
     }
 
+    loadAssetValueOverTime = async (assetId: number | undefined) => {
+        if(!assetId)
+            return;
+
+        this.assetValueOverTimeLoaded = false;
+        this.selectedAssetValues = [];
+        try {
+            const response = await agent.Stats.assetValueOverTime(assetId, this.chartPeriod);
+            runInAction(() => {
+                response.startDate = dayjs(response.startDate).toDate(); 
+                response.endDate = dayjs(response.endDate).toDate(); 
+                this.assetValueOverTime = response;
+                this.assetValueOverTimeLoaded = true;
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    setChartPeriod = (period: NetWorthChartPeriod) => {
+        this.chartPeriod = period;
+    }
+
+    deselectAsset = () => {
+        this.selectedAsset = undefined;
+    }
+
     loadAssetValues = async (assetId: number) => {
         this.assetValuesLoaded = false;
-        this.selectedAssetValues = [];
         try {
             let values = await agent.Assets.getAssetValues(assetId);
             runInAction(() => {
@@ -143,12 +183,13 @@ export default class AssetStore {
 
     createAssetValue = async (assetId: number, newAssetValue: AssetValueCreateValues) => {
         try {
-            newAssetValue.date = dayjs(newAssetValue.date).startOf('day');
+            newAssetValue.date = dayjs(newAssetValue.date).startOf('day').add(12, 'hours');
 
             let asset = await agent.Assets.createAssetValue(assetId, newAssetValue);
             runInAction(() => {
                 this.setAsset(asset);
                 this.loadAssetValues(assetId);
+                this.loadAssetValueOverTime(assetId);
                 this.updateDataInOtherStores();
             })
         } catch (error) {
@@ -164,6 +205,7 @@ export default class AssetStore {
             let asset = await agent.Assets.deleteAssetValue(assetValueId);
             runInAction(() => {
                 this.setAsset(asset);
+                this.loadAssetValueOverTime(asset.id);
                 this.updateDataInOtherStores();
             })
         } catch (error) {

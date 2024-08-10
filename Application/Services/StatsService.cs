@@ -152,6 +152,59 @@ namespace Application.Services
             return Result<ValueOverTime>.Success(chartObject);
         }
 
+        public async Task<Result<ValueOverTime>> GetAssetValueOverTime(int assetId, NetWorthChartPeriod period)
+        {
+            var user = await _utilities.GetCurrentUserAsync();
+
+            // filter assets by dates
+            var asset = await _context.Assets
+                .Include(a => a.AssetValues)
+                    .ThenInclude(av => av.Currency)
+                .Where(a => a.Id == assetId)
+                .FirstOrDefaultAsync();
+
+            if (asset == null) return null;
+
+            // create result object
+            ValueOverTime chartObject = new()
+            {
+                Data = [],
+                Labels = [],
+            };
+
+            // calculate start and end dates
+            DateTime earliestDate = FindEarliestDate(asset);
+
+            var timeWindow = CalculateTimeWindow(period, earliestDate);
+
+            chartObject.StartDate = timeWindow.StartDate;
+            chartObject.EndDate = timeWindow.EndDate;
+
+            // calculate date labels
+            var dates = CalculateDates(period, timeWindow);
+
+            // calculate data
+
+            foreach (var date in dates)
+            {
+                decimal value = 0;
+
+                var assetValue = asset.AssetValues
+                        .Where(av => av.Date.Date <= date.Date)
+                        .OrderByDescending(ab => ab.Date)
+                        .FirstOrDefault();
+
+                if (assetValue != null)
+                    value = await _utilities.Convert(assetValue.Currency.Code, user.DefaultCurrency.Code, assetValue.Value, date);
+
+                chartObject.Data.Add(value);
+                chartObject.Labels.Add(FormatDateTime(date, period));
+            }
+
+            // return data
+            return Result<ValueOverTime>.Success(chartObject);
+        }
+
         public async Task<Result<IncomesExpensesValue>> GetCurrentMonthIncome()
         {
             var user = await _utilities.GetCurrentUserAsync();
@@ -791,6 +844,13 @@ namespace Application.Services
                 .Where(asset => asset.AssetValues != null && asset.AssetValues.Count > 0)
                 .SelectMany(asset => asset.AssetValues)
                 .Min(av => av.Date);
+
+            return earliestDate;
+        }
+
+        private static DateTime FindEarliestDate(Asset asset)
+        {
+            DateTime earliestDate = asset.AssetValues.Min(av => av.Date);               
 
             return earliestDate;
         }

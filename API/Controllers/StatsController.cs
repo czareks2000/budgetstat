@@ -2,6 +2,7 @@
 using Application.Dto.Stats.Enums;
 using Application.Interfaces;
 using Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -22,6 +23,14 @@ namespace API.Controllers
         {
             return HandleResult(await _statsService.GetNetWorthValueOverTime(period));
         }
+
+        [Authorize(Policy = "IsOwner")]
+        [HttpGet("stats/assetvalueovertime/{assetId}/{period}")] //api/stats/assetvalueovertime/{assetId}/{period}
+        public async Task<IActionResult> GetAssetValueOverTime(int assetId, NetWorthChartPeriod period)
+        {
+            return HandleResult(await _statsService.GetAssetValueOverTime(assetId, period));
+        }
+
 
         [HttpGet("stats/balanceovertime/{period}")] //api/stats/balanceovertime/{period}
         public async Task<IActionResult> GetAccountBalanceValueOverTime(

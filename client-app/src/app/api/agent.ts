@@ -259,6 +259,8 @@ const Stats = {
         requests.get<NetWorthStats>(`/stats/networthstats?loans=${loans}&assets=${assets}`),
     netWorthValueOverTime: (period: NetWorthChartPeriod) =>
         requests.get<ValueOverTime>(`/stats/networthovertime/${period}`),
+    assetValueOverTime: (assetId: number, period: NetWorthChartPeriod) =>
+        requests.get<ValueOverTime>(`/stats/assetvalueovertime/${assetId}/${period}`),
     currentMothIncome: () =>
         requests.get<IncomesExpensesValue>('/stats/currentmonthincome'),
     avgMonthlyIncomesAndExpensesLastYear: () =>

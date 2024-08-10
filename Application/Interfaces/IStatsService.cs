@@ -34,6 +34,9 @@ namespace Application.Interfaces
         // historia wartości netto
         Task<Result<ValueOverTime>> GetNetWorthValueOverTime(NetWorthChartPeriod period);
 
+        // historia wartości assetu
+        Task<Result<ValueOverTime>> GetAssetValueOverTime(int assetId, NetWorthChartPeriod period);
+
         // aktualna suma wartości aktywów/pasywów
         Task<Result<NetWorthStats>> GetNetWorthStats(bool loans = true, bool assets = true);
     }
