@@ -30,7 +30,7 @@ namespace API.Controllers
 
         [Authorize(Policy = "IsOwner")]
         [HttpDelete("assets/{assetId}")] //api/assets/{assetId}
-        public async Task<IActionResult> GetAssets(int assetId)
+        public async Task<IActionResult> DeleteAsset(int assetId)
         {
             return HandleResult(await _assetService.DeleteAsset(assetId));
         }
@@ -40,6 +40,27 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateAsset(int assetId, AssetCreateUpdateDto updatedAsset)
         {
             return HandleResult(await _assetService.UpdateAsset(assetId, updatedAsset));
+        }
+
+        [Authorize(Policy = "IsOwner")]
+        [HttpPost("assets/{assetId}/values")] //api/assets/{assetId}/values
+        public async Task<IActionResult> CreateAssetValue(int assetId, AssetValueCreateDto newAssetValue)
+        {
+            return HandleResult(await _assetService.CreateAssetValue(assetId, newAssetValue));
+        }
+
+        [Authorize(Policy = "IsOwner")]
+        [HttpGet("assets/{assetId}/values")] //api/assets/{assetId}
+        public async Task<IActionResult> GetAssetValues(int assetId)
+        {
+            return HandleResult(await _assetService.GetAssetValues(assetId));
+        }
+
+        [Authorize(Policy = "IsOwner")]
+        [HttpDelete("assets/values/{assetValueId}")] //api/assets/values/{assetValueId}
+        public async Task<IActionResult> DeleteAssetValue(int assetValueId)
+        {
+            return HandleResult(await _assetService.DeleteAssetValue(assetValueId));
         }
     }
 }

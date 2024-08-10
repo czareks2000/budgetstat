@@ -143,6 +143,8 @@ namespace Application.Core
                 .ForMember(dest => dest.CurrencyId, opt => opt
                         .MapFrom(src => src.AssetValues
                             .OrderByDescending(ab => ab.Date).FirstOrDefault().CurrencyId));
+            CreateMap<AssetValue, AssetValueDto>();
+            CreateMap<AssetValueCreateDto, AssetValue>();
 
             CreateMap<AssetCategory, AssetCategoryDto>();
 

@@ -14,7 +14,7 @@ import { Loan, LoanCreateValues, LoanUpdateValues } from "../models/Loan";
 import { CollectivePayoffValues, PayoffCreateValues } from "../models/Payoff";
 import { LoanStatus } from "../models/enums/LoanStatus";
 import { Icon } from "../models/Icon";
-import { Asset, AssetCategory, AssetCreateUpdateValues } from "../models/Asset";
+import { Asset, AssetCategory, AssetCreateUpdateValues, AssetValue, AssetValueCreateValues } from "../models/Asset";
 import { IncomesAndExpensesDataSetItem, IncomesExpensesValue, LabelValueItem, NetWorthStats, ValueOverTime } from "../models/Stats";
 import { ChartPeriod } from "../models/enums/periods/ChartPeriod";
 import { TransactionType } from "../models/enums/TransactionType";
@@ -241,6 +241,12 @@ const Assets = {
         requests.del<void>(`/assets/${assetId}`),
     update: (assetId: number, asset: AssetCreateUpdateValues) =>
         requests.put<Asset>(`/assets/${assetId}`, asset),
+    getAssetValues: (assetId: number) =>
+        requests.get<AssetValue[]>(`/assets/${assetId}/values`),
+    createAssetValue: (assetId: number, newAssetValue: AssetValueCreateValues) =>
+        requests.post<Asset>(`/assets/${assetId}/values`, newAssetValue),
+    deleteAssetValue: (assetValueId: number) => 
+        requests.del<Asset>(`/assets/values/${assetValueId}`)
 }
 
 const Settings = {

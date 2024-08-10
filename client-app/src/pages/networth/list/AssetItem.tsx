@@ -5,6 +5,7 @@ import { observer } from 'mobx-react-lite'
 import { useStore } from '../../../app/stores/store';
 import { Asset } from '../../../app/models/Asset';
 import { router } from '../../../app/router/Routes';
+import NoDecorationLink from '../../../components/common/NoDecorationLink';
 
 interface Props {
     asset: Asset;
@@ -44,9 +45,11 @@ export default observer(function AssetItem({asset, openDeleteDialog}: Props) {
             </IconButton>
         </Box>
         }>
-        <ListItemText 
-            primary={asset.name}
-            secondary={<i>{formatAmount(asset.assetValue)} {getCurrencySymbol(asset.currencyId)}</i>}/>
+        <NoDecorationLink to={`/net-worth/assets/${asset.id}`} content={
+            <ListItemText 
+                primary={asset.name}
+                secondary={<i>{formatAmount(asset.assetValue)} {getCurrencySymbol(asset.currencyId)}</i>}/>}/>
+        
     </ListItem>  
   )
 })

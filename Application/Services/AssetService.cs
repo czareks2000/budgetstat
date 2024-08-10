@@ -135,5 +135,81 @@ namespace Application.Services
 
             return Result<AssetDto>.Success(assetDto);
         }
+
+        public async Task<Result<AssetDto>> CreateAssetValue(int assetId, AssetValueCreateDto newAssetValue)
+        {
+            // sprawdzenie daty
+            if (newAssetValue.Date > DateTime.UtcNow)
+                return Result<AssetDto>.Failure("Date cannot be in the future");
+
+            // sprawdzenie czy istnieje
+            var asset = await _context.Assets
+                .Include(a => a.AssetValues)
+                .FirstOrDefaultAsync(a => a.Id == assetId);
+
+            if (asset == null) return null;
+
+            // sprawdzenie waluty
+            var currency = await _context.Currencies
+                .FirstOrDefaultAsync(c => c.Id == newAssetValue.CurrencyId);
+
+            if (currency == null)
+                return Result<AssetDto>.Failure("Invalid currency id");
+
+            // utworzenie obiektu AssetValue
+            var assetValue = _mapper.Map<AssetValue>(newAssetValue);
+            assetValue.Currency = currency;
+            assetValue.Asset = asset;
+
+            _context.AssetValues.Add(assetValue);
+
+            // zapisanie zmian w bazie
+            if (await _context.SaveChangesAsync() == 0)
+                return Result<AssetDto>.Failure("Failed to update asset");
+
+            // utworzenie obiektu DTO
+            var assetDto = _mapper.Map<AssetDto>(asset);
+
+            return Result<AssetDto>.Success(assetDto);
+        }
+
+        public async Task<Result<AssetDto>> DeleteAssetValue(int assetValueId)
+        {
+            var assetValue = await _context.AssetValues
+                .FirstOrDefaultAsync(c => c.Id == assetValueId);
+
+            if (assetValue == null) return null;
+
+            var assetId = assetValue.AssetId;
+
+            bool canBeDeleted = _context.AssetValues
+                .Count(av => av.AssetId == assetId) > 1;
+
+            if (!canBeDeleted)
+                return Result<AssetDto>.Failure("You cannot delete a value if it is the only one");
+
+            _context.AssetValues.Remove(assetValue);
+
+            if (await _context.SaveChangesAsync() == 0)
+                return Result<AssetDto>.Failure("Failed to delete asset value");
+
+            var assetDto = await _context.Assets
+                .Include(a => a.AssetValues)
+                .ProjectTo<AssetDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(a => a.Id == assetId);
+
+            return Result<AssetDto>.Success(assetDto);
+        }
+
+        public async Task<Result<List<AssetValueDto>>> GetAssetValues(int assetId)
+        {
+            var assetValues = await _context.AssetValues
+                .Where(av => av.AssetId == assetId)
+                .OrderByDescending(av => av.Date)
+                .ProjectTo<AssetValueDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            return Result<List<AssetValueDto>>.Success(assetValues);
+        }
     }
 }

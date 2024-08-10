@@ -1,14 +1,18 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { Asset, AssetCategory, AssetCreateUpdateValues } from "../models/Asset";
+import { Asset, AssetCategory, AssetCreateUpdateValues, AssetValue, AssetValueCreateValues } from "../models/Asset";
 import agent from "../api/agent";
 import { Option } from "../models/Option";
 import { store } from "./store";
 import { router } from "../router/Routes";
+import dayjs from "dayjs";
 
 export default class AssetStore {
     assetRegistry = new Map<number, Asset>();
-    selectedAsset: Asset | undefined = undefined; 
     assetsLoaded = false;
+
+    selectedAsset: Asset | undefined = undefined; 
+    selectedAssetValues: AssetValue[] = [];
+    assetValuesLoaded = false;
 
     assetCategories: AssetCategory[] = [];
     categoriesLoaded = false;
@@ -21,6 +25,7 @@ export default class AssetStore {
         this.assetRegistry.clear();
         this.assetsLoaded = false;
         this.selectedAsset = undefined;
+        this.selectedAssetValues = [];
         this.assetCategories = [];
     }
 
@@ -102,6 +107,7 @@ export default class AssetStore {
             const updatedAsset = await agent.Assets.update(assetId, asset);
             runInAction(() => {
                 this.setAsset(updatedAsset);
+                this.loadAssetValues(assetId);
                 this.updateDataInOtherStores();
             })
         } catch (error) {
@@ -114,6 +120,50 @@ export default class AssetStore {
             await agent.Assets.delete(assetId);
             runInAction(() => {
                 this.assetRegistry.delete(assetId);
+                this.updateDataInOtherStores();
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    loadAssetValues = async (assetId: number) => {
+        this.assetValuesLoaded = false;
+        this.selectedAssetValues = [];
+        try {
+            let values = await agent.Assets.getAssetValues(assetId);
+            runInAction(() => {
+                this.selectedAssetValues = values;
+                this.assetValuesLoaded = true;
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    createAssetValue = async (assetId: number, newAssetValue: AssetValueCreateValues) => {
+        try {
+            newAssetValue.date = dayjs(newAssetValue.date).startOf('day');
+
+            let asset = await agent.Assets.createAssetValue(assetId, newAssetValue);
+            runInAction(() => {
+                this.setAsset(asset);
+                this.loadAssetValues(assetId);
+                this.updateDataInOtherStores();
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    deleteAssetValue = async (assetValueId: number) => {
+        try {
+            this.selectedAssetValues = this.selectedAssetValues
+                .filter(av => av.id !== assetValueId);
+
+            let asset = await agent.Assets.deleteAssetValue(assetValueId);
+            runInAction(() => {
+                this.setAsset(asset);
                 this.updateDataInOtherStores();
             })
         } catch (error) {

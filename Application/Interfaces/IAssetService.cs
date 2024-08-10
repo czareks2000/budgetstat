@@ -16,5 +16,12 @@ namespace Application.Interfaces
         Task<Result<AssetDto>> UpdateAsset(int assetId, AssetCreateUpdateDto updatedAsset);
         // przegląd zasobów (wartości assetów w ich orginalnych walutach)
         Task<Result<List<AssetDto>>> GetAssets();
+
+        // dodanie asset value
+        Task<Result<AssetDto>> CreateAssetValue(int assetId, AssetValueCreateDto newAssetValue);
+        // usuniecie asset value
+        Task<Result<AssetDto>> DeleteAssetValue(int assetValueId);
+        // przegląd asset values
+        Task<Result<List<AssetValueDto>>> GetAssetValues(int assetId);
     }
 }

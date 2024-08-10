@@ -3,13 +3,15 @@ import { useStore } from "../../../app/stores/store";
 import { useState } from "react";
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
+import { router } from "../../../app/router/Routes";
 
 interface Props {
+    redirect?: boolean
     open: boolean;
     setOpen: (state: boolean) => void;
 }
 
-export default observer(function DeleteAssetDialog({open, setOpen}: Props) {
+export default observer(function DeleteAssetDialog({open, setOpen, redirect}: Props) {
     const {assetStore: {deleteAsset, selectedAsset: asset}} = useStore();
 
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -20,6 +22,8 @@ export default observer(function DeleteAssetDialog({open, setOpen}: Props) {
             .then(() => {
                 setIsSubmitting(false);
                 setOpen(false);
+                if (redirect)
+                    router.navigate('/net-worth');
             });
     }
 

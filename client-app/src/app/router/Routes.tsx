@@ -22,7 +22,7 @@ import CounterpartyDetails from "../../pages/loans/CounterpartyDetails";
 import LoanDetails from "../../pages/loans/LoanDetails";
 import EditLoan from "../../pages/loans/EditLoan";
 import CreateAsset from "../../pages/networth/CreateAsset";
-import EditAsset from "../../pages/networth/EditAsset";
+import EditAsset from "../../pages/networth/details/EditAsset";
 import AssetDetails from "../../pages/networth/AssetDetails";
 import PlannedTransactions from "../../pages/transactions/planned/PlannedTransactions";
 import CreateTransaction from "../../pages/transactions/CreateTransaction";
@@ -68,7 +68,7 @@ export const routes: RouteObject[] = [
                 
                 {path: 'net-worth', element: <NetWorth />},
                 {path: 'net-worth/assets/create', element: <CreateAsset />},
-                {path: 'net-worth/assets/:id/edit', element: <EditAsset />},
+                {path: 'net-worth/assets/:id/edit', element: <AssetDetails editView/>},// to jest tymczasowo
                 {path: 'net-worth/assets/:id', element: <AssetDetails />},
 
                 {path: 'import-export', element: <ImportExport />},
