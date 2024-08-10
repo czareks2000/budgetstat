@@ -146,7 +146,7 @@ export default class AssetStore {
             return;
 
         this.assetValueOverTimeLoaded = false;
-        this.selectedAssetValues = [];
+        this.assetValueOverTime = undefined;
         try {
             const response = await agent.Stats.assetValueOverTime(assetId, this.chartPeriod);
             runInAction(() => {
