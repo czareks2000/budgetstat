@@ -8,6 +8,7 @@ import { router } from "../../app/router/Routes";
 import ResponsiveContainer from "../../components/common/ResponsiveContainer";
 import { BudgetPeriod } from "../../app/models/enums/BudgetPeriod";
 import ExpensesChart from "./ExpensesChart";
+import { useSearchParams } from "react-router-dom";
 
 export default observer(function CreateBudget() {
     const {
@@ -15,8 +16,10 @@ export default observer(function CreateBudget() {
         currencyStore: {defaultCurrency}
     } = useStore();
 
+    const [searchParams] = useSearchParams();
+
     const handleGoBack = () => {
-        router.navigate('/budgets');
+        router.navigate(`/budgets?period=${getPeriod()}`);
         loadChart([]);
     }
 
@@ -27,10 +30,25 @@ export default observer(function CreateBudget() {
         });
     }
 
+    const getPeriod = () => {
+        const period = parseInt(searchParams.get('period') || "2");
+        
+        switch (period) {
+            case BudgetPeriod.Week:
+                return BudgetPeriod.Week;
+            case BudgetPeriod.Month:
+                return BudgetPeriod.Month;
+            case BudgetPeriod.Year:
+                return BudgetPeriod.Year;
+            default:
+                return BudgetPeriod.Month; 
+        }
+    }
+
     const initialValues: BudgetFormValues = {
         name: "",
         categories: [],
-        period: BudgetPeriod.Month,
+        period: getPeriod(),
         amount: null,
     }
 

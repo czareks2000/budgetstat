@@ -61,13 +61,13 @@ export default observer(function BudgetForm({initialValues, onSubmit, onCancel, 
         return(
             <Form>
                 <Stack spacing={2}>
-                    {/* Name */}
-                    <TextInput label="Name" name="name"/>
-
                     {/* Period */}
                     <SelectInput 
                         label="Period" name={"period"} 
                         options={enumToOptions(BudgetPeriod)} />
+
+                    {/* Name */}
+                    <TextInput label="Name" name="name"/>
 
                     {/* Categories */}
                     <CategoryGroupedInput 

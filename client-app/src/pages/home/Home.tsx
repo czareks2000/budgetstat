@@ -74,8 +74,7 @@ export default observer(function Home() {
 
                                 <LoansCard />
 
-                                <NoDecorationLink to={"/budgets"} 
-                                    content={<BudgetsCard/>} />
+                                <BudgetsCard/>
 
                             </Stack>
                         </Grid>
