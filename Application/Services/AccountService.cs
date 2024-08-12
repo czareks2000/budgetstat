@@ -50,7 +50,8 @@ namespace Application.Services
                 .Where(a => a.User == user)
                 .Include(a => a.Currency)
                 .Include(a => a.AccountBalances)
-                .Include(l => l.Loans)
+                .Include(a => a.Loans)
+                .OrderByDescending(a => a.CreatedAt)
                 .ProjectTo<AccountDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
 
