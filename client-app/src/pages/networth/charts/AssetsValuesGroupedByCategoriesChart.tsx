@@ -19,11 +19,11 @@ export default observer(function AssetsValuesGroupedByCategoriesChart({showLegen
     <Box p={showLegend ? 2 : 0}>
         <PieChart
             colors={[
-                '#1976D2',
-                '#ce93d8',
-                '#4fc3f7',
-                '#81c784',
-                '#e0e0e0',
+                '#005288',
+                '#0076c4',
+                '#0099ff',
+                '#60bffe',
+                '#bfe4fe',
                 ]}
             slotProps={{ 
                 legend: 
