@@ -92,7 +92,7 @@ export default observer(function TransactionsDataGrid() {
             renderCell: (params) => {
                 return params.value || <i>(no description)</i>
             },
-            valueFormatter: (value) => `${value || '(deleted)'}`,
+            valueFormatter: (value) => `${value || ''}`,
         },
         {
             field: 'amount',

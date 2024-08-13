@@ -2,12 +2,10 @@
 {
     public interface IFileService
     {
-        // import transakcji
+        // import transakcji z pliku json
 
-        // export transakcji
+        // export danych aplikacji json
 
-        // drukowanie raportu
-
-        // export danych aplikacji
+        // export danych aplikacji csv
     }
 }
