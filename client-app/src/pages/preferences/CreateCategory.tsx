@@ -9,6 +9,7 @@ import { useState } from "react"
 import { TransactionType } from "../../app/models/enums/TransactionType"
 import { CategoryFormValues } from "../../app/models/Category"
 import { useStore } from "../../app/stores/store"
+import { FormikHelpers } from "formik"
 
 export default observer(function CreateCategory() {
     const {categoryStore: {createCategory, validateMainCategoryId}} = useStore();
@@ -32,11 +33,16 @@ export default observer(function CreateCategory() {
             ? mainCategoryId : "",
     }
 
-    const handleSubmit = (values: CategoryFormValues) => {
+    const handleSubmit = (values: CategoryFormValues, helpers: FormikHelpers<CategoryFormValues>) => {
         const type = values.transactionType === TransactionType.Expense ? 'expense' : 'income';
 
         createCategory(values).then(() => {
             router.navigate(`/preferences/categories?type=${type}&id=${mainCategoryId}`);
+        }).catch((err) => {
+            helpers.setErrors({
+                name: err
+            });
+            helpers.setSubmitting(false);
         });
     }
 

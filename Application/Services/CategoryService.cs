@@ -53,6 +53,15 @@ namespace Application.Services
             if (icon == null)
                 return Result<MainCategoryDto>.Failure("Invalid icon id");
 
+            // sprawdzenie czy nazwa już stnieje
+            var nameTaken = _context.Categories
+                .Where(c => c.User == user)
+                .Where(c => c.Name == newCategory.Name)
+                .Any();
+
+            if (nameTaken)
+                return Result<MainCategoryDto>.Failure("Category with this name alredy exists");
+
             // utworzenie categorii
             var category = _mapper.Map<Category>(newCategory);
             category.Icon = icon;
@@ -180,6 +189,17 @@ namespace Application.Services
                 .FirstOrDefaultAsync(c => c.Id == categoryId);
 
             if (category == null) return null;
+
+            // sprawdzenie czy nazwa już stnieje
+            var user = await _utilities.GetCurrentUserAsync();
+
+            var nameTaken = _context.Categories
+                .Where(c => c.User == user)
+                .Where(c => c.Name == updatedCategory.Name)
+                .Any();
+
+            if (nameTaken)
+                return Result<MainCategoryDto>.Failure("Category with this name alredy exists");
 
             // sprawdzenie ikony
             var icon = await _context.Icons

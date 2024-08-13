@@ -10,6 +10,7 @@ import { useParams } from "react-router-dom"
 import { useEffect } from "react"
 import LoadingWithLabel from "../../components/common/loadings/LoadingWithLabel"
 import { CategoryType } from "../../app/models/enums/CategoryType"
+import { FormikHelpers } from "formik"
 
 export default observer(function EditCategory() {
     const {categoryStore: {updateCategory, selectedCategory, selectCategory, unsetSelectedCategory}} = useStore();
@@ -35,7 +36,7 @@ export default observer(function EditCategory() {
             ? selectedCategory.mainCategoryId! : "",
     }
 
-    const handleSubmit = (values: CategoryFormValues) => {
+    const handleSubmit = (values: CategoryFormValues, helpers: FormikHelpers<CategoryFormValues>) => {
         const type = values.transactionType === TransactionType.Expense ? 'expense' : 'income';
 
         updateCategory(selectedCategory!.id, values).then(() => {
@@ -46,6 +47,11 @@ export default observer(function EditCategory() {
  
             unsetSelectedCategory();
             router.navigate(`/preferences/categories?type=${type}&id=${mainCategoryId}`);
+        }).catch((err) => {
+            helpers.setErrors({
+                name: err
+            });
+            helpers.setSubmitting(false);
         });
     }
 

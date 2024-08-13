@@ -6,6 +6,7 @@ import { Option } from "../models/Option";
 import { CategoryType } from "../models/enums/CategoryType";
 import { router } from "../router/Routes";
 import { store } from "./store";
+import { AxiosError } from "axios";
 
 export default class CategoryStore {
     mainCategories: MainCategory[] = [];
@@ -254,6 +255,7 @@ export default class CategoryStore {
             })
         } catch (error) {
             console.log(error);
+            throw (error as AxiosError).response!.data;
         }
     }
 
@@ -277,6 +279,7 @@ export default class CategoryStore {
             })
         } catch (error) {
             console.log(error);
+            throw (error as AxiosError).response!.data;
         }
     }
 

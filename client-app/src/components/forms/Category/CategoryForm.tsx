@@ -1,4 +1,4 @@
-import { Form, Formik } from "formik";
+import { Form, Formik, FormikHelpers } from "formik";
 import { observer } from "mobx-react-lite"
 import * as Yup from "yup";
 import TextInput from "../../formInputs/TextInput";
@@ -15,7 +15,7 @@ import { Option } from "../../../app/models/Option";
 
 interface Props {
     initialValues: CategoryFormValues;
-    onSubmit: (values: CategoryFormValues) => void;
+    onSubmit: (values: CategoryFormValues, helpers: FormikHelpers<CategoryFormValues>) => void;
     onCancel: () => void;
     editMode?: boolean;
 }
