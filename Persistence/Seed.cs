@@ -407,7 +407,7 @@ namespace Persistence
                     User = users[0],
                     SubCategories = new List<Category>()
                     {
-                        new() { Icon = icons[39], Name = "Gifts", Type = TransactionType.Income, User = users[0] },
+                        new() { Icon = icons[37], Name = "Gifts", Type = TransactionType.Income, User = users[0] },
                         new() { Icon = icons[14], Name = "No category", Type = TransactionType.Income, User = users[0] }
                     }
                 }

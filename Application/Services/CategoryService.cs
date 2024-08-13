@@ -195,6 +195,8 @@ namespace Application.Services
 
             var nameTaken = _context.Categories
                 .Where(c => c.User == user)
+                .Where(c => c.Id != categoryId)
+                .Where(c => c.Type == category.Type)
                 .Where(c => c.Name == updatedCategory.Name)
                 .Any();
 
@@ -497,7 +499,7 @@ namespace Application.Services
                     User = user,
                     SubCategories = new List<Category>()
                     {
-                        new() { Icon = icons.First(i => i.Id == 40), Name = "Gifts", Type = income, User = user },
+                        new() { Icon = icons.First(i => i.Id == 38), Name = "Gifts", Type = income, User = user },
                         new() { Icon = icons.First(i => i.Id == 15), Name = "No category", Type = income, User = user }
                     }
                 }
