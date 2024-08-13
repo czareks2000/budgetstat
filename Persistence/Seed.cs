@@ -121,11 +121,54 @@ namespace Persistence
                 // assets
                 new() { Name = "MapsHomeWork" },//11
                 new() { Name = "DirectionsCar" },//12
-                // common
-                new() { Name = "ShowChart" },//13 //to zmienic
+                // other
+                new() { Name = "Chair" },//13
                 new() { Name = "Help" },//14
                 // transfer
                 new() { Name = "SwapHoriz" },//15
+
+                // for subcategories
+                new() { Name = "Kitchen" }, //16
+                new() { Name = "FormatPaint" }, //17
+                new() { Name = "Handyman" }, //18
+                new() { Name = "LocalFlorist" }, //19
+
+                new() { Name = "MenuBook" }, //20
+                new() { Name = "Event" }, //21
+                new() { Name = "Coffee" }, //22
+                new() { Name = "FitnessCenter" }, //23
+                new() { Name = "EventRepeat" }, //24
+
+                new() { Name = "CurrencyExchange" }, //25
+                new() { Name = "Build" }, //26
+                new() { Name = "SafetyCheck" }, //27
+                new() { Name = "LocalGasStation" }, //28
+                new() { Name = "Payments" }, //29
+
+                new() { Name = "Apartment" }, //30
+                new() { Name = "Sailing" }, //31
+
+                new() { Name = "Medication" }, //32
+                new() { Name = "Psychology" }, //33
+                new() { Name = "Spa" }, //34
+                new() { Name = "MedicalInformation" }, //35
+
+                new() { Name = "Business" }, //36
+
+                new() { Name = "Redeem" }, //37
+                new() { Name = "AttachMoney" }, //38
+                new() { Name = "VolunteerActivism" }, //39
+
+                new() { Name = "Checkroom" }, //40
+                new() { Name = "Cable" }, //41
+                new() { Name = "School" }, //42
+                new() { Name = "Pets" }, //43
+
+                new() { Name = "DirectionsRun" }, //44
+                new() { Name = "Toys" }, //45
+
+                new() { Name = "Work" }, //46
+                new() { Name = "ElderlyWoman" }, //47
             };
 
             context.Icons.AddRange(icons);
@@ -143,13 +186,13 @@ namespace Persistence
                     User = users[0],
                     SubCategories = new List<Category>()
                     {
-                        new() { Icon = icons[0], Name = "Rent", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[0], Name = "Bills", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[0], Name = "Furniture", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[0], Name = "Appliances", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[0], Name = "Decorations", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[29], Name = "Rent", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[29], Name = "Bills", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[13], Name = "Furniture", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[16], Name = "Appliances", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[19], Name = "Decorations", Type = TransactionType.Expense, User = users[0] },
                         new() { Icon = icons[0], Name = "Insurance", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[0], Name = "Renovation", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[17], Name = "Renovation", Type = TransactionType.Expense, User = users[0] },
                         new() { Icon = icons[0], Name = "Repairs", Type = TransactionType.Expense, User = users[0] },
                         new() { Icon = icons[0], Name = "Other (Home)", Type = TransactionType.Expense, User = users[0] }
                     }
@@ -163,7 +206,7 @@ namespace Persistence
                     User = users[0],
                     SubCategories = new List<Category>()
                     {
-                        new() { Icon = icons[1], Name = "Groceries", Type = TransactionType.Expense, User = users[0] }, // [1][0]
+                        new() { Icon = icons[8], Name = "Groceries", Type = TransactionType.Expense, User = users[0] }, // [1][0]
                         new() { Icon = icons[1], Name = "Eating out", Type = TransactionType.Expense, User = users[0] }, // [1][1]
                         new() { Icon = icons[1], Name = "Other (Food)", Type = TransactionType.Expense, User = users[0] }
                     }
@@ -177,11 +220,11 @@ namespace Persistence
                     User = users[0],
                     SubCategories = new List<Category>()
                     {
-                        new() { Icon = icons[2], Name = "Books", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[2], Name = "Events", Type = TransactionType.Expense, User = users[0] }, //[2][1]
-                        new() { Icon = icons[2], Name = "Cafe, bars", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[2], Name = "Sport, hobby", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[2], Name = "Subscriptions", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[20], Name = "Books", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[21], Name = "Events", Type = TransactionType.Expense, User = users[0] }, //[2][1]
+                        new() { Icon = icons[22], Name = "Cafe, bars", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[23], Name = "Sport, hobby", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[24], Name = "Subscriptions", Type = TransactionType.Expense, User = users[0] },
                         new() { Icon = icons[2], Name = "Other (Recreation)", Type = TransactionType.Expense, User = users[0] }
                     }
                 },
@@ -194,11 +237,11 @@ namespace Persistence
                     User = users[0],
                     SubCategories = new List<Category>()
                     {
-                        new() { Icon = icons[3], Name = "Leasing", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[3], Name = "Maintenance", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[3], Name = "Insurance", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[3], Name = "Fuel", Type = TransactionType.Expense, User = users[0] }, // [3][3]
-                        new() { Icon = icons[3], Name = "Fees", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[25], Name = "Leasing", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[26], Name = "Maintenance", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[27], Name = "Insurance", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[28], Name = "Fuel", Type = TransactionType.Expense, User = users[0] }, // [3][3]
+                        new() { Icon = icons[29], Name = "Fees", Type = TransactionType.Expense, User = users[0] },
                         new() { Icon = icons[3], Name = "Public transport, taxi", Type = TransactionType.Expense, User = users[0] },
                         new() { Icon = icons[3], Name = "Other (Transportation)", Type = TransactionType.Expense, User = users[0] }
                     }
@@ -212,10 +255,10 @@ namespace Persistence
                     User = users[0],
                     SubCategories = new List<Category>()
                     {
-                        new() { Icon = icons[4], Name = "Accomodation", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[30], Name = "Accomodation", Type = TransactionType.Expense, User = users[0] },
                         new() { Icon = icons[4], Name = "Transport", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[4], Name = "Food, beverages", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[4], Name = "Entertainment", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[1], Name = "Food, beverages", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[31], Name = "Entertainment", Type = TransactionType.Expense, User = users[0] },
                         new() { Icon = icons[4], Name = "Other (Travels)", Type = TransactionType.Expense, User = users[0] }
                     }
                 },
@@ -229,12 +272,12 @@ namespace Persistence
                     SubCategories = new List<Category>()
                     {
                         new() { Icon = icons[5], Name = "Medical Expenses", Type = TransactionType.Expense, User = users[0]},
-                        new() { Icon = icons[5], Name = "Medications", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[5], Name = "Supplements", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[32], Name = "Medications", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[32], Name = "Supplements", Type = TransactionType.Expense, User = users[0] },
                         new() { Icon = icons[5], Name = "Dental Care", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[5], Name = "Therapy & Counseling", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[5], Name = "Wellness, beauty", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[5], Name = "Health insurance", Type = TransactionType.Expense, User = users[0]},
+                        new() { Icon = icons[33], Name = "Therapy & Counseling", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[34], Name = "Wellness, beauty", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[35], Name = "Health insurance", Type = TransactionType.Expense, User = users[0]},
                         new() { Icon = icons[5], Name = "Other (Health)", Type = TransactionType.Expense, User = users[0] }
                     }
                 },
@@ -249,9 +292,9 @@ namespace Persistence
                     {
                         new() { Icon = icons[6], Name = "ETF index funds", Type = TransactionType.Expense, User = users[0] },
                         new() { Icon = icons[6], Name = "Shares", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[6], Name = "Bonds", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[6], Name = "Mutual funds", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[6], Name = "Business", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[7], Name = "Bonds", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[7], Name = "Mutual funds", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[36], Name = "Business", Type = TransactionType.Expense, User = users[0] },
                         new() { Icon = icons[6], Name = "Other (Investment)", Type = TransactionType.Expense, User = users[0] }
                     }
                 },
@@ -265,9 +308,9 @@ namespace Persistence
                     SubCategories = new List<Category>()
                     {
                         new() { Icon = icons[7], Name = "Taxes", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[7], Name = "Fees", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[7], Name = "Gifts", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[7], Name = "Charity", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[38], Name = "Fees", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[37], Name = "Gifts", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[39], Name = "Charity", Type = TransactionType.Expense, User = users[0] },
                         new() { Icon = icons[7], Name = "Other (Financial)", Type = TransactionType.Expense, User = users[0] }
                     }
                 },
@@ -280,10 +323,10 @@ namespace Persistence
                     User = users[0],
                     SubCategories = new List<Category>()
                     {
-                        new() { Icon = icons[8], Name = "Clothing", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[8], Name = "Electronics", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[8], Name = "Education", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[8], Name = "Pets", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[40], Name = "Clothing", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[41], Name = "Electronics", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[42], Name = "Education", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[43], Name = "Pets", Type = TransactionType.Expense, User = users[0] },
                         new() { Icon = icons[8], Name = "Other (Shopping)", Type = TransactionType.Expense, User = users[0] }
                     }
                 },
@@ -296,12 +339,12 @@ namespace Persistence
                     User = users[0],
                     SubCategories = new List<Category>()
                     {
-                        new() { Icon = icons[9], Name = "Clothing", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[9], Name = "Education", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[9], Name = "Activities", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[9], Name = "Pocketmoney", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[9], Name = "Toys", Type = TransactionType.Expense, User = users[0] },
-                        new() { Icon = icons[9], Name = "Healthcare", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[40], Name = "Clothing", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[42], Name = "Education", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[44], Name = "Activities", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[29], Name = "Pocketmoney", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[45], Name = "Toys", Type = TransactionType.Expense, User = users[0] },
+                        new() { Icon = icons[5], Name = "Healthcare", Type = TransactionType.Expense, User = users[0] },
                         new() { Icon = icons[9], Name = "Childcare", Type = TransactionType.Expense, User = users[0] },
                         new() { Icon = icons[9], Name = "Other (Kids)", Type = TransactionType.Expense, User = users[0] }
                     }
@@ -333,11 +376,11 @@ namespace Persistence
                     User = users[0],
                     SubCategories = new List<Category>()
                     {
-                        new() { Icon = icons[10], Name = "Salary", Type = TransactionType.Income, User = users[0] },
-                        new() { Icon = icons[10], Name = "Pension", Type = TransactionType.Income, User = users[0] },
-                        new() { Icon = icons[10], Name = "Odd jobs", Type = TransactionType.Income, User = users[0] },
-                        new() { Icon = icons[10], Name = "Scholarship", Type = TransactionType.Income, User = users[0] },
-                        new() { Icon = icons[10], Name = "Business Profit", Type = TransactionType.Income, User = users[0] },
+                        new() { Icon = icons[46], Name = "Salary", Type = TransactionType.Income, User = users[0] },
+                        new() { Icon = icons[47], Name = "Pension", Type = TransactionType.Income, User = users[0] },
+                        new() { Icon = icons[46], Name = "Odd jobs", Type = TransactionType.Income, User = users[0] },
+                        new() { Icon = icons[42], Name = "Scholarship", Type = TransactionType.Income, User = users[0] },
+                        new() { Icon = icons[36], Name = "Business Profit", Type = TransactionType.Income, User = users[0] },
                         new() { Icon = icons[10], Name = "Other (Earnings)", Type = TransactionType.Income, User = users[0] }
                     }
                 },
@@ -364,7 +407,7 @@ namespace Persistence
                     User = users[0],
                     SubCategories = new List<Category>()
                     {
-                        new() { Icon = icons[14], Name = "Gifts", Type = TransactionType.Income, User = users[0] },
+                        new() { Icon = icons[39], Name = "Gifts", Type = TransactionType.Income, User = users[0] },
                         new() { Icon = icons[14], Name = "No category", Type = TransactionType.Income, User = users[0] }
                     }
                 }

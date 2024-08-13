@@ -15,10 +15,6 @@ export default observer(function CreateCategory() {
 
     const [searchParams] = useSearchParams();
 
-    const handleGoBack = () => {
-        router.navigate('/preferences/categories')
-    }
-
     const [categoryType] = useState(Number(searchParams.get('categoryType')) === CategoryType.Sub 
         ? CategoryType.Sub : CategoryType.Main);
     const [transactionType] = useState(Number(searchParams.get('transactionType')) === TransactionType.Income 
@@ -40,8 +36,14 @@ export default observer(function CreateCategory() {
         const type = values.transactionType === TransactionType.Expense ? 'expense' : 'income';
 
         createCategory(values).then(() => {
-            router.navigate(`/preferences/categories?type=${type}`);
+            router.navigate(`/preferences/categories?type=${type}&id=${mainCategoryId}`);
         });
+    }
+
+    const handleGoBack = () => {
+        const type = transactionType === TransactionType.Expense ? 'expense' : 'income';
+
+        router.navigate(`/preferences/categories?type=${type}&id=${mainCategoryId}`)
     }
 
     return (

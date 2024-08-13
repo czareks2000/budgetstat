@@ -14,10 +14,6 @@ import { CategoryType } from "../../app/models/enums/CategoryType"
 export default observer(function EditCategory() {
     const {categoryStore: {updateCategory, selectedCategory, selectCategory, unsetSelectedCategory}} = useStore();
 
-    const handleGoBack = () => {
-        router.navigate('/preferences/categories')
-    }
-
     const {id} = useParams();
     useEffect(() => {
         if (id) 
@@ -43,9 +39,25 @@ export default observer(function EditCategory() {
         const type = values.transactionType === TransactionType.Expense ? 'expense' : 'income';
 
         updateCategory(selectedCategory!.id, values).then(() => {
+            let mainCategoryId = selectedCategory!.id
+
+            if (!selectedCategory.isMain)
+                mainCategoryId = selectedCategory.mainCategoryId!;
+ 
             unsetSelectedCategory();
-            router.navigate(`/preferences/categories?type=${type}`);
+            router.navigate(`/preferences/categories?type=${type}&id=${mainCategoryId}`);
         });
+    }
+
+    const handleGoBack = () => {
+        let mainCategoryId = selectedCategory.id;
+
+        if (!selectedCategory.isMain)
+            mainCategoryId = selectedCategory.mainCategoryId!;
+
+        const params = `?type=${initialValues.transactionType === TransactionType.Income ? 'income' : 'expense'}&id=${mainCategoryId}`
+
+        router.navigate(`/preferences/categories${params}`);
     }
 
     return (
@@ -55,7 +67,7 @@ export default observer(function EditCategory() {
                 <Divider>Edit category</Divider>
                 <Paper>
                     <Box p={2}>
-                        <CategoryForm
+                        <CategoryForm           
                             key={selectedCategory.id} 
                             initialValues={initialValues}
                             onSubmit={handleSubmit}

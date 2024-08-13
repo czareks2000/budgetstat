@@ -17,7 +17,7 @@ export default observer(function ManageCategories() {
         mainExpenseCategories, mainIncomeCategories, 
         loadCategories, categoriesLoaded}} = useStore();
 
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const [selectedTab, setselectedTab] = useState(searchParams.get('type') === 'income' ? 1 : 0);
 
@@ -28,6 +28,7 @@ export default observer(function ManageCategories() {
 
     const handleChange = (_: React.SyntheticEvent, newValue: number) => {
         setselectedTab(newValue);
+        setSearchParams({type: newValue === 1 ? 'income' : 'expense'})
     };
 
     const handleGoBack = () => {

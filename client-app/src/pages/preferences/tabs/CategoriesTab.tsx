@@ -9,6 +9,7 @@ import DeleteCategoryDialog from "../dialogs/DeleteCategoryDialog"
 import { useStore } from "../../../app/stores/store"
 import { router } from "../../../app/router/Routes"
 import { CategoryType } from "../../../app/models/enums/CategoryType"
+import { useSearchParams } from "react-router-dom"
 
 interface Props {
     mainCategories: MainCategory[];
@@ -17,7 +18,18 @@ interface Props {
 export default observer(function CategoriesTab({mainCategories}: Props) {
     const {categoryStore: {selectedCategory, setSelectedCategory}} = useStore();
 
-    const [expanded, setExpanded] = useState(new Array(mainCategories.length).fill(false));
+    const [searchParams] = useSearchParams();
+
+    const initialExpanded = new Array(mainCategories.length).fill(false);
+    const initialId = parseInt(searchParams.get('id') || '-1');
+    if (initialId) {
+        const index = mainCategories.findIndex(cat => cat.id === initialId);
+        if (index !== -1) {
+            initialExpanded[index] = true;
+        }
+    }
+
+    const [expanded, setExpanded] = useState(initialExpanded);
 
     const handleToggle = (index: number) => {
         const newExpanded = [...expanded];
@@ -79,7 +91,7 @@ export default observer(function CategoriesTab({mainCategories}: Props) {
                                 <CategoryIcon iconId={category.iconId} fontSize="small" sx={{mr: 1}}/>
                                 <Typography>{category.name}</Typography>
                             </Box>
-                            <Fade in={expanded[index]}>
+                            <Fade in={expanded[index]} appear={false}>
                                 <Box mr={2} display={'flex'}>
                                     <IconButton
                                         sx={{mr: "0px", my: -1}} 
