@@ -54,8 +54,16 @@ namespace Application.Services
                 return Result<MainCategoryDto>.Failure("Invalid icon id");
 
             // sprawdzenie czy nazwa już stnieje
-            var nameTaken = _context.Categories
+            var nameTaken = newCategory.IsMain ?
+                _context.Categories
                 .Where(c => c.User == user)
+                .Where(c => c.Type == newCategory.Type)
+                .Where(c => c.Name == newCategory.Name)
+                .Any()
+            :
+                _context.Categories
+                .Where(c => c.User == user)
+                .Where(c => c.MainCategoryId == newCategory.MainCategoryId)
                 .Where(c => c.Name == newCategory.Name)
                 .Any();
 
