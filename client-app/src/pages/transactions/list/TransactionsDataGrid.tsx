@@ -1,4 +1,4 @@
-import { Box, Paper, Typography } from "@mui/material"
+import { Box, Paper, Tooltip, Typography } from "@mui/material"
 import { observer } from "mobx-react-lite"
 import { router } from "../../../app/router/Routes"
 import { DataGrid, GridActionsCellItem, GridColDef, GridColumnVisibilityModel, GridPaginationModel, GridToolbar } from '@mui/x-data-grid';
@@ -75,12 +75,16 @@ export default observer(function TransactionsDataGrid() {
             flex: 1.45,
             editable: false,
             renderCell: ({value}) => {
-                return <Box component={"span"} display={'flex'}>
-                    <CategoryIcon iconId={value.iconId} sx={{mt: '14px', mr: 1}}/>
-                    {value.name}
-                </Box>;
+                return <>
+                <Tooltip title={value.mainCategoryName} placement="left" arrow>
+                    <Box component={"span"} display={'flex'}>
+                        <CategoryIcon iconId={value.iconId} sx={{mt: '14px', mr: 1}}/>
+                        {/* {value.mainCategoryName ? value.mainCategoryName + "/" : "" } */}
+                        {value.name}
+                    </Box>
+                </Tooltip></>;
             },
-            valueFormatter: (value) => `${(value as CategoryItem).name}`,
+            valueFormatter: (value) => `${(value as CategoryItem).mainCategoryName ? (value as CategoryItem).mainCategoryName + "/" : "" }${(value as CategoryItem).name}`,
             sortComparator: (v1, v2) => v1.name.localeCompare(v2.name),
         },
         {

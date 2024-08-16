@@ -76,6 +76,7 @@ export interface CategoryItem {
     id: number;
     name: string;
     iconId: number;
+    mainCategoryName: string;
 }
 
 export interface AmountItem {

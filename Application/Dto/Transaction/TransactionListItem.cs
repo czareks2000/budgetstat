@@ -20,6 +20,7 @@ namespace Application.Dto.Transaction
         public int Id { get; set; }
         public string Name { get; set; }
         public int IconId { get; set; }
+        public string MainCategoryName { get; set; }
     }
 
     public class AmountItem
