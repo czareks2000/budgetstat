@@ -83,7 +83,7 @@ export default class AssetStore {
         try {
             const categories = await agent.Assets.getAssetCategories();
             runInAction(() => {
-                this.assetCategories = categories;
+                this.assetCategories = categories.sort((a,b) => a.id - b.id);
                 this.categoriesLoaded = true;
             })   
         } catch (error) {
