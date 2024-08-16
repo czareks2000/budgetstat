@@ -3,6 +3,7 @@ using Application.Dto.Asset;
 using Application.Dto.Budget;
 using Application.Dto.Category;
 using Application.Dto.Counterparty;
+using Application.Dto.Csv;
 using Application.Dto.Currency;
 using Application.Dto.Icon;
 using Application.Dto.Loan;
@@ -149,6 +150,9 @@ namespace Application.Core
             CreateMap<AssetCategory, AssetCategoryDto>();
 
             CreateMap<Icon, IconDto>();
+
+
+            CreateMap<Account, AccountCsvDto>();
         }
     }
 

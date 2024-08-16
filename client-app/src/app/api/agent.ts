@@ -343,6 +343,10 @@ const Stats = {
     }
 }
 
+const Files = {
+    getAppDataCsvZip: () => axios.get('/files/app-data-csv-zip', { responseType: 'arraybuffer'})
+}
+
 const agent = {
     Auth,
     Accounts,
@@ -354,7 +358,8 @@ const agent = {
     Icons,
     Assets,
     Settings,
-    Stats
+    Stats,
+    Files
 }
 
 export default agent;

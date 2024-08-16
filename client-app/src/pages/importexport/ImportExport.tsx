@@ -3,6 +3,8 @@ import ResponsiveContainer from "../../components/common/ResponsiveContainer"
 import { Box, Button, Divider, Paper, Stack, Tab, Tabs, Typography } from "@mui/material"
 import CustomTabPanel, { a11yProps } from "../preferences/tabs/CustomTabPanel"
 import { useState } from "react"
+import agent from "../../app/api/agent"
+import { LoadingButton } from "@mui/lab"
 
 export default observer(function ImportExport() {
     const [selectedTab, setselectedTab] = useState(0);
@@ -10,6 +12,28 @@ export default observer(function ImportExport() {
     const handleChange = (_: React.SyntheticEvent, newValue: number) => {
         setselectedTab(newValue);
     };
+
+    const [isLoading, setIsLoading] = useState(false);
+
+    const downloadData = async () => {
+        setIsLoading(true);
+        try {
+            const response = await agent.Files.getAppDataCsvZip();
+            const blob = new Blob([response.data], { type: 'application/zip' })
+            const downloadUrl = URL.createObjectURL(blob)
+            const a = document.createElement("a"); 
+            a.href = downloadUrl;
+            a.download = "goalsprogress.zip";
+            document.body.appendChild(a);
+            a.click();
+        } catch (error) {
+            //store.commonStore.setError(`Error downloading ZIP file: ${error}`)
+            // tu zrobić snack bar
+            console.log(error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     return (
         <ResponsiveContainer content={
@@ -28,12 +52,13 @@ export default observer(function ImportExport() {
                         <Stack p={2} spacing={2}>
                             <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
                                 <Typography>Export data</Typography>
-                                    <Button
+                                    <LoadingButton
                                         variant="contained"
-                                        onClick={() => alert()}
+                                        loading={isLoading}
+                                        onClick={() => downloadData()}
                                     >
                                         Export
-                                    </Button>
+                                    </LoadingButton>
                             </Box>
                         </Stack>
                     </Paper>
