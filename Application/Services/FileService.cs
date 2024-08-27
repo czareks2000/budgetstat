@@ -35,7 +35,7 @@ namespace Application.Services
             {
                 // Adding the goals.csv file to the archive
                 var accountsCsvEntry = archive.CreateEntry("accounts.csv");
-                using (var writer = new StreamWriter(accountsCsvEntry.Open()))
+                using var writer = new StreamWriter(accountsCsvEntry.Open());
                 using (var csv = new CsvWriter(writer, new CsvConfiguration(CultureInfo.InvariantCulture)))
                 {
                     csv.WriteRecords(accountsDto);
@@ -46,6 +46,4 @@ namespace Application.Services
             return memoryStream;
         }
     }
-
-
 }

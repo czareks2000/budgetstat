@@ -23,7 +23,7 @@ export default observer(function ImportExport() {
             const downloadUrl = URL.createObjectURL(blob)
             const a = document.createElement("a"); 
             a.href = downloadUrl;
-            a.download = "goalsprogress.zip";
+            a.download = "budgetstat.zip";
             document.body.appendChild(a);
             a.click();
         } catch (error) {
