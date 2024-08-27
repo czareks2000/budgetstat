@@ -93,7 +93,8 @@ export default observer(function LoanItemCompact({loan, detailsAction, noButtons
                                 </Stack>
                                 <Stack>
                                     <Typography variant="subtitle2">
-                                        <i>{!inProgress && <>{convertToString(loan.loanDate)} - </>}{loan.description || "(no description)"}</i>
+                                        {/* <i>{!inProgress && <>{convertToString(loan.loanDate)} - </>}{loan.description || "(no description)"}</i> */}
+                                        <i>{<>{convertToString(loan.loanDate)} - </>}{loan.description || "(no description)"}</i>
                                     </Typography>
                                     {inProgress &&
                                     <Typography variant="subtitle1">

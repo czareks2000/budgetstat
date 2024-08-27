@@ -26,9 +26,9 @@ export default observer(function CounterpartyPaidoffLoans() {
     }, [loadLoans, counterpartyLoansLoaded])
 
     const credits = getCounterpartyLoans(Number(id), LoanType.Credit, LoanStatus.PaidOff)
-        .sort((a,b) => a.repaymentDate.getTime() - b.repaymentDate.getTime());
+        .sort((a,b) => b.loanDate.getTime() - a.loanDate.getTime());
     const debts = getCounterpartyLoans(Number(id), LoanType.Debt, LoanStatus.PaidOff)
-        .sort((a,b) => a.repaymentDate.getTime() - b.repaymentDate.getTime());
+        .sort((a,b) => b.loanDate.getTime() - a.loanDate.getTime());
     
     return (
         <>
