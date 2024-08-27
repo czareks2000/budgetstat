@@ -724,8 +724,8 @@ namespace Application.Services
 
             DateTime startDate = period switch
             {
-                ChartPeriod.Last7Days => now.AddDays(-7),
-                ChartPeriod.Last30Days => now.AddDays(-30),
+                ChartPeriod.Last7Days => now.AddDays(-6),
+                ChartPeriod.Last30Days => now.AddDays(-29),
                 ChartPeriod.LastYear => now.AddMonths(-11),
                 ChartPeriod.Last5Years => now.AddYears(-4),
                 _ => throw new ArgumentOutOfRangeException(nameof(period), period, null),
@@ -937,23 +937,23 @@ namespace Application.Services
         private static List<DateTime> CalculateDates(ChartPeriod period, TimeWindow timeWindow)
         {
             List<DateTime> dates = [];
-            DateTime currentDate = timeWindow.StartDate;
+            DateTime currentDate = timeWindow.EndDate;
 
             switch (period)
             {
                 case ChartPeriod.Last7Days:
                     for (int i = 0; i < 7; i++)
                     {
-                        dates.Add(currentDate);
-                        currentDate = currentDate.AddDays(1);
+                        dates.Insert(0, currentDate);
+                        currentDate = currentDate.AddDays(-1);
                     }
                     break;
 
                 case ChartPeriod.Last30Days:
                     for (int i = 0; i < 30; i++)
                     {
-                        dates.Add(currentDate);
-                        currentDate = currentDate.AddDays(1);
+                        dates.Insert(0, currentDate);
+                        currentDate = currentDate.AddDays(-1);
                     }
                     break;
 
@@ -961,37 +961,34 @@ namespace Application.Services
                     for (int i = 0; i < 12; i++)
                     {
                         var date = new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month));
-                        dates.Add(DateTime.SpecifyKind(date, DateTimeKind.Utc));
-                        currentDate = currentDate.AddMonths(1);
+                        dates.Insert(0, DateTime.SpecifyKind(date, DateTimeKind.Utc));
+                        currentDate = currentDate.AddMonths(-1);
                     }
                     break;
 
                 case ChartPeriod.Last5Years:
+                    currentDate = timeWindow.EndDate;
                     for (int i = 0; i < 12; i++)
                     {
                         var date = new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month));
-                        dates.Add(DateTime.SpecifyKind(date, DateTimeKind.Utc));
-                        currentDate = currentDate.AddMonths(5);
+                        dates.Insert(0, DateTime.SpecifyKind(date, DateTimeKind.Utc));
+                        currentDate = currentDate.AddMonths(-5);
                     }
                     break;
 
                 case ChartPeriod.Custom:
+                    
                     int totalDays = (timeWindow.EndDate - timeWindow.StartDate).Days;
                     int interval = totalDays / 29; // 30 dates mean 29 intervals
                     for (int i = 0; i < 30; i++)
                     {
-                        dates.Add(currentDate);
-                        currentDate = currentDate.AddDays(interval);
+                        dates.Insert(0, currentDate);
+                        currentDate = currentDate.AddDays(-interval);
                     }
                     break;
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(period), period, null);
-            }
-
-            if (dates.Last() != timeWindow.EndDate)
-            {
-                dates[^1] = timeWindow.EndDate;
             }
 
             return dates;
