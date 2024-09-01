@@ -57,8 +57,7 @@ const charts = [
 ]
 
 export default observer(function Stats() {
-    const {statsStore: {selectedChart, setSelectedChart}} = useStore();
-
+    const {statsStore: {selectedChart, setSelectedChart, statsHasOldData, loadStatsPageCharts}} = useStore();
 
     const [searchParams, setSearchParams] = useSearchParams();
     const [chartId, setChartId] = useState<string | null>(searchParams.get('chartId'));
@@ -67,6 +66,11 @@ export default observer(function Stats() {
         if(chartId)
             setSelectedChart(charts.find(c => c.id === Number(chartId)) ? Number(chartId) : 0);
     },[chartId])
+
+    useEffect(() => {
+        if(statsHasOldData)
+            loadStatsPageCharts();
+    },[statsHasOldData])
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const id = parseInt(event.target.value)

@@ -113,6 +113,16 @@ export default class StatsStore {
         this.selectedChart = id;
     }
 
+    loadStatsPageCharts = async () => {
+        this.loadBalanceValueOverTime();
+        this.loadIncomesAndExpensesOverTime();
+        this.loadAvgMonthlyExpensesByCategories();
+        this.loadAvgMonthlyIncomesByCategories();
+        this.loadBalanceOverTimeForecast();
+        
+        this.setHasOldData(false);
+    }
+
     //#region Home Page Charts
 
     loadHomePageCharts = async () => {

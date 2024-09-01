@@ -44,18 +44,13 @@ export default class CommonStore {
             // można wyświetlić intefejs bez tych danch załadowanych
             store.statsStore.loadNetWorthValueOverTime();
             
-            store.statsStore.loadBalanceValueOverTime();
-            store.statsStore.loadIncomesAndExpensesOverTime();
-            store.statsStore.loadAvgMonthlyExpensesByCategories();
-            store.statsStore.loadAvgMonthlyIncomesByCategories();
-            store.statsStore.loadBalanceOverTimeForecast();
+            store.statsStore.loadStatsPageCharts();
 
             // nie można wyświetlić intefejsu bez tych danch załadowanych
             // (w przyszłości dostosować intefejs zeby nie trzeba było czekać)
             await store.transactionStore.loadPlannedTransactions();
             await store.transactionStore.loadLatestTransactions(true);
             
-
             await store.accountStore.loadAccounts();
             
             await store.budgetStore.loadBudgets();
