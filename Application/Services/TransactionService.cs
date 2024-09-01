@@ -135,7 +135,7 @@ namespace Application.Services
             // aktualizacja salda nowego konta
             var isExpense = newCategory.Type == TransactionType.Expense;
 
-            if (!_utilities.UpdateAccountBalances(newAccount.Id, transaction.Date, isExpense, updatedTransaction.Amount))
+            if (!_utilities.UpdateAccountBalances(newAccount.Id, updatedTransaction.Date, isExpense, updatedTransaction.Amount))
                 return Result<object>.Failure("Insufficient funds in the account. Change the date or amount.");
 
             // aktualizacja salda starego konta

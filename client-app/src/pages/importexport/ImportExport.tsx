@@ -1,10 +1,12 @@
 import { observer } from "mobx-react-lite"
 import ResponsiveContainer from "../../components/common/ResponsiveContainer"
-import { Box, Button, Divider, Paper, Stack, Tab, Tabs, Typography } from "@mui/material"
+import { Box, Button, Divider, Menu, MenuItem, Paper, Stack, Tab, Tabs, Typography } from "@mui/material"
 import CustomTabPanel, { a11yProps } from "../preferences/tabs/CustomTabPanel"
 import { useState } from "react"
 import agent from "../../app/api/agent"
 import { LoadingButton } from "@mui/lab"
+import dayjs from "dayjs"
+import { KeyboardArrowDown } from "@mui/icons-material"
 
 export default observer(function ImportExport() {
     const [selectedTab, setselectedTab] = useState(0);
@@ -14,21 +16,34 @@ export default observer(function ImportExport() {
     };
 
     const [isLoading, setIsLoading] = useState(false);
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
 
-    const downloadData = async () => {
+    const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
+
+    const downloadData = async (fileType: "csv" | "json") => {
         setIsLoading(true);
+        handleMenuClose();
         try {
-            const response = await agent.Files.getAppDataCsvZip();
+            const response = fileType === "csv" 
+            ? await agent.Files.getAppDataCsvZip() 
+            : await agent.Files.getAppDataJsonZip();
             const blob = new Blob([response.data], { type: 'application/zip' })
             const downloadUrl = URL.createObjectURL(blob)
             const a = document.createElement("a"); 
+            const date = dayjs().format("DD.MM.YYYY");
             a.href = downloadUrl;
-            a.download = "budgetstat.zip";
+            a.download = `budgetstat_${date}.zip`;
             document.body.appendChild(a);
             a.click();
         } catch (error) {
-            //store.commonStore.setError(`Error downloading ZIP file: ${error}`)
-            // tu zrobić snack bar
+            // tu zrobić snack bar z wiadomoscią: Error downloading ZIP file: ${error}
             console.log(error);
         } finally {
             setIsLoading(false);
@@ -55,10 +70,19 @@ export default observer(function ImportExport() {
                                     <LoadingButton
                                         variant="contained"
                                         loading={isLoading}
-                                        onClick={() => downloadData()}
+                                        endIcon={<KeyboardArrowDown />}
+                                        onClick={handleMenuClick}
                                     >
                                         Export
                                     </LoadingButton>
+                                    <Menu
+                                        anchorEl={anchorEl}
+                                        open={open}
+                                        onClose={handleMenuClose}
+                                    >
+                                        <MenuItem onClick={() => downloadData("csv")}>Export as CSV</MenuItem>
+                                        <MenuItem onClick={() => downloadData("json")}>Export as JSON</MenuItem>
+                                    </Menu>
                             </Box>
                         </Stack>
                     </Paper>

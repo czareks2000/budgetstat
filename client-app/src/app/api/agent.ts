@@ -344,7 +344,8 @@ const Stats = {
 }
 
 const Files = {
-    getAppDataCsvZip: () => axios.get('/files/app-data-csv-zip', { responseType: 'arraybuffer'})
+    getAppDataCsvZip: () => axios.get('/files/app-data-csv-zip', { responseType: 'arraybuffer'}),
+    getAppDataJsonZip: () => axios.get('/files/app-data-json-zip', { responseType: 'arraybuffer'}),
 }
 
 const agent = {

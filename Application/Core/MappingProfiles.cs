@@ -3,7 +3,7 @@ using Application.Dto.Asset;
 using Application.Dto.Budget;
 using Application.Dto.Category;
 using Application.Dto.Counterparty;
-using Application.Dto.Csv;
+using Application.Dto.Export;
 using Application.Dto.Currency;
 using Application.Dto.Icon;
 using Application.Dto.Loan;
@@ -151,8 +151,69 @@ namespace Application.Core
 
             CreateMap<Icon, IconDto>();
 
+            // Export
 
-            CreateMap<Account, AccountCsvDto>();
+            CreateMap<Account, AccountExportDto>()
+                .ForMember(dest => dest.Balance, opt => opt
+                    .MapFrom(src => src.AccountBalances
+                        .Where(ab => ab.Date.Date <= DateTime.UtcNow.Date)
+                        .OrderByDescending(ab => ab.Date).FirstOrDefault().Balance))
+                .ForMember(dest => dest.BalanceDate, opt => opt
+                    .MapFrom(src => src.AccountBalances
+                        .Where(ab => ab.Date.Date <= DateTime.UtcNow.Date)
+                        .OrderByDescending(ab => ab.Date).FirstOrDefault().Date))
+                .ForMember(dest => dest.Currency, opt => opt
+                   .MapFrom(src => src.Currency.Code));
+            CreateMap<AccountBalance, AccountBalanceExportDto>()
+                .ForMember(dest => dest.Currency, opt => opt
+                   .MapFrom(src => src.Currency.Code));
+
+            CreateMap<Asset, AssetExportDto>()
+                .ForMember(dest => dest.Value, opt => opt
+                   .MapFrom(src => src.AssetValues
+                        .OrderByDescending(ab => ab.Date).FirstOrDefault().Value))
+                .ForMember(dest => dest.Currency, opt => opt
+                   .MapFrom(src => src.AssetValues
+                        .OrderByDescending(ab => ab.Date).FirstOrDefault().Currency.Code))
+                .ForMember(dest => dest.ValueDate, opt => opt
+                   .MapFrom(src => src.AssetValues
+                        .OrderByDescending(ab => ab.Date).FirstOrDefault().Date))
+                .ForMember(dest => dest.Category, opt => opt
+                   .MapFrom(src => src.AssetCategory.Name));
+            CreateMap<AssetValue, AssetValueExportDto>()
+                .ForMember(dest => dest.Currency, opt => opt
+                   .MapFrom(src => src.Currency.Code));
+
+            CreateMap<Category, CategoryExportDto>();
+
+            CreateMap<Loan, LoanExportDto>()
+                .ForMember(dest => dest.Currency, opt => opt
+                   .MapFrom(src => src.Currency.Code))
+                .ForMember(dest => dest.Counterparty, opt => opt
+                   .MapFrom(src => src.Counterparty.Name));
+
+            CreateMap<Transaction, TransactionExportDto>()
+                .ForMember(dest => dest.Type, opt => opt
+                   .MapFrom(src => src.Category.Type))
+                .ForMember(dest => dest.Currency, opt => opt
+                   .MapFrom(src => src.Currency.Code))
+                .ForMember(dest => dest.Account, opt => opt
+                   .MapFrom(src => src.Account.Name));
+            CreateMap<Transfer, TransactionExportDto>()
+                .ForMember(dest => dest.Type, opt => opt
+                   .MapFrom(src => TransactionType.Transfer))
+                .ForMember(dest => dest.Amount, opt => opt
+                   .MapFrom(src => src.ToAmount))
+                .ForMember(dest => dest.Currency, opt => opt
+                   .MapFrom(src => src.ToAccount.Currency.Code))
+                .ForMember(dest => dest.Account, opt => opt
+                    .MapFrom(src => src.ToAccount.Name))
+                .ForMember(dest => dest.AccountId, opt => opt
+                    .MapFrom(src => src.ToAccount.Id))
+                .ForMember(dest => dest.Description, opt => opt
+                   .MapFrom(src => $"Transfer from {src.FromAccount.Name} account"))
+                .ForMember(dest => dest.Considered, opt => opt
+                   .MapFrom(src => false));
         }
     }
 

@@ -1,12 +1,17 @@
-﻿using Application.Dto.Csv;
+﻿using Application.Dto.Export;
 using Application.Interfaces;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using CsvHelper;
 using CsvHelper.Configuration;
+using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 using System.Globalization;
 using System.IO.Compression;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Application.Services
 {
@@ -24,26 +29,213 @@ namespace Application.Services
             var user = await _utilities.GetCurrentUserAsync();
 
             // Get objects from db
-            var accounts = await _context.Accounts.Where(a => a.UserId == user.Id).ToListAsync();
+            var accounts = await _context.Accounts
+                .Include(a => a.Currency)
+                .Where(a => a.UserId == user.Id).ToListAsync();
+            var accountsBalances = await _context.AccountBalances
+                .Include(ab => ab.Currency)
+                .Where(ab => ab.Account.UserId == user.Id)
+                .OrderByDescending(ab => ab.Date)
+                .ToListAsync();
+
+            var assets = await _context.Assets
+                .Include(a => a.AssetCategory)
+                .Where(a => a.UserId == user.Id).ToListAsync();
+            var assetsValues = await _context.AssetValues
+                .Include(av => av.Currency)
+                .Where(av => av.Asset.UserId == user.Id)
+                .OrderByDescending(ab => ab.Date)
+                .ToListAsync();
+
+            var categories = await _context.Categories
+                .Where(a => a.UserId == user.Id).ToListAsync();
+
+            var loans = await _context.Loans
+                .Include(l => l.Counterparty)
+                .Where(a => a.UserId == user.Id)
+                .Where(l => l.LoanStatus == LoanStatus.InProgress)
+                .ToListAsync();
+
+            var transactionsQuery = _context.Users
+                .Where(u => u.Id == user.Id)
+                .Include(u => u.Transactions)
+                .SelectMany(u => u.Transactions)
+                .Where(t => !t.Planned);
+
+            var transfersQuery = _context.Transfers
+                .Where(t => t.ToAccount.UserId == user.Id);
 
             // Creating Dto objects (with fields as they will be in the csv file) 
-            var accountsDto = _mapper.Map<List<AccountCsvDto>>(accounts);
+            var accountsDto = _mapper.Map<List<AccountExportDto>>(accounts);
+            var accountsBalancesDto = _mapper.Map<List<AccountBalanceExportDto>>(accountsBalances);
+
+            var assetsDto = _mapper.Map<List<AssetExportDto>>(assets);
+            var assetsValuesDto = _mapper.Map<List<AssetValueExportDto>>(assetsValues);
+
+            var categoriesDto = _mapper.Map<List<CategoryExportDto>>(categories);
+
+            var loansDto = _mapper.Map<List<LoanExportDto>>(loans);
+
+            List<TransactionExportDto> transactionsDto = new List<TransactionExportDto>();
+            transactionsDto = await transactionsQuery
+                .Include(t => t.Currency)
+                .Include(t => t.Category)
+                .Include(t => t.Account)
+                .ProjectTo<TransactionExportDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            var transfers = await transfersQuery
+                .Include(t => t.FromAccount)
+                .Include(t => t.ToAccount)
+                    .ThenInclude(a => a.Currency)
+                .ProjectTo<TransactionExportDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            transactionsDto.AddRange(transfers);
+
+            transactionsDto = [.. transactionsDto.OrderByDescending(t => t.Date)];
+
+            int index = 1;
+            foreach (var transaction in transactionsDto)
+                transaction.Id = index++;
+
 
             // Creating a ZIP archive in memory
             using var memoryStream = new MemoryStream();
             using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
             {
-                // Adding the goals.csv file to the archive
-                var accountsCsvEntry = archive.CreateEntry("accounts.csv");
-                using var writer = new StreamWriter(accountsCsvEntry.Open());
-                using (var csv = new CsvWriter(writer, new CsvConfiguration(CultureInfo.InvariantCulture)))
-                {
-                    csv.WriteRecords(accountsDto);
-                }
+                AddCsvToArchive(archive, "accounts.csv", accountsDto);
+                AddCsvToArchive(archive, "accountsBalances.csv", accountsBalancesDto);
+                AddCsvToArchive(archive, "assets.csv", assetsDto);
+                AddCsvToArchive(archive, "assetsValues.csv", assetsValuesDto);
+                AddCsvToArchive(archive, "categories.csv", categoriesDto);
+                AddCsvToArchive(archive, "loans.csv", loansDto);
+                AddCsvToArchive(archive, "transations.csv", transactionsDto);
             }
 
             // Returning a MemoryStream object containing the ZIP archive
             return memoryStream;
+        }
+
+        private static void AddCsvToArchive<T>(ZipArchive archive, string fileName, IEnumerable<T> records)
+        {
+            var entry = archive.CreateEntry(fileName);
+            using (var writer = new StreamWriter(entry.Open()))
+            using (var csv = new CsvWriter(writer, new CsvConfiguration(CultureInfo.InvariantCulture)))
+            {
+                csv.WriteRecords(records);
+            }
+        }
+
+        public async Task<MemoryStream> GetAppDataJsonZip()
+        {
+            var user = await _utilities.GetCurrentUserAsync();
+
+            // Get objects from db
+            var accounts = await _context.Accounts
+                .Include(a => a.Currency)
+                .Where(a => a.UserId == user.Id).ToListAsync();
+            var accountsBalances = await _context.AccountBalances
+                .Include(ab => ab.Currency)
+                .Where(ab => ab.Account.UserId == user.Id)
+                .OrderByDescending(ab => ab.Date)
+                .ToListAsync();
+
+            var assets = await _context.Assets
+                .Include(a => a.AssetCategory)
+                .Where(a => a.UserId == user.Id).ToListAsync();
+            var assetsValues = await _context.AssetValues
+                .Include(av => av.Currency)
+                .Where(av => av.Asset.UserId == user.Id)
+                .OrderByDescending(ab => ab.Date)
+                .ToListAsync();
+
+            var categories = await _context.Categories
+                .Where(a => a.UserId == user.Id).ToListAsync();
+
+            var loans = await _context.Loans
+                .Include(l => l.Counterparty)
+                .Where(a => a.UserId == user.Id)
+                .Where(l => l.LoanStatus == LoanStatus.InProgress)
+                .ToListAsync();
+
+            var transactionsQuery = _context.Users
+                .Where(u => u.Id == user.Id)
+                .Include(u => u.Transactions)
+                .SelectMany(u => u.Transactions)
+                .Where(t => !t.Planned);
+
+            var transfersQuery = _context.Transfers
+                .Where(t => t.ToAccount.UserId == user.Id);
+
+            // Creating Dto objects (with fields as they will be in the csv file) 
+            var accountsDto = _mapper.Map<List<AccountExportDto>>(accounts);
+            var accountsBalancesDto = _mapper.Map<List<AccountBalanceExportDto>>(accountsBalances);
+
+            var assetsDto = _mapper.Map<List<AssetExportDto>>(assets);
+            var assetsValuesDto = _mapper.Map<List<AssetValueExportDto>>(assetsValues);
+
+            var categoriesDto = _mapper.Map<List<CategoryExportDto>>(categories);
+
+            var loansDto = _mapper.Map<List<LoanExportDto>>(loans);
+
+            List<TransactionExportDto> transactionsDto = new List<TransactionExportDto>();
+            transactionsDto = await transactionsQuery
+                .Include(t => t.Currency)
+                .Include(t => t.Category)
+                .Include(t => t.Account)
+                .ProjectTo<TransactionExportDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            var transfers = await transfersQuery
+                .Include(t => t.FromAccount)
+                .Include(t => t.ToAccount)
+                    .ThenInclude(a => a.Currency)
+                .ProjectTo<TransactionExportDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            transactionsDto.AddRange(transfers);
+
+            transactionsDto = [.. transactionsDto.OrderByDescending(t => t.Date)];
+
+            int index = 1;
+            foreach (var transaction in transactionsDto)
+                transaction.Id = index++;
+
+
+            // Creating a ZIP archive in memory
+            using var memoryStream = new MemoryStream();
+            using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+            {
+                AddJsonToArchive(archive, "accounts.json", accountsDto);
+                AddJsonToArchive(archive, "accountsBalances.json", accountsBalancesDto);
+                AddJsonToArchive(archive, "assets.json", assetsDto);
+                AddJsonToArchive(archive, "assetsValues.json", assetsValuesDto);
+                AddJsonToArchive(archive, "categories.json", categoriesDto);
+                AddJsonToArchive(archive, "loans.json", loansDto);
+                AddJsonToArchive(archive, "transactions.json", transactionsDto);
+            }
+
+            // Returning a MemoryStream object containing the ZIP archive
+            return memoryStream;
+        }
+
+        private static void AddJsonToArchive<T>(ZipArchive archive, string fileName, IEnumerable<T> records)
+        {
+            var entry = archive.CreateEntry(fileName);
+            using (var writer = new StreamWriter(entry.Open()))
+            {
+                var options = new JsonSerializerOptions
+                {
+                    WriteIndented = true,
+                    Converters = { new JsonStringEnumConverter() },
+                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                };
+
+                string json = JsonSerializer.Serialize(records, options);
+
+                writer.Write(json);
+            }
         }
     }
 }

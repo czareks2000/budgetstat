@@ -22,5 +22,20 @@ namespace API.Controllers
                 return StatusCode(500, $"An error occurred during generating zip file");
             }
         }
+
+        [HttpGet("files/app-data-json-zip")]
+        public async Task<IActionResult> GetAppDataJsonZip()
+        {
+            try
+            {
+                var zipArchive = await _fileService.GetAppDataJsonZip();
+
+                return File(zipArchive.ToArray(), "application/zip", "budgetstat.zip");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, $"An error occurred during generating zip file");
+            }
+        }
     }
 }
