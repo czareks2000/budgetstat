@@ -119,7 +119,7 @@ export default class StatsStore {
         this.loadAvgMonthlyExpensesByCategories();
         this.loadAvgMonthlyIncomesByCategories();
         this.loadBalanceOverTimeForecast();
-        
+
         this.setHasOldData(false);
     }
 
@@ -498,7 +498,8 @@ export default class StatsStore {
             runInAction(() => {
                 response.startDate = dayjs(response.startDate).toDate(); 
                 response.endDate = dayjs(response.endDate).toDate(); 
-                this.netWorthValueOverTime = response;
+                if (!this.loadedNetWorthValueOverTime)
+                    this.netWorthValueOverTime = response;
                 this.loadedNetWorthValueOverTime = true;
             })
         } catch (error) {

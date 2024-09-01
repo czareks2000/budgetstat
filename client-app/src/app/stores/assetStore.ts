@@ -152,7 +152,8 @@ export default class AssetStore {
             runInAction(() => {
                 response.startDate = dayjs(response.startDate).toDate(); 
                 response.endDate = dayjs(response.endDate).toDate(); 
-                this.assetValueOverTime = response;
+                if (!this.assetValueOverTimeLoaded)
+                    this.assetValueOverTime = response;
                 this.assetValueOverTimeLoaded = true;
             })
         } catch (error) {

@@ -51,7 +51,8 @@ export default observer(function ValueOverTimeChart({valueOverTime, loaded, char
                         //curve: "linear",
                         data: valueOverTime?.data || mockData, 
                         color: theme.palette.primary.main, 
-                        valueFormatter: (value) => `${formatAmount(value!)} ${defaultCurrency?.symbol}`},
+                        valueFormatter: (value) => `${formatAmount(value!)} ${defaultCurrency?.symbol}`
+                    },
                 ]}
                 xAxis={[{ scaleType: 'point', data: valueOverTime?.labels || mockLabels}]}
                 //leftAxis={null}
