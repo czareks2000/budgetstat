@@ -1,7 +1,7 @@
 import { Box, Paper, Tooltip, Typography } from "@mui/material"
 import { observer } from "mobx-react-lite"
 import { router } from "../../../app/router/Routes"
-import { DataGrid, GridActionsCellItem, GridColDef, GridColumnVisibilityModel, GridPaginationModel, GridToolbar } from '@mui/x-data-grid';
+import { DataGrid, GridActionsCellItem, GridColDef, GridColumnVisibilityModel, GridPaginationModel, GridToolbar, useGridApiRef } from '@mui/x-data-grid';
 import { Delete, Edit } from "@mui/icons-material"
 import CategoryIcon from "../../../components/common/CategoryIcon"
 import { formatAmount } from "../../../app/utils/FormatAmount"
@@ -9,7 +9,7 @@ import { TransactionType } from "../../../app/models/enums/TransactionType"
 import { AmountItem, CategoryItem, TransactionRowItem, TransactionToDelete } from "../../../app/models/Transaction"
 import { useStore } from "../../../app/stores/store"
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DeleteTransactionDialog from "../dialogs/DeleteTransactionDialog";
 
 export default observer(function TransactionsDataGrid() {
@@ -17,6 +17,8 @@ export default observer(function TransactionsDataGrid() {
         transactions, transactionsLoaded, amountColor,
         dataGridSettings, setDataGridSettings,
     }} = useStore();
+
+    const gridRef = useGridApiRef();
     
     const handleEditButtonClick = (transactionId: number, type: TransactionType) => {
         router.navigate(`/transactions/${type}/${transactionId}/edit`);
@@ -165,6 +167,10 @@ export default observer(function TransactionsDataGrid() {
             itemsPerPage: newModel.pageSize
         })
     }
+    
+    useEffect(() => {
+        gridRef.current.setPage(0);
+    }, [transactions.length]);
 
     return (
     <>  
@@ -173,7 +179,8 @@ export default observer(function TransactionsDataGrid() {
             transaction={transactionToDelete} />
         <Paper>
             <Box>
-                <DataGrid 
+                <DataGrid
+                    apiRef={gridRef} 
                     sx={{
                         display: 'grid',
                         gridTemplateRows: 'auto 1f auto',
