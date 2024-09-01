@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite"
 import ResponsiveContainer from "../../components/common/ResponsiveContainer"
-import { Box, Button, Divider, Menu, MenuItem, Paper, Stack, Tab, Tabs, Typography } from "@mui/material"
+import { Alert, Box, Button, Divider, Menu, MenuItem, Paper, Snackbar, Stack, Tab, Tabs, Typography } from "@mui/material"
 import CustomTabPanel, { a11yProps } from "../preferences/tabs/CustomTabPanel"
 import { useState } from "react"
 import agent from "../../app/api/agent"
@@ -16,6 +16,8 @@ export default observer(function ImportExport() {
     };
 
     const [isLoading, setIsLoading] = useState(false);
+
+    // export menu
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
@@ -25,6 +27,14 @@ export default observer(function ImportExport() {
 
     const handleMenuClose = () => {
         setAnchorEl(null);
+    };
+
+    // snack bar
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
     };
 
     const downloadData = async (fileType: "csv" | "json") => {
@@ -43,7 +53,8 @@ export default observer(function ImportExport() {
             document.body.appendChild(a);
             a.click();
         } catch (error) {
-            // tu zrobić snack bar z wiadomoscią: Error downloading ZIP file: ${error}
+            setSnackbarMessage(`Error downloading ZIP file: ${error}`);
+            setSnackbarOpen(true);
             console.log(error);
         } finally {
             setIsLoading(false);
@@ -97,12 +108,22 @@ export default observer(function ImportExport() {
                                         variant="contained"
                                         onClick={() => alert()}
                                     >
-                                        Import
+                                        Import transactions
                                     </Button>
                             </Box>
                         </Box>
                     </Paper>
-                </CustomTabPanel>    
+                </CustomTabPanel>
+
+                <Snackbar
+                    open={snackbarOpen}
+                    autoHideDuration={6000}
+                    onClose={handleSnackbarClose}
+                >
+                    <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
+                        {snackbarMessage}
+                    </Alert>
+                </Snackbar>    
             
             </Stack>
         }/>
