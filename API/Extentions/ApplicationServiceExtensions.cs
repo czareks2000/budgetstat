@@ -35,7 +35,6 @@ namespace API.Extentions
 
             services.AddScoped<IUserAccessor, UserAccessor>();
             services.AddScoped<ICurrencyRatesService, FreeCurrencyRatesService>();
-
             
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 

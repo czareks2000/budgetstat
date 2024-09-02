@@ -43,6 +43,10 @@ namespace Application.Services
         // zwraca kwotę w podanej walucie (historyczny kurs)
         public async Task<decimal> Convert(string inputCurrencyCode, string outputCurrencyCode, decimal value, DateTime date)
         {
+            // If the provided date is in the future, change it to the current UTC date
+            if (date > DateTime.UtcNow)
+                date = DateTime.UtcNow;
+
             if (outputCurrencyCode == inputCurrencyCode)
                 return value;
 

@@ -7,7 +7,7 @@ namespace Infrastructure.Currency
     {
         private static string apiVersion = "v1";
 
-        private static CurrencyRates _currencyRates = new CurrencyRates();
+        private static CurrencyRates _currencyRates = new();
 
         private static readonly string[] fallbackUrls =
         [
@@ -20,7 +20,7 @@ namespace Infrastructure.Currency
         public async Task<decimal> CurrentRate(string inputCurrencyCode, string outputCurrencyCode)
         {
             _currencyRates = await GetCurrencyRates(DateTime.UtcNow);
-            
+
             decimal fromRate = _currencyRates.Usd[inputCurrencyCode.ToLower()];
             decimal toRate = _currencyRates.Usd[outputCurrencyCode.ToLower()];
 
@@ -29,17 +29,41 @@ namespace Infrastructure.Currency
 
         public async Task<decimal> HistoricRate(string inputCurrencyCode, string outputCurrencyCode, DateTime date)
         {
-            _currencyRates = await GetCurrencyRates(date);
+            try
+            {
+                if (date.DayOfWeek == DayOfWeek.Saturday)
+                {
+                    date = date.AddDays(-1); // Move to Friday
+                }
+                else if (date.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    date = date.AddDays(-2); // Move to Friday
+                }
 
-            decimal fromRate = _currencyRates.Usd[inputCurrencyCode.ToLower()];
-            decimal toRate = _currencyRates.Usd[outputCurrencyCode.ToLower()];
+                if (inputCurrencyCode == "PLN")
+                {
+                    return 1 / (await GetExchangeRate(outputCurrencyCode, date)).Mid;
+                }
+                else if (outputCurrencyCode == "PLN")
+                {
+                    return (await GetExchangeRate(inputCurrencyCode, date)).Mid;
+                }
 
-            return toRate / fromRate;
-        }
+                decimal inputCurrencyRate = (await GetExchangeRate(inputCurrencyCode, date)).Mid;
+                decimal outputCurrencyRate = (await GetExchangeRate(outputCurrencyCode, date)).Mid;
 
-        private static string CreateUrl(string fallbackUrl, string date = "latest")
-        {
-            return fallbackUrl.Replace("latest", date);
+                return inputCurrencyRate / outputCurrencyRate;
+
+            }
+            catch (Exception)
+            {
+                _currencyRates = await GetCurrencyRates(date);
+
+                decimal fromRate = _currencyRates.Usd[inputCurrencyCode.ToLower()];
+                decimal toRate = _currencyRates.Usd[outputCurrencyCode.ToLower()];
+
+                return toRate / fromRate;
+            }
         }
 
         private static string FormatDate(DateTime date)
@@ -50,13 +74,11 @@ namespace Infrastructure.Currency
         private static async Task<CurrencyRates> GetCurrencyRates(DateTime date)
         {
             string formattedDate = FormatDate(date);
-
-            string url = "";
-
             HttpClient client = new HttpClient();
 
             foreach (var fallbackUrl in fallbackUrls)
             {
+                string url;
                 if (date.Date == DateTime.UtcNow.Date)
                     url = fallbackUrl;
                 else
@@ -76,6 +98,41 @@ namespace Infrastructure.Currency
             }
 
             return new CurrencyRates(FormatDate(date));
+        }
+
+        private static string CreateUrl(string fallbackUrl, string date = "latest")
+        {
+            return fallbackUrl.Replace("latest", date);
+        }
+
+        private static async Task<Rates> GetExchangeRate(string currencyCode, DateTime date)
+        {
+            string formattedDate = FormatDate(date);
+
+            string url = CreateUrl_NBP(currencyCode, formattedDate);
+
+            HttpClient client = new HttpClient();
+            try
+            {
+                var response = await client.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    return JsonSerializer.Deserialize<ApiResponseNBP>(json).Rates.First();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+            throw new Exception("Could not get exchange rate");
+        }
+
+        private static string CreateUrl_NBP(string curencyCode, string date = "")
+        {
+            return $"https://api.nbp.pl/api/exchangerates/rates/A/{curencyCode}/{date}?format=json";
         }
     }
 }
