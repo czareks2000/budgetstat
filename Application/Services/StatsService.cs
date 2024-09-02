@@ -727,7 +727,7 @@ namespace Application.Services
                 ChartPeriod.Last7Days => now.AddDays(-6),
                 ChartPeriod.Last30Days => now.AddDays(-29),
                 ChartPeriod.LastYear => now.AddMonths(-11),
-                ChartPeriod.Last5Years => now.AddYears(-4),
+                ChartPeriod.Last5Years => now.AddYears(-5),
                 _ => throw new ArgumentOutOfRangeException(nameof(period), period, null),
             };
 
@@ -904,11 +904,12 @@ namespace Application.Services
                     break;
 
                 case NetWorthChartPeriod.FiveYears:
-                    for (int i = 0; i < 12; i++)
+                    currentDate = timeWindow.EndDate;
+                    for (int i = 0; i <= 12; i++)
                     {
                         var date = new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month));
-                        dates.Add(DateTime.SpecifyKind(date, DateTimeKind.Utc));
-                        currentDate = currentDate.AddMonths(5);
+                        dates.Insert(0, DateTime.SpecifyKind(date, DateTimeKind.Utc));
+                        currentDate = currentDate.AddMonths(-5);
                     }
                     break;
 
@@ -920,15 +921,14 @@ namespace Application.Services
                         dates.Add(currentDate);
                         currentDate = currentDate.AddDays(interval);
                     }
+                    if (dates.Last() != timeWindow.EndDate)
+                    {
+                        dates[^1] = timeWindow.EndDate;
+                    }
                     break;
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(period), period, null);
-            }
-
-            if (dates.Last() != timeWindow.EndDate)
-            {
-                dates[^1] = timeWindow.EndDate;
             }
 
             return dates;
@@ -968,7 +968,7 @@ namespace Application.Services
 
                 case ChartPeriod.Last5Years:
                     currentDate = timeWindow.EndDate;
-                    for (int i = 0; i < 12; i++)
+                    for (int i = 0; i <= 12; i++)
                     {
                         var date = new DateTime(currentDate.Year, currentDate.Month, DateTime.DaysInMonth(currentDate.Year, currentDate.Month));
                         dates.Insert(0, DateTime.SpecifyKind(date, DateTimeKind.Utc));
@@ -977,7 +977,6 @@ namespace Application.Services
                     break;
 
                 case ChartPeriod.Custom:
-                    
                     int totalDays = (timeWindow.EndDate - timeWindow.StartDate).Days;
                     int interval = totalDays / 29; // 30 dates mean 29 intervals
                     for (int i = 0; i < 30; i++)
