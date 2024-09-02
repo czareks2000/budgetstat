@@ -2,6 +2,7 @@
 using Domain;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Application.Services
 {
@@ -35,9 +36,16 @@ namespace Application.Services
 
             // get current rate and save to database
             currentRate = await _currencyService.CurrentRate(inputCurrencyCode, outputCurrencyCode);
-            await SaveRateToDatabase(inputCurrencyCode, outputCurrencyCode, DateTime.UtcNow, currentRate.Value);
 
-            return value * currentRate.Value;
+            if (currentRate.Value != 1)
+                await SaveRateToDatabase(inputCurrencyCode, outputCurrencyCode, DateTime.UtcNow, currentRate.Value);
+            else
+                currentRate = GetLatestsRateFromDatabase(inputCurrencyCode, outputCurrencyCode, DateTime.UtcNow);
+
+            if (currentRate.HasValue)
+                return value * currentRate.Value;
+
+            return value;
         }
 
         // zwraca kwotę w podanej walucie (historyczny kurs)
@@ -57,9 +65,16 @@ namespace Application.Services
 
             // get historic rate and save to database
             historicRate = await _currencyService.HistoricRate(inputCurrencyCode, outputCurrencyCode, date);
-            await SaveRateToDatabase(inputCurrencyCode, outputCurrencyCode, date, historicRate.Value);
 
-            return value * historicRate.Value;
+            if (historicRate.Value != 1)
+                await SaveRateToDatabase(inputCurrencyCode, outputCurrencyCode, date, historicRate.Value);
+            else
+                historicRate = GetLatestsRateFromDatabase(inputCurrencyCode, outputCurrencyCode, date);
+
+            if (historicRate.HasValue)
+                return value * historicRate.Value;
+
+            return value;
         }
 
         // zwraca aktualny kurs
@@ -75,13 +90,22 @@ namespace Application.Services
 
             // get current rate and save to database
             currentRate = await _currencyService.CurrentRate(inputCurrencyCode, outputCurrencyCode);
-            await SaveRateToDatabase(inputCurrencyCode, outputCurrencyCode, DateTime.UtcNow, currentRate.Value);
 
-            return currentRate.Value;
+            if (currentRate.Value != 1)
+                await SaveRateToDatabase(inputCurrencyCode, outputCurrencyCode, DateTime.UtcNow, currentRate.Value);
+            else
+                currentRate = GetLatestsRateFromDatabase(inputCurrencyCode, outputCurrencyCode, DateTime.UtcNow);
+
+            if (currentRate.HasValue)
+                return currentRate.Value;
+
+            return 1;
         }
 
         private async Task<bool> SaveRateToDatabase(string inputCurrencyCode, string outputCurrencyCode, DateTime date, decimal rate)
         {
+            if (rate == 1) return false;
+
             try
             {
                 var exchangeRate = new ExchangeRate
@@ -121,6 +145,31 @@ namespace Application.Services
                     .Where(er => er.InputCurrencyCode.ToLower() == outputCurrencyCode.ToLower())
                     .Where(er => er.OutputCurrencyCode.ToLower() == inputCurrencyCode.ToLower())
                     .Where(er => er.Date.Date == date.Date)
+                    .Select(er => (decimal?)er.Rate)
+                    .FirstOrDefault();
+
+                if (exchangeRate != null)
+                    exchangeRate = 1 / exchangeRate;
+            }
+
+            return exchangeRate;
+        }
+
+        private decimal? GetLatestsRateFromDatabase(string inputCurrencyCode, string outputCurrencyCode, DateTime date)
+        {
+            var exchangeRate = _context.ExchangeRates
+                .Where(er => er.InputCurrencyCode.ToLower() == inputCurrencyCode.ToLower())
+                .Where(er => er.OutputCurrencyCode.ToLower() == outputCurrencyCode.ToLower())
+                .Where(er => er.Date.Date <= date.Date)
+                .Select(er => (decimal?)er.Rate)
+                .FirstOrDefault();
+
+            if (exchangeRate == null)
+            {
+                exchangeRate = _context.ExchangeRates
+                    .Where(er => er.InputCurrencyCode.ToLower() == outputCurrencyCode.ToLower())
+                    .Where(er => er.OutputCurrencyCode.ToLower() == inputCurrencyCode.ToLower())
+                    .Where(er => er.Date.Date <= date.Date)
                     .Select(er => (decimal?)er.Rate)
                     .FirstOrDefault();
 

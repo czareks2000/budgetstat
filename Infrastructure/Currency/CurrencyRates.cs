@@ -17,15 +17,15 @@ namespace Infrastructure.Currency
 
             Usd = new Dictionary<string, decimal>
             {
-                { "pln", 3.90830404m },
-                { "eur", 0.91843178m },
+                { "pln", 1m },
+                { "eur", 1m },
                 { "usd", 1m },
-                { "gbp", 0.76159883m },
-                { "chf", 0.84992805m },
-                { "jpy", 146.13263616m },
-                { "czk", 22.65033421m },
-                { "cad", 1.34893566m },
-                { "sek", 10.26132788m }
+                { "gbp", 1m },
+                { "chf", 1m },
+                { "jpy", 1m },
+                { "czk", 1m },
+                { "cad", 1m },
+                { "sek", 1m }
             };
         }
     }
