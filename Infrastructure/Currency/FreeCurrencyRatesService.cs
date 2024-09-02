@@ -31,6 +31,23 @@ namespace Infrastructure.Currency
         {
             try
             {
+                return await TryGetExchangeRateWithFallback(inputCurrencyCode, outputCurrencyCode, date, 0);
+            }
+            catch (Exception)
+            {
+                _currencyRates = await GetCurrencyRates(date);
+
+                decimal fromRate = _currencyRates.Usd[inputCurrencyCode.ToLower()];
+                decimal toRate = _currencyRates.Usd[outputCurrencyCode.ToLower()];
+
+                return toRate / fromRate;
+            }
+        }
+
+        private static async Task<decimal> TryGetExchangeRateWithFallback(string inputCurrencyCode, string outputCurrencyCode, DateTime date, int daysOffset)
+        {
+            try
+            {
                 if (date.DayOfWeek == DayOfWeek.Saturday)
                 {
                     date = date.AddDays(-1); // Move to Friday
@@ -53,16 +70,17 @@ namespace Infrastructure.Currency
                 decimal outputCurrencyRate = (await GetExchangeRate(outputCurrencyCode, date)).Mid;
 
                 return inputCurrencyRate / outputCurrencyRate;
-
             }
-            catch (Exception)
+            catch
             {
-                _currencyRates = await GetCurrencyRates(date);
+                daysOffset++;
+                if (daysOffset >= 7)
+                {
+                    throw new Exception($"Failed to retrieve exchange rate in the last {daysOffset} days.");
+                }
 
-                decimal fromRate = _currencyRates.Usd[inputCurrencyCode.ToLower()];
-                decimal toRate = _currencyRates.Usd[outputCurrencyCode.ToLower()];
-
-                return toRate / fromRate;
+                DateTime fallbackDate = date.AddDays(-1);
+                return await TryGetExchangeRateWithFallback(inputCurrencyCode, outputCurrencyCode, fallbackDate, daysOffset);
             }
         }
 

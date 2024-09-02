@@ -18,9 +18,9 @@ namespace Persistence
             {
                 new()
                 {
-                    Name = "U.S. dollar",
-                    Code = "USD",
-                    Symbol = "$",
+                    Name = "Polish złoty",
+                    Code = "PLN",
+                    Symbol = "zł",
                 },
                 new()
                 {
@@ -30,9 +30,45 @@ namespace Persistence
                 },
                 new()
                 {
-                    Name = "Polish złoty",
-                    Code = "PLN",
-                    Symbol = "zł",
+                    Name = "U.S. dollar",
+                    Code = "USD",
+                    Symbol = "$",
+                },
+                new()
+                {
+                    Name = "Sterling",
+                    Code = "GBP",
+                    Symbol = "£",
+                },
+                new()
+                {
+                    Name = "Czech koruna",
+                    Code = "CZK",
+                    Symbol = "Kč",
+                },
+                new()
+                {
+                    Name = "Swiss franc",
+                    Code = "CHF",
+                    Symbol = "Fr",
+                },
+                new()
+                {
+                    Name = "Swedish krona",
+                    Code = "SEK",
+                    Symbol = "kr",
+                },
+                new()
+                {
+                    Name = "Canadian Dollar",
+                    Code = "CAD",
+                    Symbol = "C$",
+                },
+                new()
+                {
+                    Name = "Japanese yen",
+                    Code = "JPY",
+                    Symbol = "¥",
                 }
             };
 

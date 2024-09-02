@@ -53,19 +53,9 @@ export default class CurrencyStore {
             await agent.Settings.setDefaultCurrency(currencyId);
             runInAction(() => {
                 this.setDefaultCurrency(currencyId);
-                // home page
-                store.statsStore.loadHomePageCharts();
-                store.statsStore.loadCurrentMonthIncome();
-                store.statsStore.loadAvgMonthlyIncomesAndExpensesLastYear();
                 // accounts
                 store.accountStore.clearStore();
                 store.accountStore.loadAccounts();
-                // stats
-                store.statsStore.loadBalanceValueOverTime();
-                store.statsStore.loadIncomesAndExpensesOverTime();
-                store.statsStore.loadAvgMonthlyExpensesByCategories();
-                store.statsStore.loadAvgMonthlyIncomesByCategories();
-                store.statsStore.loadBalanceOverTimeForecast();
                 // budgets
                 store.budgetStore.clearStore();
                 store.budgetStore.loadBudgets();
@@ -73,6 +63,12 @@ export default class CurrencyStore {
                 store.statsStore.clearStore();
                 store.statsStore.loadNetWorthStats();
                 store.statsStore.loadNetWorthValueOverTime();
+                // stats
+                store.statsStore.loadStatsPageCharts();
+                // home page
+                store.statsStore.loadHomePageCharts();
+                store.statsStore.loadCurrentMonthIncome();
+                store.statsStore.loadAvgMonthlyIncomesAndExpensesLastYear();
             });
         } catch (error) {
             console.log(error);
