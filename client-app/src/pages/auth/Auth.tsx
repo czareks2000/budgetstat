@@ -4,6 +4,7 @@ import LoginForm from "../../components/forms/Auth/LoginForm"
 import { useState } from "react";
 import RegisterForm from "../../components/forms/Auth/RegisterForm";
 import { useStore } from "../../app/stores/store";
+import { router } from "../../app/router/Routes";
 
 export default observer(function Auth() {
     const {currencyStore: {currenciesLoaded}} = useStore();
@@ -11,7 +12,6 @@ export default observer(function Auth() {
     const [showLoginForm, setShowLoginForm] = useState(true);
 
     return (
-        
         <Stack
             justifyContent="center"
             alignItems="center"
@@ -26,12 +26,18 @@ export default observer(function Auth() {
                                 <LoginForm />
                             </Box>
                         </Paper>
-                        <Box mt={2}>
+                        <Box mt={2} display={'flex'} justifyContent={'space-between'}>
                             <Typography
                                 onClick={() => setShowLoginForm(false)}
                                 sx={{cursor: "pointer"}}
                                 color={'primary'}>
                                 Don't have an account? Sign Up
+                            </Typography>
+                            <Typography
+                                onClick={() => router.navigate('/forgot-password')}
+                                sx={{cursor: "pointer"}}
+                                color={'primary'}>
+                                Forgot password
                             </Typography>
                         </Box>
                     </> : <>

@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { router } from "../router/Routes";
 import { store } from "../stores/store";
-import { ChangePasswordFormValues, User, UserFormValues } from "../models/User";
+import { ChangePasswordFormValues, ResetPasswordRequest, User, UserFormValues } from "../models/User";
 import { Account, AccountFormValues } from "../models/Account";
 import { AccountStatus } from "../models/enums/AccountStatus";
 import { PlannedTransaction, PlannedTransactionCreateValues, Transaction, TransactionCreateValues, TransactionFormValues, TransactionParams, TransactionRowItem, TransactionUpdateValues } from "../models/Transaction";
@@ -99,7 +99,11 @@ const Auth = {
     register: (user: UserFormValues) => 
         requests.post<User>('/auth/register', user),
     changePassword: (values: ChangePasswordFormValues) => 
-        requests.post<void>('/auth/changepassword/', values)
+        requests.post<void>('/auth/changepassword/', values),
+    forgotPassword: (email: string) =>
+        requests.post<void>('/auth/forgot-password', { email: email }),
+    resetPassword: (resetPasswordRequest: ResetPasswordRequest) =>
+        requests.post<void>('/auth/reset-password', resetPasswordRequest)
 }
 
 const Accounts = {

@@ -22,7 +22,6 @@ import CounterpartyDetails from "../../pages/loans/CounterpartyDetails";
 import LoanDetails from "../../pages/loans/LoanDetails";
 import EditLoan from "../../pages/loans/EditLoan";
 import CreateAsset from "../../pages/networth/CreateAsset";
-import EditAsset from "../../pages/networth/details/EditAsset";
 import AssetDetails from "../../pages/networth/AssetDetails";
 import PlannedTransactions from "../../pages/transactions/planned/PlannedTransactions";
 import CreateTransaction from "../../pages/transactions/CreateTransaction";
@@ -34,6 +33,8 @@ import ManageCategories from "../../pages/preferences/ManageCategories";
 import CreateCategory from "../../pages/preferences/CreateCategory";
 import EditCategory from "../../pages/preferences/EditCategory";
 import ChangePassword from "../../pages/preferences/ChangePassword";
+import ResetPassword from "../../pages/auth/ResetPassword";
+import ForgotPassword from "../../pages/auth/ForgotPassword";
 
 export const routes: RouteObject[] = [
     {
@@ -85,9 +86,11 @@ export const routes: RouteObject[] = [
                 {path: 'server-error', element: <ServerError />},
                 {path: '*', element: <NotFound />}
             ]},
+            
         ]
     },
-    
+    {path: '/reset-password', element: <ResetPassword />},
+    {path: '/forgot-password', element: <ForgotPassword />},
 ]
 
 export const router = createBrowserRouter(routes);

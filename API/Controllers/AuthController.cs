@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Persistence;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using System.Web;
 
 namespace API.Controllers
 {
@@ -138,12 +139,27 @@ namespace API.Controllers
                 return BadRequest("Invalid Email");
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var resetPasswordLink = token;
+            var encodedToken = HttpUtility.UrlEncode(token);
+            var encodedEmail = HttpUtility.UrlEncode(request.Email);
+            var resetPasswordLink = $"http://localhost:3000/reset-password/?token={encodedToken}&email={encodedEmail}";
+
+            var content = $@"
+                Dear {user.UserName},
+                <br><br>
+                We received a request to reset your password. To proceed with resetting your password, please click the link below:
+                <br><br>
+                <a href=""{resetPasswordLink}"">Reset Your Password</a>
+                <br><br>
+                If you did not request a password reset, please ignore this email.
+                <br><br>
+                Best regards,<br>
+                BudgetStat team
+                ";
 
             var message = new Message(
                 [request.Email],
                 subject: "Reset password link",
-                content: resetPasswordLink
+                content: content
             );
 
             return HandleResult(await _mailService.SendEmail(message));

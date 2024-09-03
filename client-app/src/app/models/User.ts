@@ -18,3 +18,10 @@ export interface ChangePasswordFormValues {
     newPassword: string;
     confirmNewPassword: string;
 }
+
+export interface ResetPasswordRequest {
+    token: string;
+    email: string;
+    newPassword: string;
+    confirmNewPassword: string;
+}

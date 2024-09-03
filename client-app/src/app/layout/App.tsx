@@ -1,19 +1,17 @@
 import './App.css'
 
 import Toolbar from '@mui/material/Toolbar';
-import { Box, CssBaseline, ThemeProvider } from '@mui/material';
+import { Box } from '@mui/material';
 
 import Menu from './menu/Menu';
-import { Outlet, ScrollRestoration } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import { useEffect } from 'react';
 import { useStore } from '../stores/store';
 import Loading from '../../components/common/loadings/LoadingCenterScreen';
-import { theme } from './Theme';
 
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import Auth from '../../pages/auth/Auth';
+import Wrapper from './Wrapper';
 
 export const drawerWidth = 288;
 export const marginBottom = 150;
@@ -35,11 +33,9 @@ export default observer(function App() {
   if (!commonStore.appLoaded) return <Loading />
 
   return (
-    <ThemeProvider theme={theme}>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <CssBaseline />
-        <ScrollRestoration/>
-        {!userStore.isLoggedIn
+  <Wrapper content={
+    <>
+      {!userStore.isLoggedIn
         ? 
           <Auth /> 
         : (
@@ -57,7 +53,7 @@ export default observer(function App() {
 
           </Box>
         )}
-      </LocalizationProvider>
-    </ThemeProvider>
+    </>
+  }/>
   );
 })
