@@ -1,9 +1,7 @@
 ﻿using API.Dto;
 using API.Interfaces;
-using Application.Core;
-using Application.Dto.Loan;
+using Application.Dto.Mail;
 using Application.Interfaces;
-using Application.Services;
 using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -14,23 +12,23 @@ using System.Security.Claims;
 
 namespace API.Controllers
 {
-    [ApiController]
-    [Route("api/auth")]
     public class AuthController(
         UserManager<User> userManager,
         DataContext context,
+        IMailService mailService,
         ICategoryService categoryService,
         ITokenService tokenService,
-        IUserAccessor userAccessor) : ControllerBase
+        IUserAccessor userAccessor) : BaseApiController
     {
         private readonly UserManager<User> _userManager = userManager;
         private readonly DataContext _context = context;
+        private readonly IMailService _mailService = mailService;
         private readonly ICategoryService _categoryService = categoryService;
         private readonly ITokenService _tokenService = tokenService;
         private readonly IUserAccessor _userAccessor = userAccessor;
 
         [AllowAnonymous]
-        [HttpPost("login")]
+        [HttpPost("auth/login")]
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
@@ -46,7 +44,7 @@ namespace API.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("register")]
+        [HttpPost("auth/register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
             if (await _userManager.Users.AnyAsync(x => x.UserName == registerDto.UserName))
@@ -97,7 +95,7 @@ namespace API.Controllers
         }
 
         [Authorize]
-        [HttpDelete("deleteuser")]
+        [HttpDelete("auth/deleteuser")]
         public async Task<IActionResult> DeleteUser()
         {
             var user = await _context.Users
@@ -116,8 +114,20 @@ namespace API.Controllers
             return Ok();
         }
 
+        [HttpGet("auth/test-email")]
+        public async Task<IActionResult> TestEmail()
+        {
+            var message = new Message(
+                ["czareks20006@gmail.com"],
+                subject: "Testing",
+                content: "Test"
+            );
+
+            return HandleResult(await _mailService.SendEmail(message));
+        }
+
         [Authorize]
-        [HttpPost("changepassword")]
+        [HttpPost("auth/changepassword")]
         public async Task<ActionResult<UserDto>> ChangePassword(ChangePasswordDto changePasswordDto)
         {
             var user = await _userManager.FindByEmailAsync(_userAccessor.GetUserEmail());
@@ -135,7 +145,7 @@ namespace API.Controllers
         }
 
         [Authorize]
-        [HttpGet]
+        [HttpGet("auth")]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
             var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));

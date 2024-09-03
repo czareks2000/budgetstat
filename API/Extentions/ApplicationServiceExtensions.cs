@@ -3,6 +3,7 @@ using Application.Interfaces;
 using Application.Services;
 using Infrastructure.Currency;
 using Infrastructure.Security;
+using Infrastructure.Mail;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -30,6 +31,9 @@ namespace API.Extentions
                     policy.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader();
                 });
             });
+
+            services.Configure<EmailConfiguration>(config.GetSection("EmailConfiguration"));
+            services.AddScoped<IMailService, MailService>();
 
             services.AddHttpContextAccessor();
 
