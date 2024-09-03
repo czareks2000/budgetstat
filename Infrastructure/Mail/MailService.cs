@@ -21,7 +21,7 @@ namespace Infrastructure.Mail
             {
                 client.Connect(_emailConfig.SmtpServer, _emailConfig.Port, true);
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
-                client.Authenticate(_emailConfig.UserName, _emailConfig.Password);
+                client.Authenticate(_emailConfig.From, _emailConfig.Password);
 
                 await client.SendAsync(emailMessage);
                 return Result<object>.Success(null);
@@ -40,7 +40,7 @@ namespace Infrastructure.Mail
         private MimeMessage CreateEmailMessage(Message message)
         {
             var emailMessage = new MimeMessage();
-            emailMessage.From.Add(new MailboxAddress("BudgetStat", _emailConfig.From));
+            emailMessage.From.Add(new MailboxAddress(_emailConfig.UserName, _emailConfig.From));
             emailMessage.To.AddRange(message.To);
             emailMessage.Subject = message.Subject;
             emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Text)

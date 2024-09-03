@@ -1,5 +1,6 @@
 ﻿using API.Dto;
 using API.Interfaces;
+using Application.Core;
 using Application.Dto.Mail;
 using Application.Interfaces;
 using Domain;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 namespace API.Controllers
@@ -94,7 +96,6 @@ namespace API.Controllers
             return CreateUserObject(user);
         }
 
-        [Authorize]
         [HttpDelete("auth/deleteuser")]
         public async Task<IActionResult> DeleteUser()
         {
@@ -114,11 +115,12 @@ namespace API.Controllers
             return Ok();
         }
 
+        [AllowAnonymous]
         [HttpGet("auth/test-email")]
-        public async Task<IActionResult> TestEmail()
+        public async Task<IActionResult> TestEmail([FromQuery] string email)
         {
             var message = new Message(
-                ["czareks20006@gmail.com"],
+                [email],
                 subject: "Testing",
                 content: "Test"
             );
@@ -126,7 +128,48 @@ namespace API.Controllers
             return HandleResult(await _mailService.SendEmail(message));
         }
 
-        [Authorize]
+        [AllowAnonymous]
+        [HttpPost("auth/forgot-password")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+
+            if (user == null)
+                return BadRequest("Invalid Email");
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var resetPasswordLink = token;
+
+            var message = new Message(
+                [request.Email],
+                subject: "Reset password link",
+                content: resetPasswordLink
+            );
+
+            return HandleResult(await _mailService.SendEmail(message));
+        }
+
+        [AllowAnonymous]
+        [HttpPost("auth/reset-password")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDto resetPasswordDto)
+        {
+            var user = await _userManager.FindByEmailAsync(resetPasswordDto.Email);
+
+            if (user == null)
+                return BadRequest("Invalid Email");
+
+            var resetPassResult = await _userManager.ResetPasswordAsync(
+                user,
+                resetPasswordDto.Token,
+                resetPasswordDto.NewPassword);
+
+            if (resetPassResult.Succeeded)
+                return Ok();
+
+
+            return BadRequest(resetPassResult.Errors);
+        }
+
         [HttpPost("auth/changepassword")]
         public async Task<ActionResult<UserDto>> ChangePassword(ChangePasswordDto changePasswordDto)
         {
@@ -144,7 +187,6 @@ namespace API.Controllers
             return ValidationProblem(ModelState);
         }
 
-        [Authorize]
         [HttpGet("auth")]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
