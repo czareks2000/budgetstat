@@ -15,6 +15,11 @@ export default observer(function CreateAccount() {
     createAccount(account).then(() => {
         router.navigate('/accounts');
         formikHelpers.resetForm();
+    }).catch(error => {
+        formikHelpers.setErrors({
+          name: error
+        });
+        formikHelpers.setSubmitting(false);
     });
   }
 

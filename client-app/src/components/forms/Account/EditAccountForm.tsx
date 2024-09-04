@@ -1,4 +1,4 @@
-import { Form, Formik } from "formik";
+import { Form, Formik, FormikHelpers } from "formik";
 import { observer } from "mobx-react-lite"
 import * as Yup from "yup";
 import TextInput from "../../formInputs/TextInput";
@@ -8,7 +8,7 @@ import { Button, Stack } from "@mui/material";
 
 interface Props {
     initialValues: AccountFormValues;
-    onSubmit: (account: AccountFormValues) => void;
+    onSubmit: (account: AccountFormValues, formikHelpers: FormikHelpers<AccountFormValues>) => void;
     onCancel: () => void;
 }
 
@@ -23,7 +23,7 @@ export default observer(function EditAccountForm({initialValues, onSubmit, onCan
         <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
-            onSubmit={(values) => onSubmit(values)}
+            onSubmit={(values, helpers) => onSubmit(values, helpers)}
         >
         {({ isValid, dirty, isSubmitting }) => {
         return(

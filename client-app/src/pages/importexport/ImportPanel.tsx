@@ -68,7 +68,7 @@ export default observer(function ImportPanel({setSnackbarMessage, setSnackbarOpe
                     <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
                         <Stack spacing={1}>
                             <Typography>Import transactions from CSV file</Typography>
-                            <Typography variant="subtitle2">The CSV file should have the same format as in the export.</Typography>
+                            <Typography variant="subtitle2"><i>The CSV file should have the same format as in the export.</i></Typography>
                         </Stack>
                         <Tooltip 
                             title={

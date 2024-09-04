@@ -7,6 +7,7 @@ import { convertToDate } from "../utils/ConvertToDate";
 import { store } from "./store";
 import { formatAmount } from "../utils/FormatAmount";
 import { router } from "../router/Routes";
+import { AxiosError } from "axios";
 
 export default class AccountStore {
     accountsRegistry = new Map<number, Account>();
@@ -143,6 +144,7 @@ export default class AccountStore {
             });    
         } catch (error) {
             console.log(error);
+            throw (error as AxiosError).response!.data;
         }
     }
 
@@ -172,6 +174,7 @@ export default class AccountStore {
             });    
         } catch (error) {
             console.log(error);
+            throw (error as AxiosError).response!.data;
         }
     }
 

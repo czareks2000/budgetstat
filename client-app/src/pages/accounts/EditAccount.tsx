@@ -8,6 +8,7 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import ResponsiveContainer from "../../components/common/ResponsiveContainer";
 import LoadingWithLabel from "../../components/common/loadings/LoadingWithLabel";
+import { FormikHelpers } from "formik";
 
 export default observer(function EditAccount() {
     const [searchParams] = useSearchParams();
@@ -19,9 +20,15 @@ export default observer(function EditAccount() {
         }
     } = useStore();
     
-    function handleUpdate(updatedAccount: AccountFormValues): void {
+    function handleUpdate(updatedAccount: AccountFormValues, formikHelpers: FormikHelpers<AccountFormValues>): void {
         updateAccount(selectedAccount!.id, updatedAccount)
-            .then(() => router.navigate(redirect === 'assets' ? '/net-worth' : '/accounts'));
+            .then(() => router.navigate(redirect === 'assets' ? '/net-worth' : '/accounts'))
+            .catch(error => {
+                formikHelpers.setErrors({
+                  name: error
+                });
+                formikHelpers.setSubmitting(false);
+            });
     }
 
     const handleCancel = () => {

@@ -7,6 +7,7 @@ using Domain;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using System.Security.Principal;
 
 namespace Application.Services
 {
@@ -71,6 +72,14 @@ namespace Application.Services
             if (_utilities.CheckIfCurrencyExists(newAccount.CurrencyId))
                 return Result<AccountDto>.Failure("Invalid currency id");
 
+            var existingAccount = await _context.Accounts
+                .Where(a => a.User == user)
+                .Where(a => a.Name == newAccount.Name && a.Currency.Id == newAccount.CurrencyId)
+                .FirstOrDefaultAsync();
+
+            if (existingAccount != null)
+                return Result<AccountDto>.Failure("Account with the same name and currency already exist.");
+
             var account = _mapper.Map<Account>(newAccount);
 
             account.User = user;
@@ -101,7 +110,7 @@ namespace Application.Services
 
         // fukncja aktualizuje konto
         public async Task<Result<AccountDto>> Update(int accountId, AccountUpdateDto updatedAccount)
-        {
+        {   
             var account = _context.Accounts
                 .Include(a => a.Currency)
                 .Include(a => a.AccountBalances)
@@ -109,6 +118,16 @@ namespace Application.Services
                 .FirstOrDefault(c => c.Id == accountId);
 
             if (account == null) return null;
+
+            var user = await _utilities.GetCurrentUserAsync();
+
+            var existingAccount = await _context.Accounts
+                .Where(a => a.User == user)
+                .Where(a => a.Name == updatedAccount.Name && a.Currency.Id == account.CurrencyId)
+                .FirstOrDefaultAsync();
+
+            if (existingAccount != null)
+                return Result<AccountDto>.Failure("Account with the same name and currency already exist.");
 
             updatedAccount.Name ??= account.Name;
             updatedAccount.Description ??= account.Description;
@@ -123,7 +142,6 @@ namespace Application.Services
             var accountDto = _mapper.Map<AccountDto>(account);
 
             // przeliczenie salda do defaultowej waluty użytkownika
-            var user = await _utilities.GetCurrentUserAsync();
             accountDto.ConvertedBalance = await _utilities
                 .Convert(accountDto.Currency.Code, user.DefaultCurrency.Code, accountDto.Balance);
 
