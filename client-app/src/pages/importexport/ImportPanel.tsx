@@ -66,13 +66,18 @@ export default observer(function ImportPanel({setSnackbarMessage, setSnackbarOpe
             <Paper>
                 <Box p={2}>
                     <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
-                        <Typography>Import transactions</Typography>
+                        <Stack spacing={1}>
+                            <Typography>Import transactions from CSV file</Typography>
+                            <Typography variant="subtitle2">The CSV file should have the same format as in the export.</Typography>
+                        </Stack>
                         <Tooltip 
                             title={
                                 <Stack p={1} spacing={1}>
                                     <Typography variant="body2">Before importing, create categories and accounts.</Typography>
                                     <Typography variant="body2">Account and category names in the file must match those in the application.</Typography>
                                     <Typography variant="body2">Transfers are not included in the import and must be added manually later.</Typography>
+                                    <Typography variant="body2">Required headers:</Typography>
+                                    <Typography variant="body2">Date, Type, Amount, Currency, Description, Account, MainCategory, Category, Considered</Typography>
                                 </Stack>
                             }
                             placement="left"
