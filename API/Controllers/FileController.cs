@@ -37,5 +37,11 @@ namespace API.Controllers
                 return StatusCode(500, $"An error occurred during generating zip file");
             }
         }
+
+        [HttpPost("files/import-transactions")]
+        public async Task<IActionResult> ImportTransactions([FromForm] IFormFile file)
+        {
+            return HandleResult(await _fileService.ImportTransactions(file));
+        }
     }
 }

@@ -350,6 +350,13 @@ const Stats = {
 const Files = {
     getAppDataCsvZip: () => axios.get('/files/app-data-csv-zip', { responseType: 'arraybuffer'}),
     getAppDataJsonZip: () => axios.get('/files/app-data-json-zip', { responseType: 'arraybuffer'}),
+    importTransations: (file: Blob) => {
+        const formData = new FormData();
+        formData.append('File', file);
+        return axios.post<TransactionRowItem[]>(`/files/import-transactions`, formData, {
+            headers: {'Content-Type': 'multipart/form-data'}
+        })
+    }
 }
 
 const agent = {

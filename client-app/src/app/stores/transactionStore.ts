@@ -360,6 +360,8 @@ export default class TransactionStore {
                     this.loadTransactions();
 
                 this.latestTransactionsLoaded = false;
+
+                store.fileStore.removeTransaction(transaction.type, transactionId);
             })
         } catch (error) {
             console.log(error);
@@ -438,6 +440,7 @@ export default class TransactionStore {
                     accountIds.push(fromAccountId);
 
                 this.updateDataInOtherStores([transaction.toAccountId, fromAccountId], transaction.categoryId);
+                store.fileStore.removeTransaction(transaction.type, transaction.transactionId);
 
                 this.latestTransactionsLoaded = false;
             })

@@ -29,7 +29,7 @@ export default observer(function ExpensesChart() {
             <Box pt={2} mt={-4} height={300}>
                 <BarChart
                     slotProps={{
-                        noDataOverlay: { message: 'Select categories to see data' },
+                        noDataOverlay: { message: chart ? 'There is no expenses' : 'Select categories to see data' },
                         legend: {
                             hidden: true
                         }

@@ -12,6 +12,7 @@ using Application.Dto.Transaction.Transfer;
 using AutoMapper;
 using Domain;
 using Domain.Enums;
+using Application.Dto.Import;
 
 namespace Application.Core
 {
@@ -114,7 +115,7 @@ namespace Application.Core
             CreateMap<TransferCreateUpdateDto, Transfer>();
             CreateMap<Transfer, TransferDto>();
 
-            
+
             CreateMap<Transaction, TransactionFormValues>()
                 .ForMember(dest => dest.Description, opt => opt
                    .MapFrom(src => src.Description ?? ""));
@@ -135,7 +136,7 @@ namespace Application.Core
 
             CreateMap<PayoffCreateDto, Payoff>();
             CreateMap<Payoff, PayoffDto>();
-            
+
             CreateMap<AssetCreateUpdateDto, Asset>();
             CreateMap<Asset, AssetDto>()
                 .ForMember(dest => dest.AssetValue, opt => opt
@@ -198,7 +199,11 @@ namespace Application.Core
                 .ForMember(dest => dest.Currency, opt => opt
                    .MapFrom(src => src.Currency.Code))
                 .ForMember(dest => dest.Account, opt => opt
-                   .MapFrom(src => src.Account.Name));
+                   .MapFrom(src => src.Account.Name))
+                .ForMember(dest => dest.MainCategory, opt => opt
+                   .MapFrom(src => src.Category.MainCategory.Name))
+                .ForMember(dest => dest.Category, opt => opt
+                   .MapFrom(src => src.Category.Name));
             CreateMap<Transfer, TransactionExportDto>()
                 .ForMember(dest => dest.Type, opt => opt
                    .MapFrom(src => TransactionType.Transfer))
@@ -214,6 +219,25 @@ namespace Application.Core
                    .MapFrom(src => $"Transfer from {src.FromAccount.Name} account"))
                 .ForMember(dest => dest.Considered, opt => opt
                    .MapFrom(src => false));
+
+            //               \/ temporary \/
+
+            CreateMap<TransactionImportDto, TransactionListItem>()
+                .ForMember(dest => dest.AccountName, opt => opt
+                    .MapFrom(src => src.Account))
+                .ForMember(dest => dest.Category, opt => opt
+                    .MapFrom(src => new CategoryItem()))
+                .ForMember(dest => dest.Amount, opt => opt
+                   .MapFrom(src => src));
+            CreateMap<TransactionImportDto, AmountItem>()
+               .ForMember(dest => dest.Value, opt => opt
+                   .MapFrom(src => src.Amount))
+                .ForMember(dest => dest.Type, opt => opt
+                    .MapFrom(src => src.Type))
+                .ForMember(dest => dest.CurrencySymbol, opt => opt
+                    .MapFrom(src => src.Currency));
+
+            //              /\ temporary /\
         }
     }
 

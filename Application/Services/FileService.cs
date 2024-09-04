@@ -1,4 +1,6 @@
-﻿using Application.Dto.Export;
+﻿using Application.Core;
+using Application.Dto.Export;
+using Application.Dto.Transaction;
 using Application.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -6,21 +8,25 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 using Persistence;
 using System.Globalization;
 using System.IO.Compression;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Application.Dto.Import;
 
 namespace Application.Services
 {
     public class FileService(
         DataContext context,
+        ITransactionService transactionService,
         IUtilities utilities,
         IMapper mapper) : IFileService
     {
         private readonly DataContext _context = context;
+        private readonly ITransactionService _transactionService = transactionService;
         private readonly IUtilities _utilities = utilities;
         private readonly IMapper _mapper = mapper;
 
@@ -236,6 +242,114 @@ namespace Application.Services
 
                 writer.Write(json);
             }
+        }
+
+        public async Task<Result<List<TransactionListItem>>> ImportTransactions(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return Result<List<TransactionListItem>>.Failure("No file uploaded.");
+
+            var fileExtension = Path.GetExtension(file.FileName);
+            if (fileExtension != ".csv")
+                return Result<List<TransactionListItem>>.Failure("Invalid file format.");
+
+            List<TransactionImportDto> importedTransactions = new();
+            
+            try
+            {
+                using var stream = file.OpenReadStream();
+                importedTransactions = ProcessCsv(stream);
+            }
+            catch (Exception)
+            {
+                return Result<List<TransactionListItem>>.Failure("The content of the file is not in the correct format.");
+            }
+
+            List<int> transactionIds = []; // id utworzonych transakcji
+
+            var user = await _utilities.GetCurrentUserAsync();
+
+            var filteredAndSortedTransactions = importedTransactions
+                .Where(t => t.Type != TransactionType.Transfer)  
+                .OrderBy(t => t.Type)  
+                .ThenBy(t => t.Date)
+                .ToList();
+
+            foreach (var transaction in filteredAndSortedTransactions)
+            {
+                var categoryId = await _context.Categories
+                    .Where(c => c.UserId == user.Id)
+                    .Where(c => !c.IsMain)
+                    .Where(c => c.Name == transaction.Category)
+                    .Where(c => c.MainCategory.Name == transaction.MainCategory)
+                    .Where(c => c.Type == transaction.Type)
+                    .Select(c => c.Id)
+                    .SingleOrDefaultAsync();
+
+                if (categoryId == 0)
+                    return await CancelImport(transactionIds, $"Category not found: {transaction.MainCategory}/{transaction.Category}");
+
+                var accountId = await _context.Accounts
+                    .Where(a => a.UserId == user.Id)
+                    .Where(a => a.Name == transaction.Account)
+                    .Where(a => a.Currency.Code == transaction.Currency)
+                    .Select(c => c.Id)
+                    .SingleOrDefaultAsync();
+
+                if (accountId == 0)
+                    return await CancelImport(transactionIds, $"Account not found: {transaction.Account} ({transaction.Currency})");
+
+                var newTransaction = new TransactionCreateDto
+                {
+                    Amount = transaction.Amount,
+                    CategoryId = categoryId,
+                    Date = DateTime.SpecifyKind(transaction.Date, DateTimeKind.Utc),
+                    Description = transaction.Description,
+                    Considered = transaction.Considered
+                };
+
+                var result = await _transactionService.Create(accountId, newTransaction);
+
+                if (!result.IsSucess)
+                    return await CancelImport(transactionIds, result.Error);
+
+                transactionIds.Add(result.Value);
+            }
+
+            // zwrócenie dodanych transakcji
+            var transactions = await _context.Transactions
+                .Where(t => transactionIds.Contains(t.Id))
+                .Include(t => t.Currency)
+                .Include(t => t.Category)
+                .Include(t => t.Account)
+                .OrderBy(t => t.Date)
+                .ProjectTo<TransactionListItem>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            int index = 1;
+            foreach (var transaction in transactions)
+                transaction.Id = index++;
+
+            return Result<List<TransactionListItem>>.Success(transactions);
+        }
+
+        private List<TransactionImportDto> ProcessCsv(Stream stream)
+        {
+            // Przetwarzanie pliku CSV
+            using var reader = new StreamReader(stream);
+            using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+            var transactions = csv.GetRecords<TransactionImportDto>().ToList();
+
+            return transactions;
+        }
+
+        private async Task<Result<List<TransactionListItem>>> CancelImport(List<int> transactionIds, string message)
+        {
+            foreach (var transactionId in transactionIds)
+                await _transactionService.Delete(transactionId);
+
+            return Result<List<TransactionListItem>>
+                        .Failure(message);
         }
     }
 }
