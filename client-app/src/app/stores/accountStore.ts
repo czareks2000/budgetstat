@@ -202,9 +202,11 @@ export default class AccountStore {
 
     private updateDataInOtherStores = () => {
         store.loanStore.clearPaidOffLoansRegistry();
-        store.transactionStore.loadTransactions();
+        store.transactionStore.transactionsLoaded = false;
+        //store.transactionStore.loadTransactions();
 
-        store.statsStore.loadNetWorthValueOverTime();
+        store.statsStore.loadedNetWorthValueOverTime = false;
+        //store.statsStore.loadNetWorthValueOverTime();
         store.statsStore.loadCurrentMonthIncome();
         store.statsStore.setHasOldData(true);
         store.statsStore.homePageChartsLoaded = false;

@@ -274,7 +274,8 @@ export default class CategoryStore {
                     return current;
                 })
 
-                store.transactionStore.loadTransactions();
+                //store.transactionStore.loadTransactions();
+                store.transactionStore.transactionsLoaded = false;
                 store.transactionStore.latestTransactionsLoaded = false;
             })
         } catch (error) {

@@ -96,16 +96,19 @@ export default class FileStore {
 
     private updateDataInOtherStores = (accountIds: number[]) => {
         
-        store.transactionStore.loadTransactions();
+        store.transactionStore.transactionsLoaded = false;
+        //store.transactionStore.loadTransactions();
         store.transactionStore.latestTransactionsLoaded = false;
 
         accountIds.forEach(accountId => {
             store.accountStore.loadAccount(accountId);
         });
 
-        store.statsStore.loadNetWorthValueOverTime();
+        store.statsStore.loadedNetWorthValueOverTime = false;
+        //store.statsStore.loadNetWorthValueOverTime();
 
-        store.budgetStore.loadBudgets();
+        store.budgetStore.budgetsLoaded = false;
+        //store.budgetStore.loadBudgets();
 
         store.statsStore.loadCurrentMonthIncome();
         store.statsStore.loadAvgMonthlyIncomesAndExpensesLastYear();

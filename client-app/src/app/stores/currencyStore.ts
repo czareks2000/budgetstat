@@ -58,15 +58,17 @@ export default class CurrencyStore {
                 store.accountStore.loadAccounts();
                 // budgets
                 store.budgetStore.clearStore();
-                store.budgetStore.loadBudgets();
+                //store.budgetStore.loadBudgets();
                 // networth
                 store.statsStore.clearStore();
                 store.statsStore.loadNetWorthStats();
-                store.statsStore.loadNetWorthValueOverTime();
+                //store.statsStore.loadNetWorthValueOverTime();
                 // stats
-                store.statsStore.loadStatsPageCharts();
+                store.statsStore.setHasOldData(true);
+                //store.statsStore.loadStatsPageCharts();
                 // home page
-                store.statsStore.loadHomePageCharts();
+                store.statsStore.homePageChartsLoaded = false;
+                //store.statsStore.loadHomePageCharts();
                 store.statsStore.loadCurrentMonthIncome();
                 store.statsStore.loadAvgMonthlyIncomesAndExpensesLastYear();
             });

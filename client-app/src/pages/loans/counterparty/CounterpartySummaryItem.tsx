@@ -17,7 +17,7 @@ interface Props {
 export default observer(function CounterpartySummaryItem({detailsAction, summary}: Props) {
     const [open, setOpen] = useState(false);
 
-    if (!summary) return <></>
+    if (!summary || !summary.counterparty) return <></>
 
     summary = summary.loanType === LoanType.Credit 
     ? 

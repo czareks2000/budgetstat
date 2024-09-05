@@ -528,7 +528,11 @@ export default class TransactionStore {
             });
 
             if (!nulls)
-            store.statsStore.loadNetWorthValueOverTime();
+            {
+                store.statsStore.loadedNetWorthValueOverTime = false;
+                //store.statsStore.loadNetWorthValueOverTime();
+            }
+            
         }   
             
         if (categoryId)
