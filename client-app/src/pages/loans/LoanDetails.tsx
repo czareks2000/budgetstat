@@ -12,12 +12,21 @@ import { useEffect, useState } from "react";
 import { ExpandMore } from "@mui/icons-material";
 import { LoanStatus } from "../../app/models/enums/LoanStatus";
 import FloatingAddButton from "../../components/common/fabs/FloatingAddButton";
+import LoadingWithLabel from "../../components/common/loadings/LoadingWithLabel";
 
 export default observer(function LoanDetails() {
     const {
-        loanStore: {deletePayoff, selectLoan, selectedLoan: loan},
+        loanStore: {deletePayoff, selectLoan, selectedLoan: loan, 
+            counterpartiesLoaded, loansInProgressLoaded, loadCounterparties, loadLoans},
         currencyStore: {currencies}
     } = useStore();
+
+    useEffect(() => {
+        if (!counterpartiesLoaded)
+            loadCounterparties();
+        if (!loansInProgressLoaded)
+            loadLoans(LoanStatus.InProgress);
+    }, [counterpartiesLoaded, loansInProgressLoaded])
 
     const [isOpen, setIsOpen] = useState(false);
 
@@ -30,7 +39,7 @@ export default observer(function LoanDetails() {
         if (id) selectLoan(parseInt(id));
     }, [id, selectLoan])
 
-    if (!loan) return <></>
+    if (!loan) return <LoadingWithLabel />
 
     const currency = currencies.find(c => c.id === loan.currencyId);
 
@@ -54,7 +63,6 @@ export default observer(function LoanDetails() {
         <FloatingAddButton onClick={handleAddButtonClick} position={0}/>
         <ResponsiveContainer content={
             <Stack spacing={2}>
-
                 <Divider>Loan details</Divider>
                 <LoanItem key={loan.id} loan={loan}/>
                 

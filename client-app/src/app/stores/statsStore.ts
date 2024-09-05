@@ -61,7 +61,7 @@ export default class StatsStore {
     balanceOverTimeForecastSettings: BalanceOverTimeForecastSettings = initialBalanceOverTimeForecastSettings;
     balanceOverTimeForecastLoaded = false;
 
-    statsHasOldData = false;
+    statsHasOldData = true;
 
     constructor() {
         makeAutoObservable(this);

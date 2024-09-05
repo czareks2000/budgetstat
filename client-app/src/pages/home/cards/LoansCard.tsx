@@ -6,10 +6,12 @@ import { LoanType } from '../../../app/models/enums/LoanType';
 import { formatAmount } from '../../../app/utils/FormatAmount';
 import NoDecorationLink from '../../../components/common/NoDecorationLink';
 import { GroupedLoan } from '../../../app/models/Loan';
+import FadeInLoading from '../../../components/common/loadings/FadeInLoading';
 
 export default observer(function LoansCard() {
   const {
-      loanStore: {groupedLoansByCounterpartyAndCurrency},
+      loanStore: {groupedLoansByCounterpartyAndCurrency, 
+        counterpartiesLoaded, loansInProgressLoaded},
   } = useStore();
 
   const listItem = (loanType: LoanType, counterpartyName: string) => {
@@ -67,25 +69,30 @@ export default observer(function LoansCard() {
                 </Typography>
             </Box>} />
             <Divider/>
-            {groupedLoansByCounterpartyAndCurrency.filter(s => s.nearestRepaymentDate).length > 0 
-            ?
-            <List disablePadding sx={{p: 1}}>
-                {groupedLoansByCounterpartyAndCurrency.filter(s => s.nearestRepaymentDate).map((summary) => 
-                    <NoDecorationLink to={`/loans/counterparty/${summary.counterpartyId}?currencyId=${summary.currencyId}`}
-                    key={`${summary.counterpartyId}-${summary.currencyId}`} 
-                    content={<ListItem
-                        secondaryAction={amount(summary)}
-                        >
-                        <ListItemText 
-                            primary={listItem(summary.loanType, summary.counterparty.name)}/>
-                    </ListItem>} />
-                )}
-            </List>
-            :
-            <Box p={2}>
-                <Typography>There are no loans with in progress status</Typography>
-            </Box>
-            }       
+            <FadeInLoading loadingFlag={counterpartiesLoaded && loansInProgressLoaded} content={
+                <>
+                {groupedLoansByCounterpartyAndCurrency.filter(s => s.nearestRepaymentDate).length > 0 
+                ?
+                <List disablePadding sx={{p: 1}}>
+                        {groupedLoansByCounterpartyAndCurrency.filter(s => s.nearestRepaymentDate).map((summary) => 
+                            <NoDecorationLink to={`/loans/counterparty/${summary.counterpartyId}?currencyId=${summary.currencyId}`}
+                            key={`${summary.counterpartyId}-${summary.currencyId}`} 
+                            content={<ListItem
+                                secondaryAction={amount(summary)}
+                                >
+                                <ListItemText 
+                                    primary={listItem(summary.loanType, summary.counterparty.name)}/>
+                            </ListItem>} />
+                        )}
+                    </List>
+                :
+                <Box p={2}>
+                    <Typography>There are no loans with in progress status</Typography>
+                </Box>
+                }      
+                </>
+            }/>
+             
         </Stack>
     </Paper>
   )

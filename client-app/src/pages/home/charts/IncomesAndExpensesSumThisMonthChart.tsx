@@ -79,7 +79,7 @@ export default observer(function BalanceLastMonthLineChart() {
                     }}
                     loading={!homePageChartsLoaded}
                     margin={{ left: 65}}
-                    dataset={showExpense ? expensesThisMonth : incomesThisMonth}
+                    dataset={showExpense ? expensesThisMonth || [] : incomesThisMonth || []}
                     xAxis={[
                     { scaleType: 'band', dataKey: 'label' },
                     ]}

@@ -2,7 +2,7 @@ import { Box, Divider, Paper, Stack, Typography } from '@mui/material'
 import { LineChart } from '@mui/x-charts'
 import { observer } from 'mobx-react-lite'
 import { useStore } from '../../../app/stores/store';
-import { mockData, mockLabels } from '../../../app/utils/MockData';
+import { mockLabels } from '../../../app/utils/MockData';
 import { formatAmount } from '../../../app/utils/FormatAmount';
 import { theme } from '../../../app/layout/Theme';
 import NoDecorationLink from '../../../components/common/NoDecorationLink';
@@ -32,7 +32,7 @@ export default observer(function BalanceLastMonthLineChart() {
                     series={[
                         {   
                             //curve: "linear",
-                            data: balanceLast30Days?.data || mockData, 
+                            data: balanceLast30Days?.data || [], 
                             color: theme.palette.primary.main, 
                             valueFormatter: (value) => `${formatAmount(value!)} ${defaultCurrency?.symbol}`},
                     ]}

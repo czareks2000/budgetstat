@@ -10,11 +10,20 @@ import LoanItem from './common/LoanItem'
 import FloatingGoBackButton from '../../components/common/fabs/FloatingGoBackButton'
 import LoadingWithLabel from '../../components/common/loadings/LoadingWithLabel'
 import { LoanStatus } from '../../app/models/enums/LoanStatus'
+import FadeInLoadingWithLabel from '../../components/common/loadings/FadeInLoadingWithLabel'
 
 export default observer(function EditLoan() {  
     const {
-        loanStore: {selectLoan, selectedLoan: loan},
+        loanStore: {selectLoan, selectedLoan: loan, counterpartiesLoaded, 
+            loadCounterparties, loansInProgressLoaded, loadLoans},
     } = useStore();
+
+    useEffect(() => {
+        if (!counterpartiesLoaded)
+            loadCounterparties();
+        if (!loansInProgressLoaded)
+            loadLoans(LoanStatus.InProgress);
+    }, [counterpartiesLoaded, loansInProgressLoaded])
 
     const {id} = useParams();
     useEffect(() => {
@@ -30,25 +39,28 @@ export default observer(function EditLoan() {
     return (<>
     <FloatingGoBackButton onClick={handleRedirect}/>
     <ResponsiveContainer content={
-        <Stack spacing={2}>
-            <Divider>Loan details</Divider>
-            <LoanItem key={loan.id} loan={loan} noButtons/>
-            <Divider>Edit Loan</Divider>
-            <Paper>
-                <Box p={2}>
-                    {loan.loanStatus !== LoanStatus.PaidOff 
-                    ? 
-                        <EditLoanForm
-                            key={loan.id}
-                            loan={loan}
-                            onSubmit={handleRedirect} 
-                            onCancel={handleRedirect}/>
-                    :
-                        <>It is not possible to edit a paid-off loan</>
-                    }
-                </Box>
-            </Paper>
-        </Stack>
+        <FadeInLoadingWithLabel loadingFlag={counterpartiesLoaded && loansInProgressLoaded} content={
+            <Stack spacing={2}>
+                <Divider>Loan details</Divider>
+                <LoanItem key={loan.id} loan={loan} noButtons/>
+                <Divider>Edit Loan</Divider>
+                <Paper>
+                    <Box p={2}>
+                        {loan.loanStatus !== LoanStatus.PaidOff 
+                        ? 
+                            <EditLoanForm
+                                key={loan.id}
+                                loan={loan}
+                                onSubmit={handleRedirect} 
+                                onCancel={handleRedirect}/>
+                        :
+                            <>It is not possible to edit a paid-off loan</>
+                        }
+                    </Box>
+                </Paper>
+            </Stack>}
+        />
+        
     }/>
   </>)
 })

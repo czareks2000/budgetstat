@@ -18,7 +18,7 @@ export default class TransactionStore {
     latestTransactionsLoaded = false;
 
     plannedTransactionRegistry = new Map<number, PlannedTransaction>();
-    plannedTransactionsLoaded = true;
+    plannedTransactionsLoaded = false;
 
     transactionFormValues: TransactionFormValues | undefined = undefined;
     loadingFormValues = false;
@@ -214,20 +214,18 @@ export default class TransactionStore {
         }
     }
 
-    loadLatestTransactions = async (initial: boolean = false) => {
+    loadLatestTransactions = async () => {
         this.latestTransactionsLoaded = false;
         this.latestTransactionsRegistry.clear();
-        if (initial)
-        {
-            this.transactionsLoaded = false;
+        if (!this.transactionsLoaded)
             this.transactionRegistry.clear();
-        }
+
         try {
             const latestTransactions = await agent.Transactions.list(this.initialParams);
             runInAction(() => {
                 latestTransactions.forEach(transaction => {
                     this.latestTransactionsRegistry.set(transaction.id, transaction);
-                    if (initial)  
+                    if (!this.transactionsLoaded)  
                         this.setTransaction(transaction);
                 })
             })
@@ -236,7 +234,7 @@ export default class TransactionStore {
         } finally {
             runInAction(() => {
                 this.latestTransactionsLoaded = true;
-                if (initial)
+                if (!this.transactionsLoaded)
                     this.transactionsLoaded = true;
             })
         }

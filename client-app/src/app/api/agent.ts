@@ -33,7 +33,7 @@ const sleep = (delay: number) => {
 axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 
 axios.interceptors.response.use(async response => {
-    if (import.meta.env.DEV) await sleep(0);
+    if (import.meta.env.DEV) await sleep(200);
     return response;
 }, (error: AxiosError) => {
     const {data, status, config} = error.response as AxiosResponse;

@@ -9,26 +9,31 @@ import { TransactionType } from "../../../app/models/enums/TransactionType"
 import { AmountItem, CategoryItem, TransactionRowItem, TransactionToDelete } from "../../../app/models/Transaction"
 import { useStore } from "../../../app/stores/store"
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import DeleteTransactionDialog from "../dialogs/DeleteTransactionDialog";
 
 export default observer(function TransactionsDataGrid() {
     const {transactionStore: {
         transactions, transactionsLoaded, amountColor,
-        dataGridSettings, setDataGridSettings,
+        dataGridSettings, setDataGridSettings, loadTransactions
     }} = useStore();
+
+    useEffect(() => {
+        if (!transactionsLoaded)
+            loadTransactions();
+    }, [transactionsLoaded])
 
     const gridRef = useGridApiRef();
     
-    const handleEditButtonClick = (transactionId: number, type: TransactionType) => {
+    const handleEditButtonClick = useCallback((transactionId: number, type: TransactionType) => {
         router.navigate(`/transactions/${type}/${transactionId}/edit`);
-    }
+    }, []);
 
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
     const [transactionToDelete, setTransactionToDelete] = useState<TransactionToDelete | undefined>(undefined);
 
-    const handleDeleteButtonClick = (transaction: TransactionRowItem) => {
+    const handleDeleteButtonClick = useCallback((transaction: TransactionRowItem) => {
         setTransactionToDelete({
             index: transaction.id, 
             transactionId: transaction.transactionId, 
@@ -40,7 +45,7 @@ export default observer(function TransactionsDataGrid() {
             toAccountId: transaction.accountId
         })
         setOpenDeleteDialog(true);
-    }
+    }, []);
 
     const columns: GridColDef<TransactionRowItem[][number]>[] = [
         { 
@@ -81,7 +86,6 @@ export default observer(function TransactionsDataGrid() {
                 <Tooltip title={value.mainCategoryName} placement="left" arrow>
                     <Box component={"span"} display={'flex'}>
                         <CategoryIcon iconId={value.iconId} sx={{mt: '14px', mr: 1}}/>
-                        {/* {value.mainCategoryName ? value.mainCategoryName + "/" : "" } */}
                         {value.name}
                     </Box>
                 </Tooltip></>;

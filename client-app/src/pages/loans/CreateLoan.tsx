@@ -6,12 +6,24 @@ import CreateCounterpartyForm from '../../components/forms/Loan/CreateCounterpar
 import { useSearchParams } from 'react-router-dom'
 import { useStore } from '../../app/stores/store'
 import { router } from '../../app/router/Routes'
+import { useEffect } from 'react'
+import FadeInLoadingWithLabel from '../../components/common/loadings/FadeInLoadingWithLabel'
+import { LoanStatus } from '../../app/models/enums/LoanStatus'
 
 export default observer(function CreateLoan() {  
-    const {loanStore: {counterparties}} = useStore();
+    const {loanStore: {counterparties, 
+        counterpartiesLoaded, loadCounterparties,
+        loansInProgressLoaded, loadLoans}} = useStore();
     const [searchParams] = useSearchParams();
     const id = searchParams.get('counterpartyId');
     const fromLocation = searchParams.get('fromLocation');
+
+    useEffect(() => {
+        if (!counterpartiesLoaded)
+            loadCounterparties();
+        if (!loansInProgressLoaded)
+            loadLoans(LoanStatus.InProgress);
+    }, [counterpartiesLoaded, loansInProgressLoaded])
 
     const onCancel = () => {
         if (id)
@@ -24,23 +36,25 @@ export default observer(function CreateLoan() {
   
     return (
     <ResponsiveContainer content={
-        <Stack spacing={2}>
-            {counterparties.length > 0 && <>
-            <Divider>Create Loan</Divider>
-            <Paper>
-                <Box p={2}>
-                    <CreateLoanForm 
-                        counterpartyId={id}
-                        onCancel={onCancel}/>
-                </Box>
-            </Paper></>}
-            <Divider>Create Counterparty</Divider>
-            <Paper>
-                <Box p={2}>
-                    <CreateCounterpartyForm cancelButton={counterparties.length == 0} onCancel={onCancel} />
-                </Box>
-            </Paper>
-        </Stack>
+        <FadeInLoadingWithLabel loadingFlag={counterpartiesLoaded && loansInProgressLoaded} content={
+            <Stack spacing={2}>
+                {counterparties.length > 0 && <>
+                <Divider>Create Loan</Divider>
+                <Paper>
+                    <Box p={2}>
+                        <CreateLoanForm 
+                            counterpartyId={id}
+                            onCancel={onCancel}/>
+                    </Box>
+                </Paper></>}
+                <Divider>Create Counterparty</Divider>
+                <Paper>
+                    <Box p={2}>
+                        <CreateCounterpartyForm cancelButton={counterparties.length == 0} onCancel={onCancel} />
+                    </Box>
+                </Paper>
+            </Stack>}
+        />
     }/>
   )
 })

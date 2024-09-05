@@ -9,12 +9,18 @@ import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import LoadingWithLabel from "../../components/common/loadings/LoadingWithLabel";
 import ExpensesChart from "./ExpensesChart";
+import FadeInLoadingWithLabel from "../../components/common/loadings/FadeInLoadingWithLabel";
 
 export default observer(function EditBudget() {
     const {
-        budgetStore: {updateBudget, selectedBudget, selectBudget, deselectBudget, loadChart}, 
+        budgetStore: {updateBudget, selectedBudget, selectBudget, deselectBudget, loadChart, budgetsLoaded, loadBudgets}, 
         categoryStore: {convertToCategoryOptions}
     } = useStore();
+
+    useEffect(() => {
+        if (!budgetsLoaded)
+            loadBudgets();
+    }, [budgetsLoaded])
   
     function handleUpdate(budget: BudgetDto): void {
         updateBudget(selectedBudget!.id, budget).then(() => {
@@ -25,16 +31,19 @@ export default observer(function EditBudget() {
     const handleCancel = () => {
         deselectBudget();
         loadChart([]);
-        router.navigate('/budgets');
+        router.navigate(`/budgets?period=${selectedBudget?.period}`);
     }
 
     const {id} = useParams();
     useEffect(() => {
-        if (id) 
-            selectBudget(parseInt(id));
-        else
-            router.navigate('/not-found');
-    }, [id, selectBudget])
+        if (budgetsLoaded)
+        {
+            if (id) 
+                selectBudget(parseInt(id));
+            else
+                router.navigate('/not-found');
+        }
+    }, [id, selectBudget, budgetsLoaded])
 
     if (!selectedBudget) return <LoadingWithLabel/>
 
@@ -47,20 +56,23 @@ export default observer(function EditBudget() {
   
     return (
         <ResponsiveContainer content={
-            <Stack spacing={2}>
-                <Divider>Edit Budget</Divider>
-                <Paper>
-                    <Box p={2}>
-                        <BudgetForm 
-                            currencySymbol={selectedBudget.currency.symbol}
-                            initialValues={initialValues} 
-                            onSubmit={handleUpdate} 
-                            onCancel={handleCancel}
-                            submitText="Save"/>
-                    </Box>
-                </Paper>
-                <ExpensesChart />
-            </Stack>
+            <FadeInLoadingWithLabel loadingFlag={budgetsLoaded} content={
+                <Stack spacing={2}>
+                    <Divider>Edit Budget</Divider>
+                    <Paper>
+                        <Box p={2}>
+                            <BudgetForm 
+                                currencySymbol={selectedBudget.currency.symbol}
+                                initialValues={initialValues} 
+                                onSubmit={handleUpdate} 
+                                onCancel={handleCancel}
+                                submitText="Save"/>
+                        </Box>
+                    </Paper>
+                    <ExpensesChart />
+                </Stack>
+            }/>
+            
         }/>
     )
 })

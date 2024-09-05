@@ -22,9 +22,14 @@ interface Props {
 export default observer(function AssetDetails({editView}: Props) {
   const {
     assetStore: {
-      selectedAsset, selectAsset, deselectAsset, 
+      selectedAsset, selectAsset, deselectAsset, assetsLoaded, loadAssets, 
       loadAssetValues, loadAssetValueOverTime, getAssetCategoryIconId},
   } = useStore();
+
+  useEffect(() => {
+      if (!assetsLoaded)
+          loadAssets();
+  }, [assetsLoaded])
 
   const [selectedPage, setSeletedPage] = useState(editView ? 'edit' : 'history');
 
@@ -32,15 +37,19 @@ export default observer(function AssetDetails({editView}: Props) {
 
   const {id} = useParams();
     useEffect(() => {
-        if (id)
+        if (assetsLoaded)
         {
-          selectAsset(parseInt(id));
-          loadAssetValues(parseInt(id));
-          loadAssetValueOverTime(parseInt(id));
-        } 
-          else
-            router.navigate('/not-found');
-    }, [id, selectAsset])
+          if (id)
+          {
+            selectAsset(parseInt(id));
+            loadAssetValues(parseInt(id));
+            loadAssetValueOverTime(parseInt(id));
+          } 
+            else
+              router.navigate('/not-found');
+        }
+        
+    }, [id, selectAsset, assetsLoaded])
 
     if (!selectedAsset) return <LoadingWithLabel/>
 

@@ -10,7 +10,15 @@ import CustomTabPanel, { a11yProps } from "../../preferences/tabs/CustomTabPanel
 import LoanListWithPagination from "../common/LoanListWithPagination"
 
 export default observer(function CounterpartyPaidoffLoans() {
-    const {loanStore: {getCounterpartyLoans, loadLoans, loansPaidOffLoaded, counterpartyLoansLoaded}} = useStore()
+    const {loanStore: {getCounterpartyLoans, loadLoans, loansPaidOffLoaded, counterpartyLoansLoaded, 
+        counterpartiesLoaded, loadCounterparties, loansInProgressLoaded}} = useStore()
+
+    useEffect(() => {
+        if (!counterpartiesLoaded)
+            loadCounterparties();
+        if (!loansInProgressLoaded)
+            loadLoans(LoanStatus.InProgress);
+    }, [counterpartiesLoaded, loansInProgressLoaded])
 
     const [selectedTab, setselectedTab] = useState(0);
 
@@ -34,7 +42,7 @@ export default observer(function CounterpartyPaidoffLoans() {
         <>
             {!loansPaidOffLoaded && <LoadingWithLabel />}
 
-            <Fade in={loansPaidOffLoaded} appear={false}>
+            <Fade in={loansPaidOffLoaded && counterpartiesLoaded && loansInProgressLoaded} appear={false}>
                 <Stack spacing={2}>
                     {(credits.length == 0 && debts.length == 0) 
                     ? 

@@ -13,17 +13,29 @@ import TransactionsCard from "./cards/TransactionsCard"
 import BalanceLastMonthLineChart from "./charts/BalanceLastMonthLineChart"
 import IncomesAndExpensesSumThisMonthChart from "./charts/IncomesAndExpensesSumThisMonthChart"
 import { useEffect } from "react"
+import { LoanStatus } from "../../app/models/enums/LoanStatus"
 
 export default observer(function Home() {
     const {
         statsStore: {homePageChartsLoaded, loadHomePageCharts},
-        transactionStore: {plannedTransactionsToConfirm}
+        transactionStore: {plannedTransactionsToConfirm, plannedTransactionsLoaded, loadPlannedTransactions},
+        budgetStore: {budgetsLoaded, loadBudgets},
+        loanStore: {counterpartiesLoaded, loadCounterparties, loansInProgressLoaded, loadLoans}
     } = useStore();
 
     useEffect(() => {
         if (!homePageChartsLoaded)
             loadHomePageCharts();
-    }, [homePageChartsLoaded, loadHomePageCharts])
+        if (!plannedTransactionsLoaded)
+            loadPlannedTransactions();
+        if (!budgetsLoaded)
+            loadBudgets();
+        if (!counterpartiesLoaded)
+            loadCounterparties();
+        if (!loansInProgressLoaded)
+            loadLoans(LoanStatus.InProgress);
+    }, [homePageChartsLoaded, plannedTransactionsLoaded, budgetsLoaded, 
+        counterpartiesLoaded, loansInProgressLoaded])
 
     return (
         <Grid container>
@@ -70,7 +82,8 @@ export default observer(function Home() {
                             <Stack spacing={2}>
 
                                 {plannedTransactionsToConfirm.length > 0 &&
-                                <TransactionsToConfirmCard />}
+                                    <TransactionsToConfirmCard />
+                                }
 
                                 <LoansCard />
 
@@ -87,7 +100,8 @@ export default observer(function Home() {
                                 <TransactionsCard />
 
                                 {plannedTransactionsToConfirm.length === 0 &&
-                                <TransactionsToConfirmCard />}
+                                    <TransactionsToConfirmCard />
+                                }
 
                             </Stack>
                         </Grid>

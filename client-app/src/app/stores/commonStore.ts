@@ -1,7 +1,6 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 import { ServerError } from "../models/ServerError"
 import { store } from "./store";
-import { LoanStatus } from "../models/enums/LoanStatus";
 
 export default class CommonStore {
     serverError: ServerError | null = null;
@@ -41,34 +40,38 @@ export default class CommonStore {
 
     loadAppData = async (currencyId: number) => {
         try {
-            // można wyświetlić intefejs bez tych danch załadowanych
-            store.statsStore.loadNetWorthValueOverTime();
-            
-            store.statsStore.loadStatsPageCharts();
 
-            // nie można wyświetlić intefejsu bez tych danch załadowanych
-            // (w przyszłości dostosować intefejs zeby nie trzeba było czekać)
-            await store.transactionStore.loadPlannedTransactions();
-            await store.transactionStore.loadLatestTransactions(true);
-            
-            await store.accountStore.loadAccounts();
-            
-            await store.budgetStore.loadBudgets();
+            await Promise.all([
+                // można wyświetlić intefejs bez tych danch załadowanych
+                store.currencyStore.setDefaultCurrency(currencyId),
+                store.statsStore.loadHomePageCharts(), 
 
-            store.currencyStore.setDefaultCurrency(currencyId);
-            
-            await store.categoryStore.loadCategories();
+                store.transactionStore.loadPlannedTransactions(),
 
-            await store.loanStore.loadCounterparties();
-            await store.loanStore.loadLoans(LoanStatus.InProgress);
+                //store.budgetStore.loadBudgets();
+                //store.statsStore.loadNetWorthValueOverTime();
+                //store.statsStore.loadStatsPageCharts();
+                //store.loanStore.loadCounterparties(),
+                //store.loanStore.loadLoans(LoanStatus.InProgress),
+                //store.assetStore.loadAssets(),
 
-            await store.assetStore.loadAssetCategories();
-            await store.assetStore.loadAssets();
+                // nie można wyświetlić intefejsu bez tych danch załadowanych
 
-            await store.statsStore.loadNetWorthStats();
-            await store.statsStore.loadCurrentMonthIncome();
-            await store.statsStore.loadHomePageCharts();
-            await store.statsStore.loadAvgMonthlyIncomesAndExpensesLastYear();
+                store.assetStore.loadAssetCategories(),
+
+                store.statsStore.loadNetWorthStats(),
+
+                store.accountStore.loadAccounts(),
+
+                store.statsStore.loadCurrentMonthIncome(),
+
+                store.categoryStore.loadCategories(),
+
+                store.transactionStore.loadLatestTransactions(),
+
+                store.statsStore.loadAvgMonthlyIncomesAndExpensesLastYear()
+            ]);
+
         } catch (error) {
             console.log(error);
         } finally {

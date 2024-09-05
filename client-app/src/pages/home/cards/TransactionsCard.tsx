@@ -19,7 +19,7 @@ export default observer(function TransactionsToConfirmCard() {
   useEffect(() => {
     if (!latestTransactionsLoaded)
         loadLatestTransactions();
-    },[latestTransactionsLoaded, loadLatestTransactions])
+    }, [latestTransactionsLoaded])
 
   return (
     <Paper>

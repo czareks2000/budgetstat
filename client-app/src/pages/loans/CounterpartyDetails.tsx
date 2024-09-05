@@ -15,12 +15,22 @@ import CounterpartyPaidoffLoans from "./counterparty/CounterpartyPaidoffLoans";
 import CollectivePayoffForm from "../../components/forms/Loan/CollectivePayoffForm";
 import CustomTabPanel, { a11yProps } from "../preferences/tabs/CustomTabPanel";
 import LoanItemCompact from "./common/LoanItemCompact";
+import { LoanStatus } from "../../app/models/enums/LoanStatus";
+import FadeInLoadingWithLabel from "../../components/common/loadings/FadeInLoadingWithLabel";
 
 export default observer(function CounterpartyDetails() {
     const {
         loanStore: {
             denseLoanItems, toggleDensity,
-            getCounterpartyLoans, selectedSummaries: summaries, selectSummaries}} = useStore();
+            getCounterpartyLoans, selectedSummaries: summaries, selectSummaries, 
+            counterpartiesLoaded, loadCounterparties, loansInProgressLoaded, loadLoans}} = useStore();
+
+    useEffect(() => {
+        if (!counterpartiesLoaded)
+            loadCounterparties();
+        if (!loansInProgressLoaded)
+            loadLoans(LoanStatus.InProgress);
+    }, [counterpartiesLoaded, loansInProgressLoaded])
 
     const {id} = useParams();
 
@@ -32,7 +42,7 @@ export default observer(function CounterpartyDetails() {
             selectSummaries(Number(id));
         else
             router.navigate('/not-found');
-    },[id])
+    },[id, counterpartiesLoaded, loansInProgressLoaded])
 
     useEffect(() => {
         if (summaries.filter(s => s.currencyId === Number(currencyId)).length === 0 && summaries.length > 0) {
@@ -93,97 +103,99 @@ export default observer(function CounterpartyDetails() {
         <FloatingGoBackButton onClick={handleGoBack} position={1}/>
         <FloatingAddButton onClick={handleAddButtonClick} position={0}/>
         <ResponsiveContainer content={
-            <Stack spacing={2}>
-                <Divider>Counterparty summary</Divider>
-                <CounterpartySummaryWithPagination 
-                    summaries={summaries}
-                    currencyId={currencyId}
-                    setSearchParams={handleSetCurrencyIdParam} 
-                    onClick={handleShowHistoryToggle}
-                    buttonText={showHistory ? "Current loans" : "Show history"}/>
+            <FadeInLoadingWithLabel loadingFlag={counterpartiesLoaded && loansInProgressLoaded && summaries.length > 0} content={
+                <Stack spacing={2}>
+                    <Divider>Counterparty summary</Divider>
+                    <CounterpartySummaryWithPagination 
+                        summaries={summaries}
+                        currencyId={currencyId}
+                        setSearchParams={handleSetCurrencyIdParam} 
+                        onClick={handleShowHistoryToggle}
+                        buttonText={showHistory ? "Current loans" : "Show history"}/>
 
-                {showPayoffForm &&
-                <>
-                    <Accordion expanded={isAcordionOpen} onChange={handleAcordionToggle}>
-                        <AccordionSummary
-                        expandIcon={<ExpandMore />}
-                        aria-controls="collective-payoff-form"
-                        id="collective-payoff-form"
-                        >
-                            {!isAcordionOpen ? 'Collective repayment' : 'Click to hide'}
-                        </AccordionSummary>
-                        <Divider sx={{mb: 1}}/>
-                        <AccordionDetails>
-                            <CollectivePayoffForm loans={loans} counterpartyId={Number(id)} />      
-                        </AccordionDetails>
-                    </Accordion>
-                </>}
+                    {showPayoffForm &&
+                    <>
+                        <Accordion expanded={isAcordionOpen} onChange={handleAcordionToggle}>
+                            <AccordionSummary
+                            expandIcon={<ExpandMore />}
+                            aria-controls="collective-payoff-form"
+                            id="collective-payoff-form"
+                            >
+                                {!isAcordionOpen ? 'Collective repayment' : 'Click to hide'}
+                            </AccordionSummary>
+                            <Divider sx={{mb: 1}}/>
+                            <AccordionDetails>
+                                <CollectivePayoffForm loans={loans} counterpartyId={Number(id)} />      
+                            </AccordionDetails>
+                        </Accordion>
+                    </>}
 
-                {showHistory && 
-                    <CounterpartyPaidoffLoans />
-                }
-                
-                {!showHistory && (credits.length > 0 || debts.length > 0) && <>
-                    <Divider>Current loans</Divider>
-                    <Paper>
-                        <Box display={'flex'} justifyContent={'space-between'} alignItems={"center"}>
-                            <Tabs value={selectedTab} onChange={handleChange} aria-label="categories-tabs">
-                                <Tab label={"Credits"}  {...a11yProps(0)}/>
-                                <Tab label={"Debts"}  {...a11yProps(1)}/>
-                            </Tabs>
-                            <Tooltip title={"Toggle item density"} 
-                                    arrow placement="top">
-                                <Box>
-                                    <Switch
-                                        checked={denseLoanItems} 
-                                        onClick={toggleDensity}
-                                    />                                   
-                                </Box>
-                            </Tooltip>
-                        </Box>
-                    </Paper>
+                    {showHistory && 
+                        <CounterpartyPaidoffLoans />
+                    }
+                    
+                    {!showHistory && (credits.length > 0 || debts.length > 0) && <>
+                        <Divider>Current loans</Divider>
+                        <Paper>
+                            <Box display={'flex'} justifyContent={'space-between'} alignItems={"center"}>
+                                <Tabs value={selectedTab} onChange={handleChange} aria-label="categories-tabs">
+                                    <Tab label={"Credits"}  {...a11yProps(0)}/>
+                                    <Tab label={"Debts"}  {...a11yProps(1)}/>
+                                </Tabs>
+                                <Tooltip title={"Toggle item density"} 
+                                        arrow placement="top">
+                                    <Box>
+                                        <Switch
+                                            checked={denseLoanItems} 
+                                            onClick={toggleDensity}
+                                        />                                   
+                                    </Box>
+                                </Tooltip>
+                            </Box>
+                        </Paper>
 
-                    <CustomTabPanel value={selectedTab} index={0}>
-                        {credits.length > 0 ?
-                            <Stack spacing={2}>
-                                {credits.map((loan) => 
+                        <CustomTabPanel value={selectedTab} index={0}>
+                            {credits.length > 0 ?
+                                <Stack spacing={2}>
+                                    {credits.map((loan) => 
+                                        <Fragment key={loan.id}>
+                                            {denseLoanItems 
+                                            ? <LoanItemCompact loan={loan} detailsAction/>
+                                            : <LoanItem  loan={loan} detailsAction/>}
+                                        </Fragment>
+                                    )}
+                                </Stack>
+                                :
+                                <Paper>
+                                    <Box p={2}>
+                                        <Typography>There is no current credits</Typography>
+                                    </Box>
+                                </Paper>
+                            }
+                        </CustomTabPanel>
+
+                        <CustomTabPanel value={selectedTab} index={1}>
+                            {debts.length > 0 ?
+                                <Stack spacing={2}>
+                                {debts.map((loan) => 
                                     <Fragment key={loan.id}>
                                         {denseLoanItems 
                                         ? <LoanItemCompact loan={loan} detailsAction/>
                                         : <LoanItem  loan={loan} detailsAction/>}
                                     </Fragment>
                                 )}
-                            </Stack>
+                                </Stack>
                             :
-                            <Paper>
-                                <Box p={2}>
-                                    <Typography>There is no current credits</Typography>
-                                </Box>
-                            </Paper>
-                        }
-                    </CustomTabPanel>
-
-                    <CustomTabPanel value={selectedTab} index={1}>
-                        {debts.length > 0 ?
-                            <Stack spacing={2}>
-                            {debts.map((loan) => 
-                                <Fragment key={loan.id}>
-                                    {denseLoanItems 
-                                    ? <LoanItemCompact loan={loan} detailsAction/>
-                                    : <LoanItem  loan={loan} detailsAction/>}
-                                </Fragment>
-                            )}
-                            </Stack>
-                        :
-                            <Paper>
-                                <Box p={2}>
-                                    <Typography>There is no current debts</Typography>
-                                </Box>
-                            </Paper>
-                        }
-                    </CustomTabPanel>                    
-                </>}
-            </Stack>
+                                <Paper>
+                                    <Box p={2}>
+                                        <Typography>There is no current debts</Typography>
+                                    </Box>
+                                </Paper>
+                            }
+                        </CustomTabPanel>                    
+                    </>}
+                </Stack>
+            }/>
         }/>
         </>
     )
