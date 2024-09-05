@@ -354,10 +354,7 @@ export default class TransactionStore {
                 await this.submitUpdatedTransaction(transactionId, transaction, initialValues);
 
             runInAction(() => {
-                if (!this.filterHasInitialValues)
-                    this.resetTransactionParams();
-                else
-                    this.loadTransactions();
+                this.loadTransactions();
 
                 this.latestTransactionsLoaded = false;
 
