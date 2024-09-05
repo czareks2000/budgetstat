@@ -1,7 +1,7 @@
 import './App.css'
 
 import Toolbar from '@mui/material/Toolbar';
-import { Box } from '@mui/material';
+import { Backdrop, Box, CircularProgress } from '@mui/material';
 
 import Menu from './menu/Menu';
 import { Outlet } from 'react-router-dom';
@@ -17,7 +17,8 @@ export const drawerWidth = 288;
 export const marginBottom = 150;
 
 export default observer(function App() {
-  const {commonStore, userStore, currencyStore: {currenciesLoaded, loadCurrencies} } = useStore();
+  const {commonStore, userStore, currencyStore: {currenciesLoaded, loadCurrencies},
+  fileStore: {importInProgress, undoInProgress} } = useStore();
 
   useEffect(() => {
     if (commonStore.token) {
@@ -35,6 +36,12 @@ export default observer(function App() {
   return (
   <Wrapper content={
     <>
+      <Backdrop
+          sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.tooltip + 1 })}
+          open={importInProgress || undoInProgress}
+      >
+          <CircularProgress color="inherit" />
+      </Backdrop>
       {!userStore.isLoggedIn
         ? 
           <Auth /> 

@@ -421,7 +421,12 @@ export default class TransactionStore {
 
     deleteTransaction = async (transaction: TransactionToDelete) => {
         try {
-            this.transactionRegistry.delete(transaction.index);
+            for (const [key, value] of this.transactionRegistry.entries()) {
+                if (value.transactionId === transaction.transactionId && value.amount.type === transaction.type) {
+                    this.transactionRegistry.delete(key);
+                    break;
+                }
+            }
 
             let fromAccountId: number | null = null;
 

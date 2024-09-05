@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite"
 import { Box, Divider, Paper, Stack, Tooltip, Typography, styled } from "@mui/material"
 import { useStore } from "../../app/stores/store"
 import { CloudUpload } from "@mui/icons-material";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { LoadingButton } from "@mui/lab";
 import ImportedTransactionsList from "./ImportedTransactionsList";
 
@@ -25,10 +25,9 @@ const VisuallyHiddenInput = styled('input')({
 
 export default observer(function ImportPanel({setSnackbarMessage, setSnackbarOpen}: Props) {
     const {fileStore: {
-        importTransactions, importedTransactions, clearImportedTransactions}
+        importTransactions, importedTransactions, undoImport, undoInProgress, importInProgress}
     } = useStore();
 
-    const [isLoading, setIsLoading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const uploadTransactions = async (files: FileList | null) => {
@@ -45,15 +44,11 @@ export default observer(function ImportPanel({setSnackbarMessage, setSnackbarOpe
             return;
         }
 
-        setIsLoading(true);
-
         importTransactions(files[0]).catch((error) => {
             setSnackbarMessage(`Error uploading file: ${error}`);
             setSnackbarOpen(true);
-            clearImportedTransactions();
             console.log(error);
         }).finally(() => {
-            setIsLoading(false);
             // Clear the file input
             if (fileInputRef.current) {
                 fileInputRef.current.value = '';
@@ -61,7 +56,11 @@ export default observer(function ImportPanel({setSnackbarMessage, setSnackbarOpe
         });
     }
 
-    return (
+    const handelUndoImport = async () => {
+        undoImport();
+    }
+
+    return (<>
         <Stack spacing={2}>
             <Paper>
                 <Box p={2}>
@@ -70,6 +69,7 @@ export default observer(function ImportPanel({setSnackbarMessage, setSnackbarOpe
                             <Typography>Import transactions from CSV file</Typography>
                             <Typography variant="subtitle2"><i>The CSV file should have the same format as in the export.</i></Typography>
                         </Stack>
+                        <Box display={'flex'} gap={1}>
                         <Tooltip 
                             title={
                                 <Stack p={1} spacing={1}>
@@ -84,7 +84,7 @@ export default observer(function ImportPanel({setSnackbarMessage, setSnackbarOpe
                             arrow
                         >
                             <LoadingButton
-                                loading={isLoading}
+                                loading={importInProgress}
                                 component="label"
                                 variant="contained"
                                 tabIndex={-1}
@@ -98,18 +98,31 @@ export default observer(function ImportPanel({setSnackbarMessage, setSnackbarOpe
                                 />
                             </LoadingButton>
                         </Tooltip>
+                        {importedTransactions.length > 0 && 
+                            <LoadingButton
+                                loading={undoInProgress}
+                                component="label"
+                                variant="contained"
+                                onClick={handelUndoImport}
+                            >
+                                Undo import
+                            </LoadingButton>
+                        }
+                        </Box>
                     </Box>
                     
                 </Box>
             </Paper>
-            {importedTransactions.length > 0 &&
+            {importedTransactions.length > 0 && <>
             <Paper>
                 <Box>
                     <Typography p={2}>Recently imported transactions</Typography>
                     <Divider/>
                     <ImportedTransactionsList />
                 </Box>
-            </Paper>}
+            </Paper>
+            </>}
         </Stack>
+    </>
     )
 })

@@ -44,23 +44,26 @@ export default observer(function ExportPanel({setSnackbarOpen, setSnackbarMessag
         <Paper>
             <Stack p={2} spacing={2}>
                 <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
-                    <Typography>Export data</Typography>
-                        <LoadingButton
-                            variant="contained"
-                            loading={isLoading}
-                            endIcon={<KeyboardArrowDown />}
-                            onClick={handleMenuClick}
-                        >
-                            Export
-                        </LoadingButton>
-                        <Menu
-                            anchorEl={anchorEl}
-                            open={open}
-                            onClose={handleMenuClose}
-                        >
-                            <MenuItem onClick={() => exportData("csv")}>Export as CSV</MenuItem>
-                            <MenuItem onClick={() => exportData("json")}>Export as JSON</MenuItem>
-                        </Menu>
+                    <Stack spacing={1}>
+                        <Typography>Export data</Typography>
+                        <Typography variant="subtitle2"><i>Export application data in the format of your choice.</i></Typography>
+                    </Stack>
+                    <LoadingButton
+                        variant="contained"
+                        loading={isLoading}
+                        endIcon={<KeyboardArrowDown />}
+                        onClick={handleMenuClick}
+                    >
+                        Export
+                    </LoadingButton>
+                    <Menu
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleMenuClose}
+                    >
+                        <MenuItem onClick={() => exportData("csv")}>Export as CSV</MenuItem>
+                        <MenuItem onClick={() => exportData("json")}>Export as JSON</MenuItem>
+                    </Menu>
                 </Box>
             </Stack>
         </Paper>
