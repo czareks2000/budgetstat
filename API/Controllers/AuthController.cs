@@ -102,11 +102,24 @@ namespace API.Controllers
         {
             var user = await _context.Users
                 .Include(u => u.Categories)
+                .Include(u => u.Accounts)
+                .Include(u => u.Transactions)
+                .Include(u => u.Budgets)
+                .Include(u => u.Counterparties)
+                .Include(u => u.Loans)
+                .Include(u => u.Assets)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(u => u.Email == _userAccessor.GetUserEmail());
 
             if (user == null) return NotFound();
 
-            _context.RemoveRange(user.Categories);
+            _context.Categories.RemoveRange(user.Categories);
+            _context.Accounts.RemoveRange(user.Accounts);
+            _context.Transactions.RemoveRange(user.Transactions);
+            _context.Budgets.RemoveRange(user.Budgets);
+            _context.Counterparties.RemoveRange(user.Counterparties);
+            _context.Loans.RemoveRange(user.Loans);
+            _context.Assets.RemoveRange(user.Assets);
 
             var identityResult = await _userManager.DeleteAsync(user);
 

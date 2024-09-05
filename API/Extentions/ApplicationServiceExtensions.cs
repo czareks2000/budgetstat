@@ -20,7 +20,10 @@ namespace API.Extentions
 
                 string connStr = config.GetConnectionString("DefaultConnection");
 
-                options.UseNpgsql(connStr);
+                options.UseNpgsql(connStr, options =>
+                {
+                    options.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+                });
             });
 
 

@@ -83,12 +83,6 @@ namespace Persistence
                     UserName = "bob",
                     DefaultCurrency = currencies[2],
                     Email = "bob@test.com"
-                },
-                new() 
-                {
-                    UserName = "tom",
-                    DefaultCurrency = currencies[0],
-                    Email = "tom@test.com"
                 }
             };
 
