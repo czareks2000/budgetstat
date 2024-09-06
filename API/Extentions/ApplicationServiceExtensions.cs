@@ -28,8 +28,6 @@ namespace API.Extentions
 
             services.AddDbContext<DataContext>(options =>
             {
-                var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
                 string connStr = config.GetConnectionString("SQLServer");
 
                 options.UseSqlServer(connStr, options =>
