@@ -42,12 +42,21 @@ namespace Application.Services
         {
             var counterparty = await _context.Counterparties
                 .Include(c => c.Loans)
+                    .ThenInclude(l => l.Payoffs)
                 .FirstOrDefaultAsync(c => c.Id == counterpartyId);
 
             if (counterparty == null) return null;
 
             if (counterparty.Loans.Any(l => l.LoanStatus == LoanStatus.InProgress))
                 return Result<object>.Failure("Unable to delete a counterparty that has loans in progress");
+
+            foreach (var loan in counterparty.Loans)
+            {
+                foreach(var payoff in loan.Payoffs)
+                    _context.Payoffs.Remove(payoff);
+
+                _context.Loans.Remove(loan);
+            }
 
             _context.Counterparties.Remove(counterparty);
 
@@ -221,9 +230,12 @@ namespace Application.Services
                 _utilities.RestoreAccountBalances(
                     (int)loan.AccountId, wasExpense, loan.FullAmount, loan.LoanDate
                 );
-            }            
+            }
 
             // usunięcie Loan
+            foreach (var payoff in loan.Payoffs)
+                _context.Payoffs.Remove(payoff);
+
             _context.Loans.Remove(loan);
 
             // zapisanie zmian w bazie

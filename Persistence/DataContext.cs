@@ -55,17 +55,37 @@ namespace Persistence
             builder.Entity<Transfer>()
                 .HasOne(t => t.FromAccount)
                 .WithMany(a => a.Sources)
-                .HasForeignKey(t => t.FromAccountId);
+                .HasForeignKey(t => t.FromAccountId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<Transfer>()
                 .HasOne(t => t.ToAccount)
                 .WithMany(a => a.Destinations)
-                .HasForeignKey(t => t.ToAccountId);
+                .HasForeignKey(t => t.ToAccountId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<Transaction>()
                 .HasOne(t => t.User)
                 .WithMany(u => u.Transactions)
                 .HasForeignKey(t => t.UserId);
+
+            builder.Entity<AccountBalance>()
+                .HasOne(ab => ab.Currency)
+                .WithMany(c => c.AccountBalances)
+                .HasForeignKey(ab => ab.CurrencyId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Payoff>()
+               .HasOne(p => p.Loan)
+               .WithMany(l => l.Payoffs)
+               .HasForeignKey(ab => ab.LoanId)
+               .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Loan>()
+               .HasMany(l => l.Payoffs)
+               .WithOne(p => p.Loan)
+               .HasForeignKey(p => p.LoanId)
+               .OnDelete(DeleteBehavior.NoAction);
 
             // Zapobieganie kaskadowemu usuwaniu
             builder.Entity<Account>()

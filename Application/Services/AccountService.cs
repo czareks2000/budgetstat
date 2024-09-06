@@ -122,6 +122,7 @@ namespace Application.Services
             var user = await _utilities.GetCurrentUserAsync();
 
             var existingAccount = await _context.Accounts
+                .Where(a => a.Id != account.Id)
                 .Where(a => a.User == user)
                 .Where(a => a.Name == updatedAccount.Name && a.Currency.Id == account.CurrencyId)
                 .FirstOrDefaultAsync();

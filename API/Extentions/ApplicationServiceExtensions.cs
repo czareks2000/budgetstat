@@ -14,16 +14,28 @@ namespace API.Extentions
         public static IServiceCollection AddApplicationServices(this IServiceCollection services,
             IConfiguration config)
         {
-            services.AddDbContext<DataContext>(options =>
+            /*services.AddDbContext<DataContext>(options =>
             {
                 var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
-                string connStr = config.GetConnectionString("DefaultConnection");
+                string connStr = config.GetConnectionString("PostgreSQL");
 
                 options.UseNpgsql(connStr, options =>
                 {
                     options.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
                 });
+            });*/
+
+            services.AddDbContext<DataContext>(options =>
+            {
+                var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+                string connStr = config.GetConnectionString("SQLServer");
+
+                options.UseSqlServer(connStr, options =>
+                {
+                    options.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+                }).EnableSensitiveDataLogging();
             });
 
 

@@ -1,4 +1,5 @@
 ﻿using Domain.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace Domain
 {
@@ -7,7 +8,9 @@ namespace Domain
         public int Id { get; set; }
         public LoanType LoanType { get; set; }
         public int? AccountId { get; set; }
+        [Precision(18, 2)]
         public decimal CurrentAmount { get; set; } = 0;
+        [Precision(18, 2)]
         public decimal FullAmount { get; set; }
         public int CounterpartyId { get; set; }
         public DateTime LoanDate { get; set; } = DateTime.UtcNow.Date;

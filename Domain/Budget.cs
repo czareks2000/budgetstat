@@ -1,4 +1,5 @@
 ﻿using Domain.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace Domain
 {
@@ -7,6 +8,7 @@ namespace Domain
         public int Id { get; set; }
         public string Name { get; set; }
         public BudgetPeriod Period { get; set; } = BudgetPeriod.Month;
+        [Precision(18, 2)]
         public decimal Amount { get; set; }
         public string UserId { get; set; }
         public int CurrencyId { get; set; }

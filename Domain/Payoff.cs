@@ -1,9 +1,12 @@
-﻿namespace Domain
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace Domain
 {
     public class Payoff
     {
         public int Id { get; set; }
         public int LoanId { get; set; }
+        [Precision(18, 2)]
         public decimal Amount { get; set; }
         public int? AccountId { get; set; }
         public DateTime Date { get; set; } = DateTime.UtcNow.Date;
