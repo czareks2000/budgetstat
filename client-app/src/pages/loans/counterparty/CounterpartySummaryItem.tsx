@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Grid, IconButton, Stack, Typography } from "@mui/material"
+import { Box, Card, CardContent, Grid2, IconButton, Stack, Typography } from "@mui/material"
 import { observer } from "mobx-react-lite"
 import { GroupedLoan } from "../../../app/models/Loan";
 import { convertToString } from "../../../app/utils/ConvertToString";
@@ -67,8 +67,8 @@ export default observer(function CounterpartySummaryItem({detailsAction, summary
             content={
                 <Card>
                 <CardContent>
-                    <Grid container justifyContent="flex-end">
-                        <Grid item xs>
+                    <Grid2 container justifyContent="flex-end">
+                        <Grid2 size={"grow"}>
                             <Stack direction={'row'}>
                                 <Typography variant="h5" gutterBottom>
                                     {summary.nearestRepaymentDate ? header() : summary.counterparty.name} 
@@ -91,8 +91,8 @@ export default observer(function CounterpartySummaryItem({detailsAction, summary
                                     </Typography>
                                 </>}
                             </Stack>
-                        </Grid>
-                        <Grid item xs={'auto'} >
+                        </Grid2>
+                        <Grid2 size={'auto'}>
                             {summary.nearestRepaymentDate ?
                             <>
                                 <Typography variant="h5" color={`${progressColor()}.main`}>
@@ -113,8 +113,8 @@ export default observer(function CounterpartySummaryItem({detailsAction, summary
                                     </IconButton>                     
                                 </Box>
                             </>}
-                        </Grid> 
-                    </Grid>
+                        </Grid2> 
+                    </Grid2>
                 </CardContent>
             </Card>
         }/>

@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Divider, Grid, IconButton, LinearProgress, Stack, Typography } from "@mui/material"
+import { Box, Card, CardContent, Divider, Grid2, IconButton, LinearProgress, Stack, Typography } from "@mui/material"
 import { observer } from "mobx-react-lite"
 import { router } from "../../../app/router/Routes";
 import { Loan } from "../../../app/models/Loan";
@@ -90,8 +90,8 @@ export default observer(function LoanItem({loan, detailsAction, noButtons = fals
             content={
             <Card>
                 <CardContent>
-                    <Grid container justifyContent="flex-end" mb={2}>
-                            <Grid item xs>
+                    <Grid2 container justifyContent="flex-end" mb={2}>
+                            <Grid2 size={"grow"}>
                                 <Stack direction={'row'}>
                                     <Typography variant="h6">
                                         {header()}
@@ -106,8 +106,8 @@ export default observer(function LoanItem({loan, detailsAction, noButtons = fals
                                         Remaining: {formatAmount(remainingAmount)} {currency.symbol}
                                     </Typography>}
                                 </Stack>
-                            </Grid>
-                            <Grid item xs={'auto'} >
+                            </Grid2>
+                            <Grid2 size={'auto'}>
                                 {!noButtons && <>
                                     <Box mr={-1}>
                                         
@@ -134,22 +134,22 @@ export default observer(function LoanItem({loan, detailsAction, noButtons = fals
                                         </IconButton>                     
                                     </Box>
                                 </>}  
-                            </Grid>
-                        </Grid>
+                            </Grid2>
+                        </Grid2>
                     <Divider />
                         <Box mt={3}>
-                            <Grid container justifyContent="space-between">
-                                <Grid item>
+                            <Grid2 container justifyContent="space-between">
+                                <Grid2>
                                     <Typography variant="body1" gutterBottom>
                                         {convertToString(loan.loanDate)}
                                     </Typography>
-                                </Grid>
-                                <Grid item>
+                                </Grid2>
+                                <Grid2>
                                     <Typography variant="body1" gutterBottom>
                                         {convertToString(loan.repaymentDate)}
                                     </Typography>
-                                </Grid>
-                            </Grid>
+                                </Grid2>
+                            </Grid2>
                             <Box mb={1}>
                                 <LinearProgress 
                                     variant="determinate" 
@@ -157,23 +157,23 @@ export default observer(function LoanItem({loan, detailsAction, noButtons = fals
                                     sx={{height: 10}} 
                                     color={progressColor()}/>
                             </Box>
-                            <Grid container justifyContent="space-between">
-                                <Grid item>
+                            <Grid2 container justifyContent="space-between">
+                                <Grid2>
                                     <Typography variant="body1">
                                         {formatedLoanStartAmount}
                                     </Typography>
-                                </Grid>
-                                <Grid item>
+                                </Grid2>
+                                <Grid2>
                                     <Typography variant="body1">
                                         {formatAmount(loan.currentAmount)} / {formatAmount(loan.fullAmount)} {currency.symbol}
                                     </Typography>
-                                </Grid>
-                                <Grid item>
+                                </Grid2>
+                                <Grid2>
                                     <Typography variant="body1">
                                         {loanEndAmount}
                                     </Typography>
-                                </Grid>
-                            </Grid>
+                                </Grid2>
+                            </Grid2>
                         </Box>
                 </CardContent>
             </Card>

@@ -1,4 +1,4 @@
-import { Box, Button, Grid, MenuItem, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, Grid2, MenuItem, Paper, Stack, TextField, Typography } from "@mui/material";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import { useStore } from "../../../app/stores/store";
@@ -21,12 +21,12 @@ export default observer(function DefaultCurrencyCard() {
             <Box p={2}>
                 <Stack spacing={2}>
 
-                    <Grid container display={'flex'} alignItems={'center'} gap={2}>
-                        <Grid item xs={'auto'}>
+                    <Grid2 container display={'flex'} alignItems={'center'} gap={2}>
+                        <Grid2 size={'auto'}>
                             <Typography>Default currency</Typography>
-                        </Grid>
+                        </Grid2>
 
-                        <Grid item xs>
+                        <Grid2 size={"grow"}>
                             <TextField
                                 select
                                 size="small"
@@ -40,9 +40,9 @@ export default observer(function DefaultCurrencyCard() {
                                 </MenuItem>
                             ))}
                             </TextField>
-                        </Grid>
+                        </Grid2>
 
-                        <Grid item xs={'auto'}>
+                        <Grid2 size={'auto'}>
                             <Button
                                 variant="contained"
                                 disabled={defaultCurrency?.id === currencyId}
@@ -50,8 +50,8 @@ export default observer(function DefaultCurrencyCard() {
                             >
                                 Save
                             </Button>
-                        </Grid>
-                    </Grid>
+                        </Grid2>
+                    </Grid2>
 
                 </Stack>
             </Box>

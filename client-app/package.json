@@ -11,11 +11,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "^11.11.4",
-    "@emotion/styled": "^11.11.5",
-    "@mui/icons-material": "^5.15.20",
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^6.0.2",
     "@mui/lab": "^5.0.0-alpha.170",
-    "@mui/material": "^5.15.20",
+    "@mui/material": "^6.0.2",
     "@mui/x-charts": "^7.9.0",
     "@mui/x-data-grid": "^7.10.0",
     "@mui/x-date-pickers": "^7.8.0",

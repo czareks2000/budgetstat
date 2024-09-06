@@ -1,4 +1,4 @@
-import { Box, Divider, Grid, LinearProgress, Paper, Stack, Typography } from '@mui/material'
+import { Box, Divider, Grid2, LinearProgress, Paper, Stack, Typography } from '@mui/material'
 import { observer } from 'mobx-react-lite'
 import { useStore } from '../../../app/stores/store';
 import { NoteAlt } from '@mui/icons-material';
@@ -24,18 +24,18 @@ export default observer(function BudgetsCard() {
     const summaryItem = (period: BudgetPeriod, summary: BudgetSummary, header: string) => {
         return (
             <Box py={2}>
-                <Grid container justifyContent="space-between">
-                    <Grid item>
+                <Grid2 container justifyContent="space-between">
+                    <Grid2>
                         <Typography variant="body1" gutterBottom>
                             {header}
                         </Typography>
-                    </Grid>
-                    <Grid item>
+                    </Grid2>
+                    <Grid2>
                         <Typography variant="body1" gutterBottom>
                         {formatAmount(summary.currentAmount)} / {formatAmount(summary.fullAmount)} {defaultCurrency?.symbol}
                         </Typography>
-                    </Grid>
-                </Grid>
+                    </Grid2>
+                </Grid2>
                 <Box mb={1}>
                     <LinearProgress 
                         variant="determinate" 
@@ -43,18 +43,18 @@ export default observer(function BudgetsCard() {
                         sx={{height: 10}} 
                         color={progressColor(summary.progressValue)}/>
                 </Box>
-                <Grid container justifyContent="space-between">
-                    <Grid item>
+                <Grid2 container justifyContent="space-between">
+                    <Grid2>
                         <Typography variant="body2">
                             {startDate(period)}
                         </Typography>
-                    </Grid>
-                    <Grid item>
+                    </Grid2>
+                    <Grid2>
                         <Typography variant="body2">
                             {endDate(period)}
                         </Typography>
-                    </Grid>
-                </Grid>
+                    </Grid2>
+                </Grid2>
             </Box>  
         )
     }

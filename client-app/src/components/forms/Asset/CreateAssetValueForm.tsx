@@ -2,7 +2,7 @@ import { Form, Formik, FormikHelpers } from "formik";
 import { observer } from "mobx-react-lite"
 import * as Yup from "yup";
 import { LoadingButton } from "@mui/lab";
-import { Button, Grid, Stack } from "@mui/material";
+import { Button, Grid2, Stack } from "@mui/material";
 import SelectInput from "../../formInputs/SelectInput";
 import { useStore } from "../../../app/stores/store";
 import NumberInput from "../../formInputs/NumberInput";
@@ -43,16 +43,16 @@ export default observer(function CreateAssetValueForm({initialValues, onSubmit, 
             <Form>
                 <Stack spacing={2}>
                     <Stack direction={"row"} display="flex" spacing={2}>
-                        <Grid item xs>
+                        <Grid2 size={"grow"}>
                             {/* Asset value */}
                             <NumberInput label={"Value"} name="value" fullWidth/>
-                        </Grid>
-                        <Grid item xs={'auto'}>
+                        </Grid2>
+                        <Grid2 size={'auto'}>
                             {/* CurrencyId */}
                             <SelectInput label="Currency" name="currencyId" 
                                 options={currenciesAsOptions}
                                 minWidth={120}/>
-                        </Grid>
+                        </Grid2>
                     </Stack>
 
                     {/* Date */}

@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { Button, Divider, FormControlLabel, Grid, Stack, Switch } from "@mui/material";
+import { Button, Divider, FormControlLabel, Grid2, Stack, Switch } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
@@ -130,29 +130,29 @@ export default observer(function CreatePlannedTransactionsForm() {
                                 name={"startDate"}/>  
 
                             <Stack direction={'row'} display={'flex'} spacing={2} alignItems={'top'}>
-                                <Grid item xs={'auto'}  pt={2}>
+                                <Grid2 size={'auto'}  pt={2}>
                                     Repeats every
-                                </Grid>
-                                <Grid item xs>
+                                </Grid2>
+                                <Grid2 size={"grow"}>
                                     {/* Repeats Every */}
                                     <NumberInput
                                         label="Interval"
                                         fullWidth name={"repeatsEvery"} />
-                                </Grid>
-                                <Grid item xs={'auto'}>
+                                </Grid2>
+                                <Grid2 size={'auto'}>
                                     {/* Period */}
                                     <SelectInput 
                                         name={"period"}
                                         options={enumToOptions(Period, values.repeatsEvery ? values.repeatsEvery > 1 : false)} />
-                                </Grid>
-                                <Grid item xs={'auto'}  pt={2}>
+                                </Grid2>
+                                <Grid2 size={'auto'}  pt={2}>
                                     X
-                                </Grid>
-                                <Grid item xs>
+                                </Grid2>
+                                <Grid2 size={"grow"}>
                                     {/* Number of times */}
                                     <NumberInput 
                                         label="Times" fullWidth name={"numberOfTimes"} />
-                                </Grid>
+                                </Grid2>
                             </Stack>                   
                             
                             {/* Considered */}

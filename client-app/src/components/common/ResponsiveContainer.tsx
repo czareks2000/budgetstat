@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material"
+import { Grid2 } from "@mui/material"
 
 interface Props {
     content: React.ReactNode;
@@ -6,13 +6,13 @@ interface Props {
 
 const ResponsiveContainer = ({content}: Props) => {
   return (
-    <Grid container>
-        <Grid item xs lg xl/>
-        <Grid item xs={12} lg={8} xl={6}>
+    <Grid2 container>
+        <Grid2 size="grow"/>
+        <Grid2 size={{xs: 12, lg: 8, xl: 6}}>
             {content}
-        </Grid>
-        <Grid item xs lg xl/>
-    </Grid>
+        </Grid2>
+        <Grid2 size="grow"/>
+    </Grid2>
   )
 }
 

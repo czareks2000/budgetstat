@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { Button, Grid, Stack } from "@mui/material";
+import { Button, Grid2, Stack } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { Form, Formik, FormikHelpers, FormikState } from "formik";
 import * as Yup from "yup";
@@ -93,15 +93,15 @@ export default observer(function IncomesAndExpensesOverTimeBarChartSettings() {
                     <Stack spacing={2}>
                 
                         <Stack direction={'row'} spacing={2}>
-                            <Grid item xs>
+                            <Grid2 size={"grow"}>
                                 {/* Period */}
                                 <SelectInput 
                                     label="Period" name={"period"}
                                     fullWidth
                                     options={periodOptions} />    
-                            </Grid>
+                            </Grid2>
                             {values.period === ExtendedChartPeriod.CustomMonth &&
-                            <Grid item xs>
+                            <Grid2 size={"grow"}>
                                 {/* Custom */}
                                 <MyDatePicker 
                                     defaultValue={dayjs()}
@@ -109,9 +109,9 @@ export default observer(function IncomesAndExpensesOverTimeBarChartSettings() {
                                     views={['month','year']}
                                     format="MM/YYYY"
                                     name={"customDate"}/>
-                            </Grid>}
+                            </Grid2>}
                             {values.period === ExtendedChartPeriod.CustomYear &&
-                            <Grid item xs>
+                            <Grid2 size={"grow"}>
                                 {/* Custom */}
                                 <MyDatePicker 
                                     defaultValue={dayjs()}
@@ -119,7 +119,7 @@ export default observer(function IncomesAndExpensesOverTimeBarChartSettings() {
                                     views={['year']}
                                     format="YYYY" 
                                     name={"customDate"}/>
-                            </Grid>}
+                            </Grid2>}
                         </Stack>
 
                         {/* Accounts */}

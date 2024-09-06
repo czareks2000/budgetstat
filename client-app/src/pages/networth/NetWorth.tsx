@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite"
 import ResponsiveContainer from "../../components/common/ResponsiveContainer"
-import { Box, Divider, Grid, Paper, Stack } from "@mui/material"
+import { Box, Divider, Grid2, Paper, Stack } from "@mui/material"
 import LoansCard from "./cards/LoansCard";
 import AssetsCard from "./cards/AssetsCard";
 import NetWorthCard from "./cards/NetWorthCard";
@@ -34,39 +34,39 @@ export default observer(function NetWorth() {
             <Stack spacing={2}>
                 <Divider>Summary</Divider>
                 <Stack direction={{xs: 'column', sm: 'row'}} spacing={2}>
-                    <Grid item xs>
+                    <Grid2 size={"grow"}>
                         <NetWorthCard />
-                    </Grid>
-                    <Grid item xs>
+                    </Grid2>
+                    <Grid2 size={"grow"}>
                         <AssetsCard />
-                    </Grid>
-                    <Grid item xs>
+                    </Grid2>
+                    <Grid2 size={"grow"}>
                         <LoansCard />
-                    </Grid>
+                    </Grid2>
                 </Stack>
                 <NetWorthOverTimeLineChart />
                 <FadeInLoadingWithLabel loadingFlag={assetsLoaded} content={
                 <Stack spacing={2}>
                     <Divider>Assets</Divider>
-                    <Grid container direction={{xs: 'column', sm: 'row'}} gap={2}>
-                        <Grid item xs>
+                    <Grid2 container direction={{xs: 'column', sm: 'row'}} gap={2}>
+                        <Grid2 size={"grow"}>
                             <AssetList />
-                        </Grid>
+                        </Grid2>
                         <Paper sx={{ display: { xs: 'none', sm: 'block' }, height: 240}}>         
-                            <Grid item xs={'auto'} container justifyContent="center">
+                            <Grid2 size={'auto'} container justifyContent="center">
                                 <Box>
                                     <AssetsValuesGroupedByCategoriesChart />
                                 </Box>                      
-                            </Grid>
+                            </Grid2>
                         </Paper>
                         <Paper sx={{ display: { xs: 'block', sm: 'none' }}}>         
-                            <Grid item xs={'auto'} container justifyContent="center">
+                            <Grid2 size={'auto'} container justifyContent="center">
                                 <Box >
                                     <AssetsValuesGroupedByCategoriesChart showLegend/>
                                 </Box>                       
-                            </Grid>
+                            </Grid2>
                         </Paper>
-                    </Grid>
+                    </Grid2>
                 </Stack>} />
                 
             </Stack>

@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Divider, Grid, IconButton, LinearProgress, Stack, Typography } from "@mui/material"
+import { Box, Card, CardContent, Divider, Grid2, IconButton, LinearProgress, Stack, Typography } from "@mui/material"
 import { observer } from "mobx-react-lite"
 import { router } from "../../../app/router/Routes";
 import { Loan } from "../../../app/models/Loan";
@@ -84,8 +84,8 @@ export default observer(function LoanItemCompact({loan, detailsAction, noButtons
             content={
             <Card>
                 <CardContent>
-                    <Grid container justifyContent="flex-end">
-                            <Grid item xs>
+                    <Grid2 container justifyContent="flex-end">
+                            <Grid2 size={"grow"}>
                                 <Stack direction={'row'}>
                                     <Typography variant="h6">
                                         {header()}
@@ -101,8 +101,8 @@ export default observer(function LoanItemCompact({loan, detailsAction, noButtons
                                         Remaining: {formatAmount(remainingAmount)} {currency.symbol}
                                     </Typography>}
                                 </Stack>
-                            </Grid>
-                            <Grid item xs={'auto'} >
+                            </Grid2>
+                            <Grid2 size={'auto'}>
                                 {!noButtons && <>
                                     <Box mr={-1}>
                                         
@@ -129,8 +129,8 @@ export default observer(function LoanItemCompact({loan, detailsAction, noButtons
                                         </IconButton>                     
                                     </Box>
                                 </>}  
-                            </Grid>
-                        </Grid>
+                            </Grid2>
+                        </Grid2>
                         {inProgress &&
                         <Box mt={1}> 
                             <Divider /> 

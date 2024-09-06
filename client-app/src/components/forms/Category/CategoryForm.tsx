@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite"
 import * as Yup from "yup";
 import TextInput from "../../formInputs/TextInput";
 import { LoadingButton } from "@mui/lab";
-import { Button, Grid, Stack } from "@mui/material";
+import { Button, Grid2, Stack } from "@mui/material";
 import { useStore } from "../../../app/stores/store";
 import { CategoryFormValues } from "../../../app/models/Category";
 import { TransactionType } from "../../../app/models/enums/TransactionType";
@@ -74,39 +74,39 @@ export default observer(function CategoryForm({onSubmit, onCancel, initialValues
                     <Stack direction={'row'} spacing={2} alignItems={'top'}>
                             
                         {/* Category Type */}
-                        <Grid item xs>
+                        <Grid2 size={"grow"}>
                             <SelectInput
                                 disabled={editMode}
                                 label="Category Type" name={"categoryType"}
                                 fullWidth
                                 options={categoryTypeOptions} />  
-                        </Grid>
+                        </Grid2>
 
                         {values.categoryType === CategoryType.Sub &&
-                        <Grid item xs={'auto'} pt={2}>
+                        <Grid2 size={'auto'} pt={2}>
                             of
-                        </Grid>}
+                        </Grid2>}
 
                         {/* Main Income category */}
                         {(values.categoryType === CategoryType.Sub && values.transactionType === TransactionType.Expense) &&
-                        <Grid item xs>
+                        <Grid2 size={"grow"}>
                             <SelectInput
                                 disabled={editMode}
                                 fullWidth
                                 label="Main Category" name={"mainExpenseCategoryId"}
                                 options={mainExpenseCategoriesAsOptions} />
-                        </Grid>
+                        </Grid2>
                         }
 
                         {/* Main Expense category */}
                         {(values.categoryType === CategoryType.Sub && values.transactionType === TransactionType.Income) &&
-                        <Grid item xs>
+                        <Grid2 size={"grow"}>
                             <SelectInput
                                 disabled={editMode}
                                 fullWidth
                                 label="Main Category" name={"mainIncomeCategoryId"}
                                 options={mainIncomeCategoriesAsOptions} />
-                        </Grid>}
+                        </Grid2>}
 
                     </Stack>
 

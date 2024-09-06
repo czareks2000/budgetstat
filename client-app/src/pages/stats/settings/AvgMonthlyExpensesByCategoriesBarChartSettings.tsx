@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { Button, Grid, Stack } from "@mui/material";
+import { Button, Grid2, Stack } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { Form, Formik, FormikHelpers, FormikState } from "formik";
 import * as Yup from "yup";
@@ -99,22 +99,22 @@ export default observer(function AvgMonthlyExpensesByCategoriesBarChartSettings(
 
                         {/* Category */}
                         <Stack direction={'row'} spacing={2} alignItems={'top'}>
-                            <Grid item xs>
+                            <Grid2 size={"grow"}>
                                 <SelectInput 
                                     label="Categories type" name={"categoryType"}
                                     fullWidth 
                                     options={categoryOptions} />   
-                            </Grid>
+                            </Grid2>
                             {values.categoryType === CategoryType.Sub && <>
-                            <Grid item xs={'auto'} pt={2}>
+                            <Grid2 size={'auto'} pt={2}>
                                 of
-                            </Grid>
-                            <Grid item xs>
+                            </Grid2>
+                            <Grid2 size={"grow"}>
                                 <SelectInput 
                                     label="Main category" name={"mainCategoryId"} 
                                     fullWidth 
                                     options={mainExpenseCategoriesAsOptions} />
-                            </Grid></>}
+                            </Grid2></>}
                         </Stack>
                     
                         {/* Period */}
@@ -124,7 +124,7 @@ export default observer(function AvgMonthlyExpensesByCategoriesBarChartSettings(
 
                         {values.period === AvgChartPeriod.Custom &&
                         <Stack direction={'row'} spacing={2} alignItems={'top'}>
-                            <Grid item xs>
+                            <Grid2 size={"grow"}>
                                 {/* Start Date */}
                                 <MyDatePicker 
                                     defaultValue={dayjs().add(-30, 'days')}
@@ -132,11 +132,11 @@ export default observer(function AvgMonthlyExpensesByCategoriesBarChartSettings(
                                     views={['month','year']}
                                     label="Start Date" 
                                     name={"startDate"}/>
-                            </Grid>
-                            <Grid item xs={'auto'} pt={2}>
+                            </Grid2>
+                            <Grid2 size={'auto'} pt={2}>
                                 -
-                            </Grid>
-                            <Grid item xs>
+                            </Grid2>
+                            <Grid2 size={"grow"}>
                                 {/* End Date */}
                                 <MyDatePicker 
                                     defaultValue={dayjs()}
@@ -144,7 +144,7 @@ export default observer(function AvgMonthlyExpensesByCategoriesBarChartSettings(
                                     views={['month','year']}
                                     label="End Date" 
                                     name={"endDate"}/>
-                            </Grid>
+                            </Grid2>
                         </Stack>}
 
                         {/* Accounts */}

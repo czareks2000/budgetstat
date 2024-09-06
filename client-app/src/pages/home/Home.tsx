@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite"
-import { Divider, Grid, Stack } from "@mui/material"
+import { Divider, Grid2, Stack } from "@mui/material"
 import CurrentBalanceCard from "./cards/CurrentBalanceCard"
 import IncomesExpensesThisMonthCard from "./cards/IncomesExpensesThisMonthCard"
 import AvgMonthlyIncomesAndExpensesCard from "./cards/AvgMonthlyIncomesAndExpensesCard"
@@ -38,47 +38,47 @@ export default observer(function Home() {
         counterpartiesLoaded, loansInProgressLoaded])
 
     return (
-        <Grid container>
-            <Grid item xs lg xl/>
-            <Grid item xs={12} xl={8}>
+        <Grid2 container>
+            <Grid2 size={"grow"}/>
+            <Grid2 size={{xs: 12, xl: 8}}>
                 <Stack spacing={2}>
                     <Divider>Home Page</Divider>
 
-                    <Grid container direction={"row"} gap={2} display={'flex'} alignItems={"center"}>
+                    <Grid2 container direction={"row"} gap={2} display={'flex'} alignItems={"center"}>
 
-                        <Grid item xs={12} lg >
+                        <Grid2 size={{xs: 12, lg: 'grow'}}>
 
                             <IncomesExpensesThisMonthCard />
 
-                        </Grid>
-                        <Grid item xs={12} lg={5} >
+                        </Grid2>
+                        <Grid2 size={{xs: 12, lg: 5}}>
 
                             <CurrentBalanceCard />
 
-                        </Grid>
-                        <Grid item xs={12} lg >
+                        </Grid2>
+                        <Grid2 size={{xs: 12, lg: 'grow'}} >
 
                             <AvgMonthlyIncomesAndExpensesCard />
 
-                        </Grid>
+                        </Grid2>
 
-                    </Grid>
+                    </Grid2>
 
-                    <Grid container gap={2} direction={"row"}>
-                        <Grid item xs={12} lg>
+                    <Grid2 container gap={2} direction={"row"}>
+                        <Grid2 size={{xs: 12, lg: 'grow'}}>
                     
                             <IncomesAndExpensesSumThisMonthChart />
 
-                        </Grid>
-                        <Grid item xs={12} lg>
+                        </Grid2>
+                        <Grid2 size={{xs: 12, lg: 'grow'}}>
                           
                             <BalanceLastMonthLineChart />
 
-                        </Grid>
-                    </Grid>
+                        </Grid2>
+                    </Grid2>
 
-                    <Grid container gap={2}>
-                        <Grid item xs={12} lg>
+                    <Grid2 container gap={2}>
+                        <Grid2 size={{xs: 12, lg: 'grow'}}>
                             <Stack spacing={2}>
 
                                 {plannedTransactionsToConfirm.length > 0 &&
@@ -90,8 +90,8 @@ export default observer(function Home() {
                                 <BudgetsCard/>
 
                             </Stack>
-                        </Grid>
-                        <Grid item xs={12} lg>
+                        </Grid2>
+                        <Grid2 size={{xs: 12, lg: 'grow'}}>
                             <Stack spacing={2}>
 
                                 <NoDecorationLink to={"/accounts"} 
@@ -104,12 +104,12 @@ export default observer(function Home() {
                                 }
 
                             </Stack>
-                        </Grid>
-                    </Grid>
+                        </Grid2>
+                    </Grid2>
 
                 </Stack>
-            </Grid>
-            <Grid item xs lg xl/>
-        </Grid>
+            </Grid2>
+            <Grid2 size={"grow"}/>
+        </Grid2>
     )
 })

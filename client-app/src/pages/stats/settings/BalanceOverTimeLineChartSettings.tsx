@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { Button, Grid, Stack } from "@mui/material";
+import { Button, Grid2, Stack } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { Form, Formik, FormikHelpers, FormikState } from "formik";
 import * as Yup from "yup";
@@ -38,7 +38,7 @@ export default observer(function BalanceOverTimeLineChartSettings() {
             })
             .max(dayjs().add(1, 'day').startOf('day').toDate(), 'End date cannot be in the future')
             .test('min-duration', 'The range must be at least 30 days', function(value) {
-                const { startDate } = this.parent;
+                const { startDate } : any = this.parent;
                 return !startDate || !value || dayjs(value).diff(dayjs(startDate), 'day') >= 30;
             })
     });
@@ -102,23 +102,23 @@ export default observer(function BalanceOverTimeLineChartSettings() {
 
                         {values.period === ChartPeriod.Custom &&
                         <Stack direction={'row'} spacing={2} alignItems={'top'}>
-                            <Grid item xs>
+                            <Grid2 size={"grow"}>
                                 {/* Start Date */}
                                 <MyDatePicker 
                                     defaultValue={dayjs().add(-30, 'days')}
                                     label="Start Date" 
                                     name={"startDate"}/>
-                            </Grid>
-                            <Grid item xs={'auto'} pt={2}>
+                            </Grid2>
+                            <Grid2 size={'auto'} pt={2}>
                                 -
-                            </Grid>
-                            <Grid item xs>
+                            </Grid2>
+                            <Grid2 size={"grow"}>
                                 {/* End Date */}
                                 <MyDatePicker 
                                     defaultValue={dayjs()}
                                     label="End Date" 
                                     name={"endDate"}/>
-                            </Grid>
+                            </Grid2>
                         </Stack>}
 
                         {/* Accounts */}

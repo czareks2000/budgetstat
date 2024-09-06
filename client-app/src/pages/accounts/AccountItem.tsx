@@ -1,4 +1,4 @@
-import { Box, Card, CardActions, CardContent, Divider, Grid, IconButton, Switch, Tooltip, Typography } from "@mui/material";
+import { Card, CardContent, Divider, Grid2, IconButton, Switch, Tooltip, Typography } from "@mui/material";
 import { Account } from "../../app/models/Account";
 import { Delete, Edit } from "@mui/icons-material";
 import { AccountStatus } from "../../app/models/enums/AccountStatus";
@@ -37,25 +37,25 @@ export default observer(function AccountItem({account, openDeleteDialog}: Props)
     return (
     <Card key={account.id} >
         <CardContent>
-            <Grid container justifyContent="flex-end">
-                <Grid item xs>
+            <Grid2 container>
+                <Grid2 size={"grow"}>
                     <Typography variant="h5">
                         {account.name} {isVisible() ? '' : '(hidden)'}
                     </Typography>
                     <Typography variant="subtitle1" color="textSecondary">
                         {account.description}
                     </Typography>
-                </Grid>
-                <Grid item xs={'auto'} >
+                </Grid2>
+                <Grid2 size={'auto'}>
                     <Typography variant="h5" color={'primary'}>
                         {formatAmount(account.balance)} {account.currency.symbol}
                     </Typography>
-                </Grid>
-            </Grid>
+                </Grid2>
+            </Grid2>
         </CardContent>
         <Divider/>
-        <CardActions >
-            <Grid container justifyContent="space-between">
+        <Grid2 container p={1}>
+            <Grid2 size={"grow"}>
                 <Tooltip 
                         title={isVisible() ? "Hide" : "Make Visible"}
                         placement="right"
@@ -70,38 +70,37 @@ export default observer(function AccountItem({account, openDeleteDialog}: Props)
                             handleSwitchButtonClick();
                         }}/>
                 </Tooltip>
-                <Box>
+            </Grid2>
+            <Grid2 size={"auto"}>
+                <IconButton 
+                    aria-label="edit"
+                    onClick={(e: any) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleEditButtonClick();
+                    }}>
+                    <Edit />
+                </IconButton>
+                <Tooltip 
+                    title={account.canBeDeleted ? '' : 
+                        'The account has loans in progress.'}
+                    placement="top"
+                    arrow>
+                    <span>
                     <IconButton 
-                        aria-label="edit"
+                        disabled={!account.canBeDeleted}
+                        aria-label="delete"
                         onClick={(e: any) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            handleEditButtonClick();
+                            handleDeleteButtonClick();
                         }}>
-                        <Edit />
+                            <Delete />
                     </IconButton>
-                    <Tooltip 
-                        title={account.canBeDeleted ? '' : 
-                            'The account has loans in progress.'}
-                        placement="top"
-                        arrow>
-                        <span>
-                        <IconButton 
-                            disabled={!account.canBeDeleted}
-                            aria-label="delete"
-                            onClick={(e: any) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handleDeleteButtonClick();
-                            }}>
-                                <Delete />
-                        </IconButton>
-                        </span>
-                    </Tooltip>
-                    
-                </Box>
-            </Grid>
-        </CardActions>
+                    </span>
+                </Tooltip>
+            </Grid2>
+        </Grid2>
     </Card>
     )
 })

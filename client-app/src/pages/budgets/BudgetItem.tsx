@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite"
 import { Budget } from "../../app/models/Budget";
-import { Box, Card, CardContent, Chip, Divider, Grid, IconButton, LinearProgress, Stack, Typography } from "@mui/material";
+import { Box, Card, CardContent, Chip, Divider, Grid2, IconButton, LinearProgress, Stack, Typography } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 import { useStore } from "../../app/stores/store";
 import { router } from "../../app/router/Routes";
@@ -39,22 +39,22 @@ export default observer(function BudgetItem({budget, openDeleteDialog}: Props) {
     return (
         <Card key={budget.id}>
                 <CardContent>
-                    <Grid container justifyContent="flex-end" mb={3}>
-                        <Grid item xs>
+                    <Grid2 container justifyContent="flex-end" mb={3}>
+                        <Grid2 size={"grow"}>
                             <Stack direction={'row'}>
                                 <Typography variant="h5" gutterBottom>
                                     {budget.name}
                                 </Typography>
                             </Stack>
-                            <Grid direction={'row'} container spacing={1}>
+                            <Grid2 direction={'row'} container spacing={1}>
                                 {budget.categories.map((category) => 
-                                    <Grid item key={category.id}>
+                                    <Grid2 key={category.id}>
                                         <Chip key={category.id} label={category.name} />
-                                    </Grid>
+                                    </Grid2>
                                 )}
-                            </Grid>
-                        </Grid>
-                        <Grid item xs={'auto'} >
+                            </Grid2>
+                        </Grid2>
+                        <Grid2 size={'auto'}>
                             <Box mr={-1}>
                                 <IconButton 
                                     size="medium"
@@ -69,22 +69,22 @@ export default observer(function BudgetItem({budget, openDeleteDialog}: Props) {
                                     <Delete />
                                 </IconButton>  
                             </Box>
-                        </Grid>
-                    </Grid>
+                        </Grid2>
+                    </Grid2>
                     <Divider />
                     <Box mt={3}>
-                        <Grid container justifyContent="space-between">
-                            <Grid item>
+                        <Grid2 container justifyContent="space-between">
+                            <Grid2>
                                 <Typography variant="body1" gutterBottom>
                                     {startDate(budget.period)}
                                 </Typography>
-                            </Grid>
-                            <Grid item>
+                            </Grid2>
+                            <Grid2>
                                 <Typography variant="body1" gutterBottom>
                                     {endDate(budget.period)}
                                 </Typography>
-                            </Grid>
-                        </Grid>
+                            </Grid2>
+                        </Grid2>
                         <Box mb={1}>
                             <LinearProgress 
                                 variant="determinate" 
@@ -92,23 +92,23 @@ export default observer(function BudgetItem({budget, openDeleteDialog}: Props) {
                                 sx={{height: 10}} 
                                 color={progressColor(progressValue(budget))}/>
                         </Box>
-                        <Grid container justifyContent="space-between">
-                            <Grid item>
+                        <Grid2 container justifyContent="space-between">
+                            <Grid2>
                                 <Typography variant="body1">
                                     {formatedBudgetStartAmount}
                                 </Typography>
-                            </Grid>
-                            <Grid item>
+                            </Grid2>
+                            <Grid2>
                                 <Typography variant="body1">
                                     {formatAmount(budget.currentAmount)} / {formatAmount(budget.convertedAmount)} {defaultCurrency?.symbol}
                                 </Typography>
-                            </Grid>
-                            <Grid item>
+                            </Grid2>
+                            <Grid2>
                                 <Typography variant="body1">
                                     {budgetEndAmount}
                                 </Typography>
-                            </Grid>
-                        </Grid>
+                            </Grid2>
+                        </Grid2>
                     </Box>
                 </CardContent>
             </Card>
