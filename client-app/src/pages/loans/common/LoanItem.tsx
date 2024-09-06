@@ -115,7 +115,7 @@ export default observer(function LoanItem({loan, detailsAction, noButtons = fals
                                         <IconButton 
                                             size="medium"
                                             aria-label="edit"
-                                            onClick={(e) => {
+                                            onClick={(e: any) => {
                                                 e.preventDefault();
                                                 e.stopPropagation();
                                                 handleEditClick();
@@ -125,7 +125,7 @@ export default observer(function LoanItem({loan, detailsAction, noButtons = fals
                                         
                                         <IconButton 
                                             aria-label="delete"
-                                            onClick={(e) => {
+                                            onClick={(e: any) => {
                                                 e.preventDefault();
                                                 e.stopPropagation();
                                                 setOpen(true);

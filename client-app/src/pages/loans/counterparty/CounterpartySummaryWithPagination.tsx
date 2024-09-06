@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { GroupedLoan } from '../../../app/models/Loan'
 import CounterpartySummaryItem from './CounterpartySummaryItem';
 import { Button, Grid, Pagination } from '@mui/material';
@@ -14,18 +14,11 @@ interface Props {
 
 export default observer(function CounterpartySummaryWithPagination({summaries, onClick, buttonText, currencyId, setSearchParams}: Props) {
     const calculatePageNumber = () => {
-        return summaries.findIndex(summary => summary.currencyId === Number(currencyId)) + 1;
+        const index = summaries.findIndex(summary => summary.currencyId === Number(currencyId));
+        return index === -1 ? 1 : index + 1;
     }
     
     const [currentPage, setCurrentPage] = useState(calculatePageNumber());
-
-    useEffect(() => {
-        if (!currencyId)
-            return;
-
-        setCurrentPage(calculatePageNumber());
-        
-    }, [currencyId, summaries]);
 
     const handlePageChange = (_: React.ChangeEvent<unknown>, page: number) => {
         setCurrentPage(page);

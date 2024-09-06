@@ -30,7 +30,7 @@ export default observer(function AssetsCard()  {
                         <IconButton 
                             aria-label="add"
                             size="small"
-                            onClick={(e) => {
+                            onClick={(e: any) => {
                                 e.preventDefault();
                                 e.stopPropagation();
                                 handleAddButtonClick();

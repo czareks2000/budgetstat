@@ -64,7 +64,7 @@ export default observer(function AccountItem({account, openDeleteDialog}: Props)
                         leaveDelay={200}>
                     <Switch 
                         checked={isVisible()} 
-                        onClick={(e) => {
+                        onClick={(e: any) => {
                             e.preventDefault();
                             e.stopPropagation();
                             handleSwitchButtonClick();
@@ -73,7 +73,7 @@ export default observer(function AccountItem({account, openDeleteDialog}: Props)
                 <Box>
                     <IconButton 
                         aria-label="edit"
-                        onClick={(e) => {
+                        onClick={(e: any) => {
                             e.preventDefault();
                             e.stopPropagation();
                             handleEditButtonClick();
@@ -89,7 +89,7 @@ export default observer(function AccountItem({account, openDeleteDialog}: Props)
                         <IconButton 
                             disabled={!account.canBeDeleted}
                             aria-label="delete"
-                            onClick={(e) => {
+                            onClick={(e: any) => {
                                 e.preventDefault();
                                 e.stopPropagation();
                                 handleDeleteButtonClick();

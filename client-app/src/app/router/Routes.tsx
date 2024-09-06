@@ -62,6 +62,7 @@ export const routes: RouteObject[] = [
                 {path: 'budgets/:id/edit', element: <EditBudget />},
 
                 {path: 'loans', element: <Loans />},
+                {path: 'loans/counterparty', element: <Loans />},
                 {path: 'loans/create', element: <CreateLoan />},
                 {path: 'loans/:id/edit', element: <EditLoan />},
                 {path: 'loans/counterparty/:id', element: <CounterpartyDetails />},

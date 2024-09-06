@@ -17,12 +17,13 @@ import CustomTabPanel, { a11yProps } from "../preferences/tabs/CustomTabPanel";
 import LoanItemCompact from "./common/LoanItemCompact";
 import { LoanStatus } from "../../app/models/enums/LoanStatus";
 import FadeInLoadingWithLabel from "../../components/common/loadings/FadeInLoadingWithLabel";
+import dayjs from "dayjs";
 
 export default observer(function CounterpartyDetails() {
     const {
         loanStore: {
             denseLoanItems, toggleDensity,
-            getCounterpartyLoans, selectedSummaries: summaries, selectSummaries, 
+            selectedSummaries: summaries, selectSummaries, selectedLoans, validateCurrencyIdParam,
             counterpartiesLoaded, loadCounterparties, loansInProgressLoaded, loadLoans}} = useStore();
 
     useEffect(() => {
@@ -34,38 +35,43 @@ export default observer(function CounterpartyDetails() {
 
     const {id} = useParams();
 
+    useEffect(() => {
+        if(counterpartiesLoaded && loansInProgressLoaded)
+            selectSummaries(Number(id));
+    },[counterpartiesLoaded, loansInProgressLoaded])
+
     const [searchParams, setSearchParams] = useSearchParams();
     const [currencyId, setCurrencyId] = useState<string | null>(searchParams.get('currencyId'));
 
     useEffect(() => {
-        if(id)
-            selectSummaries(Number(id));
-        else
-            router.navigate('/not-found');
-    },[id, counterpartiesLoaded, loansInProgressLoaded])
+        if (summaries.length > 0) {
+            const paramCurrencyId = searchParams.get('currencyId');
+            const validCurrencyId = validateCurrencyIdParam(paramCurrencyId);
 
-    useEffect(() => {
-        if (summaries.filter(s => s.currencyId === Number(currencyId)).length === 0 && summaries.length > 0) {
-            handleSetCurrencyIdParam(summaries[0].currencyId);
+            if (paramCurrencyId !== validCurrencyId) {
+                setCurrencyId(validCurrencyId);
+                setSearchParams({ currencyId: validCurrencyId });
+            } else {
+                setCurrencyId(paramCurrencyId);
+            }
         }
-    }, [summaries, currencyId]);
+    }, [summaries]);
 
     const handleSetCurrencyIdParam = (id: number) => {
         setCurrencyId(id.toString());
         setSearchParams({ currencyId: id.toString() });
     }
 
-    const credits = getCounterpartyLoans(Number(id), LoanType.Credit)
+    const credits = selectedLoans
+        .filter(l => l.loanType === LoanType.Credit)
         .sort((a,b) => b.loanDate.getTime() - a.loanDate.getTime())
         .filter(c => c.currencyId === Number(currencyId));
-    const debts = getCounterpartyLoans(Number(id), LoanType.Debt)
+    const debts = selectedLoans
+        .filter(l => l.loanType === LoanType.Debt)
         .sort((a,b) => b.loanDate.getTime() - a.loanDate.getTime())
         .filter(c => c.currencyId === Number(currencyId));
 
-    const loans = [...credits, ...debts];
-
-    const loansCount = credits.length + debts.length;
-    const showPayoffForm = loansCount > 0;
+    const showPayoffForm = selectedLoans.length > 0;
 
     const [isAcordionOpen, setIsAcordionOpen] = useState(false);
 
@@ -106,7 +112,8 @@ export default observer(function CounterpartyDetails() {
             <FadeInLoadingWithLabel loadingFlag={counterpartiesLoaded && loansInProgressLoaded && summaries.length > 0} content={
                 <Stack spacing={2}>
                     <Divider>Counterparty summary</Divider>
-                    <CounterpartySummaryWithPagination 
+                    <CounterpartySummaryWithPagination
+                        key={Number(dayjs())} 
                         summaries={summaries}
                         currencyId={currencyId}
                         setSearchParams={handleSetCurrencyIdParam} 
@@ -125,7 +132,7 @@ export default observer(function CounterpartyDetails() {
                             </AccordionSummary>
                             <Divider sx={{mb: 1}}/>
                             <AccordionDetails>
-                                <CollectivePayoffForm loans={loans} counterpartyId={Number(id)} />      
+                                <CollectivePayoffForm loans={selectedLoans} counterpartyId={Number(id)} />      
                             </AccordionDetails>
                         </Accordion>
                     </>}

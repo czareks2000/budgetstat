@@ -10,7 +10,7 @@ import FadeInLoading from '../../../components/common/loadings/FadeInLoading';
 
 export default observer(function LoansCard() {
   const {
-      loanStore: {groupedLoansByCounterpartyAndCurrency, 
+      loanStore: {summaries, 
         counterpartiesLoaded, loansInProgressLoaded},
   } = useStore();
 
@@ -71,10 +71,10 @@ export default observer(function LoansCard() {
             <Divider/>
             <FadeInLoading loadingFlag={counterpartiesLoaded && loansInProgressLoaded} content={
                 <>
-                {groupedLoansByCounterpartyAndCurrency.filter(s => s.nearestRepaymentDate).length > 0 
+                {summaries.filter(s => s.nearestRepaymentDate).length > 0 
                 ?
                 <List disablePadding sx={{p: 1}}>
-                        {groupedLoansByCounterpartyAndCurrency.filter(s => s.nearestRepaymentDate).map((summary) => 
+                        {summaries.filter(s => s.nearestRepaymentDate).map((summary) => 
                             <NoDecorationLink to={`/loans/counterparty/${summary.counterpartyId}?currencyId=${summary.currencyId}`}
                             key={`${summary.counterpartyId}-${summary.currencyId}`} 
                             content={<ListItem

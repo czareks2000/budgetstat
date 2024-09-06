@@ -10,6 +10,7 @@ import { LoanType } from "../models/enums/LoanType";
 import { convertToDate } from "../utils/ConvertToDate";
 import { CollectivePayoffValues, PayoffCreateValues } from "../models/Payoff";
 import { Currency } from "../models/Currency";
+import { router } from "../router/Routes";
 
 export default class LoanStore {
     loansInProgressRegistry = new Map<number, Loan>();
@@ -26,6 +27,7 @@ export default class LoanStore {
     counterpartiesLoaded = false;
 
     selectedSummaries: GroupedLoan[] = [];
+    selectedLoans: Loan[] = [];
 
     denseLoanItems: boolean = localStorage.getItem('denseLoanItems') === "true";
 
@@ -40,10 +42,6 @@ export default class LoanStore {
         )
     }
 
-    selectSummaries = (counterpartyId: number) => {
-        this.selectedSummaries = this.getCounterpartyGroupedLoans(counterpartyId);
-    }
-
     clearStore = () => {
         this.loansInProgressRegistry.clear();
         this.loansInProgressLoaded = false;
@@ -56,6 +54,98 @@ export default class LoanStore {
         this.counterpartiesLoaded = false;
 
         this.selectedSummaries= [];
+    }
+
+    get summaries(): GroupedLoan[] {
+        const groupedLoansMap = new Map<string, GroupedLoan>();
+
+        this.loansInProgressRegistry.forEach(loan => {
+            const key = `${loan.counterpartyId}-${loan.currencyId}`;
+            const existingGroup = groupedLoansMap.get(key);
+
+            const currentAmountAdjustment = loan.loanType === LoanType.Credit ? loan.currentAmount : -loan.currentAmount;
+            const fullAmountAdjustment = loan.loanType === LoanType.Credit ? loan.fullAmount : -loan.fullAmount;
+
+            let remainingAmount = fullAmountAdjustment - currentAmountAdjustment;
+
+            if (existingGroup) {
+                existingGroup.creditsCurrentAmount += currentAmountAdjustment > 0 ? currentAmountAdjustment : 0;
+                existingGroup.debtsCurrentAmount -= currentAmountAdjustment < 0 ? currentAmountAdjustment : 0;
+                existingGroup.creditsFullAmount += fullAmountAdjustment > 0 ? fullAmountAdjustment : 0;
+                existingGroup.debtsFullAmount -= fullAmountAdjustment < 0 ? fullAmountAdjustment : 0;
+                existingGroup.currentAmount += currentAmountAdjustment;
+                existingGroup.fullAmount += fullAmountAdjustment;
+                existingGroup.nearestRepaymentDate = 
+                    new Date(Math.min(existingGroup.nearestRepaymentDate!.getTime(), loan.repaymentDate.getTime()));
+
+                remainingAmount = existingGroup.fullAmount - existingGroup.currentAmount;
+                existingGroup.loanType = remainingAmount >= 0 ? LoanType.Credit : LoanType.Debt;
+            } else {
+                groupedLoansMap.set(key, {
+                    counterpartyId: loan.counterpartyId,
+                    currencyId: loan.currencyId,
+                    counterparty: this.counterparties.find(c => c.id === loan.counterpartyId) as Counterparty,
+                    currency: store.currencyStore.currencies.find(c => c.id === loan.currencyId) as Currency,
+                    creditsCurrentAmount: loan.loanType === LoanType.Credit ? loan.currentAmount : 0,
+                    debtsCurrentAmount:loan.loanType === LoanType.Debt ? loan.currentAmount : 0,
+                    creditsFullAmount: loan.loanType === LoanType.Credit ? loan.fullAmount: 0,
+                    debtsFullAmount: loan.loanType === LoanType.Debt ? loan.fullAmount : 0,
+                    currentAmount: currentAmountAdjustment,
+                    fullAmount: fullAmountAdjustment,
+                    nearestRepaymentDate: loan.repaymentDate,
+                    loanType: remainingAmount >= 0 ? LoanType.Credit : LoanType.Debt
+                });
+            }
+        });
+
+        // Add default GroupedLoan for counterparties without any loans
+        this.counterparties.forEach(counterparty => {
+            const hasLoans = Array.from(groupedLoansMap.values()).some(group => group.counterpartyId === counterparty.id);
+            if (!hasLoans) {
+                const defaultCurrency = store.currencyStore.defaultCurrency!;
+                const key = `${counterparty.id}-${defaultCurrency.id}`;
+                groupedLoansMap.set(key, {
+                    counterpartyId: counterparty.id,
+                    currencyId: defaultCurrency.id,
+                    counterparty: counterparty,
+                    currency: defaultCurrency,
+                    creditsCurrentAmount: 0,
+                    debtsCurrentAmount: 0,
+                    creditsFullAmount: 0,
+                    debtsFullAmount: 0,
+                    currentAmount: 0,
+                    fullAmount: 0,
+                    nearestRepaymentDate: null,
+                    loanType: LoanType.Credit
+                });
+            }
+        });
+
+        return Array.from(groupedLoansMap.values()).sort((a,b) => {
+            const remainingAmountA = Math.abs(a.fullAmount - a.currentAmount);
+            const remainingAmountB = Math.abs(b.fullAmount - b.currentAmount);
+    
+            return remainingAmountB -remainingAmountA;
+        });
+    }
+
+    validateCurrencyIdParam = (currencyId: string | null) => {
+        return this.selectedSummaries.find(gl => gl.currencyId === Number(currencyId))?.currencyId.toString() ||
+         this.selectedSummaries[0]?.currencyId.toString();
+    }
+
+    selectSummaries = (counterpartyId: number) => {
+        if (this.counterparties.filter(c => c.id === counterpartyId).length === 0)
+            router.navigate('/not-found');
+
+        this.selectedSummaries = this.getCounterpartyGroupedLoans(counterpartyId);
+        this.selectedLoans = Array.from(this.loansInProgressRegistry.values())
+            .filter(l => l.counterpartyId === counterpartyId);
+    }
+
+    getCounterpartyGroupedLoans = (counterpartyId: number): GroupedLoan[] => {
+        var summaries = this.summaries.filter(gl => gl.counterpartyId === counterpartyId);
+        return summaries;
     }
 
     clearPaidOffLoansRegistry = () => {
@@ -132,6 +222,7 @@ export default class LoanStore {
                 this.setPaidOffLoansLoaded(loanStatus, counterpartyId);
                 //if (this.counterparties.length > 0 && counterpartyId === 0)
                     //this.selectSummaries(this.counterparties[0].id);
+        
             })
         } catch (error) {
             console.log(error);
@@ -147,83 +238,7 @@ export default class LoanStore {
         return this.getLoanById(loanId)?.currencyId;
     }
 
-    get groupedLoansByCounterpartyAndCurrency(): GroupedLoan[] {
-        const groupedLoansMap = new Map<string, GroupedLoan>();
-
-        this.loansInProgressRegistry.forEach(loan => {
-            const key = `${loan.counterpartyId}-${loan.currencyId}`;
-            const existingGroup = groupedLoansMap.get(key);
-
-            const currentAmountAdjustment = loan.loanType === LoanType.Credit ? loan.currentAmount : -loan.currentAmount;
-            const fullAmountAdjustment = loan.loanType === LoanType.Credit ? loan.fullAmount : -loan.fullAmount;
-
-            let remainingAmount = fullAmountAdjustment - currentAmountAdjustment;
-
-            if (existingGroup) {
-                existingGroup.creditsCurrentAmount += currentAmountAdjustment > 0 ? currentAmountAdjustment : 0;
-                existingGroup.debtsCurrentAmount -= currentAmountAdjustment < 0 ? currentAmountAdjustment : 0;
-                existingGroup.creditsFullAmount += fullAmountAdjustment > 0 ? fullAmountAdjustment : 0;
-                existingGroup.debtsFullAmount -= fullAmountAdjustment < 0 ? fullAmountAdjustment : 0;
-                existingGroup.currentAmount += currentAmountAdjustment;
-                existingGroup.fullAmount += fullAmountAdjustment;
-                existingGroup.nearestRepaymentDate = 
-                    new Date(Math.min(existingGroup.nearestRepaymentDate!.getTime(), loan.repaymentDate.getTime()));
-
-                remainingAmount = existingGroup.fullAmount - existingGroup.currentAmount;
-                existingGroup.loanType = remainingAmount >= 0 ? LoanType.Credit : LoanType.Debt;
-            } else {
-                groupedLoansMap.set(key, {
-                    counterpartyId: loan.counterpartyId,
-                    currencyId: loan.currencyId,
-                    counterparty: this.counterparties.find(c => c.id === loan.counterpartyId) as Counterparty,
-                    currency: store.currencyStore.currencies.find(c => c.id === loan.currencyId) as Currency,
-                    creditsCurrentAmount: loan.loanType === LoanType.Credit ? loan.currentAmount : 0,
-                    debtsCurrentAmount:loan.loanType === LoanType.Debt ? loan.currentAmount : 0,
-                    creditsFullAmount: loan.loanType === LoanType.Credit ? loan.fullAmount: 0,
-                    debtsFullAmount: loan.loanType === LoanType.Debt ? loan.fullAmount : 0,
-                    currentAmount: currentAmountAdjustment,
-                    fullAmount: fullAmountAdjustment,
-                    nearestRepaymentDate: loan.repaymentDate,
-                    loanType: remainingAmount >= 0 ? LoanType.Credit : LoanType.Debt
-                });
-            }
-        });
-
-        // Add default GroupedLoan for counterparties without any loans
-        this.counterparties.forEach(counterparty => {
-            const hasLoans = Array.from(groupedLoansMap.values()).some(group => group.counterpartyId === counterparty.id);
-            if (!hasLoans) {
-                const defaultCurrency = store.currencyStore.defaultCurrency!;
-                const key = `${counterparty.id}-${defaultCurrency.id}`;
-                groupedLoansMap.set(key, {
-                    counterpartyId: counterparty.id,
-                    currencyId: defaultCurrency.id,
-                    counterparty: counterparty,
-                    currency: defaultCurrency,
-                    creditsCurrentAmount: 0,
-                    debtsCurrentAmount: 0,
-                    creditsFullAmount: 0,
-                    debtsFullAmount: 0,
-                    currentAmount: 0,
-                    fullAmount: 0,
-                    nearestRepaymentDate: null,
-                    loanType: LoanType.Credit
-                });
-            }
-        });
-
-        return Array.from(groupedLoansMap.values()).sort((a,b) => {
-            const remainingAmountA = Math.abs(a.fullAmount - a.currentAmount);
-            const remainingAmountB = Math.abs(b.fullAmount - b.currentAmount);
     
-            return remainingAmountB -remainingAmountA;
-        });
-    }
-
-    getCounterpartyGroupedLoans = (counterpartyId: number): GroupedLoan[] => {
-        var summaries = this.groupedLoansByCounterpartyAndCurrency.filter(gl => gl.counterpartyId === counterpartyId);
-        return summaries;
-    }
 
     getCounterpartyLoans = (counterpartyId: number,
         type: LoanType, 

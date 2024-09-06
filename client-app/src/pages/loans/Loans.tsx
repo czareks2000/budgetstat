@@ -11,7 +11,7 @@ import FadeInLoadingWithLabel from "../../components/common/loadings/FadeInLoadi
 
 export default observer(function Loans() {
     const {loanStore: {
-        groupedLoansByCounterpartyAndCurrency, counterpartiesLoaded, 
+        summaries, counterpartiesLoaded, 
         loadCounterparties, loansInProgressLoaded, loadLoans}
     } = useStore();
 
@@ -32,15 +32,15 @@ export default observer(function Loans() {
         <ResponsiveContainer content={
             <FadeInLoadingWithLabel loadingFlag={counterpartiesLoaded && loansInProgressLoaded} content={
                 <Stack spacing={2}>
-                    {groupedLoansByCounterpartyAndCurrency.length > 0 ? 
+                    {summaries.length > 0 ? 
                         <Divider>Loans summary</Divider>
                     :
                         <Divider>You have no loans</Divider>
                     }
-                    {groupedLoansByCounterpartyAndCurrency.map((summary) => 
+                    {summaries.map((summary) => 
                         <CounterpartySummaryItem 
-                        key={`${summary.counterpartyId}-${summary.currencyId}`} 
-                        summary={summary} detailsAction/>
+                            key={`${summary.counterpartyId}-${summary.currencyId}`} 
+                            summary={summary} detailsAction/>
                     )}
                 </Stack>
             }/>

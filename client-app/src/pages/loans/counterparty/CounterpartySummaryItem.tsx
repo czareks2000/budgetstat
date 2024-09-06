@@ -104,7 +104,7 @@ export default observer(function CounterpartySummaryItem({detailsAction, summary
                                 <Box mr={-1}>           
                                     <IconButton 
                                         aria-label="delete"
-                                        onClick={(e) => {
+                                        onClick={(e: any) => {
                                             e.preventDefault();
                                             e.stopPropagation();
                                             setOpen(true);
