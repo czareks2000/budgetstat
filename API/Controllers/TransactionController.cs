@@ -88,9 +88,9 @@ namespace API.Controllers
         }
 
         [HttpGet("transactions/planned")] //api/transactions
-        public async Task<IActionResult> GetPlannedTransactions()
+        public async Task<IActionResult> GetPlannedTransactions([FromQuery] bool onlyTransactionsUpToTomorrow = false)
         {
-            return HandleResult(await _transactionService.GetPlannedTransactions());
+            return HandleResult(await _transactionService.GetPlannedTransactions(onlyTransactionsUpToTomorrow));
         }
     }
 }

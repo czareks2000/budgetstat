@@ -270,15 +270,16 @@ export default class TransactionStore {
         this.transactionFormValues = undefined;
     }
 
-    loadPlannedTransactions = async () => {
+    loadPlannedTransactions = async (onlyTransactionsUpToTomorrow: boolean = false) => {
         this.plannedTransactionsLoaded = false;
         try {
-            const transactions = await agent.Transactions.getPlannedTransactions();
+            const transactions = await agent.Transactions.getPlannedTransactions(onlyTransactionsUpToTomorrow);
             runInAction(() => {
                 transactions.forEach(transaction => {
                     this.setPlannedTransaction(transaction);
                 });
-                this.plannedTransactionsLoaded = true;
+                if(!onlyTransactionsUpToTomorrow)
+                    this.plannedTransactionsLoaded = true;
             })
         } catch (error) {
             console.log(error);

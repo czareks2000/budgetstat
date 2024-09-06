@@ -18,7 +18,7 @@ import { LoanStatus } from "../../app/models/enums/LoanStatus"
 export default observer(function Home() {
     const {
         statsStore: {homePageChartsLoaded, loadHomePageCharts},
-        transactionStore: {plannedTransactionsToConfirm, plannedTransactionsLoaded, loadPlannedTransactions},
+        transactionStore: {plannedTransactionsToConfirm},
         budgetStore: {budgetsLoaded, loadBudgets},
         loanStore: {counterpartiesLoaded, loadCounterparties, loansInProgressLoaded, loadLoans}
     } = useStore();
@@ -26,15 +26,13 @@ export default observer(function Home() {
     useEffect(() => {
         if (!homePageChartsLoaded)
             loadHomePageCharts();
-        if (!plannedTransactionsLoaded)
-            loadPlannedTransactions();
         if (!budgetsLoaded)
             loadBudgets();
         if (!counterpartiesLoaded)
             loadCounterparties();
         if (!loansInProgressLoaded)
             loadLoans(LoanStatus.InProgress);
-    }, [homePageChartsLoaded, plannedTransactionsLoaded, budgetsLoaded, 
+    }, [homePageChartsLoaded, budgetsLoaded, 
         counterpartiesLoaded, loansInProgressLoaded])
 
     return (

@@ -166,9 +166,8 @@ const Transactions = {
     },
     getTransactionFormValues: (transactionId: number, type: TransactionType) => 
         requests.get<TransactionFormValues>(`/transactions/${transactionId}?type=${type}`),
-    getPlannedTransactions: () =>
-        requests.get<PlannedTransaction[]>('transactions/planned'),
-        
+    getPlannedTransactions: (onlyTransactionsUpToTomorrow: boolean = false) =>
+        requests.get<PlannedTransaction[]>(`transactions/planned?onlyTransactionsUpToTomorrow=${onlyTransactionsUpToTomorrow}`),
 }
 
 const Budgets = {

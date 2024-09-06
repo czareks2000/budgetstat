@@ -46,7 +46,7 @@ export default class CommonStore {
                 store.currencyStore.setDefaultCurrency(currencyId),
                 store.statsStore.loadHomePageCharts(), 
 
-                store.transactionStore.loadPlannedTransactions(),
+                store.transactionStore.loadPlannedTransactions(true),
 
                 //store.budgetStore.loadBudgets();
                 //store.statsStore.loadNetWorthValueOverTime();

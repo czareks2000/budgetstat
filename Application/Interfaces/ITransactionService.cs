@@ -32,8 +32,6 @@ namespace Application.Interfaces
         // przegląd transakcji
         Task<Result<List<TransactionListItem>>> GetTransactions(TransactionParams transactionParams);
         // przegląd zaplanowanych transakcji
-        Task<Result<List<PlannedTransactionDto>>> GetPlannedTransactions();
-
-        // wyświetlenie kalendarza transakcji
+        Task<Result<List<PlannedTransactionDto>>> GetPlannedTransactions(bool onlyTransactionsUpToTomorow = false);
     }
 }

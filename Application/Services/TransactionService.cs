@@ -519,14 +519,22 @@ namespace Application.Services
             return Result<List<TransactionListItem>>.Success(transactions);
         }
 
-        public async Task<Result<List<PlannedTransactionDto>>> GetPlannedTransactions()
+        public async Task<Result<List<PlannedTransactionDto>>> GetPlannedTransactions(bool onlyTransactionsUpToTomorow = false)
         {
             var user = await _utilities.GetCurrentUserAsync();
+            var tomorow = DateTime.UtcNow.AddDays(1);
 
-            var transactions = await _context.Transactions
+            var transactionsQuery = _context.Transactions
                 .Include(t => t.Category)
                 .Where(t => t.UserId == user.Id)
-                .Where(t => t.Planned)
+                .Where(t => t.Planned);
+
+            if (onlyTransactionsUpToTomorow)
+            {
+                transactionsQuery = transactionsQuery.Where(t => t.Date.Date <= tomorow.Date);
+            }
+
+            var transactions = await transactionsQuery
                 .ProjectTo<PlannedTransactionDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
 
