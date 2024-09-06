@@ -33,7 +33,7 @@ app.UseXXssProtection(opt => opt.EnabledWithBlockMode());
 app.UseXfo(opt => opt.Deny());
 app.UseCsp(opt => opt
     .BlockAllMixedContent()
-    .StyleSources(s => s.Self().CustomSources("https://fonts.googleapis.com"))
+    .StyleSources(s => s.Self().CustomSources("https://fonts.googleapis.com").UnsafeInline())
     .FontSources(s => s.Self().CustomSources("https://fonts.gstatic.com"))
     .FormActions(s => s.Self())
     .FrameAncestors(s => s.Self())
@@ -43,9 +43,9 @@ app.UseCsp(opt => opt
 
 if (app.Environment.IsProduction())
 {
-    app.Use(async (contex, next) =>
+    app.Use(async (context, next) =>
     {
-        contex.Response.Headers.Append("Strict-Transport-Security", "max-age=31536000");
+        context.Response.Headers.Append("Strict-Transport-Security", "max-age=31536000");
         await next.Invoke();
     });
 }

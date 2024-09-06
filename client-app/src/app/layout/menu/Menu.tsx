@@ -6,7 +6,7 @@ import { AppBar, Box, Button, Drawer, Link as MuiLink, Stack, Typography } from 
 import IconButton from '@mui/material/IconButton';
 
 import MenuIcon from '@mui/icons-material/Menu';
-import { Balance, BarChart, CalendarMonth, FileUpload, Home, Logout, NoteAlt, PendingActions, SwapHoriz, Tune, Wallet } from '@mui/icons-material';
+import { Balance, BarChart, FileUpload, Home, Logout, NoteAlt, PendingActions, SwapHoriz, Tune, Wallet } from '@mui/icons-material';
 
 import NavLinks from './NavLinks';
 import { useStore } from '../../stores/store';
