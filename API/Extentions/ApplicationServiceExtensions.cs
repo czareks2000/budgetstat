@@ -35,7 +35,7 @@ namespace API.Extentions
                 options.UseSqlServer(connStr, options =>
                 {
                     options.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
-                }).EnableSensitiveDataLogging();
+                });
             });
 
 
