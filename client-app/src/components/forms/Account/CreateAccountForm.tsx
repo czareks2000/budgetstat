@@ -25,6 +25,7 @@ export default observer(function CreateAccountForm({onSubmit, onCancel}: Props) 
                         .min(0, 'Balance must be greater than or equal to 0'),
         currencyId: Yup.string().required('Currency is required'),
         date: Yup.date()
+            .typeError('Invalid date format')
             .required('Date is required')
             .max(dayjs().add(1, 'day').startOf('day').toDate(), 'Date cannot be in the future'),
         description: Yup.string().notRequired()

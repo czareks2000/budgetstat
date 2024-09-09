@@ -81,7 +81,7 @@ export default observer(function LoansCard() {
                                 secondaryAction={amount(summary)}
                                 >
                                 <ListItemText 
-                                    primary={listItem(summary.loanType, summary.counterparty.name)}/>
+                                    primary={listItem(summary.loanType, summary.counterparty?.name)}/>
                             </ListItem>} />
                         )}
                     </List>

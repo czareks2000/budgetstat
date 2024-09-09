@@ -81,6 +81,7 @@ export default observer(function TransactionForm({initialValues, onSubmit, submi
             then: schema => schema.required('Amount is required').positive('Amount must be positive')
         }),
         date: Yup.date()
+            .typeError('Invalid date format')
             .required('Date is required')
             .max(dayjs().add(1, 'day').startOf('day').toDate(), 'Date cannot be in the future'),
         description: Yup.string(),

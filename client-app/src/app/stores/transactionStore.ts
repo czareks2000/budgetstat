@@ -489,6 +489,8 @@ export default class TransactionStore {
                 transactions.forEach(transaction => {
                     this.setPlannedTransaction(transaction);
                 });
+
+                store.statsStore.setHasOldData(true);
             });
         } catch (error) {
             console.log(error);

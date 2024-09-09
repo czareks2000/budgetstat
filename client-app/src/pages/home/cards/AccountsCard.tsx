@@ -23,6 +23,7 @@ export default observer(function AccountsCard() {
             {accounts.filter(a => a.status == AccountStatus.Visible).length > 0 ?
             <List disablePadding sx={{p: 1}}>
                 {accounts.filter(a => a.status == AccountStatus.Visible)
+                    .sort((a,b) => a.createdAt.getTime() - b.createdAt.getTime())
                     .map(account =>
                     <ListItem
                         key={account.id} 

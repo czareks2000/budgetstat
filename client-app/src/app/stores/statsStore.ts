@@ -102,7 +102,7 @@ export default class StatsStore {
         this.balanceOverTimeForecastSettings = initialBalanceOverTimeForecastSettings;
         this.balanceOverTimeForecastLoaded = false;
 
-        this.statsHasOldData = false;
+        this.statsHasOldData = true;
     }
 
     setHasOldData = (state: boolean) => {

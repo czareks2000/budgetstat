@@ -14,7 +14,6 @@ interface Props {
 export default observer(function CreateAssetValue({onCancel}: Props) {
   const {
     assetStore: {createAssetValue, selectedAsset, selectAsset},
-    currencyStore: {defaultCurrency}
     } = useStore();
 
   if (!selectedAsset) return <LoadingWithLabel/>
@@ -29,7 +28,7 @@ export default observer(function CreateAssetValue({onCancel}: Props) {
 
   const initialValues: AssetValueCreateValues = {
     value: null,
-    currencyId: defaultCurrency!.id,
+    currencyId: selectedAsset.currencyId,
     date: dayjs(),
   }
   
