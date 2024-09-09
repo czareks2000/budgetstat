@@ -46,28 +46,28 @@ export default observer(function NetWorth() {
                 </Stack>
                 <NetWorthOverTimeLineChart />
                 <FadeInLoadingWithLabel loadingFlag={assetsLoaded} content={
-                <Stack spacing={2}>
-                    <Divider>Assets</Divider>
-                    <Grid2 container direction={{xs: 'column', sm: 'row'}} gap={2}>
-                        <Grid2 size={"grow"}>
-                            <AssetList />
+                    <Stack spacing={2}>
+                        <Divider>Assets</Divider>
+                        <Grid2 container direction={{xs: 'column', sm: 'row'}} gap={2}>
+                            <Grid2 size={"grow"}>
+                                <AssetList />
+                            </Grid2>
+                            <Paper sx={{ display: { xs: 'none', sm: 'block' }, height: 240}}>         
+                                <Grid2 size={'auto'} container justifyContent="center" p={0}>
+                                    <Box width={240}>
+                                        <AssetsValuesGroupedByCategoriesChart />      
+                                    </Box> 
+                                </Grid2>
+                            </Paper>
+                            <Paper sx={{ display: { xs: 'block', sm: 'none' }}}>         
+                                <Grid2 size={'auto'} container justifyContent="center" p={2}>
+                                    <Box width={310}>
+                                        <AssetsValuesGroupedByCategoriesChart showLegend/>  
+                                    </Box>      
+                                </Grid2>
+                            </Paper>
                         </Grid2>
-                        <Paper sx={{ display: { xs: 'none', sm: 'block' }, height: 240}}>         
-                            <Grid2 size={'auto'} container justifyContent="center">
-                                <Box>
-                                    <AssetsValuesGroupedByCategoriesChart />
-                                </Box>                      
-                            </Grid2>
-                        </Paper>
-                        <Paper sx={{ display: { xs: 'block', sm: 'none' }}}>         
-                            <Grid2 size={'auto'} container justifyContent="center">
-                                <Box >
-                                    <AssetsValuesGroupedByCategoriesChart showLegend/>
-                                </Box>                       
-                            </Grid2>
-                        </Paper>
-                    </Grid2>
-                </Stack>} />
+                    </Stack>} />
                 
             </Stack>
         }/>

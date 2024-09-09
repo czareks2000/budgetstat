@@ -1,4 +1,4 @@
-import { Box, Stack } from "@mui/material"
+import { Grid2, Stack } from "@mui/material"
 import { observer } from "mobx-react-lite"
 import { useStore } from "../../app/stores/store";
 import Wrapper from "../../app/layout/Wrapper";
@@ -15,17 +15,13 @@ export default observer(function ResetPassword() {
 
     return (
     <Wrapper content={
-        <Stack
-            justifyContent="center"
-            alignItems="center"
-            sx={{ width: 1, height: "100vh" }}
-        >
-            <Box p={2}>
+        <Grid2 container display={'flex'} justifyContent="center" alignItems="center" height={'100vh'} >
+            <Grid2 p={2} width={'400px'}>
                 <Stack>
                     <ResetPasswordForm token={token!} email={email!}/>
                 </Stack>
-            </Box>
-        </Stack>
+            </Grid2>
+        </Grid2>
     }
     />
     )

@@ -1,4 +1,4 @@
-import { Box, CircularProgress, Paper, Stack, Typography } from "@mui/material"
+import { Box, CircularProgress, Grid2, Paper, Stack, Typography } from "@mui/material"
 import { observer } from "mobx-react-lite"
 import LoginForm from "../../components/forms/Auth/LoginForm"
 import { useState } from "react";
@@ -12,14 +12,11 @@ export default observer(function Auth() {
     const [showLoginForm, setShowLoginForm] = useState(true);
 
     return (
-        <Stack
-            justifyContent="center"
-            alignItems="center"
-            sx={{ width: 1, height: "100vh" }}
-        >
-            <Box p={2}>
+        <Grid2 container display={'flex'} justifyContent="center" alignItems="center" height={'100vh'} >
+            <Grid2 p={2} width={'400px'}>
                 <Stack>
-                    {showLoginForm ? <>
+                    {showLoginForm ? 
+                    <>
                         <Typography variant="h5" mb={4} align="center">Sign in to BudgetStat</Typography>
                         <Paper>
                             <Box p={2}>
@@ -31,7 +28,7 @@ export default observer(function Auth() {
                                 onClick={() => setShowLoginForm(false)}
                                 sx={{cursor: "pointer"}}
                                 color={'primary'}>
-                                Don't have an account? Sign Up
+                                Sign up to BudgetStat
                             </Typography>
                             <Typography
                                 onClick={() => router.navigate('/forgot-password')}
@@ -64,8 +61,7 @@ export default observer(function Auth() {
                     </> 
                     }
                 </Stack>
-            </Box>
-        </Stack>
-       
+            </Grid2>
+        </Grid2>
     )
 })

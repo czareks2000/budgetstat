@@ -34,7 +34,7 @@ export default observer(function RegisterForm() {
                     onSubmit={handleSubmit} 
                     autoComplete="off"
                 >     
-                    <Stack spacing={2} width={400}>
+                    <Stack spacing={2}>
                        
                         <TextInput label="Username" name="userName" fullWidth/>
                     

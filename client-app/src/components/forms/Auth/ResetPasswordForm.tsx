@@ -26,7 +26,7 @@ export default observer(function ResetPasswordForm({token, email}: Props) {
             <Typography variant="h5" mb={4} align="center">Confirmation</Typography>
             <Paper>
                 <Box p={2}>
-                    <Stack spacing={2} width={400}>
+                    <Stack spacing={2}>
                         <Typography py={1} textAlign={'center'}>
                             Your password has been changed successfully.
                         </Typography>
@@ -80,7 +80,7 @@ export default observer(function ResetPasswordForm({token, email}: Props) {
                             onSubmit={handleSubmit} 
                             autoComplete="off"
                         >   
-                            <Stack spacing={2} width={400}>
+                            <Stack spacing={2}>
                                 <TextInput 
                                     label="New password"
                                     name="newPassword" type="password" />

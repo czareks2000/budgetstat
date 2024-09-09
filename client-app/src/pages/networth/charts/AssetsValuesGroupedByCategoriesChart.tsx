@@ -3,7 +3,6 @@ import { PieChart } from '@mui/x-charts'
 import { formatAmount } from '../../../app/utils/FormatAmount'
 import { observer } from 'mobx-react-lite';
 import { useStore } from '../../../app/stores/store';
-import { Box } from '@mui/material';
 
 interface Props {
     showLegend?: boolean;
@@ -16,7 +15,6 @@ export default observer(function AssetsValuesGroupedByCategoriesChart({showLegen
     } = useStore();
       
     return (
-    <Box p={showLegend ? 2 : 0}>
         <PieChart
             colors={[
                 '#005288',
@@ -37,8 +35,8 @@ export default observer(function AssetsValuesGroupedByCategoriesChart({showLegen
             series={[
                 {
                     data: assetPieChartData,
-                    innerRadius: 30,
-                    outerRadius: 100,
+                    innerRadius: showLegend ? 15 : 30,
+                    outerRadius: showLegend ? 60 : 100,
                     paddingAngle: 5,
                     cornerRadius: 5,
                     startAngle: 0,
@@ -46,10 +44,8 @@ export default observer(function AssetsValuesGroupedByCategoriesChart({showLegen
                     valueFormatter: (value) => `${formatAmount(value.value)} ${defaultCurrency?.symbol}`
                 }
             ]}
-            height={240}
-            width={showLegend ? 410 : 240}
-            margin={{left: showLegend ? 300 : 100}}
+            height={showLegend ? 200 : 240}
+            margin={{left: showLegend ? 250 : 100}}
         />
-    </Box>
   )
 })

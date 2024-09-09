@@ -19,7 +19,7 @@ export default observer(function ForgotPasswordForm() {
         <Typography variant="h5" mb={4} align="center">Confirmation</Typography>
         <Paper>
             <Box p={2}>
-                <Stack spacing={2} width={400}>
+                <Stack spacing={2}>
                     <Typography py={1} textAlign={'center'}>
                         A link to reset your password has been sent to the provided email address. Please check your inbox.
                     </Typography>
@@ -54,7 +54,7 @@ export default observer(function ForgotPasswordForm() {
                                 onSubmit={handleSubmit} 
                                 autoComplete="off"
                             >     
-                                <Stack spacing={2} width={400}>
+                                <Stack spacing={2}>
                                     <Paper>
                                         <TextInput label="Email address" name="email" fullWidth />
                                     </Paper>

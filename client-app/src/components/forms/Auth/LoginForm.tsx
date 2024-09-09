@@ -21,7 +21,7 @@ export default observer(function LoginForm() {
                     onSubmit={handleSubmit} 
                     autoComplete="off"
                 >     
-                    <Stack spacing={2} width={400}>
+                    <Stack spacing={2}>
                         <Paper>
                             <TextInput label="Email" name="email" fullWidth />
                         </Paper>
