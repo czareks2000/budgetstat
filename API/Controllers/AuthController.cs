@@ -154,7 +154,7 @@ namespace API.Controllers
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var encodedToken = HttpUtility.UrlEncode(token);
             var encodedEmail = HttpUtility.UrlEncode(request.Email);
-            var resetPasswordLink = $"http://localhost:3000/reset-password/?token={encodedToken}&email={encodedEmail}";
+            var resetPasswordLink = $"{Request.Scheme}://{Request.Host}/reset-password/?token={encodedToken}&email={encodedEmail}";
 
             var content = $@"
                 Dear {user.UserName},
