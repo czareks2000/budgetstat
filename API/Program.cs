@@ -1,3 +1,4 @@
+using API.Converters;
 using API.Extentions;
 using API.Middleware;
 using Domain;
@@ -15,7 +16,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers(opt => {
     var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
     opt.Filters.Add(new AuthorizeFilter(policy));
-}).AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+}).AddJsonOptions(x => {
+    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    x.JsonSerializerOptions.Converters.Add(new JsonDateTimeConverter());
+});
 
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
