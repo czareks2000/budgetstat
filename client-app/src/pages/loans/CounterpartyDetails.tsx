@@ -15,7 +15,6 @@ import CounterpartyPaidoffLoans from "./counterparty/CounterpartyPaidoffLoans";
 import CollectivePayoffForm from "../../components/forms/Loan/CollectivePayoffForm";
 import CustomTabPanel, { a11yProps } from "../preferences/tabs/CustomTabPanel";
 import LoanItemCompact from "./common/LoanItemCompact";
-import { LoanStatus } from "../../app/models/enums/LoanStatus";
 import FadeInLoadingWithLabel from "../../components/common/loadings/FadeInLoadingWithLabel";
 import dayjs from "dayjs";
 
@@ -23,22 +22,20 @@ export default observer(function CounterpartyDetails() {
     const {
         loanStore: {
             denseLoanItems, toggleDensity,
-            selectedSummaries: summaries, selectSummaries, selectedLoans, validateCurrencyIdParam,
-            counterpartiesLoaded, loadCounterparties, loansInProgressLoaded, loadLoans}} = useStore();
+            selectedSummaries: summaries, selectSummaries, selectedLoans, validateCurrencyIdParam, 
+            loadCounterpartiesAndLoans, dataLoaded}} = useStore();
 
     useEffect(() => {
-        if (!counterpartiesLoaded)
-            loadCounterparties();
-        if (!loansInProgressLoaded)
-            loadLoans(LoanStatus.InProgress);
-    }, [counterpartiesLoaded, loansInProgressLoaded])
+        if (!dataLoaded)
+            loadCounterpartiesAndLoans();
+    }, [dataLoaded])
 
     const {id} = useParams();
 
     useEffect(() => {
-        if(counterpartiesLoaded && loansInProgressLoaded)
+        if(dataLoaded)
             selectSummaries(Number(id));
-    },[counterpartiesLoaded, loansInProgressLoaded])
+    },[dataLoaded])
 
     const [searchParams, setSearchParams] = useSearchParams();
     const [currencyId, setCurrencyId] = useState<string | null>(searchParams.get('currencyId'));
@@ -109,7 +106,7 @@ export default observer(function CounterpartyDetails() {
         <FloatingGoBackButton onClick={handleGoBack} position={1}/>
         <FloatingAddButton onClick={handleAddButtonClick} position={0}/>
         <ResponsiveContainer content={
-            <FadeInLoadingWithLabel loadingFlag={counterpartiesLoaded && loansInProgressLoaded && summaries.length > 0} content={
+            <FadeInLoadingWithLabel loadingFlag={dataLoaded && summaries.length > 0} content={
                 <Stack spacing={2}>
                     <Divider>Counterparty summary</Divider>
                     <CounterpartySummaryWithPagination

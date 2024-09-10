@@ -8,22 +8,17 @@ import { useStore } from '../../app/stores/store'
 import { router } from '../../app/router/Routes'
 import { useEffect } from 'react'
 import FadeInLoadingWithLabel from '../../components/common/loadings/FadeInLoadingWithLabel'
-import { LoanStatus } from '../../app/models/enums/LoanStatus'
 
 export default observer(function CreateLoan() {  
-    const {loanStore: {counterparties, 
-        counterpartiesLoaded, loadCounterparties,
-        loansInProgressLoaded, loadLoans}} = useStore();
+    const {loanStore: {counterparties, dataLoaded, loadCounterpartiesAndLoans}} = useStore();
     const [searchParams] = useSearchParams();
     const id = searchParams.get('counterpartyId');
     const fromLocation = searchParams.get('fromLocation');
 
     useEffect(() => {
-        if (!counterpartiesLoaded)
-            loadCounterparties();
-        if (!loansInProgressLoaded)
-            loadLoans(LoanStatus.InProgress);
-    }, [counterpartiesLoaded, loansInProgressLoaded])
+        if (!dataLoaded)
+            loadCounterpartiesAndLoans();
+    }, [dataLoaded])
 
     const onCancel = () => {
         if (id)
@@ -36,7 +31,7 @@ export default observer(function CreateLoan() {
   
     return (
     <ResponsiveContainer content={
-        <FadeInLoadingWithLabel loadingFlag={counterpartiesLoaded && loansInProgressLoaded} content={
+        <FadeInLoadingWithLabel loadingFlag={dataLoaded} content={
             <Stack spacing={2}>
                 {counterparties.length > 0 && <>
                 <Divider>Create Loan</Divider>

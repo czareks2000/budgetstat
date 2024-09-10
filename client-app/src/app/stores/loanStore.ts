@@ -13,8 +13,13 @@ import { Currency } from "../models/Currency";
 import { router } from "../router/Routes";
 
 export default class LoanStore {
+    counterparties: Counterparty[] = [];
+    counterpartiesLoaded = false;
+
     loansInProgressRegistry = new Map<number, Loan>();
     loansInProgressLoaded = false;
+
+    dataLoaded = false;
 
     loansPaidOffRegistry = new Map<number, Loan>();
     loansPaidOffLoaded = false;
@@ -22,9 +27,6 @@ export default class LoanStore {
     counterpartyLoansLoaded: number[] = [];
     
     selectedLoan: Loan | undefined = undefined; 
-
-    counterparties: Counterparty[] = [];
-    counterpartiesLoaded = false;
 
     selectedSummaries: GroupedLoan[] = [];
     selectedLoans: Loan[] = [];
@@ -43,15 +45,17 @@ export default class LoanStore {
     }
 
     clearStore = () => {
+        this.counterparties = [];
+        this.counterpartiesLoaded = false;
+
         this.loansInProgressRegistry.clear();
         this.loansInProgressLoaded = false;
+
+        this.dataLoaded = false;
 
         this.clearPaidOffLoansRegistry();
 
         this.selectedLoan = undefined;
-
-        this.counterparties = [];
-        this.counterpartiesLoaded = false;
 
         this.selectedSummaries= [];
     }
@@ -219,10 +223,7 @@ export default class LoanStore {
             runInAction(() => {
                 loans.forEach(loan => this.setLoan(loan));
                 this.setLoadedLoansFlag(loanStatus, true);
-                this.setPaidOffLoansLoaded(loanStatus, counterpartyId);
-                //if (this.counterparties.length > 0 && counterpartyId === 0)
-                    //this.selectSummaries(this.counterparties[0].id);
-        
+                this.setPaidOffLoansLoaded(loanStatus, counterpartyId);       
             })
         } catch (error) {
             console.log(error);
@@ -373,6 +374,20 @@ export default class LoanStore {
             runInAction(() => {
                 this.counterparties = counterparties;
                 this.counterpartiesLoaded = true;
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    loadCounterpartiesAndLoans = async () => {
+        this.dataLoaded = false;
+        try {
+            await this.loadCounterparties();
+            await this.loadLoans(LoanStatus.InProgress);
+
+            runInAction(() => {
+                this.dataLoaded = true;
             })
         } catch (error) {
             console.log(error);

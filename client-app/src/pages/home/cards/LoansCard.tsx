@@ -10,8 +10,7 @@ import FadeInLoading from '../../../components/common/loadings/FadeInLoading';
 
 export default observer(function LoansCard() {
   const {
-      loanStore: {summaries, 
-        counterpartiesLoaded, loansInProgressLoaded},
+      loanStore: {summaries, dataLoaded},
   } = useStore();
 
   const listItem = (loanType: LoanType, counterpartyName: string) => {
@@ -69,7 +68,7 @@ export default observer(function LoansCard() {
                 </Typography>
             </Box>} />
             <Divider/>
-            <FadeInLoading loadingFlag={counterpartiesLoaded && loansInProgressLoaded} content={
+            <FadeInLoading loadingFlag={dataLoaded} content={
                 <>
                 {summaries.filter(s => s.nearestRepaymentDate).length > 0 
                 ?

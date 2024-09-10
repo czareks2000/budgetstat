@@ -13,14 +13,13 @@ import TransactionsCard from "./cards/TransactionsCard"
 import BalanceLastMonthLineChart from "./charts/BalanceLastMonthLineChart"
 import IncomesAndExpensesSumThisMonthChart from "./charts/IncomesAndExpensesSumThisMonthChart"
 import { useEffect } from "react"
-import { LoanStatus } from "../../app/models/enums/LoanStatus"
 
 export default observer(function Home() {
     const {
         statsStore: {homePageChartsLoaded, loadHomePageCharts},
         transactionStore: {plannedTransactionsToConfirm},
         budgetStore: {budgetsLoaded, loadBudgets},
-        loanStore: {counterpartiesLoaded, loadCounterparties, loansInProgressLoaded, loadLoans}
+        loanStore: {loadCounterpartiesAndLoans, dataLoaded}
     } = useStore();
 
     useEffect(() => {
@@ -28,12 +27,9 @@ export default observer(function Home() {
             loadHomePageCharts();
         if (!budgetsLoaded)
             loadBudgets();
-        if (!counterpartiesLoaded)
-            loadCounterparties();
-        if (!loansInProgressLoaded)
-            loadLoans(LoanStatus.InProgress);
-    }, [homePageChartsLoaded, budgetsLoaded, 
-        counterpartiesLoaded, loansInProgressLoaded])
+        if (!dataLoaded)
+            loadCounterpartiesAndLoans();
+    }, [homePageChartsLoaded, budgetsLoaded, dataLoaded])
 
     return (
         <Grid2 container>

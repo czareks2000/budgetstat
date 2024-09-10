@@ -14,16 +14,13 @@ import FadeInLoadingWithLabel from '../../components/common/loadings/FadeInLoadi
 
 export default observer(function EditLoan() {  
     const {
-        loanStore: {selectLoan, selectedLoan: loan, counterpartiesLoaded, 
-            loadCounterparties, loansInProgressLoaded, loadLoans},
+        loanStore: {selectLoan, selectedLoan: loan, dataLoaded, loadCounterpartiesAndLoans},
     } = useStore();
 
     useEffect(() => {
-        if (!counterpartiesLoaded)
-            loadCounterparties();
-        if (!loansInProgressLoaded)
-            loadLoans(LoanStatus.InProgress);
-    }, [counterpartiesLoaded, loansInProgressLoaded])
+        if (!dataLoaded)
+            loadCounterpartiesAndLoans();
+    }, [dataLoaded])
 
     const {id} = useParams();
     useEffect(() => {
@@ -39,7 +36,7 @@ export default observer(function EditLoan() {
     return (<>
     <FloatingGoBackButton onClick={handleRedirect}/>
     <ResponsiveContainer content={
-        <FadeInLoadingWithLabel loadingFlag={counterpartiesLoaded && loansInProgressLoaded} content={
+        <FadeInLoadingWithLabel loadingFlag={dataLoaded} content={
             <Stack spacing={2}>
                 <Divider>Loan details</Divider>
                 <LoanItem key={loan.id} loan={loan} noButtons/>

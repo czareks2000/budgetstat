@@ -17,16 +17,14 @@ import LoadingWithLabel from "../../components/common/loadings/LoadingWithLabel"
 export default observer(function LoanDetails() {
     const {
         loanStore: {deletePayoff, selectLoan, selectedLoan: loan, 
-            counterpartiesLoaded, loansInProgressLoaded, loadCounterparties, loadLoans},
+            dataLoaded, loadCounterpartiesAndLoans},
         currencyStore: {currencies}
     } = useStore();
 
     useEffect(() => {
-        if (!counterpartiesLoaded)
-            loadCounterparties();
-        if (!loansInProgressLoaded)
-            loadLoans(LoanStatus.InProgress);
-    }, [counterpartiesLoaded, loansInProgressLoaded])
+        if (!dataLoaded)
+            loadCounterpartiesAndLoans();
+    }, [dataLoaded])
 
     const [isOpen, setIsOpen] = useState(false);
 
