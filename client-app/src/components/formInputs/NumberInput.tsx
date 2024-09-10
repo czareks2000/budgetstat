@@ -37,7 +37,7 @@ export default observer(function NumberInput(props: Props) {
                 value={field.value === null ? '' : field.value}
                 error={meta.touched && Boolean(meta.error)}
                 helperText={meta.touched && meta.error || props.helperText}
-                InputProps={InputProps}
+                slotProps={{ input: InputProps }}
                 autoComplete='off'
                 onWheel={(e) => (e.target as HTMLElement).blur()}
             />

@@ -72,12 +72,14 @@ export default function MultipleSelectWithChceckBoxes(props: Props) {
                 <TextField
                     {...restprops}
                     {...params}
-                    InputLabelProps={{ shrink: true }} 
+                    slotProps={{ 
+                      inputLabel: { shrink: true }, 
+                      htmlInput: {...params.inputProps, readOnly: true},
+                    }}
                     placeholder={field.value.length > 0 ? "" : props.placeholder}
                     value={field.value}
                     error={meta.touched && Boolean(meta.error)}
                     helperText={meta.touched && meta.error}
-                    inputProps={{ ...params.inputProps, readOnly: true }}
                     autoComplete='off'/>}
             />
         </>

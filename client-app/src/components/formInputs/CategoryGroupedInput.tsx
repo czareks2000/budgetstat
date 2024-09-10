@@ -38,7 +38,7 @@ export default function CategoryGroupedInput(props: Props) {
                     {...restProps}
                     {...params}
                     value={field.value}
-                    InputLabelProps={{ shrink: shrinkLabel }} 
+                    slotProps={{ inputLabel: { shrink: shrinkLabel }}}
                     placeholder={multiple ? field.value.length > 0 ? "" : restProps.placeholder : ""}
                     error={meta.touched && Boolean(meta.error)}
                     helperText={meta.touched && meta.error}
