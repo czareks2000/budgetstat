@@ -98,8 +98,8 @@ export default observer(function AvgMonthlyIncomesByCategoriesBarChartSettings()
                     <Stack spacing={2}>
 
                         {/* Category */}
-                        <Stack direction={'row'} spacing={2} alignItems={'top'}>
-                            <Grid2 size={"grow"}>
+                        <Grid2 container display={'flex'} spacing={2} alignItems={'top'}>
+                            <Grid2 size={{xs: 12, sm:'grow'}}>
                                 <SelectInput 
                                     label="Categories type" name={"categoryType"}
                                     fullWidth 
@@ -115,7 +115,7 @@ export default observer(function AvgMonthlyIncomesByCategoriesBarChartSettings()
                                     fullWidth 
                                     options={mainIncomeCategoriesAsOptions} />
                             </Grid2></>}
-                        </Stack>
+                        </Grid2>
                     
                         {/* Period */}
                         <SelectInput 

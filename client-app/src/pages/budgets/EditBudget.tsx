@@ -58,6 +58,7 @@ export default observer(function EditBudget() {
         <ResponsiveContainer content={
             <FadeInLoadingWithLabel loadingFlag={budgetsLoaded} content={
                 <Stack spacing={2}>
+                 
                     <Divider>Edit Budget</Divider>
                     <Paper>
                         <Box p={2}>
@@ -69,7 +70,15 @@ export default observer(function EditBudget() {
                                 submitText="Save"/>
                         </Box>
                     </Paper>
-                    <ExpensesChart />
+            
+                
+                    <Divider>Expenses on selected categories (last year)</Divider>
+                    <Paper>
+                        <Box pt={2} mt={-4} height={300}>
+                            <ExpensesChart />
+                        </Box>
+                    </Paper>
+                 
                 </Stack>
             }/>
             

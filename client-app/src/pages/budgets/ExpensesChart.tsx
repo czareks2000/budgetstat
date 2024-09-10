@@ -1,4 +1,3 @@
-import { Box, Divider, Paper } from "@mui/material"
 import { observer } from "mobx-react-lite"
 import { useStore } from "../../app/stores/store";
 import { theme } from "../../app/layout/Theme";
@@ -23,28 +22,21 @@ export default observer(function ExpensesChart() {
     }
 
     return (
-    <>
-        <Divider>Expenses on selected categories in the last year</Divider>
-        <Paper>
-            <Box pt={2} mt={-4} height={300}>
-                <BarChart
-                    slotProps={{
-                        noDataOverlay: { message: chart ? 'There is no expenses' : 'Select categories to see data' },
-                        legend: {
-                            hidden: true
-                        }
-                    }}
-                    loading={!chartLoaded}
-                    margin={{ left: 65}}
-                    dataset={chart || []}
-                    xAxis={[
-                        { scaleType: 'band', dataKey: 'label' },
-                    ]}
-                    grid={{ horizontal: true }}
-                    {...chartSetting}
-                />
-            </Box>
-        </Paper>
-    </>
+        <BarChart
+            slotProps={{
+                noDataOverlay: { message: chart ? 'There is no expenses' : 'Select categories to see data' },
+                legend: {
+                    hidden: true
+                }
+            }}
+            loading={!chartLoaded}
+            margin={{ left: 65}}
+            dataset={chart || []}
+            xAxis={[
+                { scaleType: 'band', dataKey: 'label' },
+            ]}
+            grid={{ horizontal: true }}
+            {...chartSetting}
+        />
   )
 })

@@ -1,4 +1,4 @@
-import { Alert, Box, IconButton, ListItem, ListItemText, Snackbar } from '@mui/material'
+import { Alert, Box, IconButton, ListItem, ListItemText, Snackbar, Stack } from '@mui/material'
 import CategoryIcon from '../../../components/common/CategoryIcon'
 import { formatAmount } from '../../../app/utils/FormatAmount'
 import { observer } from 'mobx-react-lite'
@@ -63,7 +63,7 @@ export default observer(function PlannedTransactionListItem({transaction, showCo
         <ListItem 
             secondaryAction={
             <Box display={"flex"} alignItems={"center"} p={1}>
-                <Box component={"span"} mt={'1px'} mr={2}>
+                <Box component={"span"} mt={'1px'} mr={2} sx={{display: {xs: 'none', sm: 'block'}}}>
                     {convertToString(transaction.date, 'DD.MM.YYYY')}
                 </Box>
                 {showConfirmAction &&
@@ -100,7 +100,13 @@ export default observer(function PlannedTransactionListItem({transaction, showCo
                         </Box>
                     </Box>
                 </>}
-                secondary={<i>{getAccountName(transaction.accountId)} - {transaction.description || "(no description)"}</i>}/>
+                secondary={<Stack component={'span'}>
+                    <i>{getAccountName(transaction.accountId)} - {transaction.description || "(no description)"}</i>
+                    <Box component={'span'} mt={0.2} sx={{display: {xs: 'block', sm: 'none'}}}>
+                        <i>{convertToString(transaction.date, 'DD.MM.YYYY')}</i>
+                    </Box>
+                </Stack>}
+                />
             </Box>
         </ListItem>
     </>

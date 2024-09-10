@@ -129,8 +129,11 @@ export default observer(function CreatePlannedTransactionsForm() {
                                 label="Start From" 
                                 name={"startDate"}/>  
 
-                            <Stack direction={'row'} display={'flex'} spacing={2} alignItems={'top'}>
-                                <Grid2 size={'auto'}  pt={2}>
+                            <Grid2 container display={'flex'} spacing={2} alignItems={'top'}>
+                                <Grid2 
+                                    size={{xs: 12, sm:'auto'}}  
+                                    pt={{xs: 1, sm: 2}} pb={{xs: 1, sm: 0}} 
+                                    textAlign={{xs: 'center', sm: 'left'}}>
                                     Repeats every
                                 </Grid2>
                                 <Grid2 size={"grow"}>
@@ -153,7 +156,7 @@ export default observer(function CreatePlannedTransactionsForm() {
                                     <NumberInput 
                                         label="Times" fullWidth name={"numberOfTimes"} />
                                 </Grid2>
-                            </Stack>                   
+                            </Grid2>                   
                             
                             {/* Considered */}
                             <Divider/>
