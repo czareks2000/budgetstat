@@ -17,10 +17,11 @@ import { router } from "../../../app/router/Routes";
 
 interface Props {
     counterpartyId: string | null;
+    loanType: string | null;
     onCancel: () => void;
 }
 
-export default observer(function CrateLoanForm({counterpartyId, onCancel}: Props) {
+export default observer(function CrateLoanForm({counterpartyId, loanType, onCancel}: Props) {
     const {
         accountStore: {accountsAsOptions, getAccountCurrency},
         loanStore: {createLoan, counterpartiesAsOptions}} = useStore();
@@ -44,7 +45,7 @@ export default observer(function CrateLoanForm({counterpartyId, onCancel}: Props
     });
 
     const initialValues: LoanCreateValues = {
-        loanType: LoanType.Credit,
+        loanType: loanType === "2" ? LoanType.Debt : LoanType.Credit,
         accountId: "",
         fullAmount: null,
         counterpartyId: counterpartyId || "",

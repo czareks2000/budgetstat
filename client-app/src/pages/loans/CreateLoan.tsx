@@ -13,6 +13,7 @@ export default observer(function CreateLoan() {
     const {loanStore: {counterparties, dataLoaded, loadCounterpartiesAndLoans}} = useStore();
     const [searchParams] = useSearchParams();
     const id = searchParams.get('counterpartyId');
+    const loanType = searchParams.get('loanType');
     const fromLocation = searchParams.get('fromLocation');
 
     useEffect(() => {
@@ -39,6 +40,7 @@ export default observer(function CreateLoan() {
                     <Box p={2}>
                         <CreateLoanForm 
                             counterpartyId={id}
+                            loanType={loanType}
                             onCancel={onCancel}/>
                     </Box>
                 </Paper></>}

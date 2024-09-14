@@ -35,6 +35,7 @@ export default observer(function CounterpartyDetails() {
     useEffect(() => {
         if(dataLoaded)
             selectSummaries(Number(id));
+            
     },[dataLoaded])
 
     const [searchParams, setSearchParams] = useSearchParams();
@@ -51,8 +52,9 @@ export default observer(function CounterpartyDetails() {
             } else {
                 setCurrencyId(paramCurrencyId);
             }
+            setselectedTab((credits.length === 0 && debts.length > 0) ? 1 : 0);
         }
-    }, [summaries]);
+    }, [summaries, currencyId]);
 
     const handleSetCurrencyIdParam = (id: number) => {
         setCurrencyId(id.toString());
@@ -88,14 +90,14 @@ export default observer(function CounterpartyDetails() {
     };
 
     const handleAddButtonClick = () => {
-        router.navigate(`/loans/create?counterpartyId=${id}`);
+        router.navigate(`/loans/create?counterpartyId=${id}&loanType=${selectedTab === 0 ? LoanType.Credit : LoanType.Debt}`);
     }
 
     const handleGoBack = () => {
         router.navigate('/loans');
     }
     
-    const [selectedTab, setselectedTab] = useState(0);
+    const [selectedTab, setselectedTab] = useState((credits.length === 0 && debts.length > 0) ? 1 : 0);
 
     const handleChange = (_: React.SyntheticEvent, newValue: number) => {
         setselectedTab(newValue);
