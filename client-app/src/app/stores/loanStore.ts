@@ -214,6 +214,8 @@ export default class LoanStore {
         store.accountStore.loadAccount(loan.accountId);
         this.loansPaidOffRegistry.delete(loanId);
         this.loansInProgressRegistry.delete(loanId);
+
+        this.selectSummaries(Number(loan.counterpartyId));
     }
 
     loadLoans = async (loanStatus: LoanStatus, counterpartyId: number = 0) => {
