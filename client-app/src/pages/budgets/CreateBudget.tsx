@@ -66,7 +66,12 @@ export default observer(function CreateBudget() {
                         submitText="Create"/>
                 </Box>
             </Paper>
-            <ExpensesChart />
+            <Divider>Expenses on selected categories (last year)</Divider>
+            <Paper>
+                <Box pt={2} mt={-4} height={300}>
+                    <ExpensesChart />
+                </Box>
+            </Paper>
         </Stack>
     }/>
   )
