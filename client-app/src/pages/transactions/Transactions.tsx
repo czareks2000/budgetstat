@@ -23,7 +23,7 @@ export default observer(function Transactions() {
             onClick={handleAddButtonClick} position={0}/>
         <Grid2 container>
             <Grid2 size={"grow"}/>
-            <Grid2 size={{xs: 12, xl: 8}} container spacing={2}>
+            <Grid2 size={{xs: 12, xl: 9}} container spacing={2}>
                 <Grid2 size={{xs: 12, sm: 'auto', md: 12, lg: 'auto'}}>
                     <Stack spacing={2} minWidth={300} maxWidth={{xs: 1000, sm: 300, md: 1000, lg: 300}}>
                         <Divider>Filters</Divider>
