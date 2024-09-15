@@ -300,6 +300,7 @@ export default class LoanStore {
                     this.setLoan(loan);
                     this.updateDataInOtherStores([Number(payoff.accountId)]);
                 });
+                this.selectSummaries(Number(counterpartyId));
             })
         } catch (error) {
             console.log(error);
