@@ -130,7 +130,7 @@ export default observer(function CategoriesTab({mainCategories}: Props) {
                             )}
                             </List>
                         :
-                            <Typography>This category has no subcategories</Typography>
+                            <Typography>Only subcategories can be assigned to transactions, so to use this category, you need to create at least one subcategory.</Typography>
                         } 
                     </AccordionDetails>
                     <Divider/>
