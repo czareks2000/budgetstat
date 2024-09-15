@@ -58,6 +58,9 @@ export default observer(function IncomesAndExpensesOverTimeBarChart() {
                     hidden: true
                   }
                 }}
+                tooltip={{trigger:
+                    (incomesAndExpensesOverTime && incomesAndExpensesOverTime.length > 0 ? "axis" : "none" ) 
+                }}
                 loading={!incomesAndExpensesOverTimeLoaded}
                 margin={{ left: 65}}
                 dataset={incomesAndExpensesOverTime || []}

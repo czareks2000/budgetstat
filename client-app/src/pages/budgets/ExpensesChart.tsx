@@ -29,6 +29,9 @@ export default observer(function ExpensesChart() {
                     hidden: true
                 }
             }}
+            tooltip={{trigger:
+                (chart && chart.length > 0 ? "axis" : "none" ) 
+            }}
             loading={!chartLoaded}
             margin={{ left: 65}}
             dataset={chart || []}

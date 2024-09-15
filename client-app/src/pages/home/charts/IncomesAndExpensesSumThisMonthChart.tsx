@@ -72,10 +72,15 @@ export default observer(function BalanceLastMonthLineChart() {
             <Box height={274}>
                 <BarChart
                     slotProps={{
-                    noDataOverlay: { message: 'There is no data to display' },
-                    legend: {
-                        hidden: true
-                    }
+                        noDataOverlay: { message: 'There is no data to display' },
+                        legend: {
+                            hidden: true
+                        }
+                    }}
+                    tooltip={{trigger: showExpense ? 
+                        (expensesThisMonth && expensesThisMonth.length > 0 ? "axis" : "none" ) 
+                        :
+                        (incomesThisMonth && incomesThisMonth.length > 0 ? "axis" : "none" )
                     }}
                     loading={!homePageChartsLoaded}
                     margin={{ left: 65}}

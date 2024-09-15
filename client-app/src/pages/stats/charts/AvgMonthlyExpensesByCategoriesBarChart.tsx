@@ -29,6 +29,9 @@ export default observer(function AvgMonthlyExpensesByCategoriesBarChart() {
                     hidden: true
                   }
                 }}
+                tooltip={{trigger:
+                    (avgMonthlyExpensesByCategories && avgMonthlyExpensesByCategories.length > 0 ? "axis" : "none" ) 
+                }}
                 loading={!avgMonthlyExpensesByCategoriesLoaded}
                 margin={{ left: 65}}
                 dataset={avgMonthlyExpensesByCategories || []}
