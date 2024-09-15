@@ -24,7 +24,13 @@ export default observer(function RegisterForm() {
                 userName: Yup.string().required('Username is required'),
                 email: Yup.string().email('Invalid email format').required('Email is required'),
                 defaultCurrencyId: Yup.string().required("Default currency is required"),
-                password: Yup.string().required('Password is required'),
+                password: 
+                    Yup.string().required('New password is required')
+                    .min(4, 'Password must be at least 4 characters')
+                    .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
+                    .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
+                    .matches(/\d/, 'Password must contain at least one digit')
+                    .matches(/[\W_]/, 'Password must contain at least one special character'),
                 confirmPassword: Yup.string().required('Confirm password')
                     .oneOf([Yup.ref('password')], 'Your passwords do not match.')
             })}
