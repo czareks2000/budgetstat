@@ -149,6 +149,7 @@ namespace Application.Services
 
             // aktualizacja transakcji
             transaction.Account = newAccount;
+            transaction.Currency = newAccount.Currency;
             transaction.Category = newCategory;
 
             _mapper.Map(updatedTransaction, transaction);

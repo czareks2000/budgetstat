@@ -381,7 +381,10 @@ export default class TransactionStore {
 
         await agent.Transactions.updateTransaction(transactionId, updatedTransaction);
 
-        const accountId = Number(transaction.accountId);
+        const accountIds = [Number(transaction.accountId)];
+
+        if (Number(transaction.accountId) !== Number(initialValues.accountId))
+            accountIds.push(Number(initialValues.accountId));
 
         runInAction(() => {
             let categoryId = null;
@@ -396,7 +399,7 @@ export default class TransactionStore {
                     categoryId = initialValues.expenseCategoryId!.id;         
             }  
 
-            this.updateDataInOtherStores([accountId], updatedTransaction.categoryId, categoryId);
+            this.updateDataInOtherStores(accountIds, updatedTransaction.categoryId, categoryId);
         })
     }
 
