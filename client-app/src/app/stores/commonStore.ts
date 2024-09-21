@@ -40,6 +40,8 @@ export default class CommonStore {
 
     loadAppData = async (currencyId: number) => {
         try {
+            if (!store.currencyStore.currenciesLoaded)
+                await store.currencyStore.loadCurrencies();
 
             await Promise.all([
                 // można wyświetlić intefejs bez tych danch załadowanych
@@ -84,7 +86,7 @@ export default class CommonStore {
             store.accountStore.clearStore();
             store.assetStore.clearStore();
             store.categoryStore.clearStore();
-            store.currencyStore.clearStore();
+            //store.currencyStore.clearStore();
             store.loanStore.clearStore();
             store.budgetStore.clearStore();
             store.statsStore.clearStore();

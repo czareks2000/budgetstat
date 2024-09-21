@@ -90,8 +90,11 @@ export default class UserStore {
                 store.commonStore.loadAppData(user.currencyId);
             });
         } catch (error) {
-            console.log(error);
-            store.commonStore.setApploaded();
-        } 
+            runInAction(() => {
+                console.log(error);
+                this.user = null;
+                store.commonStore.setApploaded();
+            });
+        }
     }
 }

@@ -220,8 +220,6 @@ namespace Application.Core
                 .ForMember(dest => dest.Considered, opt => opt
                    .MapFrom(src => false));
 
-            //               \/ temporary \/
-
             CreateMap<TransactionImportDto, TransactionListItem>()
                 .ForMember(dest => dest.AccountName, opt => opt
                     .MapFrom(src => src.Account))
@@ -236,8 +234,6 @@ namespace Application.Core
                     .MapFrom(src => src.Type))
                 .ForMember(dest => dest.CurrencySymbol, opt => opt
                     .MapFrom(src => src.Currency));
-
-            //              /\ temporary /\
         }
     }
 
