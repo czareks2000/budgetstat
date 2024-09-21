@@ -87,6 +87,7 @@ export default class UserStore {
             const user = await agent.Auth.current();
             runInAction(() => {
                 this.user = user;
+                store.commonStore.setToken(user.token);
                 store.commonStore.loadAppData(user.currencyId);
             });
         } catch (error) {
