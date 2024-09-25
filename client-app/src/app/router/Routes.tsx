@@ -5,7 +5,6 @@ import ServerError from "../../pages/errors/ServerError";
 import NotFound from "../../pages/errors/NotFound";
 import Accounts from "../../pages/accounts/Accounts";
 import Budgets from "../../pages/budgets/Budgets";
-import Calendar from "../../pages/calendar/Calendar";
 import Home from "../../pages/home/Home";
 import ImportExport from "../../pages/importexport/ImportExport";
 import Loans from "../../pages/loans/Loans";
@@ -45,7 +44,6 @@ export const routes: RouteObject[] = [
                 {path: '', element: <Home />},
                 {path: 'home', element: <Home />},
                 {path: 'stats', element: <Stats />},
-                {path: 'calendar', element: <Calendar />},
 
                 {path: 'accounts', element: <Accounts />},
                 {path: 'accounts/create', element: <CreateAccount />},
@@ -70,7 +68,7 @@ export const routes: RouteObject[] = [
                 
                 {path: 'net-worth', element: <NetWorth />},
                 {path: 'net-worth/assets/create', element: <CreateAsset />},
-                {path: 'net-worth/assets/:id/edit', element: <AssetDetails editView/>},// to jest tymczasowo
+                {path: 'net-worth/assets/:id/edit', element: <AssetDetails editView/>},
                 {path: 'net-worth/assets/:id', element: <AssetDetails />},
 
                 {path: 'import-export', element: <ImportExport />},
@@ -87,7 +85,6 @@ export const routes: RouteObject[] = [
                 {path: 'server-error', element: <ServerError />},
                 {path: '*', element: <NotFound />}
             ]},
-            
         ]
     },
     {path: '/reset-password', element: <ResetPassword />},

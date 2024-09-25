@@ -85,7 +85,6 @@ export default observer(function Menu({ appName, drawerWidth = 288 }: Props) {
             <NavLinks items={[
                     {text: 'Home', icon: <Home />, link: 'home'}, 
                     {text: 'Stats', icon: <BarChart />, link: 'stats'}, 
-                    //{text: 'Calendar', icon: <CalendarMonth />, link: 'calendar'}
                 ]}/>
           </Box>
     
@@ -130,7 +129,6 @@ export default observer(function Menu({ appName, drawerWidth = 288 }: Props) {
               <Typography variant="h6" noWrap component="div">
                   <MuiLink component={Link} to={'/'} underline='none' color='inherit'>
                     <Stack direction={'row'} alignItems={'center'} spacing={1}>
-                      {/* <Avatar src='/logo.png' sx={{width: 32, height: 32, display: {xs: 'none', md: 'block'}}}/> */}
                       <Box>{appName}</Box>
                     </Stack>
                   </MuiLink>

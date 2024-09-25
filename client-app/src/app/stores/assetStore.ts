@@ -186,6 +186,9 @@ export default class AssetStore {
         try {
             newAssetValue.date = dayjs(newAssetValue.date).startOf('day').add(12, 'hours');
 
+            if (newAssetValue.date.isAfter(dayjs())) 
+                newAssetValue.date = dayjs();
+
             let asset = await agent.Assets.createAssetValue(assetId, newAssetValue);
             runInAction(() => {
                 this.setAsset(asset);
