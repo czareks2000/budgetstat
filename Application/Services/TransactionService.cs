@@ -132,12 +132,6 @@ namespace Application.Services
             if (newAccount == null)
                 return Result<object>.Failure("Invalid account. It does not exist or does not belong to the user.");
 
-            // aktualizacja salda nowego konta
-            var isExpense = newCategory.Type == TransactionType.Expense;
-
-            if (!_utilities.UpdateAccountBalances(newAccount.Id, updatedTransaction.Date, isExpense, updatedTransaction.Amount))
-                return Result<object>.Failure("Insufficient funds in the account. Change the date or amount.");
-
             // aktualizacja salda starego konta
             if (transaction.Account != null)
             {
@@ -146,6 +140,12 @@ namespace Application.Services
 
                 _utilities.RestoreAccountBalances(accountId, wasExpense, transaction.Amount, transaction.Date);
             }
+
+            // aktualizacja salda nowego konta
+            var isExpense = newCategory.Type == TransactionType.Expense;
+
+            if (!_utilities.UpdateAccountBalances(newAccount.Id, updatedTransaction.Date, isExpense, updatedTransaction.Amount))
+                return Result<object>.Failure("Insufficient funds in the account. Change the date or amount.");
 
             // aktualizacja transakcji
             transaction.Account = newAccount;
