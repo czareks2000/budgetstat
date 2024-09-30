@@ -37,7 +37,7 @@ export default class AccountStore {
     get accountsNamesAsOptions(): Option[] {
         return this.accounts.map(account =>({
             value: account.id,
-            text: `${account.name}`
+            text: `${account.name} (${account.currency.code})`
         }));
     }
 
