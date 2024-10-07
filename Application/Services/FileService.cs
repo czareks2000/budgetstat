@@ -116,7 +116,7 @@ namespace Application.Services
                 AddCsvToArchive(archive, "assetsValues.csv", assetsValuesDto);
                 AddCsvToArchive(archive, "categories.csv", categoriesDto);
                 AddCsvToArchive(archive, "loans.csv", loansDto);
-                AddCsvToArchive(archive, "transations.csv", transactionsDto);
+                AddCsvToArchive(archive, "transactions.csv", transactionsDto);
             }
 
             // Returning a MemoryStream object containing the ZIP archive
