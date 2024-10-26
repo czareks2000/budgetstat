@@ -170,6 +170,8 @@ namespace Application.Services
         {
             var account = await _context.Accounts
                 .Include(a => a.Transactions)
+                .Include(a => a.Sources)
+                .Include(a => a.Destinations)
                 .Include(a => a.Loans)
                 .Include(a => a.Payoffs)
                 .FirstOrDefaultAsync(c => c.Id == accountId);
@@ -178,6 +180,12 @@ namespace Application.Services
 
             if (account.Loans.Where(l => l.LoanStatus == LoanStatus.InProgress).Any())
                 return Result<object>.Failure("The account cannot be deleted. Loans with InProgress status are assigned to it.");
+
+            foreach (var transfer in account.Sources)
+                _context.Transfers.Remove(transfer);
+
+            foreach (var transfer in account.Destinations)
+                _context.Transfers.Remove(transfer);
 
             foreach (var transaction in account.Transactions)
             {
