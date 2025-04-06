@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/3117b1aa-717d-4c66-88ca-014ff47902d3/resourceGroups/BudgetStat/providers/Microsoft.Web/sites/budgetstat",
+    "appService.deploySubpath": "API\\bin\\Publish"
+}
