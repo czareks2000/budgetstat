@@ -185,6 +185,7 @@ export default class BudgetStore {
             runInAction(() => {
                 this.setBudget(createdBudget);
                 store.categoryStore.categoriesLoaded = false;
+                store.statsStore.setHasOldData(true);
             });    
         } catch (error) {
             console.log(error);
@@ -199,6 +200,7 @@ export default class BudgetStore {
                 this.budgetsRegistry.delete(budgetId);
                 this.deselectBudget();
                 store.categoryStore.categoriesLoaded = false;
+                store.statsStore.setHasOldData(true);
             });     
         } catch (error) {
             console.log(error);
@@ -213,6 +215,7 @@ export default class BudgetStore {
                 this.setBudget(updatedBudget);
                 this.deselectBudget();
                 store.categoryStore.categoriesLoaded = false;
+                store.statsStore.setHasOldData(true);
             });    
         } catch (error) {
             console.log(error);

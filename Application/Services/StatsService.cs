@@ -555,8 +555,18 @@ namespace Application.Services
                     .Where(t => accountIds.Contains((int)t.AccountId))
                     .ToList();
 
+            // get budgets
+            var budgets = _context.Budgets
+                .Include(b => b.Currency)
+                .Where(a => a.UserId == user.Id);
+
+            var weeklyBudgets = budgets.Where(b => b.Period == BudgetPeriod.Week).ToList();
+            var monthlyBudgets = budgets.Where(b => b.Period == BudgetPeriod.Month).ToList();
+            var annualBudgets = budgets.Where(b => b.Period == BudgetPeriod.Year).ToList();
+
             // calculate data
             DateTime currentStartDate = timeWindow.StartDate;
+            int datesCount = dates.Count;
             foreach (var currentEndDate in dates)
             {
                 //dodać wartość planowanych transakcji
@@ -575,6 +585,16 @@ namespace Application.Services
                             transaction.Currency.Code, user.DefaultCurrency.Code, transaction.Amount, currentEndDate);
                 }
 
+                //dodać wartość budgetów
+                accountsCurrentValue -= await CalculateConvertedBudgetSumAsync(
+                    weeklyBudgets, user.DefaultCurrency.Code, currentEndDate, BudgetPeriod.Week, period, datesCount);
+
+                accountsCurrentValue -= await CalculateConvertedBudgetSumAsync(
+                    monthlyBudgets, user.DefaultCurrency.Code, currentEndDate, BudgetPeriod.Month, period, datesCount);
+
+                accountsCurrentValue -= await CalculateConvertedBudgetSumAsync(
+                    annualBudgets, user.DefaultCurrency.Code, currentEndDate, BudgetPeriod.Year, period, datesCount);
+
                 chartObject.Data.Add(accountsCurrentValue);
                 chartObject.Labels.Add(FormatDateTime(currentEndDate, period));
 
@@ -586,6 +606,37 @@ namespace Application.Services
         }
 
         #region HelperFunctions
+
+        private async Task<decimal> CalculateConvertedBudgetSumAsync(
+            IEnumerable<Budget> budgets,
+            string targetCurrencyCode,
+            DateTime conversionDate,
+            BudgetPeriod budgetPeriod,
+            ForecastPeriod forecastPeriod, 
+            int datesCount)
+        {
+            decimal total = 0;
+            foreach (var budget in budgets)
+            {
+                total += await _utilities.Convert(
+                    budget.Currency.Code,
+                    targetCurrencyCode,
+                    budget.Amount,
+                    conversionDate);
+            }
+
+            return forecastPeriod == ForecastPeriod.NextYear
+                ? budgetPeriod == BudgetPeriod.Week
+                    ? total * (52 / 12)
+                    : budgetPeriod == BudgetPeriod.Month
+                        ? total
+                        : total / 12
+                : budgetPeriod == BudgetPeriod.Week
+                    ? (total / 7) 
+                    : budgetPeriod == BudgetPeriod.Month
+                        ? (total / datesCount)
+                        : total / 12 / datesCount;
+        }
 
         private async Task<List<Transaction>> FilterTransactions(
             List<Transaction> transactions, TransactionType type, ExtendedChartPeriod period, DateTime date, List<int> categoryIds, string userId)
